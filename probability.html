@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#184838"><title>金花大乱斗 · 牌型概率</title>
+<meta name="theme-color" content="#184838"><title>金花拳 · 牌型概率</title>
 <style>
 :root{--paper:#f4f1e8;--panel:#fffdf6;--ink:#243c33;--muted:#718073;--green:#184838;--line:#dce0d3;--gold:#d7a944;--trips:#b66a53;--flush:#527b62;--straight:#72959a;--pair:#8c8fa8;--high:#aeb5ac;font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:var(--paper);font-size:15px;line-height:1.65}
 *{box-sizing:border-box}body{margin:0}button,select,input{font:inherit}button,a,select,input{touch-action:manipulation}button{cursor:pointer}button:focus-visible,select:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #b58927;outline-offset:3px}button,select{color:var(--ink)}a{color:var(--green);text-underline-offset:4px}h1,h2,h3,p{margin:0}h1,h2{font-family:ui-serif,"Songti SC",serif;font-weight:600}header,main,footer{max-width:1120px;margin:auto;padding:0 28px}header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:24px;padding-bottom:22px;border-bottom:1px solid var(--line)}.brand{font-size:14px;letter-spacing:.04em}.brand span{color:var(--muted);margin-left:14px;font-size:11px;letter-spacing:.15em}.back-link{font-size:12px;text-decoration:none;white-space:nowrap}.hero{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:40px;padding:36px 0 28px;align-items:center}.eyebrow{color:var(--muted);font-size:11px;letter-spacing:.16em;margin-bottom:10px}h1{font-size:38px;line-height:1.3;letter-spacing:.02em}.hero p{color:#637665;margin-top:15px;font-size:13px;max-width:670px}.hero p b{color:var(--ink);font-weight:550}.hero-stat{text-align:right;border-left:1px solid var(--line);padding-left:28px}.hero-stat .label{font-size:12px;color:var(--muted)}.hero-stat .value{font-family:ui-serif,Georgia,serif;font-size:54px;line-height:1.2;color:var(--green);font-variant-numeric:tabular-nums;margin:8px 0}.hero-stat .detail{font-size:12px;color:#667a65}.controls{background:#e7ecdf;border:1px solid #d4decb;border-radius:12px;padding:17px 20px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 28px}.control-group{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.control-group>label,.control-label{font-size:12px;font-weight:600}.controls select{border:1px solid #c8d4c0;border-radius:7px;padding:8px 10px;background:var(--panel);max-width:100%;min-height:42px}.pool-options{display:flex;flex-wrap:wrap;gap:6px}.pool-options button{background:#ffffff80;border:1px solid #cbd6c4;border-radius:7px;min-width:44px;min-height:42px;padding:6px 10px;line-height:1.3}.pool-options button[aria-pressed=true]{background:var(--green);color:#fff;border-color:var(--green)}.controls-note{width:100%;font-size:11px;line-height:1.6;color:#687c65}.section{padding:30px 0;border-bottom:1px solid var(--line)}.section-head{display:flex;justify-content:space-between;align-items:baseline;gap:20px;margin-bottom:14px}.section h2{font-size:24px;line-height:1.4}.section h2 .num{font-family:ui-sans-serif,system-ui;font-size:11px;color:var(--muted);display:inline-block;vertical-align:middle;margin-right:10px}.method{font-size:11px;color:#69806b;white-space:nowrap}.section-description{font-size:13px;color:#657869;max-width:860px;margin-bottom:18px}.legend{display:flex;flex-wrap:wrap;gap:9px 18px;margin:14px 0 20px;font-size:12px}.legend-item{display:inline-flex;align-items:center;gap:7px}.swatch{display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--color);flex:none}.pool-chart{display:grid;gap:7px}.pool-row{display:grid;grid-template-columns:68px minmax(0,1fr);align-items:center;gap:14px;background:none;border:1px solid transparent;border-radius:9px;padding:9px 12px;text-align:left;min-height:54px;width:100%}.pool-row:hover{background:#e9ecdf}.pool-row[aria-pressed=true]{background:#fffdf6;border-color:#cfdbc6;box-shadow:0 2px 6px #183b3210}.pool-label{font-size:14px;font-variant-numeric:tabular-nums}.pool-label small{display:block;font-size:10px;color:var(--muted)}.stack{display:flex;height:32px;border-radius:5px;overflow:hidden;background:#e0e5d9}.segment{background:var(--color);height:100%;min-width:0;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap}.segment span{font-size:11px;color:#fffdf6;font-variant-numeric:tabular-nums;font-weight:500}.segment.gold span{color:#3a361e}.chart-axis{display:flex;justify-content:space-between;margin:8px 12px 0 94px;font-size:10px;color:#82917c;font-variant-numeric:tabular-nums}.selected-breakdown{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin:20px 0 0;padding-top:18px;border-top:1px solid var(--line)}.selected-breakdown .type{font-size:11px;color:#71816d;display:flex;align-items:center;gap:7px}.selected-breakdown .percent{font-family:ui-serif,Georgia,serif;font-size:25px;line-height:1.4;margin-top:5px;font-variant-numeric:tabular-nums}.chart-note{font-size:12px;color:#677d64;margin-top:16px}.chart-note b{color:#375b3e;font-weight:600}.compare-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11px;margin-bottom:17px;color:var(--muted)}.compare-legend i{display:inline-block;width:18px;height:5px;vertical-align:middle;margin-right:5px;background:var(--green)}.compare-legend i.best{background:var(--gold)}.availability{display:grid;grid-template-columns:1fr 1fr;gap:15px 30px}.availability-item{display:grid;grid-template-columns:67px minmax(0,1fr) 83px;gap:12px;align-items:center;min-height:57px}.availability-type{font-size:13px}.availability-type small{display:block;font-size:9px;color:var(--muted)}.dual-track{display:grid;gap:7px}.track{height:9px;border-radius:3px;background:linear-gradient(90deg,#e3e7dc 0%,#e3e7dc 100%);overflow:hidden}.fill{height:100%;background:var(--green);border-radius:3px;transition:width .2s ease}.fill.best{background:var(--gold)}.availability-value{font-variant-numeric:tabular-nums;text-align:right;font-size:14px}.availability-value small{display:block;font-size:11px;color:#8f782f}.notice{margin:16px 0 0;padding-left:12px;border-left:3px solid #bac9ae;font-size:12px;color:#6e806a;line-height:1.8}.trend-layout{display:grid;grid-template-columns:minmax(0,1fr) 255px;gap:32px;align-items:center}.trend{width:100%;min-width:0}.trend svg{display:block;width:100%;overflow:visible}.trend text{font-family:ui-sans-serif,system-ui;fill:#7b8c77;font-size:11px}.trend .grid{stroke:#dfe4d7;stroke-width:1}.trend .axis{stroke:#bfcab7;stroke-width:1}.trend .series{fill:none;stroke-width:2.5}.trend .dot{stroke-width:2}.trend-legend{display:flex;flex-wrap:wrap;gap:10px 20px;font-size:11px;margin-top:8px}.trend-legend i{display:inline-block;width:18px;height:2px;vertical-align:middle;margin-right:6px;background:var(--color)}.wild-detail{padding:20px;border-radius:12px;background:var(--panel);border:1px solid var(--line)}.wild-detail .value{font-family:ui-serif,Georgia,serif;font-size:36px;color:#8d6a23;line-height:1.3;margin:8px 0;font-variant-numeric:tabular-nums}.wild-detail h3{font-size:13px;font-weight:550}.wild-detail p{font-size:12px;color:#73806a;line-height:1.8}.wild-detail .subline{font-size:11px;border-top:1px solid var(--line);margin-top:13px;padding-top:11px}.table-scroll{overflow-x:auto}.table-scroll:focus-visible{outline:2px solid #b58927}table{border-collapse:collapse;width:100%;font-size:12px;font-variant-numeric:tabular-nums}th,td{padding:11px 10px;text-align:right;border-bottom:1px solid #e2e5da;white-space:nowrap}th:first-child,td:first-child{text-align:left}thead th{color:#76826e;font-weight:550}tr.selected{background:#eaf0e2}caption{text-align:left;padding:18px 0 8px;font-size:12px;font-weight:600}.table-help{font-size:11px;color:var(--muted);margin:12px 0}.details{margin-top:20px}.details summary{cursor:pointer;font-size:13px;color:#486944;min-height:44px;display:list-item;padding:10px 0}.details p,.details li{font-size:12px;color:#6c7d65;line-height:1.9}.details ul{padding-left:20px}.data-label{font-size:11px;color:#8c9785;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;margin-top:15px}footer{padding-top:23px;padding-bottom:28px;font-size:11px;color:#7a8a70;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}[hidden]{display:none!important}.sr-only{position:absolute;clip:rect(0,0,0,0);clip-path:inset(50%);width:1px;height:1px;overflow:hidden;white-space:nowrap}
@@ -12,9 +12,527 @@
 @media(prefers-reduced-motion:reduce){.fill{transition:none}}
 @media print{header .back-link,.controls,.details summary{display:none}body{background:white}.section{break-inside:avoid}footer{font-size:10px}.table-scroll{overflow:visible}table{font-size:10px}th,td{padding:6px}.trend-layout{grid-template-columns:1fr 230px}}
 </style>
-</head>
+<script>'use strict';
+// Display-only localization. Game state, historical traces, card IDs and saves stay canonical.
+const GKLocale=(()=>{
+ const SUPPORTED=['zh-CN','en'],KEY='gk_ui_language',HAN=/[\u3400-\u9fff]/;
+ const normalize=v=>/^zh(?:-|$)/i.test(v||'')?'zh-CN':/^en(?:-|$)/i.test(v||'')?'en':null;
+ let language;
+ try{language=normalize(new URL(location.href).searchParams.get('lang'))||normalize(localStorage.getItem(KEY));}catch(_){}
+ language=language||normalize(navigator.language)||'en';
+ const sources=new WeakMap(),attributes=new WeakMap(),missing=new Set(),registered=new WeakSet();let observer,queued=false,phrasesDirty=false;
+ const en=Object.fromEntries(`
+金花拳	3Card Royale
+金花大乱斗	3Card Royale
+一副牌 · 攻防对决	One deck. Two rivals.
+规则	Rules
+菜单	Menu
+对局	Play
+回放	Replay
+进攻	Attack
+防守	Defend
+对手	Rival
+对方	Rival
+你	You
+自己	Your
+自己的	Your
+伤牌	Wounds
+明伤牌	Face-up wounds
+手牌	Hand
+牌堆	Deck
+弃牌	Discard
+暂无	None
+清空	Clear
+可换	Swap
+可出	Play
+明牌	Face-up card
+扣牌	Face-down card
+待补	Refill
+实体牌	Cards
+逢人配	Wildcard
+四炸	Four of a kind
+三炸	Three of a kind
+炸弹	Three of a kind
+同花顺	Straight flush
+同花	Flush
+顺子	Straight
+对子	Pair
+高牌	High card
+版本	Version
+效果	Effect
+结果	Result
+指标	Metric
+结算	Results
+整场	Match
+确认	Confirm
+翻开	Reveal
+扣回	Hide
+翻牌	Reveal
+换牌	Refresh
+牌桌	Table
+正面	Face-up
+背面	Face-down
+无效果	No effect
+结算中	Resolving
+没有手牌	No cards
+整场目标	Match goal
+升到 A，再赢一局	Reach A, then win again
+升到 A	Reach A
+最高级 · A	Top level · A
+赢得整场	wins the match
+整场结束	Match over
+下一局，A 级争胜	Next game: win at A
+已到 A	is at A
+回到牌桌	Back to table
+新开局与记录	Game & records
+规则版本	Rules version
+复盘种子（选填）	Replay seed (optional)
+留空随机开局	Leave blank for a random deal
+首局先攻	First attacker
+随机先攻	Random
+你先攻	You first
+对手先攻	Rival first
+开新一场	New match
+导出记录	Export game
+牌型速查	Hand rankings
+最近结算	Recent turns
+对局信息	Game info
+查看三张牌型概率（不含四炸）↗	Three-card probabilities (no four of a kind) ↗
+新场随机发牌，刷新续玩。开新一场会替换当前版本的存档。	New matches use random deals. Reload to continue. Starting a new match replaces this version’s saved game.
+★ 自己的红桃级牌是逢人配。	★ The heart card matching your level is wild.
+四炸 · 新旧各100场对照	Four of a kind · 100 matches per version
+历史20种子对照	Earlier study · 20 seeds per version
+四炸版	Four-card variant
+完整升级场数	Completed matches
+平均每场轮数	Rounds per match
+平均每局轮数	Rounds per game
+四炸使用次数	Four-of-a-kind plays
+出现四炸的局数	Games with four of a kind
+单局中位数	Median rounds
+最长单局	Longest game
+无效果攻防	No-effect combats
+旧五版各20场，采用可见信息启发式。相同种子只保证首局发牌相同；后续会分叉。程序结果不代表真人体验。	20 matches per earlier version, using a visible-information heuristic. Seeds match only the opening deal; later play diverges. Simulation does not measure human enjoyment.
+一分钟开局	Quick start
+手牌 8 张	8 cards each
+52 张 · 去掉大小王	52 cards · no jokers
+记住这几件事	Keep in mind
+完整规则与边界	Full rules & details
+每轮怎么打	Each round
+换牌目标与次数	Refresh targets
+牌型与逢人配	Rankings & wildcards
+赢局与升级	Winning & leveling up
+怎么补手牌	Refilling your hand
+① 选满三张	① Choose three cards
+① 三张，或四炸四张	① Three cards, or four of a kind
+② 进攻胜出 → 掉血	② Win the attack → deal damage
+③ 防守胜出 → 换牌	③ Win the defense → refresh
+③ 防守胜出 → 翻牌	③ Win the defense → flip cards
+④ 交换攻防 → 轮末补牌	④ Swap roles → refill after both attacks
+点自己的手牌或明伤牌，可混用。看过牌型，再点“进攻”或“防守”。★ 是你当前级数的红桃牌，可作任意牌。	Choose from your hand and face-up wounds, then press Attack or Defend. ★ marks the heart card of your level, which is wild.
+两人各进攻一次才算一轮。中间不补手牌；轮末保留剩余牌，补到 8 张。伤牌打出会原位补牌，伤势不变。	Each player attacks once per round. Do not refill between attacks. Keep unused cards and refill to eight at round end. Played wounds are replaced in place; damage stays the same.
+双方手牌保密，明伤牌公开。级数从 2 开始，你的 ♥2 起初是逢人配。赢局按双方伤势差升级；升到 A 后，再以 A 开局赢一局，才赢得整场。	Hands are private and face-up wounds are public. Start at level 2, with ♥2 as your wildcard. Game wins raise your level by the final damage gap. To win the match, start a game at A and win it.
+两人共用一副 52 张扑克牌，移出大小王。各发 8 张手牌，伤牌区为空，级数从 2 开始。首局随机先攻，之后每局败者先攻；每轮交换先攻。	Share one 52-card deck without jokers. Deal eight cards each, with no wounds, at level 2. The first attacker is random in game one; later games start with the previous loser. Swap the round’s first attacker after each round.
+进攻者先选三张公开，防守者看过后选三张。可以混用手牌和自己的正面伤牌，也可以全用明牌。	The attacker reveals three cards; the defender then chooses three. Use any mix of hand cards and your face-up wounds.
+进攻者出三张或四张同点炸弹，防守者可以接三张或四炸，张数不必相同。手牌和自己的明伤牌可混用。	Play three cards, or four of the same rank. The defender may respond with three cards or four of a kind, regardless of the attack’s card count. Mix hand cards with your face-up wounds.
+双方用牌弃置，使用的桌面明牌逐张补回正面新牌，进攻者先补。新牌不影响本次牌型，从下一次出牌起可用。	Discard both plays. Replace each played wound face up, attacker first. Replacements do not affect this combat and become playable afterward.
+交换攻防再打一次，中间不补手牌。一轮结束保留所有余牌，补到 8 张。	Swap roles and play again without refilling. After both attacks, keep all unused cards and refill to eight.
+四张出牌只限同点四炸，可用自己的逢人配；三张与四炸互相可接。四炸之间比点数，天然与逢人配不分优先级。四炸6分对三炸5分只差1；四炸对高牌差6，完整伤害计入升级。	A four-card play must be four of a kind; your wildcard is allowed. Three-card and four-card plays can answer each other. Compare ranks between four of a kind, with no preference for natural cards. Four of a kind scores 6: one above trips, six above high card. Apply the full damage before calculating level gains.
+进攻分 − 防守分 = Δ	Attack score − defense score = Δ
+自己手牌、双方伤牌可指定；对方手牌不查看、随机抽一张。弃旧牌，从公共牌堆原位补一张，手牌保密、伤牌公开。每次消耗一次机会，可以跨区域分配，也能再次换同一位置的新牌。用牌弃置与桌面补位完成后才换，新牌从下一次攻防开始可用。	Choose a card from your hand or either wound area. A rival’s hand card is selected blindly at random. Discard it and draw into the same area. Hands stay private; wounds stay public. Each refresh costs one opportunity. You may switch areas or refresh the same slot again. Refresh after played wounds are replaced; new cards are usable in later combats.
+A23、QKA 可以组成顺子，KA2 不可以。同组三张不能复制完全相同的虚拟牌；手牌和明牌都适用。系统自动选择最高牌型，并显示逢人配声明。	A23 and QKA are straights; KA2 is not. A wildcard cannot duplicate the same physical rank-and-suit card within a play. This applies to hand cards and face-up wounds. The game chooses the strongest legal interpretation and shows the wildcard assignment.
+· 试玩与回放共用引擎。自动对手使用启发式策略，程序对局与真人试玩分别记录。	· Play and replay use the same engine. The automated rival uses a heuristic. Simulations and human playtests are recorded separately.
+同花顺、顺子比最高点（A23 为 3 高，QKA 为 A 高）；炸弹比点数；对子先比对子、再比单张；同花和高牌按从大到小逐张比，花色不分大小。	Compare the top rank for straights and straight flushes: A23 is 3-high, QKA is A-high. Compare the set rank for trips; pair rank then kicker for pairs; descending ranks for flushes and high cards. Suits do not break ties.
+同牌型不比大小。	Equal hand types are not rank-compared.
+同牌型进攻点数胜伤 1，防守点数胜换 1 次；完全同点仍由进攻方换 1 次。	Within the same hand type, an attack win deals 1 damage; a defense win grants 1 refresh. An exact tie still grants the attacker 1 refresh in this version.
+比较同牌型点数；进攻胜造成 1 伤，防守胜获得 1 张翻牌机会，完全相同由进攻方选 1 张机会。	Compare ranks within the same type. An attack win deals 1 damage; a defense win grants 1 flip. An exact tie grants the attacker 1 flip.
+同分由进攻方选择 1 张翻牌机会；无目标则无效果。	Equal scores grant the attacker one flip opportunity. With no target, nothing happens.
+同分直接让防守方新增 1 张扣牌；同分不再翻牌。	Equal scores deal 1 face-down wound to the defender, with no flip opportunity.
+同牌型比点数：进攻胜造成 1 伤，防守胜获得 1 张翻牌机会。完全相同仍由进攻方选机会。	Compare ranks within the same type. Attack wins deal 1 damage; defense wins grant 1 flip. Exact ties grant the attacker a flip.
+进攻者翻开自己一张扣牌，或扣回对方一张明牌。	The attacker reveals one of their wounds, or hides one of the rival’s wounds.
+防守方新增 1 张扣牌，无翻牌效果。	The defender gains 1 face-down wound, with no flip.
+伤牌全亮，达到 5 伤败北；防守按胜出分差换牌，可分配目标、连续换同一位置。	All wounds are face up. Lose at 5 wounds. A defense win grants refreshes equal to the score gap, with flexible targets and repeated slots.
+通常出三张，也可出四张同点炸弹，6 分；三张与四炸可互相接牌，允许自己的逢人配。其余沿用五伤换牌版。	Normally play three cards, or four of a kind for 6 points. Either card count can answer the other. Your wildcard is allowed. Other rules follow the five-wound refresh version.
+切换时保存当前对局，各版本可分别续玩。	Switching saves your game. Each version has its own save.
+进攻打的是掉血，防守打的是机会。	Attack to deal damage. Defend to gain options.
+每次选三张，与自动对手交替攻防。	Choose three cards and trade attacks with the automated rival.
+通常出三张，也可出四张同点炸弹。	Play three cards, or four of the same rank.
+伤牌全亮 · 5 张败北	All wounds face up · lose at 5
+明暗都算伤势 · 6 张败北	All wounds count · lose at 6
+执行伤害或换牌；新补位伤牌也可换。伤牌达到 5 张立即败北。	Apply damage or refreshes, including newly replaced wounds as valid targets. Five wounds ends the game.
+执行下面的差值效果；新补的明牌也可以被翻面。总伤牌达到 6 张就败北。	Apply the score-gap effect below. Newly replaced wounds may be flipped. Six wounds ends the game.
+防守者获得 |Δ| 次换牌机会，逐次选任意合法目标。	The defender gains |Δ| refreshes, choosing each valid target in turn.
+防守者翻开自己 |Δ| 张扣牌，或扣回对方 |Δ| 张明牌。	The defender reveals |Δ| own wounds or hides |Δ| rival wounds.
+每次弃掉一张，原区域补回一张。可以跨区域分配，也可以再次换同一位置的新牌；新手牌保密，新伤牌公开，双方伤势不变。	Discard one card and draw into the same area. Change areas or refresh a slot again. Hands stay private, wounds public, and damage unchanged.
+翻面两种效果二选一，不能拆分；有几张处理几张，没有目标则无效果。伤牌无论明暗都计伤势。翻牌与出牌补位都不回血。	Choose reveal or hide; do not split the effect. Use as many valid targets as possible. All wounds count toward damage. Flipping and replacing wounds never heal.
+桌面牌不能拿入手牌，也不能主动弃牌换新。	Do not move wounds into your hand or voluntarily redraw hand cards.
+换牌每次额外抽一张，补回原区域；不会拿对方的牌，也不会把伤牌移入手牌。	Each refresh draws one extra card into the original area. It does not take a rival’s card or move a wound into a hand.
+完整一轮用了 k 张桌面牌，手牌会剩 2+k 张，补 6−k 张；桌面另补 k 张。出牌替换共抽六张，受击新增另算。	If you play k wounds during a round, keep 2+k hand cards and draw 6−k. Replace k wounds separately: six replacement draws total, plus any damage draws.
+一人一轮实际出牌共 k 张（6、7 或 8），其中 t 张来自伤牌区：原位补 t 张伤牌，轮末补 k−t 张手牌，仍保留余牌补到8张。受伤和换牌抽牌另算；双方手牌和伤牌区全空、没有换牌目标时，机会自动结束。	Each player plays k cards per round: 6, 7 or 8. If t come from wounds, replace t wounds and draw k−t hand cards at round end, keeping unused cards and refilling to eight. Damage and refresh draws are extra. If both hands and wound areas are empty, refresh opportunities end automatically.
+牌型分更高，按分差造成伤害。	A higher hand-type score deals damage equal to the gap.
+同牌型比点数，进攻胜造成 1 伤。	Within the same type, an attack rank win deals 1 damage.
+同分也由进攻造成 1 伤。	Equal scores also deal 1 damage.
+同分由进攻争取翻面机会。	Equal scores give the attacker a flip opportunity.
+按牌型胜出分差，获得同样次数的换牌。同牌型点数胜得 1 次。点自己的手牌、双方伤牌或对手牌背，再确认换牌。	Gain refreshes equal to your hand-type score advantage, or one for a same-type rank win. Tap your hand, either wound area, or a rival card back; then confirm.
+按牌型胜出分差，翻开自己的扣牌，或扣回对手的明牌。	Reveal your wounds or hide rival wounds, up to the hand-type score gap.
+同牌型点数胜得 1 张机会。	A same-type rank win grants one flip.
+先选效果，再点目标牌。	Choose the effect, then tap its targets.
+例如：进攻是对子 1 分，防守是同花顺 4 分 → 防守获得 3 次换牌。每次弃旧摸新，原区域补回一张；可以连续换同一个位置，伤势不变。	Example: Pair (1) attacks; straight flush (4) defends. The defender gains three refreshes. Discard and redraw in the same area each time; repeat slots if desired. Damage does not change.
+伤牌全部亮出，达到 5 张立即败北。用伤牌出牌会补回明牌；换伤牌也原位补回明牌。这些操作都不回血。	All wounds are face up; five or more ends the game. Playing or refreshing a wound replaces it face up in place. Neither action heals.
+明暗伤牌都计伤势，达到 6 张立即败北。只有明伤牌能参与出牌；使用后补回明牌。翻面与出牌都不回血。	All wounds count; six or more ends the game. Only face-up wounds are playable, and are replaced face up. Flipping and playing wounds never heal.
+恭喜，赢下整场！	You won the match!
+这场，对手赢了	Your rival wins this match
+这一局，你赢了	You won this game
+这一局，对手赢了	Your rival won this game
+以 A 开局，再赢一局。你做到了。	You started at A and won. You did it.
+对手以 A 开局赢下了最后一局。	Your rival started at A and won the final game.
+从 2 到 A，这一场属于你。	From 2 to A. This match is yours.
+再开一场，从 2 重新挑战。	Start another match and climb again from 2.
+下一局以 A 开局，再赢一局就赢整场。	Start the next game at A. Win it to take the match.
+对手进入 A 级决胜局，仍需再赢一局。	Your rival reaches A and must win another game.
+开始下一局	Next game
+再玩一场	Play again
+结算完成	Combat resolved
+交换攻防	Swap roles
+交换进攻与防守	Swap attack and defense
+保留余牌，补到 8 张	Keep unused cards; refill to eight
+补牌 · 下一轮	Refill · next round
+下一局以 A 级争胜	Next game: win at A
+继续升级，向 A 前进	Keep climbing toward A
+已以 A 级开局并赢得一局，整场结束。	Won a game starting at A. Match over.
+下一局由败者先攻。到 A 后，还要以 A 开局再赢一局。	The previous loser attacks first next game. Reach A, then win another game starting at A.
+关闭结算，查看牌桌	Close results and review table
+本局终局伤势	Final damage this game
+查看牌桌	Review table
+查看结算	Show results
+你的逢人配	Your wildcard
+对手的逢人配	Rival’s wildcard
+对手手牌，身份保密	Rival’s hidden hand card
+对手手牌牌背，点击盲换一张	Rival’s card back; tap for a blind refresh
+扣牌，背面朝上	Face-down wound
+伤牌已出，结算后补回，仍计伤势	Played wound; replaced after combat, still counts as damage
+已选足，请先取消一张再换牌。	Selection full. Deselect a card first.
+已选足，请先取消一张再调整。	Selection full. Deselect a card first.
+双方手牌可见；切回“对局”继续你的存档。	Both hands are visible. Return to Play to continue your saved game.
+换牌时直接点牌选目标，再确认；对手手牌点牌背盲换一张。★ 为你的逢人配。	Tap a target, then confirm. Rival hand cards are refreshed blindly. ★ marks your wildcard.
+点手牌或明牌选三张。翻面时点选目标牌。★ 为你的逢人配。	Choose three hand cards or face-up wounds. Tap targets when flipping. ★ marks your wildcard.
+你进攻	Your attack
+你防守	Your defense
+三张或同点四炸，手牌与明伤牌可混用	Three cards or four of a kind; use hand cards and wounds
+手牌、明伤牌均可选	Choose from hand and face-up wounds
+选三张，应对进攻	Choose three cards to defend
+四张须组成同点四炸	Four cards must form four of a kind
+确认换牌	Refresh card
+点牌换新 · 对手手牌盲换	Tap to refresh · rival’s hand stays hidden
+盲换对手 1 张手牌	Refresh one random rival hand card
+对手换牌中…	Rival is refreshing…
+对手选择翻面	Rival is choosing a flip
+翻面会改变出牌机会，双方伤势不变。	Flips change playable options, not damage.
+选择翻面	Choose a flip
+确认翻面	Confirm flip
+手牌 · 公开	Hand · revealed
+手牌 · 盲换	Hand · blind refresh
+对手手牌	Rival’s hand
+对手伤牌区	Rival’s wounds
+你的手牌	Your hand
+你的伤牌区	Your wounds
+上一步	Previous step
+下一步	Next step
+自动播放	Auto replay
+暂停	Pause
+回放进度	Replay progress
+跳到局或轮	Jump to game or round
+双方升级进度	Both players’ level progress
+整场升级目标	Match level goal
+页面模式	Page mode
+当前操作	Current action
+菜单：新开局、版本与记录	Menu: new match, versions and records
+没有可换的牌，机会自动结束	No targets; refresh ends automatically
+没有翻面目标，伤势不变	No flip targets; damage unchanged
+等待翻面选择；伤势不变	Choose a flip; damage unchanged
+同种子各100场完整升级。四炸含逢人配；AI仅看己方手牌和公开牌。平均每场轮数差	100 full matches per version using the same seeds. Four of a kind allows wildcards. AI sees only its own hand and public cards. Mean round difference:
+，95%重采样区间	, bootstrap 95% interval
+，暂不支持节奏明显改变。另跑100场节牌防守检查；程序不能测出真人是否更好玩。	. No clear pace change. Another 100 matches test a card-saving defense strategy. Simulation cannot determine human enjoyment.
+概率参数	Probability settings
+牌型顺序	Hand order
+逢人配带来多少提升	How much does a wildcard help?
+可用牌	Available cards
+多一张牌，	One more card.
+多多少出牌机会？	How many more options?
+先看	Explore
+最高能出什么	your strongest available hand
+，再看	, then
+哪些牌型可以同时凑出	which hand types can coexist
+。明牌与手牌都计入可用牌，扣牌不计；按当前三张牌规则，A23 与 QKA 都是顺子。	. Count hand cards and face-up wounds, excluding hidden wounds. Under these three-card rules, A23 and QKA are straights.
+一副牌 · 8—13 张选三	One deck · choose 3 from 8–13
+最高能出的牌型	Your strongest available hand
+精确组合计数	Exact combinatorial counts
+每组牌只归入一个最高牌型，每行合计 100%。点选一行，查看该数量的细节。	Each pool is counted under its strongest hand type once. Every row totals 100%. Select a row to explore it.
+从 9 张开始，最高牌型至少是同花。	With 9 or more cards, at least a flush is guaranteed.
+四种花色中必有一种至少三张；对子与顺子依然能出，只是不再是整组牌的上限。	At least one of four suits has three cards. Pairs and straights remain playable, but cannot be the pool’s strongest hand under this ranking.
+能组成，不等于最高只能出	Available is different from strongest
+同一组牌可以既有同花，也有炸弹或同花顺。这些概率会重叠，不能相加；同花不包含同花顺。	A pool may contain a flush, trips and a straight flush at once. Availability overlaps and must not be summed. Flush availability excludes straight flushes.
+可以出该牌型	Available hand type
+最高是该牌型	Strongest hand type
+同花顺概率 · 精确计算	Straight flush · exact probability
+普通牌、当前逢人配，以及“已经持有逢人配”的条件是不同口径。曲线表示能组成同花顺的概率；交换炸弹与同花顺的排序不改变这条可用率曲线。	Ordinary cards, random wildcard ownership and known wildcard ownership are different conditions. These curves show straight-flush availability; changing its rank relative to trips does not change that availability.
+完整概率表	Full probability tables
+最高能出的牌型 · 精确	Strongest available hand · exact
+可以出该牌型 · 可同时满足	Available hand types · may overlap
+组合数	Combinations
+如何计算，以及实战该怎样读这些数字	Methods & what these probabilities mean in play
+从完整 52 张牌中无放回、均匀抽取 N 张可用牌。逢人配是牌组中的一张，随机持有概率为 N/52。	Sample N available cards uniformly without replacement from all 52 cards. The wildcard is one physical card, held with probability N/52.
+“最高牌型”通过组合生成函数和动态规划精确计数；三张组合共享实体牌，不能当作独立事件相乘。	Strongest-hand counts use generating functions and dynamic programming. Three-card combinations share cards and are not independent events.
+每组三张仍按最高声明评分，不通过主动降低逢人配声明制造弱牌型。花色不比大小；同牌型点数比较不改变这些出现概率。	Each three-card play uses its strongest legal wildcard interpretation. You cannot declare a weaker interpretation to create another hand type. Suits do not break ties; rank comparisons do not change occurrence probabilities.
+这里只计算一次选三的组合上限，不要求同时为第二次出牌留下不重叠的三张。保留手牌、明牌更新、公开对手牌会改变实战条件；这些数字不是胜率或实际出牌频率。	This measures options for one three-card play, without reserving three other cards for a second play. Retained hands, wound replacements and public information change real play. These are not win rates or actual play frequencies.
+最高型已计算全部 13 个级数，并用普通三张 22,100 组、普通四张 270,725 组穷举与游戏引擎核对；另以 200 万组随机牌池检查分布。	Strongest-hand counts cover all 13 levels. Exhaustive checks compare all 22,100 ordinary three-card sets and 270,725 four-card sets against the engine, plus two million sampled pools.
+同花顺、炸弹的可用率精确计算；其余可用率仅提供 2 级与无逢人配模式的 200 万组抽样估计。单项 95% 误差半宽最多约 0.07 个百分点。0.3.2 的最高分布由原精确联合计数重算：同时有炸弹和同花顺的牌组改归炸弹；不把原最高同花顺占比当作新版占比。	Straight-flush and trips availability is exact. Other availability uses two million samples for level 2 and no-wildcard modes, with a maximum individual 95% error half-width near 0.07 percentage points. Version 0.3.2 recomputes the strongest-hand distribution from exact joint counts, assigning pools with both trips and a straight flush to trips.
+上方为可以出该型，下方为最高是该型。估计中的“≈100%”表示接近或舍入，不能一律当成理论必然。	The upper bar shows availability; the lower bar shows the strongest type. An estimated ≈100% may be rounding, not a mathematical guarantee.
+本级数的同花顺与炸弹可用率为精确值。其余四项尚未计算；切回 2 级或无逢人配即可查看对应估计。下方金色条仍为本级数的精确最高型概率。	Straight-flush and trips availability is exact at this level. The other four types are not computed here; choose level 2 or no wildcard for estimates. Gold bars still show exact strongest-hand probabilities.
+无逢人配 · 普通牌对照	No wildcard · ordinary cards
+无逢人配 · 普通牌	No wildcard · ordinary cards
+无逢人配	No wildcard
+普通牌对照	Ordinary-card baseline
+可用率未计算	Availability not computed
+可用率估计	Estimated availability
+可用率精确	Exact availability
+未计算	Not computed
+不同可用牌数量下的同花顺概率曲线	Straight-flush availability by pool size
+同花顺概率随可用牌从八张增加到十三张的变化	Straight-flush probability for pools of 8–13 cards
+已持有 ♥2 · 条件概率	Holding ♥2 · conditional probability
+本级数的随机持有概率	Chance to hold this level’s wildcard
+此时能出同花顺的概率。条件是已经拿到逢人配；不要把它当作随机牌池的无条件概率。	Straight-flush availability given that you already hold the wildcard. This is conditional, not the probability for a random pool.
+同花顺允许 A23 / QKA，不允许 KA2。	Straights allow A23 and QKA, but not KA2.
+每组三张按最高声明评分。最高型各行合计 100%，四舍五入可能差 0.01%；可用率各列重叠，不能相加。≈ 为 200 万组抽样估计，— 为未计算。	Each three-card set uses its strongest interpretation. Strongest-type rows total 100%, with possible 0.01% rounding differences. Availability overlaps and cannot be summed. ≈ means an estimate from two million samples; — means not computed.
+回到 0.3.2 试玩桌 ↗	Back to the 0.3.2 table ↗
+52 张普通牌 · 无大小王 · 可离线查看	52 standard cards · no jokers · works offline
+概率基准	Probability baseline
+数据快照：	Data snapshot:
+0.3 · 原版	0.3 · Original
+0.3.1a · 同分伤 1	0.3.1a · Tie deals 1
+0.3.1a · 试验 a	0.3.1a · Variant a
+0.3.1b · 比大小	0.3.1b · Compare ranks
+0.3.1b · 试验 b	0.3.1b · Variant b
+0.3.1b · 同花顺最高	0.3.1b · Straight flush first
+0.3.2 · 当前试玩	0.3.2 · Baseline
+0.3.2 · 翻牌	0.3.2 · Flip wounds
+0.3.2 · 炸弹最高	0.3.2 · Trips first
+0.3.3 · 换牌	0.3.3 · Refresh cards
+0.3.3 · 全亮 / 五伤 / 换牌试验	0.3.3 · Face-up / five wounds / refresh
+0.3.4 · 四炸6分试验	0.3.4 · Four of a kind: 6
+0.3.4 · 四炸 6 分试验	0.3.4 · Four of a kind: 6
+语言	Language
+`.trim().split('\n').map(line=>line.split('\t')));
+ const phrases=Object.entries(en).sort((a,b)=>b[0].length-a[0].length);
+ Object.assign(en,{
+  '金花拳：一副扑克牌的双人攻防游戏。与自动对手试玩，进攻造成伤势，防守争取换牌机会。':'3Card Royale: a two-player combat game using one standard deck. Attack to deal damage and defend to gain refresh opportunities.',
+  '两个人，一副牌，打到 A。':'Two players. One deck. Battle to A.',
+  '伤':'damage','张':'cards','局':'games','轮':'rounds','次':'times','级':'level','暗':'face down','明':'face up','五':'five','六':'six',
+  '试玩':'Playtest','牌型概率':'Hand probabilities','同分处理：':'Ties: ',
+  '伤势':'Damage','净胜':'Damage gap','升了':'Gained','升 ':'Gain ','已换':'Refreshed','已选':'Selected','新增':'Add','最多':'Up to',
+  '本场':'This match','这一局':'this game','的级数':'’s level','先攻。':' attacks first.','下一局由':'Next game: ',
+  '你赢了':'You won ','对手赢了':'Rival won ','牌堆为空':'Deck empty','牌堆将尽':'Deck running low','牌堆情况':'Deck status',
+  '下次抽牌时重洗弃牌':'Reshuffle discard on the next draw',
+  '种选法':'combinations','个百分点':'percentage points','换牌另抽':'Extra refresh draws: ',
+  '牌堆剩余':'Deck remaining: ','终局伤势':'Final damage: ','胜者升':'winner gains ',
+  '指纹':'hash','种三张选法':'three-card combinations','普通牌':'Ordinary cards',
+  '点牌换新':'tap to refresh','共':'total','补手牌':'refill hand: ','伤势不变':'damage unchanged',
+  '上一轮：保留':'Previous round · kept: ','以 A 级获胜':'won at A','扣回对手的伤牌':'Hide rival wounds',
+  '选择可用牌张数':'Select pool size','固定种子':'replay seed','开局与结算':'Setup & scoring',
+  '最高为':'strongest: ','最高牌型：':'strongest type: ','桌面补位':'wound replacements: ',
+  '分数越高越强。':'Higher scores win.','牌型可用率完整表':'Full hand-availability table',
+  '最高牌型概率完整表':'Full strongest-hand probability table',
+  '八到十三张的最高牌型分布':'Strongest-hand distribution for 8–13 cards',
+  '随机牌池':'Random pool','随机持有逢人配：':'Chance to hold the wildcard: ',
+  '程序回放':'Simulation replay','剩余':'left','的 A 级决胜局':'’s A-level game',
+  '三张 / 四炸四张':'3 cards / 4 of a kind','防守者新增 Δ 张':'The defender gains Δ ',
+  '四张同点可拆三张打5分，或全出打6分。':'Play three from a four-card set for 5 points, or all four for 6.',
+  '保留全部余牌，轮末只补到八张。明牌用后补位，伤势不变。':'Keep unused cards and refill to eight after both attacks. Replace played face-up wounds; damage stays the same.',
+  '同牌型沿用 b 的点数比较。':'Same-type hands use variant b’s rank comparison.',
+  '四炸同型比点数；天然与逢人配四炸平等。其他牌型沿用点数比较。':'Compare ranks within four of a kind; natural and wildcard sets are equal. Other types use the same rank comparisons.',
+  '盲换':'Blind refresh','封锁机会':'reduce playable options','解锁出牌':'unlock playable cards',
+  '轮结束':'rounds completed','种组合 · 只看一次出牌。':'combinations · one play only.',
+  '金花-':'3Card-Royale-','-试玩记录.json':'-playtest.json',
+  '而且已持有 ♥2':'already holding ♥2','最高牌型':'strongest type','。':' . ',
+  '分':' pts','至':'to','中…':' in progress…','选牌':'Selected','选 3':'choose 3','无放回随机牌池':'random pool without replacement',
+  '三张':'three cards','四张':'four cards','有几张处理几张，没有目标就跳过。':'Use available targets; skip if none.',
+  '翻开自己，或扣回对手。两种效果不能拆分。':'Reveal your wounds or hide rival wounds. Do not split the effects.',
+  '同型比点数；天然与逢人配四炸平等。其他牌型沿用点数比较。':'Compare ranks; natural and wildcard sets are equal. Other hand types also compare ranks.',
+  '的概率。已持有时的同花顺条件率只计算了 2 级，此处不显示其他级数的条件曲线。':' probability. Conditional straight-flush curves are available only at level 2.',
+  '局结算':'game results','第 ':'Game ','轮。双方手牌公开用于复盘，扣牌仍隐藏。策略用于检查执行，不代表最优打法。':'rounds. Both hands are public for review; hidden wounds remain hidden. The heuristic checks execution, not optimal play.',
+  '张截断。胜者升级数等于败方伤牌总数减胜方伤牌总数，败者级数不变，最多升到 A；必须再以 A 级开局并赢一局，才赢得整场。每局收回全部 52 张牌重新洗匀。公共抽牌堆空时只洗弃牌，不回收伤牌。':'Apply all damage, then calculate the level gain from the final damage gap. Start at A and win to take the match. Reshuffle all 52 cards between games; during a game, recycle only the discard pile.',
+  '选择三张不同的实体牌，四炸版本也可选四张同点。':'Choose three distinct cards, or four of the same rank in the four-card variant.',
+  '四张出牌必须组成同点四炸。':'A four-card play must be four of a kind.',
+  '没有足够的可用牌。':'Not enough playable cards.',
+  '没有合法换牌目标。':'No valid refresh targets.',
+  '未知规则版本。':'Unknown rule version.',
+  '存档版本不匹配。':'Save version mismatch.',
+  '手牌超过八张。':'Hand exceeds eight cards.',
+  '52 张实体牌未守恒。':'Card conservation failed.',
+  '伤牌空位没有对应的出牌。':'A wound slot has no corresponding played card.',
+  '全亮试验出现扣牌。':'A face-down wound appeared in the face-up version.',
+  '换牌阶段没有有效机会。':'No valid refresh opportunity.',
+  '公共牌堆与弃牌均为空。':'Draw and discard piles are empty.',
+  '现在不是该玩家出牌。':'It is not this player’s turn.',
+  '只能使用自己的三张牌，四炸版本也可出四张同点；手牌与明牌可混用。':'Use three of your playable cards, or four of a kind in the four-card variant. Hand cards and face-up wounds may be mixed.',
+  '补位改变了伤势。':'Wound replacement changed damage.',
+  '当前没有换牌机会。':'No refresh is pending.',
+  '请选择自己的牌、公开伤牌，或盲换对方手牌。':'Choose your hand, a public wound, or a blind rival-hand refresh.',
+  '换牌改变了伤势或手牌张数。':'Refresh changed damage or hand size.',
+  '当前没有待处理的翻面选择。':'No flip is pending.',
+  '请选足本次可操作的牌，且不能混合两种效果。':'Choose the required number of valid targets for one effect.',
+  '翻面改变了伤势。':'Flipping changed damage.',
+  '请先完成本次攻防。':'Finish this combat first.',
+  '余牌预算不一致。':'Remaining-card budget mismatch.',
+  '补手牌与伤牌补位不等于实际出牌张数。':'Replacement draws do not match the cards played.',
+  '当前不能开始下一局。':'Cannot start the next game yet.',
+  '没有合法翻面选择。':'No valid flip targets.',
+  '执行伤害或手牌交换；伤区不参与交换。伤牌达到5张立即败北。':'Apply damage or hand exchanges. Wounds cannot be exchanged. Five wounds ends the game.',
+  '伤牌全亮，达到5张立即败北。用伤牌出牌会原位补明牌，伤势不变；伤牌不属于交换目标。':'All wounds are face up; five ends the game. Played wounds are replaced face up without healing. Wounds cannot be exchanged.',
+  '手牌保密，伤牌公开。胜者按伤势差升级并下局先攻。到A后有三次机会：失败亮红灯，成功亮绿灯并赢整场。三红灯后该玩家回到2级，对手保留等级。':'Hands are private; wounds are public. Win to level up by the damage gap and start the next game. At A you have three attempts: red means failure, green means a match win. Three red lights return that player to level 2; the rival keeps their level.',
+  '并列':'Level','双方 A 级决胜':'Both at A · final game','以 A 开局再赢一局':'Start at A and win again',
+  '0.3.6 · 防守反击':'0.3.6 · Counterplay','0.3.5 · 胜者先攻':'0.3.5 · Winner starts',
+  '四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。四炸允许逢人配。':'Four of a kind 6 > Trips 5 > Straight flush 4 > Flush 3 > Straight 2 > Pair 1 > High card 0. Your wildcard may complete four of a kind.',
+  '四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。':'Four of a kind 6 > Trips 5 > Straight flush 4 > Flush 3 > Straight 2 > Pair 1 > High card 0.',
+  '沿用四炸与五伤换牌，小局赢家下局先攻，局内仍每轮交换先攻。':'Four-of-a-kind and five-wound refresh rules. The game winner starts the next game; round initiative still alternates.',
+  '防守胜出后选自己一张手牌，盲换对手一张，或弃旧摸新；次数随胜出分差变化。小局赢家下局先攻，轮间仍交换；以A开局输三次回到2级，对手保留等级。':'After a defense win, give one hand card for a blind swap with your rival, or discard it and draw. The score gap sets the number of exchanges. Game winners start next; rounds alternate. Lose three games starting at A and return to level 2; your rival keeps their level.',
+  '同牌型比较点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无事发生。':'Compare ranks within the same type: attack wins deal 1 damage, defense wins grant 1 exchange. Exact ties do nothing.',
+  '对手手牌牌背，点击盲交换一张':'Rival’s hidden hand card; tap to swap blindly','手牌 · 盲交换':'Hand · blind swap','选一张交出':'choose a card to give','已交换':'Exchanged','交换':'exchanged',
+  '交出':'Give','先选自己一张手牌':'Choose one of your hand cards first',
+  '① 先选自己一张手牌':'① Choose one hand card',
+  '② 点对手牌背交换，或点牌堆摸新':'② Tap a rival card back to swap, or the deck to redraw',
+  '对手交换手牌中…':'Rival is exchanging…','盲换对手':'Blind swap','弃旧摸新':'Discard & draw',
+  '点牌堆：弃旧摸新':'Tap deck: discard & draw',
+  '③ 防守胜出 → 手牌反击':'③ Win the defense → counterplay',
+  '防守胜出，按分差获得交换次数；同牌型点数胜得1次。先选自己一张手牌，再点对手牌背盲换，或点牌堆弃旧摸新。双方手牌张数和伤势不变。':'Gain exchanges equal to the defense score gap, or one for a same-type rank win. Choose one hand card, then tap a rival card back for a blind swap, or the deck to discard and draw. Hand sizes and damage stay the same.',
+  '防守者获得|Δ|次手牌交换机会。每次交出自己一张，盲换对手一张，或弃旧摸新。':'The defender gains |Δ| hand exchanges. Give one hand card for a blind rival swap, or discard it and draw.',
+  '手牌保密，伤区不参与交换。每次独立选择，可重复换掉刚拿到的牌；自己没有手牌时机会自动结束，对手没手牌时只能弃旧摸新。':'Hands stay private. Wounds cannot be exchanged. Choose each time, including cards just received. With no hand cards your opportunities end; with no rival hand cards you may only discard and draw.',
+  '选择自己一张手牌。与对手换时随机盲取一张，两张直接交换，不经过弃牌堆；选择牌库时把自己的牌弃掉，再从牌堆摸一张。双方手牌张数与伤势不变，可连续执行不同选项。':'Choose one hand card. For a blind swap, exchange it directly with a random rival hand card; neither is discarded. For a redraw, discard your card and draw from the deck. Hand sizes and damage stay unchanged; mix the options across opportunities.',
+  '例如：进攻对子1分，防守同花顺4分，获得3次交换。可以交出一张K盲换对手一张，再弃掉刚拿到的牌摸新；交换不回血。':'Example: Pair (1) attacks; straight flush (4) defends, granting three exchanges. Swap your K blindly with a rival card, then discard the received card and draw. Exchanging does not heal.',
+  '五伤即败，完整伤势差决定赢家升级。小局赢家下局先攻；每轮仍交换先攻。升到A后，以A开局赢一局即赢整场；以A开局输掉三次，该玩家回到2级，对手等级保留，次数重新计算。灰灯未用，红灯失败，绿灯成功。':'Lose at five wounds; the full damage gap sets the winner’s level gain. Game winners start next, while round initiative alternates. Start at A and win to take the match. Lose three games starting at A and return to level 2; the rival keeps their level. Gray lights are unused attempts, red means failure, green means success.',
+  '交换只改变牌的身份，不改变手牌数量；双方各进攻一次后，才保留余牌并补到8张。盲换对手不抽公共牌堆；弃旧摸新额外抽一张。伤牌出牌仍原位补明牌，伤势不变。':'Exchanges change card identities, not hand sizes. After both players attack, keep unused cards and refill to eight. Blind swaps use no deck cards; redraws draw one extra card. Played wounds are still replaced face up without healing.',
+  '先选自己一张手牌，再点对手牌背或公共牌堆；也可使用中央两个按钮。':'Choose one hand card, then tap a rival card back or the deck. You can also use the two action buttons.',
+  '两人共用52张牌，各8张手牌，级数从2开始。首局随机或按设置，之后小局胜者先攻；每轮交换先攻。':'Share a 52-card deck, eight hand cards each, starting at level 2. Opening initiative is random or chosen in settings. Later game winners start next; round initiative alternates.',
+  '下一局由胜者先攻。到 A 后，还要以 A 开局再赢一局。':'The previous winner attacks first next game. Reach A, then win a game starting at A.',
+ });
+ phrases.splice(0,phrases.length,...Object.entries(en).sort((a,b)=>b[0].length-a[0].length));
+ // These inline phrases precede bold text without a source-space in Chinese.
+ en['先看']='Explore ';en['，再看']=', then ';
+ function text(source){
+  if(language==='zh-CN')return source.replace(/金花大乱斗/g,'金花拳');
+  const s=String(source),trim=s.trim();if(!HAN.test(s))return s;
+  if(en[trim]!==undefined)return s.replace(trim,en[trim]);
+  const rules=[
+   [/^第 (\d+) 局 · 第 (\d+) 轮$/,(_,g,r)=>`Game ${g} · Round ${r}`],
+   [/^第 (\d+) 局 \/ 第 (\d+) 轮$/,(_,g,r)=>`Game ${g} / Round ${r}`],
+   [/^第 (\d+) 局 · 结算$/,(_,g)=>`Game ${g} · Results`],
+   [/^第 (\d+) 局结算$/,(_,g)=>`Game ${g} results`],
+   [/^程序回放 · 第 (\d+) 局$/,(_,g)=>`Replay · Game ${g}`],
+   [/^本场 (\d+) 局 · 共 (\d+) 轮$/,(_,g,r)=>`${g} games · ${r} rounds`],
+   [/^净胜 (\d+) 伤 · 第 (\d+) 轮结束$/,(_,d,r)=>`Damage gap ${d} · ${r} rounds`],
+   [/^(你|对手|A|B) · (\w+) 级$/,(_,w,l)=>`${text(w)} · Lv ${l}`],
+   [/^(你|对手|A|B)领先 (\d+) 级$/,(_,w,n)=>`${text(w)} leads by ${n}`],
+   [/^防守反击 · 剩余 (\d+) 次$/,(_,n)=>`Counterplay · ${n} left`],
+   [/^冲A：失败 (\d+) 次(，成功)?$/,(_,n,win)=>`A attempts: ${n} failed${win?', succeeded':''}`],
+   [/^(你|对手)冲A还剩 (\d+) 次。$/,(_,w,n)=>`${text(w)} has ${n} A attempts left.`],
+   [/^(你|对手)冲A三次未果：A → 2；(你|对手)保留当前等级。$/,(_,w,keep)=>`${text(w)}: three failed A attempts. A → 2. ${text(keep)}: level retained.`],
+   [/^(你|对手|A|B)升了 (\d+) 级$/,(_,w,n)=>`${text(w)} gained ${n} levels`],
+   [/^(你|对手|A|B)升到 A$/,(_,w)=>`${text(w)} reached A`],
+   [/^(你|对手|A|B)的级数$/,(_,w)=>`${text(w)}’s level`],
+   [/^(你|对手|A|B)的 A 级决胜局$/,(_,w)=>`${text(w)}’s A-level game`],
+   [/^(你|对手|A|B)(进攻|防守)中…$/,(_,w,a)=>`${text(w)} is ${a==='进攻'?'attacking':'defending'}…`],
+   [/^(你|对手|A|B)进攻$/,(_,w)=>`${text(w)} attacks`],
+   [/^(你|对手|A|B)换牌 (\d+)\/(\d+)$/,(_,w,n,c)=>`${text(w)} refreshed ${n}/${c}`],
+   [/^(你|对手|A|B)交换 (\d+)\/(\d+)$/,(_,w,n,c)=>`${text(w)} exchanged ${n}/${c}`],
+   [/^(你|对手|A|B)(翻开|扣回) (\d+) 张$/,(_,w,a,n)=>`${text(w)} ${a==='翻开'?'revealed':'hid'} ${n}`],
+   [/^下一局由(你|对手)先攻。$/,(_,w)=>`${text(w)} attacks first next game.`],
+   [/^(\d+) 伤即败$/,(_,n)=>`Lose at ${n} wounds`],
+   [/^伤势 (\d+) \/ (\d+)$/,(_,n,c)=>`Damage ${n} / ${c}`],
+   [/^\/ (\d+) 伤$/,(_,n)=>`/ ${n}`],
+   [/^手牌 · (\d+)( · 点牌换新)?$/,(_,n,r)=>`Hand · ${n}${r?' · tap to refresh':''}`],
+   [/^换牌 · 剩余 (\d+) 次$/,(_,n)=>`Refresh · ${n} left`],
+   [/^选牌 (\d+) \/ (\d+)$/,(_,n,c)=>`Selected ${n} / ${c}`],
+   [/^已选 (\d+) · 三张 \/ 四炸四张$/,(_,n)=>`Selected ${n} · 3 or 4 of a kind`],
+   [/^已换 (\d+) \/ (\d+) 次，伤势不变$/,(_,n,c)=>`Refreshed ${n} / ${c}; damage unchanged`],
+   [/^最多 (\d+) 张：翻开自己，或扣回对手。两种效果不能拆分。$/,(_,n)=>`Up to ${n} cards: reveal your wounds or hide rival wounds. Choose one effect.`],
+   [/^(\d+) 张，而且已持有 ♥2$/,(_,n)=>`${n} cards, already holding ♥2`],
+   [/^(\d+) 张全部按普通牌时，能出同花顺的概率。♥级牌不使用逢人配能力。$/,(_,n)=>`Straight-flush probability with ${n} ordinary cards and no wildcard.`],
+   [/^较普通牌提升 ([\d.]+) 个百分点$/,(_,n)=>`+${n} percentage points vs. ordinary cards`],
+   [/^随机持有逢人配：(.*)。$/,(_,s)=>`Chance to hold the wildcard: ${s}.`],
+   [/^普通牌 · (\d+) 种三张选法$/,(_,n)=>`Ordinary cards · ${n} three-card combinations`],
+   [/^(\d+) 张$/,(_,n)=>`${n} cards`],
+   [/^(\d+) 种选法$/,(_,n)=>`${n} combinations`],
+   [/^([\w♥]+) 级 · ♥(\w+)$/,(_,n,r)=>`Level ${n} · ♥${r}`],
+   [/^从完整 52 张牌随机取 (\d+) 张时，持有 ♥(\w+) 的概率。已持有时的同花顺条件率只计算了 2 级，此处不显示其他级数的条件曲线。$/,(_,n,r)=>`Chance to hold ♥${r} in ${n} random cards from the full deck. Conditional straight-flush curves are available only at level 2.`],
+   [/^完整承受伤害后按总伤势检查，不在第(五|六)张截断。.*$/,()=>`Apply all damage before checking defeat; do not stop drawing at the threshold. The winner gains levels equal to the loser’s wounds minus their own, capped at A; the loser’s level stays unchanged. Start a game at A and win it to win the match. Shuffle all 52 cards between games. When the draw pile empties, reshuffle only the discard pile.`],
+   [/^上一轮：保留 (.*?) 张，补手牌 (.*?) 张；桌面补位 (.*?) 张。(?:换牌另抽 (.*?) 张。)?$/,(_,k,h,w,r)=>`Last round · kept ${k}; drew ${h} into hands, ${w} into wounds.${r?' Extra refresh draws: '+r+'.':''}`],
+   [/^新增 (\d+) 张(明伤牌|扣牌)，伤势 (.*?) → (.*?)$/,(_,n,f,a,b)=>`Added ${n} ${f==='明伤牌'?'face-up':'face-down'} wounds; damage ${a} → ${b}`],
+   [/^翻开自己 (\d+) 张，解锁出牌；伤势不变$/,(_,n)=>`Reveal ${n} own wounds to unlock plays; damage unchanged`],
+   [/^扣回对方 (\d+) 张，封锁机会；伤势不变$/,(_,n)=>`Hide ${n} rival wounds to block plays; damage unchanged`],
+   [/^例如：进攻是对子 1 分，防守是同花顺 (\d+) 分 → 防守最多翻面 (\d+) 张。有几张处理几张，没有目标就跳过。$/,(_,s,n)=>`Example: Pair (1) attacks; straight flush (${s}) defends. The defender may flip up to ${n} wounds, limited by valid targets.`],
+   [/^(.*?) · 固定种子 (\d+) · (\d+) 局 \/ (\d+) 轮。双方手牌公开用于复盘，扣牌仍隐藏。策略用于检查执行，不代表最优打法。$/,(_,v,seed,g,r)=>`${v} · Replay seed ${seed} · ${g} games / ${r} rounds. Both hands are public for review; face-down wounds stay hidden. The heuristic checks execution and is not optimal play.`],
+   [/^(\d+) 张时，持有 ♥(\w+)$/,(_,n,r)=>`${n} cards, holding ♥${r}`],
+   [/^规则 (.*?) · 指纹 (.*)$/,(_,v,h)=>`Rules ${v} · hash ${h}`],
+   [/^牌堆剩余 (\d+) 张，弃牌 (\d+) 张(?:；(.*))?$/,(_,s,d,n)=>`Deck ${s} cards; discard ${d}${n?'; '+text(n):''}`],
+   [/^牌堆 (\d+) · 弃牌 (\d+)(?: · (.*))?$/,(_,s,d,n)=>`Deck ${s} · Discard ${d}${n?' · '+text(n):''}`],
+  ];
+  for(const [re,fn]of rules)if(re.test(trim))return s.replace(trim,trim.replace(re,fn));
+  let out=s;for(const [zh,eng]of phrases)out=out.split(zh).join(eng);
+  out=out.replace(/(你|对手)/g,w=>text(w)).replace(/第 (\d+) 局/g,'Game $1').replace(/第 (\d+) 轮/g,'Round $1')
+   .replace(/(\d+) 张/g,'$1 cards').replace(/(\d+) 次/g,'$1 times').replace(/(\d+) 分/g,'$1 pts').replace(/(\d+) 级/g,'$1 levels')
+   .replace(/\b(\d+) 伤/g,'$1 damage').replace(/，/g,', ').replace(/。/g,'. ').replace(/；/g,'; ').replace(/：/g,': ')
+   .replace(/([\d/ ]) 明 \/ ([\d/ ]+) 暗/g,'$1 face up / $2 face down');
+  out=out.replace(/ \./g,'.').replace(/([.!?])(?=[A-Z])/g,'$1 ').replace(/(\d+ cards)(?=random)/g,'$1 ');
+  if(HAN.test(out))missing.add(trim);
+  return out;
+ }
+ function nodeText(n){const current=n.nodeValue,prior=sources.get(n),source=prior&&prior.display===current?prior.source:current,display=text(source);sources.set(n,{source,display});if(current!==display)n.nodeValue=display;}
+ function elementAttributes(el){
+  if(el.closest('[data-no-i18n],script,style'))return;
+  let map=attributes.get(el);if(!map){map={};attributes.set(el,map);}
+  for(const attr of ['aria-label','title','placeholder',...(el.tagName==='META'?['content']:[])])if(el.hasAttribute(attr)){
+   const current=el.getAttribute(attr),prior=map[attr],source=prior&&prior.display===current?prior.source:current,display=text(source);map[attr]={source,display};if(current!==display)el.setAttribute(attr,display);
+  }
+ }
+ function apply(){
+  observer?.disconnect();document.documentElement.lang=language;
+  if(phrasesDirty){phrases.splice(0,phrases.length,...Object.entries(en).sort((a,b)=>b[0].length-a[0].length));phrasesDirty=false;}
+  const walker=document.createTreeWalker(document,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentElement&&!n.parentElement.closest('script,style,[data-no-i18n]')?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT});
+  while(walker.nextNode())nodeText(walker.currentNode);
+  for(const el of document.querySelectorAll('[aria-label],[title],[placeholder],meta[content]'))elementAttributes(el);
+  for(const select of document.querySelectorAll('[data-language-select]'))select.value=language;
+  for(const a of document.querySelectorAll('a[href]')){const url=new URL(a.getAttribute('href'),location.href);if(url.origin===location.origin&&/\/(?:index|probability)\.html$/.test(url.pathname)){url.searchParams.set('lang',language);if(a.href!==url.href)a.href=url.href;}}
+  document.querySelector('meta[property="og:locale"]')?.setAttribute('content',language==='en'?'en_US':'zh_CN');
+  observer?.observe(document.documentElement,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['aria-label','title','placeholder','content']});
+ }
+ function schedule(){if(!queued){queued=true;queueMicrotask(()=>{queued=false;apply();});}}
+ function registerEvent(e){
+  if(!e?.state||registered.has(e))return;registered.add(e);
+  const s=e.state,c=s.lastCombat,who=i=>en[s.players[i]?.name]||s.players[i]?.name||String(i),move=s.active[e.actor],r=e.result;
+  let title,note;
+  switch(e.kind){
+   case 'deal':title=`Game ${e.game} · Deal`;note=`${who(s.first)} attacks first. Eight hand cards each, no wounds. ${e.game===1?'Opening initiative is random or selected in settings.':e.note.includes('胜者')?'The previous winner attacks first.':'The previous loser attacks first.'}`;break;
+   case 'attack':case 'defend':title=`${who(e.actor)} ${e.kind==='attack'?'attacks':'defends'} · ${en[move?.name]||move?.name||''} ${move?.score??''} pts`;note=move?`Uses ${move.origins.filter(o=>o.zone==='hand').length} hand cards and ${move.origins.filter(o=>o.zone==='table').length} face-up wounds.${move.wild?' Wildcard '+(window.GK?.label(move.wild.physical)||move.wild.physical)+' → '+(window.GK?.label(move.wild.as)||move.wild.as)+'.':''}`:'Cards played.';break;
+   case 'replace':title=`Discard plays · replace ${c?.replacements.length||0} wounds`;note='Replace played wounds face up, attacker first. New cards do not change this combat and are usable afterward.';break;
+   case 'damage':title=`${who(1-c.attacker)} takes ${c.amount} damage`;note=`Damage ${c.before.join(' / ')} → ${c.after.join(' / ')}. Add ${c.amount} wounds.`;break;
+   case 'choice':title=`${who(s.pendingRefresh?.actor??s.pendingFlip?.actor)} chooses ${s.pendingRefresh?'a refresh':'a flip'}`;note=s.pendingRefresh?(s.aLosses?`${s.pendingRefresh.total} exchanges. Choose one hand card to give, then blindly swap with a rival hand card or discard and draw. Wounds cannot be exchanged.`:`${s.pendingRefresh.total} refreshes. Choose targets in turn; replace each card in the same area. A rival’s hand stays hidden and is selected randomly. Damage does not change.`):`Up to ${s.pendingFlip.amount} targets: reveal own wounds or hide rival wounds. Choose one effect. Damage does not change.`;break;
+   case 'refresh':if(e.target.exchange){title=`${who(e.actor)} ${e.target.exchange==='opponent'?'blindly swaps hands':'discards and draws'}`;note=`Hand sizes and damage stay unchanged; ${e.remaining} exchanges left.`;break;}title=`${who(e.actor)} ${e.target.blind?'blindly refreshes':'refreshes'} ${e.target.who===e.actor?'own':'rival'} ${e.target.zone==='hand'?'hand':'wound'}`;note=`${e.target.zone==='table'?(window.GK?.label(e.target.from)||e.target.from)+' → '+(window.GK?.label(e.target.to)||e.target.to)+'.':'New hand cards are visible only to their owner.'} Damage unchanged; ${e.remaining} refreshes left.`;break;
+   case 'flip':title=`${who(e.actor)} flips wounds`;note='Playable options change; total damage remains unchanged.';break;
+   case 'end':title=`Game ${e.game} · ${who(r.winner)} wins`;note=`Damage gap ${r.gain}. Level ${r.from} → ${r.to}.${r.match_won?' Won starting at A: match over.':(e.note.includes('胜者')?' The previous winner attacks first next game.':' The previous loser attacks first next game.')}${r.a_reset?' Three failed A attempts: '+who(r.a_reset.who)+' returns to level 2; '+who(1-r.a_reset.who)+' retains the current level.':''}`;break;
+   case 'swap':title='Swap attack and defense';note='No hand refill between attacks. Use remaining hand cards and playable wounds.';break;
+   case 'refill':title='Keep unused cards · refill to eight';note=`Kept ${s.lastRefill.before.join(' / ')}; hand draws ${s.lastRefill.drawn.join(' / ')}; wound replacements ${s.lastRefill.tableUses.join(' / ')}. Damage draws are extra.`;break;
+   case 'round':title=`Round ${e.round} · ${who(s.first)} attacks first`;note='Both hands are back to eight. Wounds remain unchanged.';break;
+   case 'no_effect':title='No valid targets';note='No applicable effect. Damage unchanged.';break;
+  }
+  if(title)en[e.title.trim()]=title;if(note)en[e.note.trim()]=note;phrasesDirty=true;
+ }
+ function setLanguage(next){const normalized=normalize(next);if(!normalized)return;language=normalized;missing.clear();try{localStorage.setItem(KEY,language);}catch(_){}const url=new URL(location.href);url.searchParams.set('lang',language);history.replaceState(null,'',url);apply();}
+ function init(){for(const select of document.querySelectorAll('[data-language-select]'))select.addEventListener('change',e=>setLanguage(e.target.value));observer=new MutationObserver(schedule);apply();}
+ return {init,apply,text,setLanguage,registerEvent,get language(){return language;},get missing(){return [...missing];},supported:SUPPORTED};
+})();
+window.GKLocale=GKLocale;
+</script><style>.probability-language{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end}.probability-language select{font:inherit;min-height:36px;max-width:140px;padding:4px 6px;background:#fffdf6;border:1px solid #c8d4c0;border-radius:6px}html[lang="en"] header .brand{font-weight:650;letter-spacing:0}html[lang="en"] .hero-stat .value{font-size:46px}@media(max-width:500px){header{gap:8px;flex-wrap:wrap}.probability-language{gap:8px}html[lang="en"] h1{font-size:28px}html[lang="en"] .brand span{display:none}html[lang="en"] .availability-item{grid-template-columns:80px minmax(0,1fr) 80px}} </style></head>
 <body>
-<header><div class="brand">金花大乱斗<span>PROBABILITY STUDY</span></div><a class="back-link" id="simulator-link" href="/index.html?version=0.3.2">回到 0.3.2 试玩桌 ↗</a></header>
+<header><div class="brand">金花拳<span>PROBABILITY STUDY</span></div><div class="probability-language"><select data-language-select aria-label="语言"><option value="zh-CN" data-no-i18n>简体中文</option><option value="en" data-no-i18n>English</option></select><a class="back-link" id="simulator-link" href="index.html?version=0.3.2">回到 0.3.2 试玩桌 ↗</a></div></header>
 <main>
 <section class="hero"><div><div class="eyebrow">一副牌 · 8—13 张选三</div><h1>多一张牌，<br>多多少出牌机会？</h1><p>先看<b>最高能出什么</b>，再看<b>哪些牌型可以同时凑出</b>。明牌与手牌都计入可用牌，扣牌不计；按当前三张牌规则，A23 与 QKA 都是顺子。</p></div><div class="hero-stat" aria-live="polite"><div class="label" id="hero-label"></div><div class="value" id="hero-value"></div><div class="detail" id="hero-detail"></div></div></section>
 <section class="controls" aria-label="概率参数"><div class="control-group"><label for="order-select">牌型顺序</label><select id="order-select"><option value="0.3.2">0.3.2 · 炸弹最高</option><option value="0.3.1b">0.3.1b · 同花顺最高</option></select></div><div class="control-group"><label for="level-select">逢人配</label><select id="level-select"></select></div><div class="control-group"><span class="control-label">可用牌</span><div class="pool-options" id="pool-options" role="group" aria-label="选择可用牌张数"></div></div><p class="controls-note" id="controls-note"></p></section>
@@ -23,7 +541,7 @@
 <section class="section" aria-labelledby="wild-title"><div class="section-head"><h2 id="wild-title"><span class="num">03</span>逢人配带来多少提升</h2><span class="method">同花顺概率 · 精确计算</span></div><p class="section-description">普通牌、当前逢人配，以及“已经持有逢人配”的条件是不同口径。曲线表示能组成同花顺的概率；交换炸弹与同花顺的排序不改变这条可用率曲线。</p><div class="trend-layout"><div class="trend"><svg id="trend-svg" role="img" aria-label="不同可用牌数量下的同花顺概率曲线"></svg><div class="trend-legend" id="trend-legend"></div></div><aside class="wild-detail"><h3 id="conditional-title"></h3><div class="value" id="conditional-value"></div><p id="conditional-note"></p><p class="subline" id="wild-presence"></p></aside></div></section>
 <section class="section" aria-labelledby="table-title"><div class="section-head"><h2 id="table-title"><span class="num">04</span>完整概率表</h2><span class="method" id="table-mode"></span></div><div class="table-scroll" role="region" aria-label="最高牌型概率完整表"><table id="highest-table"><caption>最高能出的牌型 · 精确</caption><thead><tr><th scope="col">可用牌</th><th scope="col">组合数</th><th scope="col">同花顺</th><th scope="col">炸弹</th><th scope="col">同花</th><th scope="col">顺子</th><th scope="col">对子</th><th scope="col">高牌</th></tr></thead><tbody></tbody></table></div><div class="table-scroll" role="region" aria-label="牌型可用率完整表"><table id="available-table"><caption>可以出该牌型 · 可同时满足</caption><thead><tr><th scope="col">可用牌</th><th scope="col">同花顺</th><th scope="col">炸弹</th><th scope="col">同花</th><th scope="col">顺子</th><th scope="col">对子</th><th scope="col">高牌</th></tr></thead><tbody></tbody></table></div><p class="table-help" id="table-help"></p><details class="details"><summary>如何计算，以及实战该怎样读这些数字</summary><ul><li>从完整 52 张牌中无放回、均匀抽取 N 张可用牌。逢人配是牌组中的一张，随机持有概率为 N/52。</li><li>“最高牌型”通过组合生成函数和动态规划精确计数；三张组合共享实体牌，不能当作独立事件相乘。</li><li>同花顺、炸弹的可用率精确计算；其余可用率仅提供 2 级与无逢人配模式的 200 万组抽样估计。单项 95% 误差半宽最多约 0.07 个百分点。0.3.2 的最高分布由原精确联合计数重算：同时有炸弹和同花顺的牌组改归炸弹；不把原最高同花顺占比当作新版占比。</li><li>每组三张仍按最高声明评分，不通过主动降低逢人配声明制造弱牌型。花色不比大小；同牌型点数比较不改变这些出现概率。</li><li>这里只计算一次选三的组合上限，不要求同时为第二次出牌留下不重叠的三张。保留手牌、明牌更新、公开对手牌会改变实战条件；这些数字不是胜率或实际出牌频率。</li></ul><p>最高型已计算全部 13 个级数，并用普通三张 22,100 组、普通四张 270,725 组穷举与游戏引擎核对；另以 200 万组随机牌池检查分布。</p><p class="data-label">数据快照：2026-10-13 · SHA-256 a39bdd09b70bcf7f7ac86f27f1f08e97f0beea57b6d17d90997c4c04aad18daa</p></details></section>
 </main>
-<footer><span>金花大乱斗 · 0.3.2 概率基准</span><span>52 张普通牌 · 无大小王 · 可离线查看</span></footer>
+<footer><span>金花拳 · 0.3.2 概率基准</span><span>52 张普通牌 · 无大小王 · 可离线查看</span></footer>
 <script>const PROBABILITY_DATA={"samples":2000000,"seed":20261013,"category_order":["high","pair","straight","flush","trips","straight_flush"],"exact":[{"wild_level":0,"rows":[{"n":8,"denominator":752538150,"highest_counts":[138600,9191760,21621990,557159692,90361206,74064902],"trips_available_count":90361206,"sf_available_count":81954778,"joint_trips_and_sf_count":7889876},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2541649000,643274632,494151768],"trips_available_count":643274632,"sf_available_count":581840668,"joint_trips_and_sf_count":87688900},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,9317407998,3811231996,2691384226],"trips_available_count":3811231996,"sf_available_count":3440379670,"joint_trips_and_sf_count":748995444},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,29090202624,19153075656,12160450560],"trips_available_count":19153075656,"sf_available_count":17271586016,"joint_trips_and_sf_count":5111135456},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,77488755750,82808633622,46082017498],"trips_available_count":82808633622,"sf_available_count":74687263166,"joint_trips_and_sf_count":28605245668},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,176074977648,311410338096,147528243856],"trips_available_count":311410338096,"sf_available_count":281325437668,"joint_trips_and_sf_count":133797193812}]},{"wild_level":2,"rows":[{"n":8,"denominator":752538150,"highest_counts":[113400,7655472,18421578,473742597,167904342,84700761],"trips_available_count":167904342,"sf_available_count":170047830,"joint_trips_and_sf_count":85347069},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2100700809,1097332984,481041607],"trips_available_count":1097332984,"sf_available_count":1083638547,"joint_trips_and_sf_count":602596940},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7502557050,5965622476,2351844694],"trips_available_count":5965622476,"sf_available_count":5782552919,"joint_trips_and_sf_count":3430708225},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22830000174,27636954312,9936774354],"trips_available_count":27636954312,"sf_available_count":26472369027,"joint_trips_and_sf_count":16535594673},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59246970270,111067016214,36065420386],"trips_available_count":111067016214,"sf_available_count":105698884065,"joint_trips_and_sf_count":69633463679},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,131067414426,392143371312,111802773862],"trips_available_count":392143371312,"sf_available_count":372143523899,"joint_trips_and_sf_count":260340750037}]},{"wild_level":3,"rows":[{"n":8,"denominator":752538150,"highest_counts":[123480,7892880,18174090,475069936,167904342,83373422],"trips_available_count":167904342,"sf_available_count":168097756,"joint_trips_and_sf_count":84724334},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2108759884,1097332984,472982532],"trips_available_count":1097332984,"sf_available_count":1071685837,"joint_trips_and_sf_count":598703305},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7542751638,5965622476,2311650106],"trips_available_count":5965622476,"sf_available_count":5720123690,"joint_trips_and_sf_count":3408473584},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22994767524,27636954312,9772007004],"trips_available_count":27636954312,"sf_available_count":26189042213,"joint_trips_and_sf_count":16417035209},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59803915632,111067016214,35508475024],"trips_available_count":111067016214,"sf_available_count":104576353640,"joint_trips_and_sf_count":69067878616},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,132624271272,392143371312,110245917016],"trips_available_count":392143371312,"sf_available_count":368266482246,"joint_trips_and_sf_count":258020565230}]},{"wild_level":4,"rows":[{"n":8,"denominator":752538150,"highest_counts":[115290,7784163,18290997,474926229,167904342,83517129],"trips_available_count":167904342,"sf_available_count":168258312,"joint_trips_and_sf_count":84741183},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2107676874,1097332984,474065542],"trips_available_count":1097332984,"sf_available_count":1073008822,"joint_trips_and_sf_count":598943280},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7536364068,5965622476,2318037676],"trips_available_count":5965622476,"sf_available_count":5728895296,"joint_trips_and_sf_count":3410857620},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22964669760,27636954312,9802104768],"trips_available_count":27636954312,"sf_available_count":26237027211,"joint_trips_and_sf_count":16434922443},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59689233738,111067016214,35623156918],"trips_available_count":111067016214,"sf_available_count":104796752124,"joint_trips_and_sf_count":69173595206},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,132268471026,392143371312,110601717262],"trips_available_count":392143371312,"sf_available_count":369127030894,"joint_trips_and_sf_count":258525313632}]},{"wild_level":5,"rows":[{"n":8,"denominator":752538150,"highest_counts":[117180,7792983,18280287,474922782,167904342,83520576],"trips_available_count":167904342,"sf_available_count":168317976,"joint_trips_and_sf_count":84797400},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2107683570,1097332984,474058846],"trips_available_count":1097332984,"sf_available_count":1073289666,"joint_trips_and_sf_count":599230820},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7536487257,5965622476,2317914487],"trips_available_count":5965622476,"sf_available_count":5729766789,"joint_trips_and_sf_count":3411852302},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22965544518,27636954312,9801230010],"trips_available_count":27636954312,"sf_available_count":26238503826,"joint_trips_and_sf_count":16437273816},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59693757378,111067016214,35618633278],"trips_available_count":111067016214,"sf_available_count":104795533209,"joint_trips_and_sf_count":69176899931},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,132286635687,392143371312,110583552601],"trips_available_count":392143371312,"sf_available_count":369106800846,"joint_trips_and_sf_count":258523248245}]},{"wild_level":6,"rows":[{"n":8,"denominator":752538150,"highest_counts":[119070,7801803,18269577,474924105,167904342,83519253],"trips_available_count":167904342,"sf_available_count":168310571,"joint_trips_and_sf_count":84791318},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2107694581,1097332984,474047835],"trips_available_count":1097332984,"sf_available_count":1073237329,"joint_trips_and_sf_count":599189494},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7536572811,5965622476,2317828933],"trips_available_count":5965622476,"sf_available_count":5729486622,"joint_trips_and_sf_count":3411657689},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22966069011,27636954312,9800705517],"trips_available_count":27636954312,"sf_available_count":26237205388,"joint_trips_and_sf_count":16436499871},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59696215869,111067016214,35616174787],"trips_available_count":111067016214,"sf_available_count":104789711030,"joint_trips_and_sf_count":69173536243},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,132295525566,392143371312,110574662722],"trips_available_count":392143371312,"sf_available_count":369081417090,"joint_trips_and_sf_count":258506754368}]},{"wild_level":7,"rows":[{"n":8,"denominator":752538150,"highest_counts":[117180,7799643,18273627,474924459,167904342,83518899],"trips_available_count":167904342,"sf_available_count":168304069,"joint_trips_and_sf_count":84785170},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2107694388,1097332984,474048028],"trips_available_count":1097332984,"sf_available_count":1073197295,"joint_trips_and_sf_count":599149267},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7536563301,5965622476,2317838443],"trips_available_count":5965622476,"sf_available_count":5729328379,"joint_trips_and_sf_count":3411489936},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22965985386,27636954312,9800789142],"trips_available_count":27636954312,"sf_available_count":26236841237,"joint_trips_and_sf_count":16436052095},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59695707216,111067016214,35616683440],"trips_available_count":111067016214,"sf_available_count":104789635776,"joint_trips_and_sf_count":69172952336},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,132293221716,392143371312,110576966572],"trips_available_count":392143371312,"sf_available_count":369085118697,"joint_trips_and_sf_count":258508152125}]},{"wild_level":8,"rows":[{"n":8,"denominator":752538150,"highest_counts":[117180,7799643,18273627,474924459,167904342,83518899],"trips_available_count":167904342,"sf_available_count":168304069,"joint_trips_and_sf_count":84785170},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2107694388,1097332984,474048028],"trips_available_count":1097332984,"sf_available_count":1073197295,"joint_trips_and_sf_count":599149267},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7536563301,5965622476,2317838443],"trips_available_count":5965622476,"sf_available_count":5729328379,"joint_trips_and_sf_count":3411489936},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22965985386,27636954312,9800789142],"trips_available_count":27636954312,"sf_available_count":26236841237,"joint_trips_and_sf_count":16436052095},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59695707216,111067016214,35616683440],"trips_available_count":111067016214,"sf_available_count":104789635776,"joint_trips_and_sf_count":69172952336},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,132293221716,392143371312,110576966572],"trips_available_count":392143371312,"sf_available_count":369085118697,"joint_trips_and_sf_count":258508152125}]},{"wild_level":9,"rows":[{"n":8,"denominator":752538150,"highest_counts":[119070,7801803,18269577,474924105,167904342,83519253],"trips_available_count":167904342,"sf_available_count":168310571,"joint_trips_and_sf_count":84791318},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2107694581,1097332984,474047835],"trips_available_count":1097332984,"sf_available_count":1073237329,"joint_trips_and_sf_count":599189494},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7536572811,5965622476,2317828933],"trips_available_count":5965622476,"sf_available_count":5729486622,"joint_trips_and_sf_count":3411657689},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22966069011,27636954312,9800705517],"trips_available_count":27636954312,"sf_available_count":26237205388,"joint_trips_and_sf_count":16436499871},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59696215869,111067016214,35616174787],"trips_available_count":111067016214,"sf_available_count":104789711030,"joint_trips_and_sf_count":69173536243},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,132295525566,392143371312,110574662722],"trips_available_count":392143371312,"sf_available_count":369081417090,"joint_trips_and_sf_count":258506754368}]},{"wild_level":10,"rows":[{"n":8,"denominator":752538150,"highest_counts":[117180,7792983,18280287,474922782,167904342,83520576],"trips_available_count":167904342,"sf_available_count":168317976,"joint_trips_and_sf_count":84797400},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2107683570,1097332984,474058846],"trips_available_count":1097332984,"sf_available_count":1073289666,"joint_trips_and_sf_count":599230820},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7536487257,5965622476,2317914487],"trips_available_count":5965622476,"sf_available_count":5729766789,"joint_trips_and_sf_count":3411852302},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22965544518,27636954312,9801230010],"trips_available_count":27636954312,"sf_available_count":26238503826,"joint_trips_and_sf_count":16437273816},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59693757378,111067016214,35618633278],"trips_available_count":111067016214,"sf_available_count":104795533209,"joint_trips_and_sf_count":69176899931},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,132286635687,392143371312,110583552601],"trips_available_count":392143371312,"sf_available_count":369106800846,"joint_trips_and_sf_count":258523248245}]},{"wild_level":11,"rows":[{"n":8,"denominator":752538150,"highest_counts":[115290,7784163,18290997,474926229,167904342,83517129],"trips_available_count":167904342,"sf_available_count":168258312,"joint_trips_and_sf_count":84741183},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2107676874,1097332984,474065542],"trips_available_count":1097332984,"sf_available_count":1073008822,"joint_trips_and_sf_count":598943280},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7536364068,5965622476,2318037676],"trips_available_count":5965622476,"sf_available_count":5728895296,"joint_trips_and_sf_count":3410857620},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22964669760,27636954312,9802104768],"trips_available_count":27636954312,"sf_available_count":26237027211,"joint_trips_and_sf_count":16434922443},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59689233738,111067016214,35623156918],"trips_available_count":111067016214,"sf_available_count":104796752124,"joint_trips_and_sf_count":69173595206},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,132268471026,392143371312,110601717262],"trips_available_count":392143371312,"sf_available_count":369127030894,"joint_trips_and_sf_count":258525313632}]},{"wild_level":12,"rows":[{"n":8,"denominator":752538150,"highest_counts":[123480,7892880,18174090,475069936,167904342,83373422],"trips_available_count":167904342,"sf_available_count":168097756,"joint_trips_and_sf_count":84724334},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2108759884,1097332984,472982532],"trips_available_count":1097332984,"sf_available_count":1071685837,"joint_trips_and_sf_count":598703305},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7542751638,5965622476,2311650106],"trips_available_count":5965622476,"sf_available_count":5720123690,"joint_trips_and_sf_count":3408473584},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22994767524,27636954312,9772007004],"trips_available_count":27636954312,"sf_available_count":26189042213,"joint_trips_and_sf_count":16417035209},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59803915632,111067016214,35508475024],"trips_available_count":111067016214,"sf_available_count":104576353640,"joint_trips_and_sf_count":69067878616},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,132624271272,392143371312,110245917016],"trips_available_count":392143371312,"sf_available_count":368266482246,"joint_trips_and_sf_count":258020565230}]},{"wild_level":13,"rows":[{"n":8,"denominator":752538150,"highest_counts":[113400,7655472,18421578,473742597,167904342,84700761],"trips_available_count":167904342,"sf_available_count":170047830,"joint_trips_and_sf_count":85347069},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2100700809,1097332984,481041607],"trips_available_count":1097332984,"sf_available_count":1083638547,"joint_trips_and_sf_count":602596940},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7502557050,5965622476,2351844694],"trips_available_count":5965622476,"sf_available_count":5782552919,"joint_trips_and_sf_count":3430708225},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22830000174,27636954312,9936774354],"trips_available_count":27636954312,"sf_available_count":26472369027,"joint_trips_and_sf_count":16535594673},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59246970270,111067016214,36065420386],"trips_available_count":111067016214,"sf_available_count":105698884065,"joint_trips_and_sf_count":69633463679},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,131067414426,392143371312,111802773862],"trips_available_count":392143371312,"sf_available_count":372143523899,"joint_trips_and_sf_count":260340750037}]},{"wild_level":14,"rows":[{"n":8,"denominator":752538150,"highest_counts":[113400,7655472,18421578,473788086,167904342,84655272],"trips_available_count":167904342,"sf_available_count":169593600,"joint_trips_and_sf_count":84938328},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2100768810,1097332984,480973606],"trips_available_count":1097332984,"sf_available_count":1081902352,"joint_trips_and_sf_count":600928746},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7502588175,5965622476,2351813569],"trips_available_count":5965622476,"sf_available_count":5777814581,"joint_trips_and_sf_count":3426001012},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22829786550,27636954312,9936987978],"trips_available_count":27636954312,"sf_available_count":26463172620,"joint_trips_and_sf_count":16526184642},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59245625094,111067016214,36066765562],"trips_available_count":111067016214,"sf_available_count":105686386135,"joint_trips_and_sf_count":69619620573},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,131061658602,392143371312,111808529686],"trips_available_count":392143371312,"sf_available_count":372131965709,"joint_trips_and_sf_count":260323436023}]}],"monte_carlo":[{"wild_level":0,"rows":[{"n":8,"highest_counts":[342,24306,57730,1481548,239699,196375],"available_counts":[1999979,1775466,1350066,1870713,239699,217322]},{"n":9,"highest_counts":[0,0,0,1383019,348855,268126],"available_counts":[1999998,1897949,1573232,1986873,348855,315733]},{"n":10,"highest_counts":[0,0,0,1179810,481012,339178],"available_counts":[2000000,1962333,1735554,1999389,481012,433798]},{"n":11,"highest_counts":[0,0,0,965261,633638,401101],"available_counts":[2000000,1989168,1843857,1999977,633638,570332]},{"n":12,"highest_counts":[0,0,0,752518,802350,445132],"available_counts":[2000000,1997926,1911830,2000000,802350,722392]},{"n":13,"highest_counts":[0,0,0,555242,981097,463661],"available_counts":[2000000,1999764,1952157,2000000,981097,884584]}]},{"wild_level":2,"rows":[{"n":8,"highest_counts":[284,20284,49223,1259122,446011,225076],"available_counts":[1999942,1810470,1457389,1886498,446011,452197]},{"n":9,"highest_counts":[0,0,0,1142226,596331,261443],"available_counts":[1999994,1915863,1654564,1988123,596331,589499]},{"n":10,"highest_counts":[0,0,0,949396,754325,296279],"available_counts":[1999999,1969573,1792620,1999370,754325,731164]},{"n":11,"highest_counts":[0,0,0,756864,915638,327498],"available_counts":[2000000,1991451,1881464,1999969,915638,876804]},{"n":12,"highest_counts":[0,0,0,575026,1076805,348169],"available_counts":[2000000,1998394,1935161,2000000,1076805,1024703]},{"n":13,"highest_counts":[0,0,0,413273,1235728,350999],"available_counts":[2000000,1999825,1965974,2000000,1235728,1172012]}]}],"wild_present_monte_carlo":[{"n":8,"samples_with_wild":308367,"straight_flush_count":265460},{"n":9,"samples_with_wild":347009,"straight_flush_count":324373},{"n":10,"samples_with_wild":385819,"straight_flush_count":375929},{"n":11,"samples_with_wild":424709,"straight_flush_count":421280},{"n":12,"samples_with_wild":463097,"straight_flush_count":462101},{"n":13,"samples_with_wild":501390,"straight_flush_count":501178}],"verification":{"exhaustive_n3":22100,"exhaustive_n4":270725,"n3_natural_counts":[16440,3744,720,1096,52,48],"n3_wild_counts":[15480,4137,981,1235,124,143],"n4_natural_counts":[123624,71856,25260,45168,2509,2308],"all_exact_rows_sum_to_denominator":true,"shared_engine":"agent/cursor/scripts/gk_v032_engine.js","shared_engine_sha256":"851ca9a11132161a958ad7572ac6e778937551d68e3d8f1600e1bd501f894263","core_sha256":"d8ef132f71176271bb61de8b6afaa7dacacd758aa3dffe024fb0ef406c2a2764","trial_rule_sha256":"68454315f1f24f7f4390d5363fd5238c2eda4ba67b91fd203b080b570650fa9b","cpp_sha256":"75bbf748084c8fb187be2bfa4206dc54f6674d3a1f587797285f4d7d8bd702c2","lookup_script_sha256":"3a77b9d906599bb7bb09f079e4ac862f51c1f264a45481304d48e578d9d13fae","mc_vs_exact_cells":72,"max_standardized_mc_error":2.9275969812557667,"all_mc_comparisons_within_six_sigma_plus_six_counts":true,"max_95pct_monte_carlo_margin_percentage_points":0.06929646455628166,"exact_all_13_levels":true,"rule_version":"0.3.2","baseline_data_sha256":"7abb7e5affa9818a95acea9ff9192cf69f48125983d3b6f6c35b377caeb417e0","highest_recomputed_using_exact_joint_counts":true,"availability_keeps_same_hand_family":true},"wild_present_straight_flush":[{"n":8,"numerator":99648978,"denominator":115775100},{"n":9,"numerator":595447688,"denominator":636763050},{"n":10,"numerator":2964721748,"denominator":3042312350},{"n":11,"numerator":12672429741,"denominator":12777711870},{"n":12,"numerator":47525229623,"denominator":47626016970},{"n":13,"numerator":158687631908,"denominator":158753389900}],"rule_version":"0.3.2","ranking":["trips","straight_flush","flush","straight","pair","high"],"previous_ranking":{"rule_version":"0.3.1b","exact":[{"wild_level":0,"rows":[{"n":8,"denominator":752538150,"highest_counts":[138600,9191760,21621990,557159692,82471330,81954778],"trips_available_count":90361206},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2541649000,555585732,581840668],"trips_available_count":643274632},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,9317407998,3062236552,3440379670],"trips_available_count":3811231996},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,29090202624,14041940200,17271586016],"trips_available_count":19153075656},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,77488755750,54203387954,74687263166],"trips_available_count":82808633622},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,176074977648,177613144284,281325437668],"trips_available_count":311410338096}]},{"wild_level":2,"rows":[{"n":8,"denominator":752538150,"highest_counts":[113400,7655472,18421578,473742597,82557273,170047830],"trips_available_count":167904342},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2100700809,494736044,1083638547],"trips_available_count":1097332984},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7502557050,2534914251,5782552919],"trips_available_count":5965622476},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22830000174,11101359639,26472369027],"trips_available_count":27636954312},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59246970270,41433552535,105698884065],"trips_available_count":111067016214},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,131067414426,131802621275,372143523899],"trips_available_count":392143371312}]},{"wild_level":3,"rows":[{"n":8,"denominator":752538150,"highest_counts":[123480,7892880,18174090,475069936,83180008,168097756],"trips_available_count":167904342},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2108759884,498629679,1071685837],"trips_available_count":1097332984},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7542751638,2557148892,5720123690],"trips_available_count":5965622476},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22994767524,11219919103,26189042213],"trips_available_count":27636954312},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59803915632,41999137598,104576353640],"trips_available_count":111067016214},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,132624271272,134122806082,368266482246],"trips_available_count":392143371312}]},{"wild_level":4,"rows":[{"n":8,"denominator":752538150,"highest_counts":[115290,7784163,18290997,474926229,83163159,168258312],"trips_available_count":167904342},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2107676874,498389704,1073008822],"trips_available_count":1097332984},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7536364068,2554764856,5728895296],"trips_available_count":5965622476},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22964669760,11202031869,26237027211],"trips_available_count":27636954312},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59689233738,41893421008,104796752124],"trips_available_count":111067016214},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,132268471026,133618057680,369127030894],"trips_available_count":392143371312}]},{"wild_level":5,"rows":[{"n":8,"denominator":752538150,"highest_counts":[117180,7792983,18280287,474922782,83106942,168317976],"trips_available_count":167904342},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2107683570,498102164,1073289666],"trips_available_count":1097332984},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7536487257,2553770174,5729766789],"trips_available_count":5965622476},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22965544518,11199680496,26238503826],"trips_available_count":27636954312},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59693757378,41890116283,104795533209],"trips_available_count":111067016214},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,132286635687,133620123067,369106800846],"trips_available_count":392143371312}]},{"wild_level":6,"rows":[{"n":8,"denominator":752538150,"highest_counts":[119070,7801803,18269577,474924105,83113024,168310571],"trips_available_count":167904342},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2107694581,498143490,1073237329],"trips_available_count":1097332984},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7536572811,2553964787,5729486622],"trips_available_count":5965622476},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22966069011,11200454441,26237205388],"trips_available_count":27636954312},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59696215869,41893479971,104789711030],"trips_available_count":111067016214},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,132295525566,133636616944,369081417090],"trips_available_count":392143371312}]},{"wild_level":7,"rows":[{"n":8,"denominator":752538150,"highest_counts":[117180,7799643,18273627,474924459,83119172,168304069],"trips_available_count":167904342},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2107694388,498183717,1073197295],"trips_available_count":1097332984},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7536563301,2554132540,5729328379],"trips_available_count":5965622476},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22965985386,11200902217,26236841237],"trips_available_count":27636954312},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59695707216,41894063878,104789635776],"trips_available_count":111067016214},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,132293221716,133635219187,369085118697],"trips_available_count":392143371312}]},{"wild_level":8,"rows":[{"n":8,"denominator":752538150,"highest_counts":[117180,7799643,18273627,474924459,83119172,168304069],"trips_available_count":167904342},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2107694388,498183717,1073197295],"trips_available_count":1097332984},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7536563301,2554132540,5729328379],"trips_available_count":5965622476},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22965985386,11200902217,26236841237],"trips_available_count":27636954312},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59695707216,41894063878,104789635776],"trips_available_count":111067016214},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,132293221716,133635219187,369085118697],"trips_available_count":392143371312}]},{"wild_level":9,"rows":[{"n":8,"denominator":752538150,"highest_counts":[119070,7801803,18269577,474924105,83113024,168310571],"trips_available_count":167904342},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2107694581,498143490,1073237329],"trips_available_count":1097332984},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7536572811,2553964787,5729486622],"trips_available_count":5965622476},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22966069011,11200454441,26237205388],"trips_available_count":27636954312},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59696215869,41893479971,104789711030],"trips_available_count":111067016214},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,132295525566,133636616944,369081417090],"trips_available_count":392143371312}]},{"wild_level":10,"rows":[{"n":8,"denominator":752538150,"highest_counts":[117180,7792983,18280287,474922782,83106942,168317976],"trips_available_count":167904342},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2107683570,498102164,1073289666],"trips_available_count":1097332984},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7536487257,2553770174,5729766789],"trips_available_count":5965622476},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22965544518,11199680496,26238503826],"trips_available_count":27636954312},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59693757378,41890116283,104795533209],"trips_available_count":111067016214},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,132286635687,133620123067,369106800846],"trips_available_count":392143371312}]},{"wild_level":11,"rows":[{"n":8,"denominator":752538150,"highest_counts":[115290,7784163,18290997,474926229,83163159,168258312],"trips_available_count":167904342},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2107676874,498389704,1073008822],"trips_available_count":1097332984},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7536364068,2554764856,5728895296],"trips_available_count":5965622476},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22964669760,11202031869,26237027211],"trips_available_count":27636954312},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59689233738,41893421008,104796752124],"trips_available_count":111067016214},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,132268471026,133618057680,369127030894],"trips_available_count":392143371312}]},{"wild_level":12,"rows":[{"n":8,"denominator":752538150,"highest_counts":[123480,7892880,18174090,475069936,83180008,168097756],"trips_available_count":167904342},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2108759884,498629679,1071685837],"trips_available_count":1097332984},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7542751638,2557148892,5720123690],"trips_available_count":5965622476},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22994767524,11219919103,26189042213],"trips_available_count":27636954312},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59803915632,41999137598,104576353640],"trips_available_count":111067016214},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,132624271272,134122806082,368266482246],"trips_available_count":392143371312}]},{"wild_level":13,"rows":[{"n":8,"denominator":752538150,"highest_counts":[113400,7655472,18421578,473742597,82557273,170047830],"trips_available_count":167904342},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2100700809,494736044,1083638547],"trips_available_count":1097332984},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7502557050,2534914251,5782552919],"trips_available_count":5965622476},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22830000174,11101359639,26472369027],"trips_available_count":27636954312},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59246970270,41433552535,105698884065],"trips_available_count":111067016214},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,131067414426,131802621275,372143523899],"trips_available_count":392143371312}]},{"wild_level":14,"rows":[{"n":8,"denominator":752538150,"highest_counts":[113400,7655472,18421578,473788086,82966014,169593600],"trips_available_count":167904342},{"n":9,"denominator":3679075400,"highest_counts":[0,0,0,2100768810,496404238,1081902352],"trips_available_count":1097332984},{"n":10,"denominator":15820024220,"highest_counts":[0,0,0,7502588175,2539621464,5777814581],"trips_available_count":5965622476},{"n":11,"denominator":60403728840,"highest_counts":[0,0,0,22829786550,11110769670,26463172620],"trips_available_count":27636954312},{"n":12,"denominator":206379406870,"highest_counts":[0,0,0,59245625094,41447395641,105686386135],"trips_available_count":111067016214},{"n":13,"denominator":635013559600,"highest_counts":[0,0,0,131061658602,131819935289,372131965709],"trips_available_count":392143371312}]}],"monte_carlo":[{"wild_level":0,"rows":[{"n":8,"highest_counts":[342,24306,57730,1481548,218752,217322],"available_counts":[1999979,1775466,1350066,1870713,239699,217322]},{"n":9,"highest_counts":[0,0,0,1383019,301248,315733],"available_counts":[1999998,1897949,1573232,1986873,348855,315733]},{"n":10,"highest_counts":[0,0,0,1179810,386392,433798],"available_counts":[2000000,1962333,1735554,1999389,481012,433798]},{"n":11,"highest_counts":[0,0,0,965261,464407,570332],"available_counts":[2000000,1989168,1843857,1999977,633638,570332]},{"n":12,"highest_counts":[0,0,0,752518,525090,722392],"available_counts":[2000000,1997926,1911830,2000000,802350,722392]},{"n":13,"highest_counts":[0,0,0,555242,560174,884584],"available_counts":[2000000,1999764,1952157,2000000,981097,884584]}]},{"wild_level":2,"rows":[{"n":8,"highest_counts":[284,20284,49223,1259122,218890,452197],"available_counts":[1999942,1810470,1457389,1886498,446011,452197]},{"n":9,"highest_counts":[0,0,0,1142226,268275,589499],"available_counts":[1999994,1915863,1654564,1988123,596331,589499]},{"n":10,"highest_counts":[0,0,0,949396,319440,731164],"available_counts":[1999999,1969573,1792620,1999370,754325,731164]},{"n":11,"highest_counts":[0,0,0,756864,366332,876804],"available_counts":[2000000,1991451,1881464,1999969,915638,876804]},{"n":12,"highest_counts":[0,0,0,575026,400271,1024703],"available_counts":[2000000,1998394,1935161,2000000,1076805,1024703]},{"n":13,"highest_counts":[0,0,0,413273,414715,1172012],"available_counts":[2000000,1999825,1965974,2000000,1235728,1172012]}]}]}};</script>
 <script>'use strict';
 const $=id=>document.getElementById(id),DATA=PROBABILITY_DATA;
@@ -111,4 +629,4 @@ if(location.protocol==='file:')$('simulator-link').href='../2026-10-13-gk-v032/i
 let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(renderTrend,80);});
 render();
 </script>
-</body></html>
+<script>GKLocale.init();</script></body></html>
