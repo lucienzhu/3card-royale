@@ -851,6 +851,33 @@ html[lang="en"] .brand .brand-sub{letter-spacing:.12em;font-size:7px}
  .race-line .race-finish {transform:translateX(-100%)}
  .race-line .own-marker {left:clamp(4px,var(--own-position),calc(100% - 4px))}
  .race-line .opp-marker {left:clamp(4px,var(--opp-position),calc(100% - 4px))}
+</style><style id="sz-hand-reference">.battle,.topline{position:relative}
+#hr-reference{color:#f7f4ec;z-index:4;font-size:12px;line-height:1.3}
+#hr-toggle{display:inline-flex;align-items:center;justify-content:space-between;gap:12px;min-height:28px;padding:4px 8px;border:1px solid #bfd8bd55;border-radius:6px;background:#173e3b;color:#e5eedd;font:inherit;white-space:nowrap;cursor:pointer}
+#hr-toggle i{font-style:normal;font-size:15px;line-height:1;color:#7bcec0}
+#hr-toggle:hover,#hr-toggle[aria-expanded=true]{border-color:#7bcec0;background:#23574f}
+#hr-toggle:focus-visible{outline:2px solid #e0c27f;outline-offset:2px}
+#hr-panel[hidden]{display:none!important}
+#hr-panel{border:1px solid #bfd8bd44;border-radius:7px;background:#173e3b;padding:5px 9px;box-shadow:0 6px 18px #072c292e}
+#hr-panel table{width:100%;border-collapse:collapse;font:inherit;color:inherit;margin:0}
+#hr-panel caption{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden;white-space:nowrap}
+#hr-panel th,#hr-panel td{padding:2px 0;line-height:16px;border:0;background:transparent;text-align:left}
+#hr-panel thead th{color:#aac7bb;font-size:10px;font-weight:500}
+#hr-panel tbody th{font-weight:500}
+#hr-panel td,#hr-panel th:last-child{text-align:right;width:28px;font-variant-numeric:lining-nums tabular-nums}
+#hr-panel tbody td{font-weight:750;color:#f4e1b7;font-size:13px}
+#hr-panel small{font-size:9px;color:#aac7bb;margin-left:5px;white-space:nowrap}
+#hr-reference:not(.hr-side){position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+#hr-reference:not(.hr-side) #hr-toggle{font-size:11px;min-height:25px;padding:3px 7px;gap:6px}
+#hr-reference:not(.hr-side) #hr-panel{position:absolute;top:calc(100% + 7px);left:50%;transform:translateX(-50%);width:220px;max-width:calc(100vw - 44px);max-height:calc(100dvh - 160px);overflow-y:auto}
+#hr-reference.hr-side{position:absolute;left:0;top:0;bottom:0;width:182px;display:flex;flex-direction:column;justify-content:center;gap:5px}
+#hr-reference.hr-side #hr-toggle{align-self:flex-start}
+#hr-reference.hr-side[data-open=true]{justify-content:flex-start}
+#hr-reference.hr-side #hr-panel{min-height:0;overflow-y:auto;scrollbar-width:thin}
+.battle:has(#hr-reference.hr-side[data-open=true]){min-height:195px}
+@media(max-width:360px){#hr-reference:not(.hr-side) #hr-toggle{min-height:23px;padding-inline:5px;font-size:10px;gap:4px}}
+
+#hr-reference.hr-side #hr-panel th,#hr-reference.hr-side #hr-panel td{padding-block:1px}
 </style></head>
 <body>
 <header class="app-header">
@@ -879,7 +906,7 @@ html[lang="en"] .brand .brand-sub{letter-spacing:.12em;font-size:7px}
     <div class="opponent-hand-group hand-group"><div class="rack-label"><span id="opp-hand-label">手牌</span><span id="opp-hand-count"></span></div><div class="cards hidden-hand" id="opp-hand" aria-label="对手手牌"></div></div>
      <div class="wound-group opponent-wound-group"><div class="rack-label"><span id="opp-table-label">伤牌</span></div><div class="cards wound-cards" id="opp-table" aria-label="对手伤牌区"></div></div>
    </section>
-   <section class="battle">
+   <section class="battle"><aside id="hr-reference" data-no-i18n><button type="button" id="hr-toggle" aria-expanded="false" aria-controls="hr-panel">牌型</button><div id="hr-panel" role="region" hidden></div></aside>
     <div class="battle-top"><span id="battle-round"></span><span id="battle-status"></span></div>
     <div class="combat-sides"><div><p class="combat-title" id="attack-label">进攻</p><div class="combat-cards" id="attack-cards"></div></div><aside class="pile-indicator" id="deck-count" role="img" aria-label="牌堆情况"><div class="pile stock-pile" id="stock-pile" aria-hidden="true"><span class="pile-label">牌堆</span><span class="pile-stack"><b id="stock-count"></b></span></div><span class="pile-recycle" id="pile-recycle" aria-hidden="true" hidden>↻</span><div class="pile discard-pile" id="discard-pile" aria-hidden="true"><span class="pile-label">弃牌</span><span class="pile-stack"><b id="discard-count"></b></span></div></aside><div><p class="combat-title" id="defend-label">防守</p><div class="combat-cards" id="defend-cards"></div></div></div>
     <div class="formula" id="formula"></div>
@@ -1681,7 +1708,7 @@ html[lang="en"] .brand .brand-sub{letter-spacing:.12em;font-size:7px}
 ;
 'use strict';
 const $=id=>document.getElementById(id);
-const UI_REVISION='sz-flower-center-2';
+const UI_REVISION='sz-hand-reference-1';
 const VARIANT_TEXT={
  '0.3.8':{name:'0.3.8 · 共用花牌',note:'首局双方共用♥2作为花牌。此后小局赢家升级后的等级决定下一小局双方共用的花牌；一局内不变。花牌即逢人配／会子／百搭牌。攻防、血牌交换与升级其余规则沿用0.3.7。',tie:'同牌型比较点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无事发生。',ranking:'四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。四炸也可用花牌。'},
  '0.3.7':{name:'0.3.7 · 血牌反击',note:'防守胜出可用自己的手牌或伤牌交换对手盲手牌、公开伤牌、自己的另一牌区，或弃旧摸新。每次1机会，张数与伤势不变；其余沿用0.3.6。',tie:'同牌型比较点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无事发生。',ranking:'四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。四炸允许逢人配。'},
@@ -2098,5 +2125,32 @@ GKLocale.init();
  new MutationObserver(()=>{if(dialog.open)sync();}).observe(dialog,{attributes:true,attributeFilter:['open']});
  document.getElementById('version-select').addEventListener('change',()=>queueMicrotask(sync));
  sync();
+})();
+</script><script>/* Read-only hand rank reference; all scores come from the active shared engine. */
+(()=>{'use strict';
+ const host=document.getElementById('hr-reference'),button=document.getElementById('hr-toggle'),panel=document.getElementById('hr-panel'),versionSelect=document.getElementById('version-select');
+ const battle=document.querySelector('.battle'),topline=document.querySelector('.topline');
+ const wide=matchMedia('(min-width:1100px) and (min-height:700px)');
+ const english=['High card','Pair','Straight','Flush','Three of a kind','Straight flush','Four of a kind'];
+ let open=false,lastLanguage="";
+ const t=(zh,en)=>window.GKLocale?.language==='en'?en:zh;
+ function mount(){(wide.matches?battle:topline).append(host);host.classList.toggle('hr-side',wide.matches);paint();}
+ function paint(){
+  lastLanguage=window.GKLocale?.language||"zh-CN";
+  const version=versionSelect.value,ids=[0,1,2,3,4,5];if(GK.allowsFour(version))ids.push(6);
+  ids.sort((a,b)=>GK.points(b,version)-GK.points(a,version));
+  host.dataset.open=String(open);button.setAttribute('aria-expanded',String(open));
+  button.setAttribute('aria-label',t('查看牌型大小和分数','View hand ranks and points'));
+  button.innerHTML='<span>'+t(wide.matches?'牌型 · 分数':'牌型',wide.matches?'Hand ranks':'Ranks')+'</span><i aria-hidden="true">'+(open?'−':'+')+'</i>';
+  panel.hidden=!open;panel.setAttribute('aria-label',t('牌型大小与分数','Hand ranks and points'));
+  panel.innerHTML='<table><caption>'+t('牌型由大到小','Hands, strongest first')+'</caption><thead><tr><th scope="col">'+t('大 → 小','Strong → weak')+'</th><th scope="col">'+t('分','Pts')+'</th></tr></thead><tbody>'+ids.map(k=>'<tr data-hr-kind="'+k+'"><th scope="row">'+t(k===4?'三炸':GK.NAMES[k],english[k])+(k===6?'<small>'+t('4张','4 cards')+'</small>':'')+'</th><td>'+GK.points(k,version)+'</td></tr>').join('')+'</tbody></table>';
+ }
+ function close(focus=false){if(!open)return;open=false;paint();if(focus)button.focus({preventScroll:true});}
+ button.addEventListener('click',()=>{open=!open;paint();});
+ document.addEventListener('click',e=>{if(!wide.matches&&!e.composedPath().includes(host))close();});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&open&&!document.querySelector('dialog[open]')){e.preventDefault();close(true);}});
+ versionSelect.addEventListener('change',()=>queueMicrotask(paint));
+ new MutationObserver(()=>{if((window.GKLocale?.language||"zh-CN")!==lastLanguage)paint();}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+ wide.addEventListener('change',mount);mount();
 })();
 </script></body></html>

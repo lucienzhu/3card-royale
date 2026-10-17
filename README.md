@@ -19,7 +19,7 @@
 
 ## 实现与视觉
 
-- 当前界面：sz-flower-center-2；规则仍0.3.8。简中深圳花牌，英文3Card Royale。
+- 当前界面：sz-hand-reference-1；规则仍0.3.8。简中深圳花牌，英文3Card Royale。
 - 自包含index.html和probability.html可离线打开；gamecore.js是相同的0.3.8引擎，可用CommonJS载入或作为浏览器脚本使用。概率页只统计三张组合，不含四炸。
 - brand-mark.svg是矢量牌花，vi.css提供配色和界面样式；brand.html展示实际视觉系统，social-preview.png为1200×630分享图。
 - 首次／新场随机发牌，复盘种子选填，刷新续玩。更名继续兼容原有各版本浏览器存档。
@@ -32,10 +32,12 @@
 
 ## 开发与托管
 
-纯静态页面，GitHub Pages从main根目录部署。标志、配色和名称变更不改引擎规则版本。旧Git标签保持，当前发布标签gk-v0.3.8-center1b；双语介绍页about.html包含交互攻防示例、线下开局与可打印规则。
+纯静态页面，GitHub Pages从main根目录部署。标志、配色和名称变更不改引擎规则版本。旧Git标签保持，当前发布标签gk-v0.3.8-ranks1；双语介绍页about.html包含交互攻防示例、线下开局与可打印规则。
 
 花红采用三角梅紫红 #D83B74；牌形与三角梅轮廓为原生单色SVG，实心版及透明128px自定义emoji可在视觉页下载。自定义emoji不是Unicode通用字符。
 
 规则弹窗默认六步图解完整一轮，可切换完整文字；旧版本保持自己的文字规则。三片花瓣来自同一轮廓按120度旋转，左右对称。
 
 Desktop: the upgrade race is centered on the table with equal side columns; mobile portrait keeps its stacked header. Three small white flowers replace the central circle in the bougainvillea mark.
+
+Toggle hand ranks beside the desktop combat area or at the top of compact tables. Scores follow the selected rules version.
