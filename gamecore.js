@@ -1,4 +1,4 @@
-/* GK 0.3.7: hand and wound counterplay; frozen older variants retained. */
+/* GK 0.3.8: winner's new level sets a shared flower card for the next game. */
 (function (root, factory) {
   const api = factory();
   if (typeof module === 'object' && module.exports) module.exports = api;
@@ -6,11 +6,13 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
   const VERSION = '0.3', SUITS = ['♠', '♥', '♣', '♦'];
-  const VERSIONS = ['0.3','0.3.1a','0.3.1b','0.3.2','0.3.3','0.3.4','0.3.5','0.3.6','0.3.7'];
-  const allowsFour = version => version==='0.3.4'||version==='0.3.5'||version==='0.3.6'||version==='0.3.7';
-  const winnerStarts = version => version==='0.3.5'||version==='0.3.6'||version==='0.3.7';
-  const handExchange = version => version==='0.3.6'||version==='0.3.7';
-  const woundExchange = version => version==='0.3.7';
+  const VERSIONS = ['0.3','0.3.1a','0.3.1b','0.3.2','0.3.3','0.3.4','0.3.5','0.3.6','0.3.7','0.3.8'];
+  const sharedFlower = version => version==='0.3.8';
+  const allowsFour = version => version==='0.3.4'||version==='0.3.5'||version==='0.3.6'||version==='0.3.7'||sharedFlower(version);
+  const winnerStarts = version => version==='0.3.5'||version==='0.3.6'||version==='0.3.7'||sharedFlower(version);
+  const handExchange = version => version==='0.3.6'||version==='0.3.7'||sharedFlower(version);
+  const woundExchange = version => version==='0.3.7'||sharedFlower(version);
+  const flowerLevel = (state,who) => sharedFlower(state.version)?state.flowerLevel:state.players[who].level;
   const comparesRanks = version => version==='0.3.1b'||version==='0.3.2'||version==='0.3.3'||allowsFour(version);
   const points = (kind,version) => (version==='0.3.2'||version==='0.3.3'||allowsFour(version))?(kind===4?5:kind===5?4:kind):kind;
   const isRefresh = version => version==='0.3.3'||allowsFour(version);
@@ -111,9 +113,12 @@
   const FOUR_POLICY = REFRESH_POLICY+' 0.3.4：三张组合之外枚举合法四炸，四炸6分；进攻仍优先最高分，防守仍优先少受伤、争取机会，再保留下一次组合。启发式不模拟对手未知手牌，也未针对多花一张的代价进行多步搜索。';
   const EXCHANGE_POLICY = '0.3.6：小局胜者下局先攻，轮间交换。防守按分差获得手牌交换机会，同型点数胜一次、完全同点无效果；以A开局输三次，该玩家回到2级，对手保留等级。选自己一张，盲换对手一张，或弃掉再抽一张；伤区不参与。AI只读己方手牌和公开牌，保留可用最强组合、保留己方逢人配，避免送出对方逢人配，等效时优先盲换；不看对手暗牌或牌库。启发式，不代表最优。';
   const WOUND_POLICY = '0.3.7：继承0.3.6。防守交换可交出自己的手牌或公开伤牌，交换对手盲手牌、对手公开伤牌、自己的另一牌区，或弃旧摸新。每次1机会、张数与伤势不变，伤区所得牌公开。AI只看己方牌、公开伤牌和对手手牌数量；优先有明确组合收益的公开交换，否则刷新不影响最强组合的己方牌，不读取隐藏身份或牌库。';
+  const FLOWER_POLICY = '0.3.8：继承0.3.7，首局双方共用♥2作为花牌。此后小局赢家升级后的等级决定下一小局的共同花牌；局内不随攻防胜负或换牌改变。花牌即逢人配、会子、百搭牌。AI仍只读自己的手牌和公开信息，以共同花牌评估双方组合，不读对手手牌或牌库。';
+  const flowerView = view => sharedFlower(view.version)?{...view,level:view.flowerLevel,enemyLevel:view.flowerLevel}:view;
   const WINNER_POLICY = FOUR_POLICY+' 0.3.5：小局胜者下一小局先攻；局内仍每轮交换先攻，首局随机或按设置。';
   // These policies receive only a visible view; no stock, enemy hand or hidden wound identities.
   function choosePlay(view) {
+    view=flowerView(view);
     const available=[...view.hand,...view.table.filter(x=>x.up&&x.card!==null).map(x=>x.card)];
     const candidates=legalPlays(available,view.level,view.version||VERSION).map(cards=>{
       const version=view.version||VERSION,e=evaluate(cards,view.level,version), tableUses=cards.filter(c=>view.table.some(x=>x.up&&x.card===c)).length;
@@ -144,6 +149,7 @@
   }
   // Refresh policy only sees its own hand, public wounds and enemy hand count.
   function chooseRefresh(view) {
+    view=flowerView(view);
     const options=view.refreshOptions||[],own=[...view.hand,...view.table.filter(x=>x.up&&!x.pending).map(x=>x.card)];
     assert(options.length,'没有合法换牌目标。');
     if(woundExchange(view.version)){
@@ -203,6 +209,7 @@
     bump(key,n=1){this.stats[key]=(this.stats[key]||0)+n;}
     injuries(){return this.players.map(p=>p.table.length);}
     check() {
+      if(sharedFlower(this.version))assert(Number.isInteger(this.flowerLevel)&&this.flowerLevel>=2&&this.flowerLevel<=14,'共同花牌等级无效。');
       const ids=[...this.stock,...this.discard];
       for(const p of this.players){ids.push(...p.hand,...p.table.filter(x=>x.card!==null).map(x=>x.card));assert(p.hand.length<=8,'手牌超过八张。');}
       for(const move of this.active)if(move)ids.push(...move.cards);
@@ -218,7 +225,7 @@
       return true;
     }
     snapshot() {
-      return clone({players:this.players,stock:this.stock,discard:this.discard,active:this.active,lastCombat:this.lastCombat,lastRefill:this.lastRefill,first:this.first,attacker:this.attacker,phase:this.phase,pendingFlip:this.pendingFlip,roundUses:this.roundUses,...(isRefresh(this.version)?{pendingRefresh:this.pendingRefresh,roundRefreshes:this.roundRefreshes}:{}),...(allowsFour(this.version)?{roundCardsPlayed:this.roundCardsPlayed}:{}),...(handExchange(this.version)?{aLosses:this.aLosses}:{})});
+      return clone({players:this.players,stock:this.stock,discard:this.discard,active:this.active,lastCombat:this.lastCombat,lastRefill:this.lastRefill,first:this.first,attacker:this.attacker,phase:this.phase,pendingFlip:this.pendingFlip,roundUses:this.roundUses,...(isRefresh(this.version)?{pendingRefresh:this.pendingRefresh,roundRefreshes:this.roundRefreshes}:{}),...(allowsFour(this.version)?{roundCardsPlayed:this.roundCardsPlayed}:{}),...(handExchange(this.version)?{aLosses:this.aLosses}:{}),...(sharedFlower(this.version)?{version:this.version,flowerLevel:this.flowerLevel}:{})});
     }
     emit(kind,title,note,extra={}) {
       this.check();this.bump('snapshots');
@@ -231,6 +238,7 @@
       return this.stock.pop();
     }
     startGame(first) {
+      if(sharedFlower(this.version))this.flowerLevel=this.players[first].level;
       this.game++;this.round=1;this.roundsSeen++;this.first=first;this.attacker=first;this.battleIndex=0;
       this.stock=Array.from({length:52},(_,i)=>i);this.rng.shuffle(this.stock);this.discard=[];this.active=[null,null];
       this.lastCombat=null;this.pendingFlip=null;this.lastRefill=null;this.roundUses=[0,0];this.phase='attack';
@@ -238,14 +246,14 @@
       if(allowsFour(this.version))this.roundCardsPlayed=[0,0];
       for(const p of this.players){p.hand=[];p.table=[];}
       for(let i=0;i<8;i++)for(const who of [first,1-first])this.players[who].hand.push(this.draw());
-      this.emit('deal',`第 ${this.game} 局 · 发牌`,`${this.players[first].name}先攻，各八张手牌，伤牌区为空。${this.game===1?(this.firstWasChosen?'首局先攻按试玩设置指定。':'首局先攻由模拟猜拳决定。'):(winnerStarts(this.version)?'上一局胜者先攻。':'上一局败者先攻。')}`);
+      this.emit('deal',`第 ${this.game} 局 · 发牌`,`${this.players[first].name}先攻，各八张手牌，伤牌区为空。${this.game===1?(this.firstWasChosen?'首局先攻按试玩设置指定。':'首局先攻由模拟猜拳决定。'):(winnerStarts(this.version)?'上一局胜者先攻。':'上一局败者先攻。')}${sharedFlower(this.version)?'本局双方共用花牌 ♥'+rankLabel(this.flowerLevel)+'，局内保持。':''}`);
     }
     currentActor(){return this.phase==='attack'?this.attacker:this.phase==='defend'?1-this.attacker:this.phase==='flip'?this.pendingFlip.actor:this.phase==='refresh'?this.pendingRefresh.actor:null;}
     available(who){const p=this.players[who];return [...p.hand,...p.table.filter(x=>x.up&&x.card!==null).map(x=>x.card)];}
     view(who) {
       const p=this.players[who],q=this.players[1-who];
       const visible=table=>table.map(x=>({up:x.up,pending:x.card===null,card:x.up?x.card:null}));
-      return {version:this.version,hand:[...p.hand],table:visible(p.table),enemyTable:visible(q.table),level:p.level,enemyLevel:q.level,
+      return {version:this.version,hand:[...p.hand],table:visible(p.table),enemyTable:visible(q.table),level:p.level,enemyLevel:q.level,...(sharedFlower(this.version)?{flowerLevel:this.flowerLevel}:{}),
         role:this.phase==='defend'?'defend':'attack',attackScore:this.active[this.attacker]?.score??null,
         attackMove:this.active[this.attacker]?clone(this.active[this.attacker]):null,
         flipAmount:this.pendingFlip?.amount??0,injuries:this.injuries(),...(isRefresh(this.version)?{actor:who,enemyHandCount:q.hand.length,refreshRemaining:this.pendingRefresh?.remaining??0,refreshOptions:this.phase==='refresh'&&this.pendingRefresh.actor===who?this.refreshOptions():[]}:{})};
@@ -254,7 +262,7 @@
       assert((this.phase==='attack'||this.phase==='defend')&&who===this.currentActor(),'现在不是该玩家出牌。');
       assert((cards.length===3||allowsFour(this.version)&&cards.length===4)&&new Set(cards).size===cards.length&&cards.every(c=>this.available(who).includes(c)),'只能使用自己的三张牌，四炸版本也可出四张同点；手牌与明牌可混用。');
       cards=[...cards];
-      const p=this.players[who],e=evaluate(cards,p.level,this.version),origins=[];
+      const p=this.players[who],e=evaluate(cards,flowerLevel(this,who),this.version),origins=[];
       if(allowsFour(this.version)){
         this.roundCardsPlayed[who]+=cards.length;
         if(cards.length===4){this.bump('four_bombs');this.bump(this.phase==='attack'?'four_attack':'four_defend');this.bump(new Set(cards.map(rank)).size===1?'four_natural':'four_wild_assisted');}
@@ -264,7 +272,7 @@
         if(h!==-1){p.hand.splice(h,1);origins.push({zone:'hand'});}
         else{const i=p.table.findIndex(x=>x.up&&x.card===c);origins.push({zone:'table',index:i});p.table[i]={card:null,up:false};this.roundUses[who]++;this.bump('table_cards_used');}
       }
-      this.active[who]={cards:[...cards],origins,level:p.level,score:e.score,name:e.name,rankKey:e.rankKey,wild:e.wild,...((this.version==='0.3.2'||isRefresh(this.version))?{kind:e.kind}:{})};
+      this.active[who]={cards:[...cards],origins,level:flowerLevel(this,who),score:e.score,name:e.name,rankKey:e.rankKey,wild:e.wild,...((this.version==='0.3.2'||isRefresh(this.version))?{kind:e.kind}:{})};
       const attacking=this.phase==='attack';this.phase=attacking?'defend':'resolving';
       this.emit(attacking?'attack':'defend',`${p.name}${attacking?'进攻':'防守'} · ${e.name} ${e.score} 分`,
         `使用 ${origins.filter(o=>o.zone==='hand').length} 张手牌、${origins.filter(o=>o.zone==='table').length} 张明牌。`+(e.wild?`逢人配 ${label(e.wild.physical)} 按 ${label(e.wild.as)} 计分。`:''),{actor:who});
@@ -461,7 +469,7 @@
       if(g.round>maxRounds){stopped='round_limit';break;}
       g.aiStep();
     }
-    return {version:g.version,seed:g.seed,policy:woundExchange(g.version)?WOUND_POLICY:handExchange(g.version)?EXCHANGE_POLICY:winnerStarts(g.version)?WINNER_POLICY:allowsFour(g.version)?FOUR_POLICY:isRefresh(g.version)?REFRESH_POLICY:POLICY,results:g.results,totalRounds:g.roundsSeen,stats:g.stats,stopped,matchComplete:g.phase==='match_over',events:g.events,finalState:g.snapshot()};
+    return {version:g.version,seed:g.seed,policy:sharedFlower(g.version)?FLOWER_POLICY:woundExchange(g.version)?WOUND_POLICY:handExchange(g.version)?EXCHANGE_POLICY:winnerStarts(g.version)?WINNER_POLICY:allowsFour(g.version)?FOUR_POLICY:isRefresh(g.version)?REFRESH_POLICY:POLICY,results:g.results,totalRounds:g.roundsSeen,stats:g.stats,stopped,matchComplete:g.phase==='match_over',events:g.events,finalState:g.snapshot()};
   }
-  return {VERSION,VERSIONS,SUITS,NAMES,POLICY,REFRESH_POLICY,FOUR_POLICY,WINNER_POLICY,EXCHANGE_POLICY,WOUND_POLICY,RNG,Game,rank,suit,rankLabel,label,wild,plainScore,points,comparesRanks,isRefresh,allowsFour,winnerStarts,handExchange,woundExchange,deathThreshold,rankKey,strengthLabel,outcome,evaluate,combinations,fourBombs,legalPlays,bestScore,bestStrength,choosePlay,chooseFlip,chooseRefresh,simulate};
+  return {VERSION,VERSIONS,SUITS,NAMES,POLICY,REFRESH_POLICY,FOUR_POLICY,WINNER_POLICY,EXCHANGE_POLICY,WOUND_POLICY,FLOWER_POLICY,RNG,Game,rank,suit,rankLabel,label,wild,plainScore,points,comparesRanks,isRefresh,allowsFour,winnerStarts,handExchange,woundExchange,sharedFlower,flowerLevel,deathThreshold,rankKey,strengthLabel,outcome,evaluate,combinations,fourBombs,legalPlays,bestScore,bestStrength,choosePlay,chooseFlip,chooseRefresh,simulate};
 });
