@@ -69,3 +69,60 @@ html[lang="en"] .brand .brand-sub{letter-spacing:.12em;font-size:7px}
 
 /* Identical bracts, 120 degree rotation. No outline stroke on reverse petals. */
 .card.back .motif svg g,.back svg g{fill:currentColor;stroke:none}
+
+/* Shenzhen daylight: a flat floral identity, shared by the mark and all UI. */
+:root{--sz-paper:#F7F7F2;--sz-ink:#173E3B;--sz-sea:#173E3B;--sz-flower:#D83B74;--sz-flower-deep:#BF2E65;--sz-mint:#86D8C7;--sz-gold:#F2CD5D;--sz-table:#DFF1EB;--cream:var(--sz-paper);--ink:var(--sz-ink);--line:#AECFC3;--muted:#496D65;--green:var(--sz-ink);--gold:var(--sz-gold)}
+body{background:var(--sz-paper);color:var(--sz-ink)}
+.table{background:var(--sz-table);border-color:#AECFC3;color:var(--sz-ink);box-shadow:none}
+.table .tabs button{color:#496D65}.table .tabs button[aria-selected=true]{color:var(--sz-ink)}
+.topline .meta,.rack-label,.empty,.damage small,.preview-score small{color:#496D65}
+.card{background:#FFFFFF;border-color:#AAC7BC;color:var(--sz-ink);box-shadow:-2px 2px 4px #173E3B19}
+.card.red{color:var(--sz-flower-deep)}
+.card.back{background:var(--sz-paper);border-color:#D3AF45}
+.card.back .motif{border:0}.card.back .motif svg{color:var(--sz-flower);opacity:1}
+.card.back .motif svg g{stroke:none}.card.back .motif svg rect{display:none}
+.card.selected{background:#FCE9F0;outline-color:var(--sz-flower)}.card.selected:after{color:var(--sz-flower-deep)}
+.card:has(.wild){border-color:#D3AF45;background:#FFFBEA}.card:has(.wild).selected{background:#FCE9F0;border-color:var(--sz-flower)}
+.card .wild{color:#765D17}.card.swap-destination,.card.swap-destination:focus-visible,.blind-target-selected,.exchange-ready{outline-color:#138270}
+.level{color:var(--sz-flower-deep)}.pip{border-color:#63897F}.pip.filled{background:var(--sz-flower);border-color:var(--sz-flower)}
+.battle{border-color:#AECFC3}.combat-title,.combat-title b,.combat-title .wild-declaration{color:var(--sz-ink)}
+.combat-cards:empty:after{border-color:#7EA79C;color:#527E73}
+.formula{color:var(--sz-flower-deep)}
+.actionbar{background:var(--sz-paper);border-color:#C4DDD2}.actionbar h2,.preview-score{color:var(--sz-ink)}
+.actionbar.is-hand-exchange #action-description{color:#496D65}
+.action-buttons .primary{background:var(--sz-flower-deep);border-color:var(--sz-flower-deep);color:#fff}
+.action-buttons button:not(.primary){background:transparent;border-color:#A7C5B9;color:var(--sz-ink)}
+.pile-stack{background:#C6E7DB;border-color:#6D9F91;color:var(--sz-ink)}
+.discard-pile .pile-stack{background:var(--sz-paper);border-color:#89AA9F;color:var(--sz-ink)}
+.pile-label,.pile-title,.pile-recycle{color:#496D65}
+.stock-pile.is-low .pile-stack{background:#FFF1B2;border-color:#D3AF45;color:var(--sz-ink)}
+.race-track{--own-race:var(--sz-flower);--opp-race:#138270}.race-line:before{background:#CADBD2}.race-gap{background:#97B6A8}
+.goal-title h2,.goal-legend strong{color:var(--sz-ink)}.goal-title svg{stroke:#D3AF45}
+.goal-own{color:var(--sz-flower-deep)}.goal-opp{color:#176C5C}.race-line .race-finish{background:var(--sz-paper);color:#806519}
+.attempt-lights .failed{background:var(--sz-flower-deep)}.attempt-lights .succeeded{background:#138270}
+.modal,.modal-head,.rg-navigation{background:var(--sz-paper)}.modal::backdrop{background:#173E3B66}
+.result-sheet{background:var(--sz-paper);border-color:#AECFC3;box-shadow:0 20px 60px #173E3B30}
+.result-head,.result-head button,.result-upgrade p,.result-net,.result-hint{color:#496D65}
+.result-content h2,#result-subtitle{color:var(--sz-ink)}
+#result-from{background:#E8EEE7;color:#496D65}#result-to{background:#FFF0B2;border-color:#D3AF45;color:var(--sz-ink)}
+.result-damage>div{background:#EEF2EB;color:#496D65}.result-damage strong{color:var(--sz-ink)}
+.result-damage .result-winner{background:#D3EBDE;color:var(--sz-ink)}
+.result-actions{background:var(--sz-paper);border-color:#AECFC3}.result-actions .primary{background:var(--sz-flower-deep);border-color:var(--sz-flower-deep);color:#fff}
+.result-emblem,.result-modal.is-loss .result-emblem{background:#FCE7EF;box-shadow:none}
+.is-champion .result-sheet{background:var(--sz-paper);border-color:#D3AF45}
+.is-champion .result-emblem{background:#FFF0B2;box-shadow:0 0 0 8px #F2CD5D14,0 0 0 16px #86D8C714}
+.is-champion .result-actions .primary{background:var(--sz-gold);border-color:var(--sz-gold);color:var(--sz-ink)}
+#hr-reference,#hr-toggle,#hr-panel{color:var(--sz-ink)}
+#hr-toggle,#hr-panel{background:var(--sz-paper);border-color:#A6C9BA;box-shadow:none}
+#hr-toggle:hover,#hr-toggle[aria-expanded=true]{background:#EFF8F1;border-color:#138270}
+#hr-toggle i,#hr-panel thead th,#hr-panel small{color:#496D65}#hr-panel tbody td{color:var(--sz-flower-deep)}
+.rg-card{background:#fff}.rg-card.red{color:var(--sz-flower-deep)}.rg-card.wound{background:#FFFBEA;border-color:#D3AF45}
+.rg-card.rg-back{background:var(--sz-table);color:var(--sz-ink)}
+.brand-symbol,.result-brand{color:var(--sz-flower)}
+.vi-day .hero-mark,.vi-day .sample.dark{background:var(--sz-table);color:var(--sz-ink)}
+.vi-day .dark .quiet,.vi-day .quiet,.vi-day .fine{color:#496D65}
+.vi-day .back{background:var(--sz-paper);border-color:#D3AF45}.vi-day .back svg g{stroke:none}.vi-day .back svg rect{display:none}
+.vi-day .back svg{color:var(--sz-flower)}.vi-day .face.red{color:var(--sz-flower-deep)}
+.vi-day .face{background:#fff}.vi-day .hero-mark{box-shadow:none}
+.vi-day .usage{margin:8px 0 28px;padding:16px 20px;background:#EAF5ED;border-radius:12px;font-size:13px;line-height:1.8;color:#496D65}
+.vi-day .usage strong{color:var(--sz-ink)}
