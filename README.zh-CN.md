@@ -56,3 +56,17 @@ node scripts/check.cjs
 ## 许可
 
 代码、规则说明和原创视觉采用[MIT许可](LICENSE)，保留版权与许可声明。欢迎试玩、改编、翻译和实现；变体请注明规则差异，不冒充原项目维护者。
+
+## 用它做自己的游戏
+
+SDK 0.1.0／规则0.3.8：JavaScript＋TypeScript类型、Python原生核心、Rust原生核心，共用卡牌编号、动作与JSON状态。提供只看可见信息的基础策略和可选Gymnasium环境。
+
+- [移植核心与示例](docs/SDK.zh-CN.md)
+- [RL环境、掩码与观察](docs/RL.zh-CN.md)
+- [Python源码](python/threecard_royale/) · [Rust源码](rust/) · [JavaScript接口](sdk/)
+
+`python -m pip install -e './python[gym]'`后运行`python examples/train_random.py`；Rust用`cargo build --manifest-path rust/Cargo.toml --locked`。目前按仓库源码交付，尚未上传软件包注册库。
+
+## 小 Tips：名字的由来
+
+**三张牌是内核，三角梅是深圳的花。**「花牌」连起花札、炸金花与《小丑牌》（Balatro）的玩法灵感：组合、公开牌取舍、换牌与成长。目标是用一副普通扑克，把两个人的1v1做得尽可能好玩，随时随地愿意再来一局。实体牌仍是52张，不含大小王。

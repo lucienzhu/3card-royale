@@ -37,3 +37,7 @@ Report a bug with rule version, browser/device, steps, expected result and actua
 English and Simplified Chinese are peers. Update paired documents and preserve the precise meaning of rules rather than translating word for word. Other-language contributions are welcome; discuss a consistent glossary first. Be respectful and describe observable behavior when disagreeing about a design.
 
 Contributions are shared under this repository’s MIT license. Keep copyright and license notices and credit prior work.
+
+## Core & RL changes
+
+See [SDK](SDK.md) and [Gym](RL.md). Keep all native implementations in lockstep with current rules; run the public conformance suite before changing actions, shuffle or scoring. Python/Gym and Rust tools are optional for web-only UI work.

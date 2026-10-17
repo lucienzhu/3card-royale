@@ -5,6 +5,11 @@
   "description": "An open two-player card game from Shenzhen.",
   "license": "MIT",
   "scripts": {
-    "test": "node scripts/check.cjs"
-  }
+    "test": "node scripts/check.cjs",
+    "test:core": "python3 -m unittest discover -s tests -p 'test_core.py'",
+    "test:gym": "python3 -m unittest discover -s tests -p 'test_*.py'",
+    "test:conformance": "python3 tests/conformance.py --rust rust/target/debug/royale-json"
+  },
+  "main": "sdk/index.js",
+  "types": "sdk/index.d.ts"
 }
