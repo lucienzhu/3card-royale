@@ -217,3 +217,7 @@ body{background:var(--sz-paper);color:var(--sz-ink)}
 [data-sz-theme=dark] th,[data-sz-theme=dark] td{border-color:var(--line)}[data-sz-theme=dark] thead th{color:var(--muted)}
 @media(max-width:600px){.sz-theme-pair{gap:10px}.sz-theme-card{padding:16px}.sz-theme-card strong{font-size:17px}.sz-appearance.inline{margin-top:6px}}
 @media print{[data-sz-theme=dark]{--paper:#fff;--ink:#173E3B;--muted:#496D65;--line:#AECFC3;--sz-paper:#fff;--sz-ink:#173E3B;color-scheme:light}.sz-appearance{display:none}}
+
+/* Gold flower centers only; the goal yellow stays unchanged. */
+:root{--sz-logo-center:#DEB04A}
+[data-sz-theme=dark]{--sz-logo-center:#F1C86A}
