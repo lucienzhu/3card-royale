@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="description" content="金花拳：一副扑克牌的双人攻防游戏。与自动对手试玩，进攻造成伤势，防守争取换牌机会。">
-<meta property="og:title" content="金花拳"><meta property="og:description" content="两个人，一副牌，打到 A。"><meta property="og:locale" content="zh_CN">
-<meta name="theme-color" content="#153d30">
-<title>金花拳 · 试玩</title>
+<meta name="description" content="深圳花牌：一副扑克牌的双人攻防游戏。与自动对手试玩，进攻造成伤势，防守争取换牌机会。">
+<meta property="og:title" content="深圳花牌"><meta property="og:description" content="两个人，一副牌，打到 A。"><meta property="og:locale" content="zh_CN">
+<meta name="theme-color" content="#123e39">
+<title>深圳花牌 · 试玩</title>
 <script>'use strict';
 // Display-only localization. Game state, historical traces, card IDs and saves stay canonical.
 const GKLocale=(()=>{
@@ -17,6 +17,7 @@ const GKLocale=(()=>{
  language=language||normalize(navigator.language)||'en';
  const sources=new WeakMap(),attributes=new WeakMap(),missing=new Set(),registered=new WeakSet();let observer,queued=false,phrasesDirty=false;
  const en=Object.fromEntries(`
+深圳花牌	3Card Royale
 金花拳	3Card Royale
 金花大乱斗	3Card Royale
 一副牌 · 攻防对决	One deck. Two rivals.
@@ -410,12 +411,13 @@ A23、QKA 可以组成顺子，KA2 不可以。同组三张不能复制完全相
   '下一局由胜者先攻。到 A 后，还要以 A 开局再赢一局。':'The previous winner attacks first next game. Reach A, then win a game starting at A.',
  });
  Object.assign(en,{"可交换":"Swap target","血牌反击": "Wound counterplay", "防守胜出可用自己的手牌或伤牌交换对手盲手牌、公开伤牌、自己的另一牌区，或弃旧摸新。每次1机会，张数与伤势不变；其余沿用0.3.6。": "After a defense win, give a hand or wound card for a blind rival-hand swap, a public rival wound, your other area, or a discard-and-draw. Each costs one opportunity. Counts and damage stay unchanged; other rules follow 0.3.6.", "先选自己的手牌或伤牌": "Choose your hand or wound card first", "请选择高亮的交换目标": "Choose a highlighted swap target", "① 选自己的手牌或伤牌": "① Choose your hand or wound card", "② 点目标牌交换，或点牌堆摸新": "② Tap a target to swap, or the deck to redraw", "③ 防守胜出 → 换牌反击": "③ Win defense → counterplay", "按分差获得交换次数；同牌型点数胜得1次。先点自己的手牌或伤牌，再点目标牌或牌堆。手牌仍保密，伤牌全亮。": "Gain exchanges equal to the score gap, or one for a same-type rank win. Choose your hand or wound card, then a target or the deck. Hands stay hidden; wounds stay public.", "先完成出牌补位，再执行伤害或交换。双方伤牌都能换；张数不变，不回血。五伤即败。": "Replace played wounds before damage or exchanges. Either player’s wounds can be swapped. Counts stay unchanged; no healing. Lose at five wounds.", "伤牌全亮，达到5张败北。伤牌可以出牌或参与交换，换入伤区的牌保持公开；伤牌张数不变，不回血。": "All wounds are face up; lose at five. Play or exchange wounds. Cards entering a wound slot remain public; the number of wounds stays the same. No healing.", "防守者获得|Δ|次交换机会，每次消耗1次。自己的手牌和伤牌都可交出。": "The defender gains |Δ| exchange opportunities. Each swap costs one; give a hand or wound card.", "先选自己的手牌或伤牌，再选对手盲手牌、对手公开伤牌、自己的另一牌区，或牌库。同一牌区内再点自己的牌可改选，点已选牌取消。": "Choose your hand or wound card, then a blind rival hand card, a public rival wound, your other area, or the deck. Tap another card in your source area to change selection; tap the selected card to cancel.", "与牌交换时两张直接互换，不经弃牌堆。对手手牌只盲抽，不看牌选；公开伤牌可以指定。与牌库换则弃掉交出的牌，原位摸新。换入手牌保密，换入伤区公开。每次1机会，双方手牌和伤牌张数均不变。": "Swap two cards directly, without discarding. Rival hand cards are blind random picks; public wounds can be chosen. For the deck, discard your card and draw into its slot. Cards entering hands stay private; wounds stay public. Each action costs one opportunity. Both hand and wound counts stay unchanged.", "例如：交出手牌K，拿对手公开伤牌7；K原位成为对手伤牌，7进入你的手牌。也能用自己的伤牌盲换对手手牌、弃旧摸新，或与自己的手牌互换。均不回血。": "Example: Give your hand K for a rival’s public wound 7. K becomes their wound; 7 enters your hand. Your wound can also blind-swap with a rival hand, redraw from the deck, or swap with your own hand. None of these heal.", "交换不改变手牌或伤牌张数。两张牌互换不抽牌；与牌库换额外抽1张，原区域补位。双方各进攻一次后才保留余牌、补手牌到8张；伤牌打出仍原位补明牌。": "Swaps keep hand and wound counts unchanged. Direct swaps use no deck cards; redraws use one extra draw into the source slot. After both attacks, keep unused cards and refill hands to eight. Played wounds are still replaced face up.", "先点自己的手牌或伤牌，再点对手牌背、公开伤牌、自己的另一牌区或牌堆。没有自己的牌可交出时，机会结束。": "Choose your hand or wound card, then a rival card back, public rival wound, your other area, or the deck. With no cards of your own to give, remaining opportunities end.", "先选自己的手牌或伤牌，再选合法交换目标。": "Choose your hand or wound card, then a valid target.", "完成交换": "completed an exchange", "没有可交出的牌": "No cards to give", "自己没有手牌或伤牌，剩余交换机会自动结束。": "No hand or wound cards to give; remaining opportunities end.", "手牌张数与伤势不变，伤牌保持公开；剩余": "Hand sizes and damage stay unchanged; wounds remain public. Remaining", "公开伤牌": "public wounds", "自己的另一牌区": "your other area", "先选自己手牌或伤牌，再选对手盲手牌、公开伤牌、自己的另一牌区或牌库。伤势不变。": "Choose your hand or wound card, then a blind rival hand card, a public wound, your other area, or the deck. Damage stays unchanged."});
+ Object.assign(en,{'3CARD ROYALE':'SHENZHEN FLOWER CARDS','深圳花牌':'3Card Royale','深圳花牌：一副扑克牌的双人攻防游戏。与自动对手试玩，进攻造成伤势，防守争取换牌机会。':'3Card Royale: a two-player game with one standard deck. Attack to deal damage. Defend to gain exchanges.','深圳花牌 · 开放的双人扑克玩法':'3Card Royale · An open two-player card game','标志与视觉':'Visual identity','规则与源码 ↗':'Rules & source ↗'});
  phrases.splice(0,phrases.length,...Object.entries(en).sort((a,b)=>b[0].length-a[0].length));
  // These inline phrases precede bold text without a source-space in Chinese.
  en['先看']='Explore ';en['，再看']=', then ';
  function text(source){
-  if(language==='zh-CN')return source.replace(/金花大乱斗/g,'金花拳');
-  const s=String(source),trim=s.trim();if(!HAN.test(s))return s;
+  if(language==='zh-CN')return String(source).replace(/金花大乱斗|金花拳/g,'深圳花牌');
+  const s=String(source),trim=s.trim();if(!HAN.test(s))return trim==='3CARD ROYALE'?s.replace(trim,'SHENZHEN FLOWER CARDS'):s;
   if(en[trim]!==undefined)return s.replace(trim,en[trim]);
   const rules=[
    [/^第 (\d+) 局 · 第 (\d+) 轮$/,(_,g,r)=>`Game ${g} · Round ${r}`],
@@ -719,10 +721,82 @@ html[lang="en"] .result-hint{line-height:1.5}
 
 .card.swap-destination{outline:1px dashed #dfc480;outline-offset:-2px}.card.swap-destination:focus-visible{outline:2px solid #dfc480}
 </style>
-</head>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2080%2080%22%3E%3Crect%20width%3D%2280%22%20height%3D%2280%22%20rx%3D%2218%22%20fill%3D%22%23F7F4EC%22%2F%3E%3Cg%20transform%3D%22translate(8%208)%22%3E%0A%20%3Cg%20fill%3D%22%23D95360%22%20stroke%3D%22%23F7F4EC%22%20stroke-width%3D%222.5%22%20stroke-linejoin%3D%22round%22%3E%0A%20%20%3Cpath%20d%3D%22M32%2032%2019%2020Q15%2016%2019%2012L28%203Q32-1%2036%203L45%2014Q49%2018%2044%2022Z%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M32%2032%2019%2020Q15%2016%2019%2012L28%203Q32-1%2036%203L45%2014Q49%2018%2044%2022Z%22%20transform%3D%22rotate(120%2032%2032)%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M32%2032%2019%2020Q15%2016%2019%2012L28%203Q32-1%2036%203L45%2014Q49%2018%2044%2022Z%22%20transform%3D%22rotate(240%2032%2032)%22%2F%3E%0A%20%3C%2Fg%3E%0A%20%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%223.4%22%20fill%3D%22%23F7F4EC%22%2F%3E%0A%3C%2Fg%3E%3C%2Fsvg%3E"><meta property="og:type" content="website"><meta property="og:site_name" content="深圳花牌 · 3Card Royale"><meta property="og:image" content="https://lucienzhu.github.io/gk-royale-playtest/social-preview.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://lucienzhu.github.io/gk-royale-playtest/social-preview.png"><style>/* Shenzhen Flower Cards / 深圳花牌. UI-only identity: no layout or rule reset. */
+:root{--sz-paper:#f7f4ec;--sz-ink:#173e3b;--sz-sea:#13504a;--sz-flower:#d95360;--sz-flower-deep:#ab3447;--sz-mint:#7bcec0;--sz-gold:#e0c27f;--cream:var(--sz-paper);--ink:var(--sz-ink);--line:#d9ded5;--green:var(--sz-sea);--gold:var(--sz-gold)}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--sz-paper)}
+.brand{display:flex;align-items:center;gap:9px;min-width:0}
+.brand-symbol{width:32px;height:32px;flex:none;display:block}
+.brand-copy{min-width:0;display:flex;flex-direction:column;gap:3px}
+.brand h1{font-size:22px;font-weight:800;line-height:1.1;letter-spacing:.015em;color:var(--sz-ink);white-space:nowrap}
+.brand .brand-sub{display:block;font-size:8px;line-height:1;letter-spacing:.15em;color:#65837a;font-weight:600;white-space:nowrap}
+.header-controls button{color:var(--sz-ink)}
+.table{background:radial-gradient(ellipse at 50% 42%,#205c54 0,#123e39 82%);border-color:#285c51;box-shadow:0 6px 24px #103b3610}
+.table .tabs button[aria-selected=true]{color:#fff8ee;position:relative}
+.table .tabs button[aria-selected=true]:after{content:'';position:absolute;bottom:0;left:6px;right:6px;height:2px;border-radius:1px;background:var(--sz-flower)}
+.topline .meta,.rack-label{color:#b1cec3}
+.card{background:#fffef9;border-color:#d9ddcf;color:#1a3b37;box-shadow:-2px 2px 5px #031e2530}
+.card.red{color:#c64753}
+.card .rank{font-family:Arial,Helvetica,sans-serif;font-variant-numeric:lining-nums tabular-nums;line-height:1}
+.card .center{opacity:.12}
+.card.back{background:linear-gradient(145deg,#22665c,#16463f);border-color:#80b5a4}
+.card.back .motif{border-color:#80b5a466;inset:5px;overflow:hidden}
+.card.back .motif svg{width:52%;height:52%;overflow:visible;opacity:.86}
+.card.back .motif svg g{fill:#c4ddc8;stroke:#205c52;stroke-width:2}
+.card.back .motif svg circle{fill:#205c52}
+.card.selected{background:#fff2da;outline-color:var(--sz-gold)}
+.card.selected:after{color:#895f1f}
+.card:has(.wild){border-color:#d8b76d;background:#fff9eb}
+.card.swap-destination{outline-color:var(--sz-mint)}
+.card.swap-destination:focus-visible{outline-color:var(--sz-mint)}
+.blind-target-selected,.exchange-ready{outline-color:var(--sz-mint)}
+.pip{border-color:#8eb1a4}.pip.filled{background:#ee9a91;border-color:#ee9a91}
+.level{color:#e3cd91}.damage small{color:#b6cfc4}
+.battle{border-color:#b9d7c327}.combat-title{color:#b9d2c6}.combat-title b{color:#fff4dd}
+.formula{color:#e9d3a2}.actionbar{background:#bfd8bd0d;border:1px solid #bfd8bd0c;border-radius:9px}
+.actionbar h2{color:#f4e1b7}.preview-score{color:#d5e6d8}
+.action-buttons .primary{background:#f1c4c0;border-color:#f1c4c0;color:#362d2b;font-weight:750}
+.action-buttons button:not(.primary){border-color:#a1c6b953;color:#d7e6dc}
+.action-buttons .primary:disabled{opacity:.55}
+.actionbar.is-hand-exchange #action-description{color:#b7e6d6}
+.pile-stack{background:linear-gradient(135deg,#317266,#21594d);border-color:#9dc2a8;color:#f4f4dc}
+.discard-pile .pile-stack{background:#dce6d5;color:#2c5146;border-color:#a4bea6}
+.stock-pile.is-low .pile-stack{background:#6e453d;border-color:#eca399;color:#ffe2cd}
+.race-track{--own-race:var(--sz-flower);--opp-race:#379c8b}
+.race-line:before{background:#d5ddd3}.race-gap{background:#a8b9a7}
+.race-marker{border-color:var(--sz-paper)}
+.goal-own{color:var(--sz-flower-deep)}.goal-opp{color:#357f73}
+.goal-title h2,.goal-legend strong{color:#785d2c}.goal-title svg{stroke:#9a762f}
+.race-line .race-finish{background:var(--sz-paper);color:#906b27}
+.attempt-lights .failed{background:#c64753}.attempt-lights .succeeded{background:#348b70}
+.result-sheet{border-color:#d3dccc;background:var(--sz-paper)}
+.result-content h2{color:var(--sz-ink)}.result-actions{background:var(--sz-paper)}
+.result-actions .primary{background:var(--sz-sea);border-color:var(--sz-sea);color:#fff9ec}
+.result-emblem{border-radius:18px;background:#f1d9d7;color:var(--sz-flower-deep)}
+.result-brand{display:block;position:absolute;inset:12px;width:40px;height:40px}
+.result-cup{display:none}
+.is-champion .result-brand{inset:23px;width:54px;height:54px;opacity:.2}
+.is-champion .result-emblem{border-radius:26px;background:#f3e6be;box-shadow:0 0 0 8px #d9536009,0 0 0 16px #e0c27f12}
+.is-champion .result-actions .primary{background:#efd69b;border-color:#efd69b;color:#4a422f}
+.modal .identity-note{border-top:1px solid var(--line);padding-top:12px;margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px;line-height:1.5;color:#6b8173;flex-wrap:wrap}
+.identity-note a{color:#315f52;text-decoration-thickness:1px;text-underline-offset:3px}
+html[lang="en"] .brand h1{font-size:20px;letter-spacing:-.035em}
+html[lang="en"] .brand .brand-sub{letter-spacing:.12em;font-size:7px}
+@media(max-width:400px){.brand{gap:7px}.brand-symbol{width:27px;height:27px}.brand h1{font-size:20px}.brand .brand-sub{font-size:7px;letter-spacing:.1em}.header-controls{gap:2px}html[lang="en"] .brand h1{font-size:17px}}
+@media(max-width:360px){.brand-symbol{width:23px;height:23px}.brand h1{font-size:19px}.brand .brand-sub{font-size:6px}html[lang="en"] .brand h1{font-size:15px}}
+@media(max-height:650px){.brand .brand-sub{display:none}.brand-symbol{width:25px;height:25px}.brand h1{font-size:20px}}
+@media(max-height:450px) and (min-width:600px){.brand-symbol{width:22px;height:22px}.brand h1,html[lang="en"] .brand h1{font-size:16px}.brand{gap:5px}}
+@media(prefers-reduced-motion:reduce){.card{transition:none}}
+</style><script>window.SZFlowerMark="<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 64 64\" fill=\"none\">\n <g fill=\"#D95360\" stroke=\"#F7F4EC\" stroke-width=\"2.5\" stroke-linejoin=\"round\">\n  <path d=\"M32 32 19 20Q15 16 19 12L28 3Q32-1 36 3L45 14Q49 18 44 22Z\"/>\n  <path d=\"M32 32 19 20Q15 16 19 12L28 3Q32-1 36 3L45 14Q49 18 44 22Z\" transform=\"rotate(120 32 32)\"/>\n  <path d=\"M32 32 19 20Q15 16 19 12L28 3Q32-1 36 3L45 14Q49 18 44 22Z\" transform=\"rotate(240 32 32)\"/>\n </g>\n <circle cx=\"32\" cy=\"32\" r=\"3.4\" fill=\"#F7F4EC\"/>\n</svg>";</script></head>
 <body>
 <header class="app-header">
- <div class="brand"><h1>金花拳</h1><span class="brand-sub">一副牌 · 攻防对决</span></div>
+ <div class="brand"><svg class="brand-symbol" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+ <g fill="#D95360" stroke="#F7F4EC" stroke-width="2.5" stroke-linejoin="round">
+  <path d="M32 32 19 20Q15 16 19 12L28 3Q32-1 36 3L45 14Q49 18 44 22Z"/>
+  <path d="M32 32 19 20Q15 16 19 12L28 3Q32-1 36 3L45 14Q49 18 44 22Z" transform="rotate(120 32 32)"/>
+  <path d="M32 32 19 20Q15 16 19 12L28 3Q32-1 36 3L45 14Q49 18 44 22Z" transform="rotate(240 32 32)"/>
+ </g>
+ <circle cx="32" cy="32" r="3.4" fill="#F7F4EC"/>
+</svg><div class="brand-copy"><h1>深圳花牌</h1><span class="brand-sub" data-brand-caption>3CARD ROYALE</span></div></div>
  <div class="header-controls"><button id="open-rules"><span class="header-label">规则</span></button><button id="open-settings" aria-label="菜单：新开局、版本与记录"><span class="header-label">菜单</span><svg class="header-menu-icon" aria-hidden="true" viewBox="0 0 16 16"><circle cx="2" cy="8" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="14" cy="8" r="1.5"/></svg></button></div>
  <span id="version-badge" hidden></span>
  <section class="match-goal" aria-label="整场升级目标">
@@ -793,6 +867,7 @@ html[lang="en"] .result-hint{line-height:1.5}
   <details class="menu-detail"><summary>对局信息</summary><p id="card-check"></p></details>
   <details class="trial-comparison"><summary>四炸 · 新旧各100场对照</summary><div id="four-study-content"></div></details>
   <details class="trial-comparison"><summary>历史20种子对照</summary><div class="comparison-scroll"><table><thead><tr><th>版本</th><th>单局中位数</th><th>最长单局</th><th>无效果攻防</th></tr></thead><tbody id="comparison-rows"></tbody></table></div><p>旧五版各20场，采用可见信息启发式。相同种子只保证首局发牌相同；后续会分叉。程序结果不代表真人体验。</p></details>
+  <div class="identity-note"><span>深圳花牌 · 开放的双人扑克玩法</span><a href="brand.html">标志与视觉</a><a href="https://github.com/lucienzhu/gk-royale-playtest" target="_blank" rel="noopener">规则与源码 ↗</a></div>
   <p><a href="probability.html">查看三张牌型概率（不含四炸）↗</a></p>
  </div>
 </dialog>
@@ -801,7 +876,14 @@ html[lang="en"] .result-hint{line-height:1.5}
  <div class="result-sheet">
   <div class="result-head"><span id="result-kicker"></span><button id="close-result" aria-label="关闭结算，查看牌桌">×</button></div>
   <div class="result-content">
-   <div class="result-emblem" aria-hidden="true"><svg class="result-cup" viewBox="0 0 24 24"><path d="M7 3h10v5a5 5 0 0 1-10 0V3Zm0 2H3v2a4 4 0 0 0 4 4m10-6h4v2a4 4 0 0 1-4 4M12 13v5m-4 3h8m-7-3h6"/></svg><span id="result-a" hidden>A</span></div>
+   <div class="result-emblem" aria-hidden="true"><svg class="result-brand" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+ <g fill="#D95360" stroke="#F7F4EC" stroke-width="2.5" stroke-linejoin="round">
+  <path d="M32 32 19 20Q15 16 19 12L28 3Q32-1 36 3L45 14Q49 18 44 22Z"/>
+  <path d="M32 32 19 20Q15 16 19 12L28 3Q32-1 36 3L45 14Q49 18 44 22Z" transform="rotate(120 32 32)"/>
+  <path d="M32 32 19 20Q15 16 19 12L28 3Q32-1 36 3L45 14Q49 18 44 22Z" transform="rotate(240 32 32)"/>
+ </g>
+ <circle cx="32" cy="32" r="3.4" fill="#F7F4EC"/>
+</svg><svg class="result-cup" viewBox="0 0 24 24"><path d="M7 3h10v5a5 5 0 0 1-10 0V3Zm0 2H3v2a4 4 0 0 0 4 4m10-6h4v2a4 4 0 0 1-4 4M12 13v5m-4 3h8m-7-3h6"/></svg><span id="result-a" hidden>A</span></div>
    <h2 id="result-title"></h2><p id="result-subtitle"></p>
    <div class="result-upgrade" id="result-upgrade"><span id="result-from"></span><span class="result-arrow" aria-hidden="true">→</span><strong id="result-to"></strong><p id="result-upgrade-note"></p></div>
    <div class="result-damage" aria-label="本局终局伤势"><div id="result-own"><span>你</span><strong id="result-own-damage"></strong><small>伤</small></div><div id="result-opp"><span>对手</span><strong id="result-opp-damage"></strong><small>伤</small></div></div>
@@ -1526,7 +1608,7 @@ html[lang="en"] .result-hint{line-height:1.5}
 ;
 'use strict';
 const $=id=>document.getElementById(id);
-const UI_REVISION='wound-counterplay-1';
+const UI_REVISION='sz-flower-vi-1';
 const VARIANT_TEXT={
  '0.3.7':{name:'0.3.7 · 血牌反击',note:'防守胜出可用自己的手牌或伤牌交换对手盲手牌、公开伤牌、自己的另一牌区，或弃旧摸新。每次1机会，张数与伤势不变；其余沿用0.3.6。',tie:'同牌型比较点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无事发生。',ranking:'四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。四炸允许逢人配。'},
  '0.3.6':{name:'0.3.6 · 防守反击',note:'防守胜出后选自己一张手牌，盲换对手一张，或弃旧摸新；次数随胜出分差变化。小局赢家下局先攻，轮间仍交换；以A开局输三次回到2级，对手保留等级。',tie:'同牌型比较点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无事发生。',ranking:'四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。四炸允许逢人配。'},
@@ -1554,7 +1636,7 @@ function card(id,{back=false,pending=false,selected=false,selectable=false,mini=
  const el=document.createElement(handler?'button':'div');el.className='card'+(back?' back':'')+(pending?' pending':'')+(mini?' mini':'')+(selected?' selected':'')+(selectable?' selectable':'');
  if(handler){el.type='button';el.addEventListener('click',()=>{const zone=el.parentElement,id=zone.id,index=[...zone.children].indexOf(el);handler();const replacement=$(id)?.children[index];if(replacement?.tagName==='BUTTON')replacement.focus({preventScroll:true});});el.setAttribute('aria-pressed',String(!!selected));}
  if(pending){el.innerHTML='<span class="pending-mark" aria-hidden="true">↻</span><span class="pending-label">待补</span>';el.setAttribute('aria-label','伤牌已出，结算后补回，仍计伤势');}
- else if(back){el.innerHTML='<span class="motif">✦</span>';el.setAttribute('aria-label',backLabel);}
+ else if(back){el.innerHTML='<span class="motif" aria-hidden="true">'+(window.SZFlowerMark||'✦')+'</span>';el.setAttribute('aria-label',backLabel);}
  else{el.classList.toggle('red',GK.suit(id)===1||GK.suit(id)===3);el.innerHTML='<span class="rank">'+GK.rankLabel(GK.rank(id))+'</span><span class="suit">'+GK.SUITS[GK.suit(id)]+'</span><span class="center">'+GK.SUITS[GK.suit(id)]+'</span>'+(badge?'<span class="badge">'+badge+'</span>':'')+(GK.wild(id,level)?'<span class="wild">★</span>':'');el.setAttribute('aria-label',GK.label(id)+(badge?'，'+badge:'')+(GK.wild(id,level)?'，逢人配':''));el.dataset.card=String(id);}
  return el;
 }
@@ -1745,7 +1827,7 @@ function render(){
  for(const e of game.events)GKLocale.registerEvent(e);for(const e of ROLLOUT.events)GKLocale.registerEvent(e);
  const replay=mode==='replay',event=replay?ROLLOUT.events[cursor]:game.lastEvent,s=replay?event.state:game.snapshot();
  document.querySelector('.app-main').classList.toggle('is-replay',replay);$('replay-detail').hidden=!replay;if(replay)$('replay-detail').textContent=event.title+'：'+event.note;
- const v=VARIANT_TEXT[variant];$('version-select').value=variant;$('version-badge').textContent=v.name;$('version-note').textContent=v.note+' 切换时保存当前对局，各版本可分别续玩。';$('rule-title').textContent=v.name+' · 开局与结算';$('variant-rules').textContent=v.note;$('tie-rule').textContent=v.tie;$('ranking-rule').textContent=v.ranking;const scoreText=(variant==='0.3.2'||GK.isRefresh(variant))?'炸弹 5 · 同花顺 4 · 同花 3 · 顺子 2 · 对子 1 · 高牌 0':'同花顺 5 · 炸弹 4 · 同花 3 · 顺子 2 · 对子 1 · 高牌 0';$('score-list').textContent=scoreText;$('rule-score-list').textContent=scoreText;$('rule-fingerprint').textContent='规则 '+variant+' · 指纹 '+ROLLOUT.source_sha256.slice(0,12);document.title='金花拳 · '+variant+' 试玩';
+ const v=VARIANT_TEXT[variant];$('version-select').value=variant;$('version-badge').textContent=v.name;$('version-note').textContent=v.note+' 切换时保存当前对局，各版本可分别续玩。';$('rule-title').textContent=v.name+' · 开局与结算';$('variant-rules').textContent=v.note;$('tie-rule').textContent=v.tie;$('ranking-rule').textContent=v.ranking;const scoreText=(variant==='0.3.2'||GK.isRefresh(variant))?'炸弹 5 · 同花顺 4 · 同花 3 · 顺子 2 · 对子 1 · 高牌 0':'同花顺 5 · 炸弹 4 · 同花 3 · 顺子 2 · 对子 1 · 高牌 0';$('score-list').textContent=scoreText;$('rule-score-list').textContent=scoreText;$('rule-fingerprint').textContent='规则 '+variant+' · 指纹 '+ROLLOUT.source_sha256.slice(0,12);document.title='深圳花牌 · '+variant+' 试玩';
  const refresh=GK.isRefresh(variant),cap=GK.deathThreshold(variant),four=GK.allowsFour(variant);
  if(four){$('score-list').textContent='四炸 6 · 三炸 5 · 同花顺 4 · 同花 3 · 顺子 2 · 对子 1 · 高牌 0';$('rule-score-list').textContent=$('score-list').textContent;}
  $('quick-intro').textContent='进攻打的是掉血，防守打的是机会。'+(four?'通常出三张，也可出四张同点炸弹。':'每次选三张，与自动对手交替攻防。');
@@ -1860,7 +1942,7 @@ $('result-review').addEventListener('click',closeResult);
 $('result-primary').addEventListener('click',continueResult);
 $('result-modal').addEventListener('close',()=>{stopCelebration();const r=currentResult();if(mode==='play'&&r&&resultKey(r)===$('result-modal').dataset.resultKey)$('show-result')?.focus({preventScroll:true});});
 $('new-match').addEventListener('click',newMatch);
-$('export-match').addEventListener('click',()=>{const data={version:game.version,ui_revision:UI_REVISION,locale:GKLocale.language,game_name:GKLocale.language==='en'?'3Card Royale':'金花拳',seed:game.seed,policy:GK.woundExchange(game.version)?GK.WOUND_POLICY:GK.handExchange(game.version)?GK.EXCHANGE_POLICY:GK.winnerStarts(game.version)?GK.WINNER_POLICY:GK.allowsFour(game.version)?GK.FOUR_POLICY:GK.isRefresh(game.version)?GK.REFRESH_POLICY:GK.POLICY,results:game.results,stats:game.stats,events:game.events,save:game.save(),source_sha256:ROLLOUT.source_sha256,...(ROLLOUT.baseline_sha256?{baseline_sha256:ROLLOUT.baseline_sha256}:{})};const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=(GKLocale.language==='en'?'3Card-Royale-':'金花拳-')+variant+'-'+game.seed+'-playtest.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+$('export-match').addEventListener('click',()=>{const data={version:game.version,ui_revision:UI_REVISION,locale:GKLocale.language,game_name:GKLocale.language==='en'?'3Card Royale':'深圳花牌',seed:game.seed,policy:GK.woundExchange(game.version)?GK.WOUND_POLICY:GK.handExchange(game.version)?GK.EXCHANGE_POLICY:GK.winnerStarts(game.version)?GK.WINNER_POLICY:GK.allowsFour(game.version)?GK.FOUR_POLICY:GK.isRefresh(game.version)?GK.REFRESH_POLICY:GK.POLICY,results:game.results,stats:game.stats,events:game.events,save:game.save(),source_sha256:ROLLOUT.source_sha256,...(ROLLOUT.baseline_sha256?{baseline_sha256:ROLLOUT.baseline_sha256}:{})};const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=(GKLocale.language==='en'?'3Card-Royale-':'深圳花牌-')+variant+'-'+game.seed+'-playtest.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
 $('prev-step').addEventListener('click',()=>{stopReplay();replayGo(cursor-1);});$('next-step').addEventListener('click',()=>{stopReplay();replayGo(cursor+1);});
 $('replay-range').max=ROLLOUT.events.length-1;$('replay-range').addEventListener('input',e=>{stopReplay();replayGo(e.target.value);});
 $('auto-replay').addEventListener('click',()=>{if(autoTimer){stopReplay();return;}if(cursor===ROLLOUT.events.length-1)replayGo(0);$('auto-replay').textContent='暂停';autoTimer=setInterval(()=>{if(cursor>=ROLLOUT.events.length-1)stopReplay();else replayGo(cursor+1);},1300);});

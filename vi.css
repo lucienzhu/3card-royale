@@ -1,0 +1,65 @@
+/* Shenzhen Flower Cards / 深圳花牌. UI-only identity: no layout or rule reset. */
+:root{--sz-paper:#f7f4ec;--sz-ink:#173e3b;--sz-sea:#13504a;--sz-flower:#d95360;--sz-flower-deep:#ab3447;--sz-mint:#7bcec0;--sz-gold:#e0c27f;--cream:var(--sz-paper);--ink:var(--sz-ink);--line:#d9ded5;--green:var(--sz-sea);--gold:var(--sz-gold)}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--sz-paper)}
+.brand{display:flex;align-items:center;gap:9px;min-width:0}
+.brand-symbol{width:32px;height:32px;flex:none;display:block}
+.brand-copy{min-width:0;display:flex;flex-direction:column;gap:3px}
+.brand h1{font-size:22px;font-weight:800;line-height:1.1;letter-spacing:.015em;color:var(--sz-ink);white-space:nowrap}
+.brand .brand-sub{display:block;font-size:8px;line-height:1;letter-spacing:.15em;color:#65837a;font-weight:600;white-space:nowrap}
+.header-controls button{color:var(--sz-ink)}
+.table{background:radial-gradient(ellipse at 50% 42%,#205c54 0,#123e39 82%);border-color:#285c51;box-shadow:0 6px 24px #103b3610}
+.table .tabs button[aria-selected=true]{color:#fff8ee;position:relative}
+.table .tabs button[aria-selected=true]:after{content:'';position:absolute;bottom:0;left:6px;right:6px;height:2px;border-radius:1px;background:var(--sz-flower)}
+.topline .meta,.rack-label{color:#b1cec3}
+.card{background:#fffef9;border-color:#d9ddcf;color:#1a3b37;box-shadow:-2px 2px 5px #031e2530}
+.card.red{color:#c64753}
+.card .rank{font-family:Arial,Helvetica,sans-serif;font-variant-numeric:lining-nums tabular-nums;line-height:1}
+.card .center{opacity:.12}
+.card.back{background:linear-gradient(145deg,#22665c,#16463f);border-color:#80b5a4}
+.card.back .motif{border-color:#80b5a466;inset:5px;overflow:hidden}
+.card.back .motif svg{width:52%;height:52%;overflow:visible;opacity:.86}
+.card.back .motif svg g{fill:#c4ddc8;stroke:#205c52;stroke-width:2}
+.card.back .motif svg circle{fill:#205c52}
+.card.selected{background:#fff2da;outline-color:var(--sz-gold)}
+.card.selected:after{color:#895f1f}
+.card:has(.wild){border-color:#d8b76d;background:#fff9eb}
+.card.swap-destination{outline-color:var(--sz-mint)}
+.card.swap-destination:focus-visible{outline-color:var(--sz-mint)}
+.blind-target-selected,.exchange-ready{outline-color:var(--sz-mint)}
+.pip{border-color:#8eb1a4}.pip.filled{background:#ee9a91;border-color:#ee9a91}
+.level{color:#e3cd91}.damage small{color:#b6cfc4}
+.battle{border-color:#b9d7c327}.combat-title{color:#b9d2c6}.combat-title b{color:#fff4dd}
+.formula{color:#e9d3a2}.actionbar{background:#bfd8bd0d;border:1px solid #bfd8bd0c;border-radius:9px}
+.actionbar h2{color:#f4e1b7}.preview-score{color:#d5e6d8}
+.action-buttons .primary{background:#f1c4c0;border-color:#f1c4c0;color:#362d2b;font-weight:750}
+.action-buttons button:not(.primary){border-color:#a1c6b953;color:#d7e6dc}
+.action-buttons .primary:disabled{opacity:.55}
+.actionbar.is-hand-exchange #action-description{color:#b7e6d6}
+.pile-stack{background:linear-gradient(135deg,#317266,#21594d);border-color:#9dc2a8;color:#f4f4dc}
+.discard-pile .pile-stack{background:#dce6d5;color:#2c5146;border-color:#a4bea6}
+.stock-pile.is-low .pile-stack{background:#6e453d;border-color:#eca399;color:#ffe2cd}
+.race-track{--own-race:var(--sz-flower);--opp-race:#379c8b}
+.race-line:before{background:#d5ddd3}.race-gap{background:#a8b9a7}
+.race-marker{border-color:var(--sz-paper)}
+.goal-own{color:var(--sz-flower-deep)}.goal-opp{color:#357f73}
+.goal-title h2,.goal-legend strong{color:#785d2c}.goal-title svg{stroke:#9a762f}
+.race-line .race-finish{background:var(--sz-paper);color:#906b27}
+.attempt-lights .failed{background:#c64753}.attempt-lights .succeeded{background:#348b70}
+.result-sheet{border-color:#d3dccc;background:var(--sz-paper)}
+.result-content h2{color:var(--sz-ink)}.result-actions{background:var(--sz-paper)}
+.result-actions .primary{background:var(--sz-sea);border-color:var(--sz-sea);color:#fff9ec}
+.result-emblem{border-radius:18px;background:#f1d9d7;color:var(--sz-flower-deep)}
+.result-brand{display:block;position:absolute;inset:12px;width:40px;height:40px}
+.result-cup{display:none}
+.is-champion .result-brand{inset:23px;width:54px;height:54px;opacity:.2}
+.is-champion .result-emblem{border-radius:26px;background:#f3e6be;box-shadow:0 0 0 8px #d9536009,0 0 0 16px #e0c27f12}
+.is-champion .result-actions .primary{background:#efd69b;border-color:#efd69b;color:#4a422f}
+.modal .identity-note{border-top:1px solid var(--line);padding-top:12px;margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px;line-height:1.5;color:#6b8173;flex-wrap:wrap}
+.identity-note a{color:#315f52;text-decoration-thickness:1px;text-underline-offset:3px}
+html[lang="en"] .brand h1{font-size:20px;letter-spacing:-.035em}
+html[lang="en"] .brand .brand-sub{letter-spacing:.12em;font-size:7px}
+@media(max-width:400px){.brand{gap:7px}.brand-symbol{width:27px;height:27px}.brand h1{font-size:20px}.brand .brand-sub{font-size:7px;letter-spacing:.1em}.header-controls{gap:2px}html[lang="en"] .brand h1{font-size:17px}}
+@media(max-width:360px){.brand-symbol{width:23px;height:23px}.brand h1{font-size:19px}.brand .brand-sub{font-size:6px}html[lang="en"] .brand h1{font-size:15px}}
+@media(max-height:650px){.brand .brand-sub{display:none}.brand-symbol{width:25px;height:25px}.brand h1{font-size:20px}}
+@media(max-height:450px) and (min-width:600px){.brand-symbol{width:22px;height:22px}.brand h1,html[lang="en"] .brand h1{font-size:16px}.brand{gap:5px}}
+@media(prefers-reduced-motion:reduce){.card{transition:none}}
