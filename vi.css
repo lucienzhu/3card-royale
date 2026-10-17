@@ -221,3 +221,8 @@ body{background:var(--sz-paper);color:var(--sz-ink)}
 /* Gold flower centers only; the goal yellow stays unchanged. */
 :root{--sz-logo-center:#DEB04A}
 [data-sz-theme=dark]{--sz-logo-center:#F1C86A}
+
+/* Fixed brand pigments. Functional text accents retain theme-specific contrast. */
+:root,[data-sz-theme=dark]{--sz-brand-red:#D83B74;--sz-brand-gold:#DEB04A;--sz-logo-petal:var(--sz-brand-red);--sz-logo-center:var(--sz-brand-gold)}
+.sz-brand-anchors{display:flex;flex-wrap:wrap;gap:10px 22px;margin:10px 0 18px;color:var(--ink);font-size:13px}
+.sz-brand-anchors span{display:flex;align-items:center;gap:7px}.sz-brand-anchors i{width:15px;height:15px;border-radius:50%;display:inline-block}

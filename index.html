@@ -1076,6 +1076,26 @@ body{background:var(--sz-paper);color:var(--sz-ink)}
 </style><style id="sz-flower-center-gold">/* Gold flower centers only; the goal yellow stays unchanged. */
 :root{--sz-logo-center:#DEB04A}
 [data-sz-theme=dark]{--sz-logo-center:#F1C86A}
+</style><style id="sz-brand-anchors">/* Fixed brand pigments. Functional text accents retain theme-specific contrast. */
+:root,[data-sz-theme=dark]{--sz-brand-red:#D83B74;--sz-brand-gold:#DEB04A;--sz-logo-petal:var(--sz-brand-red);--sz-logo-center:var(--sz-brand-gold)}
+.sz-brand-anchors{display:flex;flex-wrap:wrap;gap:10px 22px;margin:10px 0 18px;color:var(--ink);font-size:13px}
+.sz-brand-anchors span{display:flex;align-items:center;gap:7px}.sz-brand-anchors i{width:15px;height:15px;border-radius:50%;display:inline-block}
+</style><style id="sz-rule-swaps">/* All legal exchange paths, scoped to the fifth teaching case. */
+.rg-swap-picker{display:grid;gap:10px;margin-bottom:14px}
+.rg-swap-row{display:grid;grid-template-columns:32px minmax(0,1fr);gap:8px;align-items:start}
+.rg-swap-row>span{font-size:12px;color:var(--muted);line-height:38px}
+.rg-swap-source,.rg-swap-target{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.rg-swap-picker button{min-height:38px;border:1px solid var(--line);border-radius:7px;padding:7px 5px;background:transparent;color:var(--ink);font:600 12px/1.35 -apple-system,BlinkMacSystemFont,'PingFang SC',Arial,sans-serif}
+.rg-swap-picker button[aria-pressed=true]{color:var(--sz-flower-deep);border-color:var(--sz-flower);background:#D83B7410;box-shadow:inset 0 0 0 1px var(--sz-flower)}
+.rg-swap-picker button:focus-visible{outline:2px solid var(--sz-flower);outline-offset:2px}
+.rg-all-swaps{display:grid;grid-template-columns:minmax(0,1fr) 24px minmax(0,1fr);gap:12px;align-items:center;margin:0 auto;max-width:380px}
+.rg-all-swaps>div{gap:7px}.rg-all-swaps small{line-height:1.4;text-align:center}
+.rg-all-swaps+.rg-result{margin-top:12px;min-height:70px;justify-content:center}
+.rg-all-swaps+.rg-result strong{font-size:15px;line-height:1.5}.rg-all-swaps+.rg-result>span{font-size:12px;line-height:1.5}
+.rg-swap-invariants{margin:10px 0 0;font-size:12px;text-align:center;color:var(--muted);line-height:1.5}
+[data-sz-theme=dark] .rg-swap-picker button[aria-pressed=true]{background:#F27FAE14}
+@media(min-width:540px){.rg-swap-target{grid-template-columns:repeat(4,minmax(0,1fr))}.rg-swap-source{max-width:280px}}
+@media(max-width:360px){.rg-swap-picker button{font-size:11px}.rg-all-swaps+.rg-result strong{font-size:14px}.rg-swap-row{grid-template-columns:26px minmax(0,1fr);gap:6px}}
 </style></head>
 <body>
 <header class="app-header">
@@ -1892,7 +1912,7 @@ body{background:var(--sz-paper);color:var(--sz-ink)}
 ;
 'use strict';
 const $=id=>document.getElementById(id);
-const UI_REVISION='sz-hand-examples-1';
+const UI_REVISION='sz-rule-swaps-1';
 const VARIANT_TEXT={
  '0.3.8':{name:'0.3.8 · 共用花牌',note:'首局双方共用♥2作为花牌。此后小局赢家升级后的等级决定下一小局双方共用的花牌；一局内不变。花牌即逢人配／会子／百搭牌。攻防、血牌交换与升级其余规则沿用0.3.7。',tie:'同牌型比较点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无事发生。',ranking:'四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。四炸也可用花牌。'},
  '0.3.7':{name:'0.3.7 · 血牌反击',note:'防守胜出可用自己的手牌或伤牌交换对手盲手牌、公开伤牌、自己的另一牌区，或弃旧摸新。每次1机会，张数与伤势不变；其余沿用0.3.6。',tie:'同牌型比较点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无事发生。',ranking:'四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。四炸允许逢人配。'},
@@ -2262,7 +2282,7 @@ GKLocale.init();
  const host=document.getElementById('rg-guide'),dialog=document.getElementById('rule-page');
  const textPanel=document.getElementById('rg-text'),switches=document.getElementById('rg-switch');
  const progress=document.getElementById('rg-progress'),navigation=document.getElementById('rg-navigation'),scroller=dialog.querySelector('.modal-body');
- let step=0,view='visual',exchange='rival',lastLanguage='',lastVersion='';
+ let step=0,view='visual',exchange='rival',sourceZone='hand',lastLanguage='',lastVersion='';
  const data=window.SZRuleCases;
  const t=(zh,en)=>window.GKLocale?.language==='en'?en:zh;
  const card=(label,extra='')=>{const suit=(label.match(/[♠♥♣♦]/)||[''])[0],rank=label.replace(/[♠♥♣♦]/g,'');return `<span class="rg-card ${suit==='♥'||suit==='♦'?'red':''} ${extra}" aria-label="${rank}${suit}"><b>${rank}</b><i>${suit}</i>${extra.includes('wound')?'<small>'+t('伤','W')+'</small>':''}${extra.includes('wild')?'<small>✦</small>':''}</span>`;};
@@ -2273,12 +2293,38 @@ GKLocale.init();
  const result=(main,sub='')=>`<div class="rg-result"><strong>${main}</strong>${sub?`<span>${sub}</span>`:''}</div>`;
  const metric=(who,from,to)=>`<span>${who}<b>${from} <i>→</i> ${to}</b></span>`;
  const counts=(a,b)=>`<div class="rg-counts">${metric(t('你的手牌','Your hand'),a[0],a[1])}${metric(t('对手手牌','Rival hand'),b[0],b[1])}</div>`;
+ const hiddenCard=()=>'<span class="rg-card rg-back" aria-label="'+t('未知牌','Unknown card')+'"><b>?</b><i>✦</i></span>';
+ function exchangeCase(){
+  const wound=sourceZone==='table',give=wound?'K♦':'9♠',other=wound?'9♠':'K♦';
+  const own=t(wound?'你的伤牌':'你的手牌',wound?'Your wound':'Your hand');
+  const destinations=[['blind',t('对手盲手牌','Rival’s blind hand')],['rival',t('对手伤牌','Rival’s wound')],['own',t(wound?'自己的手牌':'自己的伤牌',wound?'Your hand':'Your wound')],['deck',t('牌库','Draw pile')]];
+  const label=destinations.find(x=>x[0]===exchange)[1];
+  let main,detail;
+  if(exchange==='blind'){
+   main=t('交出'+give+'，随机换回1张','Give '+give+'; receive 1 random card');
+   detail=t(wound?'换回的牌放回你的伤牌区，立即公开。':'换回的牌进你的手牌，保持保密。',wound?'The received card becomes your face-up wound.':'The received card goes into your private hand.');
+  }else if(exchange==='deck'){
+   main=t('弃掉'+give+'，再摸1张','Discard '+give+', then draw 1');
+   detail=t(wound?'新牌补回你的伤牌区，立即公开。':'新牌补回你的手牌，保持保密。',wound?'The new card replaces your wound, face up.':'The new card replaces your hand card, privately.');
+  }else if(exchange==='own'){
+   main=t('手牌9♠与伤牌K♦互换','Hand 9♠ ⇄ wound K♦');
+   detail=t('换入手牌的保密，换入伤牌区的公开。','Cards entering the hand are private; wounds are public.');
+  }else{
+   main=t('你拿10♦，对手伤牌换成'+give,'You receive 10♦; their wound becomes '+give);
+   detail=t(wound?'10♦放回你的伤牌区，双方伤牌保持公开。':'10♦进你的手牌，对手的伤牌公开。',wound?'10♦ becomes your wound. Both wounds stay face up.':'10♦ enters your private hand; their wound stays face up.');
+  }
+  return `<div class="rg-swap-picker">
+   <div class="rg-swap-row"><span>${t('交出','Give')}</span><div class="rg-swap-source" role="group" aria-label="${t('选择自己的牌区','Your source zone')}">${[['hand',t('自己的手牌','Your hand')],['table',t('自己的伤牌','Your wound')]].map(([key,name])=>`<button type="button" data-rg-source="${key}" aria-pressed="${sourceZone===key}">${name}</button>`).join('')}</div></div>
+   <div class="rg-swap-row"><span>${t('换到','For')}</span><div class="rg-swap-target" role="group" aria-label="${t('全部交换目标','All swap destinations')}">${destinations.map(([key,name])=>`<button type="button" data-rg-exchange="${key}" aria-pressed="${exchange===key}">${name}</button>`).join('')}</div></div>
+  </div><div class="rg-exchange rg-all-swaps" data-source="${sourceZone}" data-target="${exchange}"><div><small>${own}</small>${card(give,wound?'wound':'')}</div><strong aria-hidden="true">${exchange==='deck'?'→':'⇄'}</strong><div><small>${label}</small>${exchange==='rival'?card('10♦','wound'):exchange==='own'?card(other,wound?'':'wound'):hiddenCard()}</div></div>
+  ${result(main,detail)}<p class="rg-swap-invariants">${t('每次1机会 · 张数不变 · 不回血','1 opportunity each · Same counts · No healing')}</p>`;
+ }
  const steps=()=>[
   {title:t('先看这一轮的起点','Start of this round'),caption:t('例子从双方各有1伤开始。花牌都是♥2。','Both players already have 1 wound. The shared flower is ♥2.'),body:()=>`<div class="rg-route"><b>${t('你进攻','You attack')}</b><i>→</i><b>${t('对手进攻','Rival attacks')}</b><i>→</i><b>${t('补手牌','Refill')}</b></div><div class="rg-start-row"><strong>${t('对手','Rival')}</strong><div>${stack(8)}<small>${t('手牌保密','Private hand')}</small></div><div>${cards(['J♦'])}${damage(1)}</div></div><div class="rg-start-row"><strong>${t('你','You')}</strong><div>${stack(8)}<small>${t('8张手牌','8 hand cards')}</small></div><div>${cards(['6♣'],['wound'])}${damage(1)}</div></div>${result(t('各进攻一次，才算一轮','A round = one attack each'))}`},
   {title:t('你进攻：伤牌也能出','Your attack: use a wound'),caption:t('手里的7、8，搭上公开伤牌6。','Combine your hand’s 7 and 8 with your face-up wound 6.'),body:()=>duel({label:t('你 · 进攻','You · Attack'),name:t('同花顺','Straight flush'),score:4,cards:['6♣','7♣','8♣'],extras:['wound']},{label:t('对手 · 防守','Rival · Defend'),name:t('对子','Pair'),score:1,cards:['5♠','5♥','9♦']})+result(t('4 − 1 = 对手 +3伤','4 − 1 = rival +3 wounds'),t('对手的伤势：1 → 4','Rival wounds: 1 → 4'))+`<div class="rg-replace">${card('6♣','wound')}<span>${t('弃掉后原位补','Discard, replace')}<b>→</b></span>${card('K♦','wound')}<strong>${t('仍是1伤','Still 1 wound')}</strong></div>`+counts([8,6],[8,5])},
   {title:t('交换攻防，先不补手牌','Swap roles. No refill yet.'),caption:t('现在由对手进攻，你用剩下的牌来防守。','The rival attacks next. Defend with the cards you have left.'),body:()=>`<div class="rg-role-swap"><div><b>${t('你','You')}</b>${stack(6)}<strong>${t('防守','Defend')}</strong></div><span aria-hidden="true">⇄</span><div><b>${t('对手','Rival')}</b>${stack(5)}<strong>${t('进攻','Attack')}</strong></div></div>${result(t('这时不摸牌','Do not draw yet'),t('公开伤牌也仍可参与出牌','Your face-up wounds are still playable'))}<div class="rg-wound-pair"><span>${t('你','You')}${damage(1)}</span><span>${t('对手','Rival')}${damage(4)}</span></div>`},
   {title:t('你守住了，赢1次机会','Defend to earn 1 swap'),caption:t('♥2是共用花牌，这里当作第三张4。','♥2 is the shared flower. Here it becomes a third 4.'),body:()=>duel({label:t('对手 · 进攻','Rival · Attack'),name:t('同花顺','Straight flush'),score:4,cards:['J♠','Q♠','K♠']},{label:t('你 · 防守','You · Defend'),name:t('三炸','Three of a kind'),score:5,cards:['4♠','4♥','2♥'],extras:['','','wild']})+`<div class="rg-wild-note">♥2 <span>→</span> ${data.defense.wild?window.GK.label(data.defense.wild.as):'♣4'} · ${t('花牌可代任意牌','Flower = wildcard')}</div>`+result(t('5 − 4 = 1次交换','5 − 4 = 1 swap'),t('防守赢的是机会，伤势不变','Defense earns opportunity. Wounds stay unchanged.'))+counts([6,3],[5,2])},
-  {title:t('把机会换成更好的牌','Turn the swap into a better card'),caption:t('先选自己一张，再选想换的目标。','Choose a card to give, then choose a target.'),body:()=>`<div class="rg-mini-toggle" role="group" aria-label="${t('交换示例','Swap example')}"><button type="button" data-rg-exchange="rival" aria-pressed="${exchange==='rival'}">${t('换公开伤牌','Rival wound')}</button><button type="button" data-rg-exchange="deck" aria-pressed="${exchange==='deck'}">${t('换牌库','Draw from deck')}</button></div><div class="rg-exchange"><div><small>${t('你 · 手牌','You · Hand')}</small>${card('9♠')}</div><strong aria-hidden="true">${exchange==='rival'?'⇄':'→'}</strong><div><small>${exchange==='rival'?t('对手 · 伤牌','Rival · Wound'):t('公共牌库','Draw pile')}</small>${exchange==='rival'?card('10♦','wound'):'<span class="rg-card rg-back"><b>?</b><i>✦</i></span>'}</div></div>${result(exchange==='rival'?t('你拿10，对手伤牌换成9','You get 10; their wound becomes 9'):t('弃掉9，再摸1张','Discard 9, then draw 1'),t('消耗1次机会；双方张数、伤势不变','Spend 1 swap. Hand sizes and wounds stay the same.'))}<p class="rg-caption">${t('也能盲换对手手牌，或交出自己的伤牌。每次都消耗1次机会。','You may also blindly swap a rival hand card or give one of your wounds. Each swap costs 1 opportunity.')}</p>`},
+  {title:t('1次机会，任选一种交换','1 swap. Choose any route.'),caption:t('先选自己的手牌或伤牌，再选交换目标。','Choose your hand card or wound, then pick its destination.'),body:exchangeCase},
   {title:t('一轮结束，各补到8张','Round over. Refill to 8.'),caption:t('保留剩余手牌，只补缺的数量。','Keep your unused cards. Draw only the missing cards.'),body:()=>`<div class="rg-refill"><div><strong>${t('你','You')}</strong>${stack(3)}<b>+5</b>${stack(8)}</div><div><strong>${t('对手','Rival')}</strong>${stack(2)}<b>+6</b>${stack(8)}</div></div><div class="rg-wound-pair"><span>${t('你','You')}${damage(1)}</span><span>${t('对手','Rival')}${damage(4)}</span></div>${result(t('下一轮，对手先攻','Next round, the rival attacks first'),t('伤牌保留，不回血。达到5伤就输小局。','Wounds remain. No healing. 5 wounds loses the game.'))}<div class="rg-finish">2 <span>→</span> A <span>+</span> ${t('再赢一局','win again')} <b>⚑</b></div>`},
  ];
  function paint(){
@@ -2307,8 +2353,10 @@ GKLocale.init();
   else if(b.hasAttribute('data-rg-prev'))step=Math.max(0,step-1);
   else if(b.hasAttribute('data-rg-next')){if(step===5){document.getElementById('close-rules').click();return;}step++;}
   else if(b.dataset.rgExchange)exchange=b.dataset.rgExchange;
-  const focus=b.hasAttribute('data-rg-next')?'[data-rg-next]':b.hasAttribute('data-rg-prev')?'[data-rg-prev]':b.dataset.rgExchange?'[data-rg-exchange="'+b.dataset.rgExchange+'"]':'[data-rg-step="'+b.dataset.rgStep+'"]';
-  paint();if(!b.dataset.rgExchange)scroller.scrollTop=0;dialog.querySelector(focus)?.focus({preventScroll:true});
+  else if(b.dataset.rgSource)sourceZone=b.dataset.rgSource;
+  else return;
+  const focus=b.dataset.rgSource?'[data-rg-source="'+b.dataset.rgSource+'"]':b.hasAttribute('data-rg-next')?'[data-rg-next]':b.hasAttribute('data-rg-prev')?'[data-rg-prev]':b.dataset.rgExchange?'[data-rg-exchange="'+b.dataset.rgExchange+'"]':'[data-rg-step="'+b.dataset.rgStep+'"]';
+  paint();if(!b.dataset.rgExchange&&!b.dataset.rgSource)scroller.scrollTop=0;dialog.querySelector(focus)?.focus({preventScroll:true});
  }
  for(const element of [host,progress,navigation])element.addEventListener('click',navigate);
  function sync(){const language=window.GKLocale?.language||'zh-CN',version=document.getElementById('version-select').value;if(language!==lastLanguage||version!==lastVersion){if(version!==lastVersion){view=version==='0.3.8'?'visual':'text';step=0;}lastLanguage=language;lastVersion=version;paint();}}
@@ -2364,7 +2412,7 @@ GKLocale.init();
   for(const e of document.querySelectorAll('[data-sz-theme-label]'))e.textContent=t('外观','Appearance');
   for(const e of document.querySelectorAll('[data-sz-theme-choice]'))e.setAttribute('aria-pressed',String(e.dataset.szThemeChoice===mode));
   const swatches=document.querySelector('.swatches[data-sz-palette]');
-  if(swatches){const labels=mode==='light'?['纸白','海墨','三角梅花红','薄荷青绿','日光黄']:['夜蓝','海雾白','三角梅花红','薄荷青绿','日光黄'];swatches.innerHTML=['paper','ink','flower','mint','sun'].map((k,i)=>`<div class="swatch"><i style="background:${palette[k]}"></i><b>${labels[i]}</b><small>${palette[k]}</small></div>`).join('');}
+  if(swatches){const labels=mode==='light'?['纸白','海墨','三角梅花红','薄荷青绿','花心金']:['夜蓝','海雾白','三角梅花红','薄荷青绿','花心金'];swatches.innerHTML=['paper','ink','flower','mint','sun'].map((k,i)=>`<div class="swatch"><i style="background:${k==='flower'?'#D83B74':k==='sun'?'#DEB04A':palette[k]}"></i><b>${labels[i]}</b><small>${k==='flower'?'#D83B74':k==='sun'?'#DEB04A':palette[k]}</small></div>`).join('');}
   const status=document.querySelector('[data-sz-theme-status]');if(status)status.textContent=mode==='light'?'晴日 · 纸白与浅薄荷，花红做识别。':'晚风 · 冷蓝灰与海雾白，花红做识别。';
  }
  function choose(value){if(!['system','light','dark'].includes(value))return;preference=value;try{localStorage.setItem(key,value);}catch{}render();}
