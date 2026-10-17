@@ -1,5 +1,5 @@
 /* Shenzhen Flower Cards / 深圳花牌. UI-only identity: no layout or rule reset. */
-:root{--sz-paper:#f7f4ec;--sz-ink:#173e3b;--sz-sea:#13504a;--sz-flower:#d95360;--sz-flower-deep:#ab3447;--sz-mint:#7bcec0;--sz-gold:#e0c27f;--cream:var(--sz-paper);--ink:var(--sz-ink);--line:#d9ded5;--green:var(--sz-sea);--gold:var(--sz-gold)}
+:root{--sz-paper:#f7f4ec;--sz-ink:#173e3b;--sz-sea:#13504a;--sz-flower:#D83B74;--sz-flower-deep:#A52256;--sz-mint:#7bcec0;--sz-gold:#e0c27f;--cream:var(--sz-paper);--ink:var(--sz-ink);--line:#d9ded5;--green:var(--sz-sea);--gold:var(--sz-gold)}
 body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--sz-paper)}
 .brand{display:flex;align-items:center;gap:9px;min-width:0}
 .brand-symbol{width:32px;height:32px;flex:none;display:block}
@@ -31,7 +31,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .battle{border-color:#b9d7c327}.combat-title{color:#b9d2c6}.combat-title b{color:#fff4dd}
 .formula{color:#e9d3a2}.actionbar{background:#bfd8bd0d;border:1px solid #bfd8bd0c;border-radius:9px}
 .actionbar h2{color:#f4e1b7}.preview-score{color:#d5e6d8}
-.action-buttons .primary{background:#f1c4c0;border-color:#f1c4c0;color:#362d2b;font-weight:750}
+.action-buttons .primary{background:#F1BDD0;border-color:#F1BDD0;color:#362d2b;font-weight:750}
 .action-buttons button:not(.primary){border-color:#a1c6b953;color:#d7e6dc}
 .action-buttons .primary:disabled{opacity:.55}
 .actionbar.is-hand-exchange #action-description{color:#b7e6d6}
@@ -48,11 +48,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .result-sheet{border-color:#d3dccc;background:var(--sz-paper)}
 .result-content h2{color:var(--sz-ink)}.result-actions{background:var(--sz-paper)}
 .result-actions .primary{background:var(--sz-sea);border-color:var(--sz-sea);color:#fff9ec}
-.result-emblem{border-radius:18px;background:#f1d9d7;color:var(--sz-flower-deep)}
+.result-emblem{border-radius:18px;background:#F4D7E3;color:var(--sz-flower-deep)}
 .result-brand{display:block;position:absolute;inset:12px;width:40px;height:40px}
 .result-cup{display:none}
 .is-champion .result-brand{inset:23px;width:54px;height:54px;opacity:.2}
-.is-champion .result-emblem{border-radius:26px;background:#f3e6be;box-shadow:0 0 0 8px #d9536009,0 0 0 16px #e0c27f12}
+.is-champion .result-emblem{border-radius:26px;background:#f3e6be;box-shadow:0 0 0 8px #D83B7409,0 0 0 16px #e0c27f12}
 .is-champion .result-actions .primary{background:#efd69b;border-color:#efd69b;color:#4a422f}
 .modal .identity-note{border-top:1px solid var(--line);padding-top:12px;margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px;line-height:1.5;color:#6b8173;flex-wrap:wrap}
 .identity-note a{color:#315f52;text-decoration-thickness:1px;text-underline-offset:3px}
@@ -63,3 +63,6 @@ html[lang="en"] .brand .brand-sub{letter-spacing:.12em;font-size:7px}
 @media(max-height:650px){.brand .brand-sub{display:none}.brand-symbol{width:25px;height:25px}.brand h1{font-size:20px}}
 @media(max-height:450px) and (min-width:600px){.brand-symbol{width:22px;height:22px}.brand h1,html[lang="en"] .brand h1{font-size:16px}.brand{gap:5px}}
 @media(prefers-reduced-motion:reduce){.card{transition:none}}
+
+/* sz-flower-vi-2: one bougainvillea ink, currentColor reverse mark. */
+.card.back .motif svg{color:#C4DDC8;width:68%;height:68%}.card.back .motif svg rect{display:none}.back svg{color:#C4DDC8}.back svg rect{display:none}.brand-symbol,.result-brand{color:var(--sz-flower)}
