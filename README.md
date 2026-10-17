@@ -19,7 +19,7 @@
 
 ## 实现与视觉
 
-- 当前界面：sz-rule-swaps-1；规则仍0.3.8。简中深圳花牌，英文3Card Royale。
+- 当前界面：sz-rule-zones-1；规则仍0.3.8。简中深圳花牌，英文3Card Royale。
 - 自包含index.html和probability.html可离线打开；gamecore.js是相同的0.3.8引擎，可用CommonJS载入或作为浏览器脚本使用。概率页只统计三张组合，不含四炸。
 - brand-mark.svg是矢量牌花，vi.css提供配色和界面样式；brand.html展示实际视觉系统，social-preview.png为1200×630分享图。
 - 首次／新场随机发牌，复盘种子选填，刷新续玩。更名继续兼容原有各版本浏览器存档。
@@ -32,7 +32,7 @@
 
 ## 开发与托管
 
-纯静态页面，GitHub Pages从main根目录部署。标志、配色和名称变更不改引擎规则版本。旧Git标签保持，当前发布标签gk-v0.3.8-guide2；双语介绍页about.html包含交互攻防示例、线下开局与可打印规则。
+纯静态页面，GitHub Pages从main根目录部署。标志、配色和名称变更不改引擎规则版本。旧Git标签保持，当前发布标签gk-v0.3.8-guide3；双语介绍页about.html包含交互攻防示例、线下开局与可打印规则。
 
 花红采用三角梅紫红 #D83B74；牌形与三角梅轮廓为原生单色SVG，实心版及透明128px自定义emoji可在视觉页下载。自定义emoji不是Unicode通用字符。
 
@@ -49,3 +49,5 @@ Day / Dusk share the same bougainvillea geometry, with a separate system/light/d
 Each hand ranking includes a miniature natural-card example, with the active version’s order and points. Dark and light themes are retained.
 
 The fifth illustrated rule step lists both source zones and all four destinations (eight directed paths). Each costs one opportunity; counts and wounds remain unchanged. Logo red #D83B74 and center gold #DEB04A are fixed across themes; interface text accents retain readable contrast.
+
+An interactive zone map now precedes the six round steps: private hands, public wounds, attack/defense, and shared draw/discard piles. The map is illustrative; a real game begins with 8 hand cards and 0 wounds each.
