@@ -1,53 +1,58 @@
-# 深圳花牌 · 3Card Royale
+# 3Card Royale · 深圳花牌
 
-一副普通扑克，两个人，从2打到A。开放的双人扑克玩法，欢迎试玩、改编与实现。
+[简体中文](README.zh-CN.md) · **English**
 
-[玩法介绍](https://lucienzhu.github.io/gk-royale-playtest/about.html) · [开始试玩](https://lucienzhu.github.io/gk-royale-playtest/) · [Play in English](https://lucienzhu.github.io/gk-royale-playtest/?lang=en) · [标志与视觉](https://lucienzhu.github.io/gk-royale-playtest/brand.html)
+![3Card Royale — One deck. Two players. Race to Ace.](assets/repository-cover.svg)
 
-## 当前规则 0.3.8
+**One standard deck. Two players. Race from 2 to Ace.**
 
-- 一副52张普通扑克牌，去掉大小王。各8张起手，手牌保密，伤牌全亮；初始级数2。首局随机先攻，随后小局赢家下一局先攻，局内每轮交换先攻。
-- 通常出3张，也可出4张同点炸弹。双方共用花牌（逢人配／会子／百搭牌）：首局♥2，此后按小局赢家升级后的等级确定下一小局的红桃花牌，一小局内固定；手牌与自己的公开伤牌可混用。三张和四炸可互相接，不要求张数相同。
-- 四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。同牌型比较点数；A23为3高、QKA为A高，KA2不成顺，花色不分大小。
-- 进攻胜按分差加伤；同牌型点数胜造成1伤。5伤即败小局，完整伤害仍计入升级。完全同型同点无事发生。
-- 防守胜按分差获得交换机会，同牌型点数胜得1次。先选自己的手牌或伤牌，再选对手盲手牌、对手公开伤牌、自己的另一牌区，或牌库。每次消耗1机会，双方手牌／伤牌张数不变，不回血。
-- 与牌直接交换，不经弃牌堆；对手手牌盲抽，公开伤牌可指定。与牌库交换时弃掉自己的牌，摸新牌补原位。换入伤区公开，手牌仍保密。
-- 双方出牌先弃置、用过的伤牌原位补明牌，之后才执行伤害或交换。新补牌不影响本次牌型。中间交换攻防不补手牌；双方各进攻一次为一轮，轮末保留余牌、补手牌至8张。牌堆耗尽时重洗弃牌堆。
-- 赢局按完整终局伤势差升级，升到A后，再以A开局赢一小局才赢整场。以A开局失败亮红灯；三次失败仅该玩家回2级，对手保留等级。
+An open card game from Shenzhen: build three-card hands, turn wounds into playable options, and earn swaps by defending well. A four-card bomb can change the whole hand.
 
-网页内“规则”提供各版本完整条款。旧九版分别保留，不把不同版本的规则混合。
+[**Play in English ↗**](https://lucienzhu.github.io/gk-royale-playtest/?lang=en) · [Learn the game](https://lucienzhu.github.io/gk-royale-playtest/about.html?lang=en) · [Read the rules](docs/RULES.md) · [Visual identity](https://lucienzhu.github.io/gk-royale-playtest/brand.html?lang=en)
 
-## 实现与视觉
+The browser demo plays against the computer. For two people at a table, all you need is a standard 52-card deck. No sign-in, betting, or cash conversion.
 
-- 当前界面：sz-rule-zones-1；规则仍0.3.8。简中深圳花牌，英文3Card Royale。
-- 自包含index.html和probability.html可离线打开；gamecore.js是相同的0.3.8引擎，可用CommonJS载入或作为浏览器脚本使用。概率页只统计三张组合，不含四炸。
-- brand-mark.svg是矢量牌花，vi.css提供配色和界面样式；brand.html展示实际视觉系统，social-preview.png为1200×630分享图。
-- 首次／新场随机发牌，复盘种子选填，刷新续玩。更名继续兼容原有各版本浏览器存档。
+## How a round works
 
-## 开放许可与变体
+1. Make a three-card hand from your private hand and your face-up wounds. Four of a kind may use four cards.
+2. Attack wins deal damage. Defense wins earn card swaps. An exact tie does nothing.
+3. Swap roles without refilling. After each player has attacked once, keep your unused cards and refill to eight.
 
-本仓库代码、规则说明和原创视觉素材采用[MIT许可](LICENSE)。可复制、修改、发布和实现，保留许可中的版权与许可声明。名字用于介绍这套玩法，不要求其他实现获得名称独占授权；不冒充官方或本项目维护者即可。若修改规则，请写明版本和差异，方便玩家对齐。
+At five wounds you lose the game. The winner levels up by the complete final damage gap and attacks first next game. Reach A, then win a game that you began at A to win the match.
 
-不需要账号，无ChatGPT依赖、无下注、无现金兑换。程序对局不替代真人试玩。
+## What makes it different
 
-## 开发与托管
+- **Wounds are options.** You may play them, but replace them afterward: using a wound does not heal it.
+- **Defense changes your next hand.** Swap your hand or wound cards with a rival’s cards, your other card zone, or the draw pile.
+- **One shared flower.** A heart wildcard follows the previous winner’s new level. Both players share it for the whole game.
 
-纯静态页面，GitHub Pages从main根目录部署。标志、配色和名称变更不改引擎规则版本。旧Git标签保持，当前发布标签gk-v0.3.8-guide3；双语介绍页about.html包含交互攻防示例、线下开局与可打印规则。
+## Run locally
 
-花红采用三角梅紫红 #D83B74；牌形与三角梅轮廓为原生单色SVG，实心版及透明128px自定义emoji可在视觉页下载。自定义emoji不是Unicode通用字符。
+No build step or runtime dependencies. Serve the repository with any static HTTP server. For example:
 
-规则弹窗默认六步图解完整一轮，可切换完整文字；旧版本保持自己的文字规则。三片花瓣来自同一轮廓按120度旋转，左右对称。
+```sh
+python3 -m http.server 8000 --bind 127.0.0.1
+# Open http://127.0.0.1:8000/about.html?lang=en
+```
 
-Desktop: the upgrade race is centered on the table with equal side columns; mobile portrait keeps its stacked header. Three small white flowers replace the central circle in the bougainvillea mark.
+With Node.js installed, run the repository checks:
 
-Toggle hand ranks beside the desktop combat area or at the top of compact tables. Scores follow the selected rules version.
+```sh
+node scripts/check.cjs
+```
 
-04 logo palette and all UI share daylight tokens: paper, bougainvillea, pale mint and small flat sun-yellow details. The game engine, rules and save keys are unchanged.
+## Explore and contribute
 
-Day / Dusk share the same bougainvillea geometry, with a separate system/light/dark preference. The illustrated guide uses a single compact toolbar and a non-overlapping footer. Rules, engine and game save keys are unchanged.
+| Resource | Start here |
+| --- | --- |
+| Rules | [Full 0.3.8 rulebook](docs/RULES.md) |
+| Contributing | [Local development, structure, feedback and translations](docs/CONTRIBUTING.md) |
+| Design | [Colors, logo, UI and language principles](docs/DESIGN.md) |
+| Feedback | [Playtest notes and bug reports](https://github.com/lucienzhu/gk-royale-playtest/issues/new/choose) |
+| Research | [Historical three-card probability lab](https://lucienzhu.github.io/gk-royale-playtest/probability.html?lang=en) |
 
-Each hand ranking includes a miniature natural-card example, with the active version’s order and points. Dark and light themes are retained.
+**Status:** playtest rules 0.3.8. Rules are still being tested with people; simulation results are not a claim of balance or popularity. Older rule variants remain selectable in the game menu, and release tags are immutable.
 
-The fifth illustrated rule step lists both source zones and all four destinations (eight directed paths). Each costs one opportunity; counts and wounds remain unchanged. Logo red #D83B74 and center gold #DEB04A are fixed across themes; interface text accents retain readable contrast.
+## License
 
-An interactive zone map now precedes the six round steps: private hands, public wounds, attack/defense, and shared draw/discard piles. The map is illustrative; a real game begins with 8 hand cards and 0 wounds each.
+Code, rule text and original visual assets are released under the [MIT license](LICENSE). Keep the copyright and license notice. You are welcome to play, adapt, translate and build your own implementation; identify rule changes and avoid presenting a fork as the original project.

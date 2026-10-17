@@ -1,0 +1,27 @@
+name: Playtest feedback / 试玩反馈
+description: Tell us what happened at your table / 记录真实试玩感受
+title: "[Playtest] "
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Rule version / 规则版本
+      placeholder: "0.3.8"
+    validations:
+      required: true
+  - type: textarea
+    id: session
+    attributes:
+      label: The session / 试玩情况
+      description: "Players, platform, length, and prior card-game experience / 人数、平台、时长与扑克经验"
+  - type: textarea
+    id: moments
+    attributes:
+      label: What stood out? / 有趣或困惑的时刻
+      description: "Describe a concrete hand or decision / 尽量给一手牌或一次决策"
+    validations:
+      required: true
+  - type: textarea
+    id: replay
+    attributes:
+      label: Would you play again? / 是否愿意再玩，为什么

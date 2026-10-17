@@ -1,0 +1,1 @@
+GKLocale.init();

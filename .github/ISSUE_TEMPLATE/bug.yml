@@ -1,0 +1,26 @@
+name: Bug report / 问题报告
+description: A reproducible issue in the game or website / 游戏或网站的可复现问题
+title: "[Bug] "
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Rule version and page / 规则版本与页面
+      placeholder: "0.3.8 · index.html"
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Browser and device / 浏览器与设备
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps, expected and actual result / 步骤、预期和实际结果
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Optional screenshot or replay seed / 可选截图或复盘种子
+      description: "Remove personal information before sharing / 分享前移除个人信息"
