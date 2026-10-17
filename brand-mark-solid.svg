@@ -1,1 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" color="#D83B74"><defs><mask id="huapai-cut"><rect width="64" height="64" fill="white"/><path fill="black" fill-rule="evenodd" d="M32 12C35 19 41 24 41 28C41 32 37 36 35 38C41 34 45 34 47 38C49 42 49 46 53 50C47 49 43 53 38 50C34 48 33 44 32 42C31 46 29 50 25 51C20 53 16 49 11 50C15 46 15 41 18 37C22 33 27 35 29 38C26 35 21 31 23 25C24 21 29 18 32 12Z M34.4 38.8a2.4 2.4 0 1 0-4.8 0a2.4 2.4 0 1 0 4.8 0Z"/></mask></defs><rect x="9" y="3" width="46" height="58" rx="7" fill="currentColor" mask="url(#huapai-cut)"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" color="#D83B74"><defs><mask id="huapai-sym-cut" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="white"/><g color="black">
+ 
+ <g fill="currentColor">
+  <path d="M29.4019 34.5C24 32 21 28 23 23C25 19 29 16 32 12C35 16 39 19 41 23C43 28 40 32 34.5981 34.5A3 3 0 0 0 29.4019 34.5Z"/>
+  <path d="M29.4019 34.5C24 32 21 28 23 23C25 19 29 16 32 12C35 16 39 19 41 23C43 28 40 32 34.5981 34.5A3 3 0 0 0 29.4019 34.5Z" transform="rotate(120 32 36)"/>
+  <path d="M29.4019 34.5C24 32 21 28 23 23C25 19 29 16 32 12C35 16 39 19 41 23C43 28 40 32 34.5981 34.5A3 3 0 0 0 29.4019 34.5Z" transform="rotate(240 32 36)"/>
+ </g>
+</g></mask></defs><rect x="9" y="3" width="46" height="58" rx="7" fill="currentColor" mask="url(#huapai-sym-cut)"/></svg>

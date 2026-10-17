@@ -66,3 +66,6 @@ html[lang="en"] .brand .brand-sub{letter-spacing:.12em;font-size:7px}
 
 /* sz-flower-vi-2: one bougainvillea ink, currentColor reverse mark. */
 .card.back .motif svg{color:#C4DDC8;width:68%;height:68%}.card.back .motif svg rect{display:none}.back svg{color:#C4DDC8}.back svg rect{display:none}.brand-symbol,.result-brand{color:var(--sz-flower)}
+
+/* Identical bracts, 120 degree rotation. No outline stroke on reverse petals. */
+.card.back .motif svg g,.back svg g{fill:currentColor;stroke:none}
