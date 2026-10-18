@@ -2,7 +2,7 @@
 
 [简体中文](SDK.zh-CN.md) · [RL environment](RL.md) · [Rules](RULES.md)
 
-SDK **0.1.1**, rules **0.3.8**, state schema **1**. The website continues to use its existing engine and saves. The SDK's JSON state is a separate host format, not a browser-save replacement.
+SDK **0.2.0**, rules **1.0.0**, state schema **2**. Standard browser games use rules 1.0.0 in a separate save namespace; older variants and saves retain their original rules. The SDK's JSON state is a separate host format, not a browser-save replacement.
 
 | Runtime | Implementation | Entry point |
 | --- | --- | --- |
@@ -12,7 +12,7 @@ SDK **0.1.1**, rules **0.3.8**, state schema **1**. The website continues to use
 | Rust | Native library and JSON-lines CLI; serde/serde_json dependencies | `rust/src/lib.rs` |
 | C++17 | Native header-only core and baseline; vendored nlohmann/json, offline build | `cpp/include/threecard_royale/` |
 
-Only current 0.3.8 is exposed by the SDK. Historical variants remain in the browser. The C++, Rust and Python implementations run independently and are replay-tested against the actual website engine. Packages are supplied as repository source; they have not been uploaded to npm, PyPI, crates.io or a C++ package registry.
+Only current 1.0.0 is exposed by the SDK. Historical variants remain in the browser. The C++, Rust and Python implementations run independently and are replay-tested against the actual website engine. Packages are supplied as repository source; they have not been uploaded to npm, PyPI, crates.io or a C++ package registry.
 
 ## Start a game
 
@@ -62,7 +62,7 @@ Browser integration: load `gamecore.js`, then `sdk/index.js`; use `window.ThreeC
 
 Card ID `0..51`: `suit * 13 + rank - 2`. Suits: spades 0, hearts 1, clubs 2, diamonds 3; ranks 2..14 (Ace 14). Jokers are excluded. The shared heart flower card substitutes for one card; four of a kind scores 6.
 
-Get a legal action from `legalActions()` / `legal_actions()` and pass it to `step`. Lists are deterministic: ascending physical IDs for triples, then legal quadruples; swap sources in hand/wound index order. JSON object-key order is irrelevant, card-array order is canonical.
+Get a legal action from `legalActions()` / `legal_actions()` and pass it to `step`. Lists are deterministic: ascending physical IDs for triples, then legal quadruples, then legal quintuples; swap sources in hand/wound index order. JSON object-key order is irrelevant, card-array order is canonical.
 
 | Phase | Action |
 | --- | --- |
@@ -79,7 +79,7 @@ Swap source is your `hand` or `wounds`. Target is `deck`, `blind` (one random ri
 
 ## State ownership & observations
 
-`save()` returns a deep copy of **private full state**: deck order, both hands and RNG are included. `Game.restore(state)` loads trusted schema-1 states and checks conservation. Do not expose this object to agents or opponents. Integrations still need their own input validation, authentication and server authority.
+`save()` returns a deep copy of **private full state**: deck order, both hands and RNG are included. `Game.restore(state)` loads trusted schema-2 states and checks conservation. Do not expose this object to agents or opponents. Integrations still need their own input validation, authentication and server authority.
 
 `observation(player)` contains only that player's hand, both public wound areas (null while a used slot awaits replacement), revealed plays, public discard cards, hand/deck counts, levels, common flower, failed-A lights, phase, public results and legal actions when it is their turn. It never includes the opponent's hand identities, stock order, seed or RNG. JSON observations are detached copies. Legal actions are state-relative and indices must not be cached after `step`.
 
@@ -105,4 +105,10 @@ Install the optional Gym dependencies before the Python suite. Conformance compa
 
 Rust full-match example: `cargo run --manifest-path rust/Cargo.toml --locked --example baseline`.
 
-C++ full-match example: `/tmp/royale-cpp/royale-baseline-cpp`. SDK 0.1.1 adds C++; rules, state schema and the browser game remain unchanged.
+C++ full-match example: `/tmp/royale-cpp/royale-baseline-cpp`. SDK 0.2.0 adds C++; rules, state schema and the browser game remain unchanged.
+
+Standard 1.0 adds five of a kind (7 points): four natural equal-rank cards plus the shared flower. See [complete standard rules](RULES.md). Five-card plays are included in legal actions. `wild.as` is a virtual face; in five of a kind it may name an already-present representative face without reusing a physical card. Gym score/kind features use /7 and played-card count uses /5.
+
+SDK 0.2 accepts rules-1.0.0 states only. Keep SDK 0.1.1 for existing 0.3.8 states or start a new standard game; schema 2 alone does not make rule versions interchangeable.
+
+`level_owner` is fixed at each game start and is independent of the rotating `first` attacker. Only this player can pass or fail an Ace challenge when the shared flower level is 14. Results include `level_owner` and nullable `ace_challenger`. Schema 2 preserves this identity across save/restore.

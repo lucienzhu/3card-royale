@@ -6,7 +6,7 @@
 
 **一副普通扑克，两个人，从 2 打到 A。**
 
-来自深圳的开放扑克玩法：八张手牌选三张，伤牌也能出，防守成功换机会。四张同点炸弹，也能改变这一手。
+来自深圳的开放扑克玩法：八张手牌选三张，伤牌也能出，防守成功换机会。四炸6分，四张自然同点牌加花牌组成罕见的五炸7分。
 
 [**开始试玩 ↗**](https://lucienzhu.github.io/gk-royale-playtest/?lang=zh-CN) · [学会怎么玩](https://lucienzhu.github.io/gk-royale-playtest/about.html?lang=zh-CN) · [完整规则](docs/RULES.zh-CN.md) · [视觉识别](https://lucienzhu.github.io/gk-royale-playtest/brand.html?lang=zh-CN)
 
@@ -14,11 +14,11 @@
 
 ## 一轮怎么玩
 
-1. 从手牌与自己的公开伤牌中选三张；四张同点炸弹也可以出。
+1. 从手牌与自己的公开伤牌中选三张；四炸出四张，五炸出五张。
 2. 进攻赢，造成伤害；防守赢，获得换牌机会；完全同型同点无事发生。
 3. 中途交换攻防不补手牌，双方各进攻一次后，保留余牌、补到八张。
 
-达到五伤输小局，赢家按完整终局伤势差升级并在下局先攻。先升到A，再赢下一局以A开局的游戏，才赢整场。
+达到五伤输小局，赢家按完整终局伤势差升级并在下局先攻。先升到A，再赢下自己打级的A局（本局共用♥A），才赢整场。个人为A时赢下对手的10局，只取得下局打自己A的资格；输掉也不记闯关失败。
 
 ## 不一样的地方
 
@@ -45,13 +45,13 @@ node scripts/check.cjs
 
 | 内容 | 入口 |
 | --- | --- |
-| 规则 | [0.3.8完整规则](docs/RULES.zh-CN.md) |
+| 规则 | [1.0.0完整规则](docs/RULES.zh-CN.md) |
 | 贡献 | [本地开发、目录、反馈与翻译](docs/CONTRIBUTING.zh-CN.md) |
 | 设计 | [颜色、标志、UI与语言原则](docs/DESIGN.zh-CN.md) |
 | 反馈 | [提交试玩记录或Bug](https://github.com/lucienzhu/gk-royale-playtest/issues/new/choose) |
 | 研究 | [历史三张牌概率研究](https://lucienzhu.github.io/gk-royale-playtest/probability.html?lang=zh-CN) |
 
-**当前状态：**试玩规则0.3.8，继续收集真人反馈。模拟不等于平衡性证明，也不等于流行度。旧规则仍能从游戏菜单选择，已有版本标签不移动。
+**当前状态：**试玩规则1.0.0，继续收集真人反馈。模拟不等于平衡性证明，也不等于流行度。旧规则仍能从游戏菜单选择，已有版本标签不移动。
 
 ## 许可
 
@@ -59,7 +59,7 @@ node scripts/check.cjs
 
 ## 用它做自己的游戏
 
-SDK 0.1.1／规则0.3.8：JavaScript＋TypeScript类型、Python／Rust／C++17原生核心，共用卡牌编号、动作与JSON状态。提供只看可见信息的基础策略和可选Gymnasium环境。
+SDK 0.2.0／规则1.0.0：JavaScript＋TypeScript类型、Python／Rust／C++17原生核心，共用卡牌编号、动作与JSON状态。提供只看可见信息的基础策略和可选Gymnasium环境。
 
 - [移植核心与示例](docs/SDK.zh-CN.md)
 - [RL环境、掩码与观察](docs/RL.zh-CN.md)
@@ -70,3 +70,5 @@ SDK 0.1.1／规则0.3.8：JavaScript＋TypeScript类型、Python／Rust／C++17�
 ## 小 Tips：名字的由来
 
 **三张牌是内核，三角梅是深圳的花。**「花牌」连起花札、炸金花与《小丑牌》（Balatro）的玩法灵感：组合、公开牌取舍、换牌与成长。目标是用一副普通扑克，把两个人的1v1做得尽可能好玩，随时随地愿意再来一局。实体牌仍是52张，不含大小王。
+
+标准1.0增加五炸7分：四张自然同点牌＋本局共用花牌。见[完整标准规则](docs/RULES.zh-CN.md)。合法动作包含五张出牌；`wild.as`只表示虚拟牌面，五炸可引用已存在的同点代表牌，实体ID仍不重复。Gym分数／类别特征改按7归一，出牌数按5归一。

@@ -1,5 +1,5 @@
 #pragma once
-// Native C++17 rules 0.3.8. SDK state schema 1. MIT, see cpp/LICENSE.
+// Native C++17 rules 1.0.0. SDK state schema 2. MIT, see cpp/LICENSE.
 #include <nlohmann/json.hpp>
 #include <algorithm>
 #include <array>
@@ -15,8 +15,8 @@
 
 namespace threecard_royale {
 using Json = nlohmann::json;
-inline constexpr const char* RULES = "0.3.8";
-inline constexpr const char* SDK_VERSION = "0.1.1";
+inline constexpr const char* RULES = "1.0.0";
+inline constexpr const char* SDK_VERSION = "0.2.0";
 namespace detail {
 inline void require(bool ok, const char* message) {
     if (!ok) throw std::invalid_argument(message);
@@ -63,13 +63,18 @@ inline bool stronger(const Json& a, const Json& b) {
 
 inline Json evaluate(std::vector<int> cards, int level = 2) {
     using namespace detail;
-    require(level >= 2 && level <= 14 && (cards.size() == 3 || cards.size() == 4), "Invalid cards or flower level");
+    require(level >= 2 && level <= 14 && (cards.size() == 3 || cards.size() == 4 || cards.size() == 5), "Invalid cards or flower level");
     require(std::all_of(cards.begin(), cards.end(), [](int c) { return c >= 0 && c < 52; }), "Card IDs must be 0..51");
     std::sort(cards.begin(), cards.end());
     require(std::adjacent_find(cards.begin(), cards.end()) == cards.end(), "Use distinct physical cards");
     int wc = -1;
     std::vector<int> others;
     for (int c : cards) { if (wild(c, level)) wc = c; else others.push_back(c); }
+    if (cards.size() == 5) {
+        const int target=rank(others.front());
+        require(wc>=0 && others.size()==4 && std::all_of(others.begin(),others.end(),[&](int c){return rank(c)==target;}), "Five of a kind needs four natural equal ranks and the flower");
+        return {{"score",7},{"kind",7},{"rank_key",{target}},{"wild",{{"physical",wc},{"as",target-2}}}};
+    }
     if (cards.size() == 4) {
         const int target = rank(others.front());
         require(std::all_of(others.begin(), others.end(), [&](int c) { return rank(c) == target; }), "Four cards must be one rank");
@@ -113,7 +118,7 @@ public:
     explicit Game(std::uint32_t seed, std::optional<int> first = std::nullopt) {
         detail::require(!first || *first == 0 || *first == 1, "Invalid first player");
         Json p = {{"level", 2}, {"hand", Json::array()}, {"wounds", Json::array()}};
-        s_ = {{"schema", 1}, {"rules", RULES}, {"seed", seed}, {"rng", seed ? seed : 0x6d2b79f5U},
+        s_ = {{"schema", 2}, {"rules", RULES}, {"seed", seed}, {"rng", seed ? seed : 0x6d2b79f5U},
               {"players", Json::array({p, p})}, {"a_losses", {0, 0}}, {"game", 0}, {"round", 0},
               {"results", Json::array()}, {"next_first", nullptr}, {"last_combat", nullptr}};
         const int f = first ? *first : random() < 0.5 ? 0 : 1;
@@ -151,6 +156,11 @@ public:
                             }
                             if (valid) out.push_back({{"type", "play"}, {"cards", cs}});
                         }
+            for(std::size_t a=0;a<n;++a)for(std::size_t b=a+1;b<n;++b)for(std::size_t c=b+1;c<n;++c)for(std::size_t d=c+1;d<n;++d)for(std::size_t e=d+1;e<n;++e){
+                const std::vector<int> cs{cards[a],cards[b],cards[c],cards[d],cards[e]};int target=0,count=0;bool valid=true;
+                for(int card:cs)if(!wild(card,level)){if(target&&target!=rank(card))valid=false;target=rank(card);++count;}
+                if(valid&&count==4)out.push_back({{"type","play"},{"cards",cs}});
+            }
         } else if (phase == "refresh") {
             const int who = *actor();
             const auto& p = s_.at("players").at(who);
@@ -200,7 +210,7 @@ public:
                 {"first", s_.at("first")}, {"attacker", s_.at("attacker")}, {"battle_index", s_.at("battle_index")},
                 {"levels", Json::array({p.at("level"), q.at("level")})},
                 {"a_losses", Json::array({s_.at("a_losses").at(who), s_.at("a_losses").at(1 - who)})},
-                {"flower_level", s_.at("flower_level")}, {"hand", p.at("hand")}, {"wounds", p.at("wounds")},
+                {"flower_level", s_.at("flower_level")}, {"level_owner", s_.at("level_owner")}, {"hand", p.at("hand")}, {"wounds", p.at("wounds")},
                 {"enemy_wounds", q.at("wounds")}, {"enemy_hand_count", q.at("hand").size()},
                 {"deck_count", s_.at("stock").size()}, {"discard", s_.at("discard")},
                 {"active", s_.at("active")}, {"pending", s_.at("pending")}, {"last_combat", s_.at("last_combat")},
@@ -208,7 +218,7 @@ public:
     }
     bool check() const {
         using namespace detail;
-        require(s_.at("schema") == 1 && s_.at("rules") == RULES, "Unsupported SDK state");
+        require(s_.at("schema") == 2 && (s_.at("level_owner")==0 || s_.at("level_owner")==1) && s_.at("rules") == RULES, "Unsupported SDK state");
         const std::vector<std::string> phases{"attack", "defend", "refresh", "resolved", "game_over", "match_over"};
         const auto phase = s_.at("phase").get<std::string>();
         require(std::find(phases.begin(), phases.end(), phase) != phases.end(), "Invalid phase");
@@ -275,7 +285,7 @@ private:
     }
     void start_game(int first) {
         s_["game"] = s_.at("game").get<int>() + 1;
-        s_["round"] = 1; s_["first"] = first; s_["attacker"] = first; s_["battle_index"] = 0;
+        s_["round"] = 1; s_["first"] = first; s_["level_owner"] = first; s_["attacker"] = first; s_["battle_index"] = 0;
         s_["flower_level"] = s_["players"][first]["level"];
         std::vector<int> stock(52); std::iota(stock.begin(), stock.end(), 0); s_["stock"] = stock; shuffle_stock();
         s_["discard"] = Json::array(); s_["active"] = Json::array({nullptr, nullptr}); s_["pending"] = nullptr;
@@ -348,8 +358,10 @@ private:
         const int winner = 1 - loser, old = s_["players"][winner]["level"];
         const int gain = static_cast<int>(s_["players"][loser]["wounds"].size()) - static_cast<int>(s_["players"][winner]["wounds"].size());
         const int level = std::min(14, old + gain); s_["players"][winner]["level"] = level; s_["next_first"] = winner;
-        s_["phase"] = old == 14 ? "match_over" : "game_over"; Json reset = nullptr;
-        if (s_["players"][loser]["level"] == 14 && old != 14) {
+        const int challenger=s_.at("flower_level")==14?s_.at("level_owner").get<int>():-1;
+        const bool match_won=old==14&&challenger==winner;
+        s_["phase"] = match_won ? "match_over" : "game_over"; Json reset = nullptr;
+        if (s_["players"][loser]["level"] == 14 && challenger == loser) {
             s_["a_losses"][loser] = s_["a_losses"][loser].get<int>() + 1;
             if (s_["a_losses"][loser] == 3) {
                 s_["players"][loser]["level"] = 2; s_["a_losses"][loser] = 0;
@@ -359,7 +371,7 @@ private:
         if (old < 14 && level == 14) s_["a_losses"][winner] = 0;
         s_["results"].push_back({{"game", s_.at("game")}, {"rounds", s_.at("round")}, {"winner", winner},
                                 {"damage", {s_["players"][0]["wounds"].size(), s_["players"][1]["wounds"].size()}},
-                                {"gain", gain}, {"from", old}, {"to", level}, {"match_won", old == 14}, {"aLosses", s_.at("a_losses")}, {"a_reset", reset}});
+                                {"gain", gain}, {"from", old}, {"to", level}, {"match_won", match_won}, {"level_owner", s_.at("level_owner")}, {"ace_challenger", challenger<0?Json(nullptr):Json(challenger)}, {"aLosses", s_.at("a_losses")}, {"a_reset", reset}});
     }
     void advance() {
         if (s_["battle_index"] == 0) { s_["battle_index"] = 1; s_["attacker"] = 1 - s_.at("first").get<int>(); s_["phase"] = "attack"; s_["last_combat"] = nullptr; }

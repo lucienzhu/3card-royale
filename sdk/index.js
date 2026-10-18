@@ -1,11 +1,11 @@
-/* SDK 0.1.1 / rules 0.3.8. Uses the frozen browser rules engine. */
+/* SDK 0.2.0 / rules 1.0.0. Uses the frozen browser rules engine. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports)
     module.exports = factory(require("../gamecore.js"));
   else root.ThreeCardRoyale = factory(root.GK);
 })(typeof globalThis !== "undefined" ? globalThis : this, function (GK) {
   "use strict";
-  const RULES = "0.3.8",
+  const RULES = "1.0.0",
     copy = (v) => JSON.parse(JSON.stringify(v)),
     stable = (v) =>
       JSON.stringify(
@@ -73,6 +73,7 @@
               rs = cs.filter((c) => !GK.wild(c, level)).map(GK.rank);
             if (new Set(rs).size === 1) out.push(cs);
           }
+    out.push(...GK.fiveBombs(cards,level));
     return out;
   }
   class Game {
@@ -95,7 +96,7 @@
     save() {
       const g = this.g;
       return copy({
-        schema: 1,
+        schema: 2,
         rules: RULES,
         seed: g.seed,
         rng: g.rng.state,
@@ -122,6 +123,7 @@
         attacker: g.attacker,
         battle_index: g.battleIndex,
         flower_level: g.flowerLevel,
+        level_owner: g.levelOwner,
         stock: g.stock,
         discard: g.discard,
         active: g.active.map(move),
@@ -133,7 +135,7 @@
     }
     static restore(s) {
       requireValid(
-        s.schema === 1 &&
+        s.schema === 2 && (s.level_owner === 0 || s.level_owner === 1) &&
           s.rules === RULES &&
           Number.isInteger(s.rng) &&
           s.rng > 0 &&
@@ -163,6 +165,7 @@
         attacker: s.attacker,
         battleIndex: s.battle_index,
         flowerLevel: s.flower_level,
+        levelOwner: s.level_owner,
         stock: copy(s.stock),
         discard: copy(s.discard),
         active: s.active.map((m) =>
@@ -319,6 +322,7 @@
         levels: [p.level, q.level],
         a_losses: [s.a_losses[who], s.a_losses[1 - who]],
         flower_level: s.flower_level,
+        level_owner: s.level_owner,
         hand: p.hand,
         wounds: p.wounds,
         enemy_wounds: q.wounds,

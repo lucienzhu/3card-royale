@@ -3,6 +3,7 @@
  const host=document.getElementById('rg-guide'),dialog=document.getElementById('rule-page');
  const textPanel=document.getElementById('rg-text'),switches=document.getElementById('rg-switch');
  const progress=document.getElementById('rg-progress'),navigation=document.getElementById('rg-navigation'),scroller=dialog.querySelector('.modal-body');
+ const standard=document.createElement('article');standard.className='standard-rules';standard.hidden=true;textPanel.before(standard);
  let step=0,view='visual',exchange='rival',sourceZone='hand',zone='hand',lastLanguage='',lastVersion='';
  const data=window.SZRuleCases;
  const t=(zh,en)=>window.GKLocale?.language==='en'?en:zh;
@@ -74,6 +75,8 @@
   {title:t('一轮结束，各补到8张','Round over. Refill to 8.'),caption:t('保留剩余手牌，只补缺的数量。','Keep your unused cards. Draw only the missing cards.'),body:()=>`<div class="rg-refill"><div><strong>${t('你','You')}</strong>${stack(3)}<b>+5</b>${stack(8)}</div><div><strong>${t('对手','Rival')}</strong>${stack(2)}<b>+6</b>${stack(8)}</div></div><div class="rg-wound-pair"><span>${t('你','You')}${damage(1)}</span><span>${t('对手','Rival')}${damage(4)}</span></div>${result(t('下一轮，对手先攻','Next round, the rival attacks first'),t('伤牌保留，不回血。达到5伤就输小局。','Wounds remain. No healing. 5 wounds loses the game.'))}<div class="rg-finish">2 <span>→</span> A <span>+</span> ${t('再赢一局','win again')} <b>⚑</b></div>`},
  ];
  function paint(){
+  const isStandard=document.getElementById('version-select').value==='1.0.0';standard.hidden=!isStandard;
+  if(isStandard){standard.innerHTML=window.SZStandardRules[window.GKLocale?.language==='en'?'en':'zh'];switches.parentElement.hidden=true;host.hidden=true;textPanel.hidden=true;progress.hidden=true;navigation.hidden=true;document.getElementById('rules-heading').textContent=t('标准规则 1.0','Standard Rules 1.0');return;}
   const available=document.getElementById('version-select').value==='0.3.8';
   switches.parentElement.hidden=!available;
   switches.querySelector('[data-rg-view="visual"]').hidden=!available;

@@ -48,13 +48,15 @@ export interface GameResult {
   from: number;
   to: number;
   match_won: boolean;
+  level_owner: PlayerId;
+  ace_challenger: PlayerId | null;
   aLosses: [number, number];
   a_reset: null | { who: PlayerId; from: 14; to: 2; failures: 3 };
 }
 /** Private trusted-host state: never send to an agent or untrusted client. */
 export interface State {
-  schema: 1;
-  rules: "0.3.8";
+  schema: 2;
+  rules: "1.0.0";
   seed: number;
   rng: number;
   players: [
@@ -71,6 +73,7 @@ export interface State {
   attacker: PlayerId;
   battle_index: number;
   flower_level: number;
+  level_owner: PlayerId;
   stock: number[];
   discard: number[];
   active: [Move | null, Move | null];
@@ -80,7 +83,7 @@ export interface State {
   phase: Phase;
 }
 export interface Observation {
-  rules: "0.3.8";
+  rules: "1.0.0";
   player: PlayerId;
   actor: PlayerId | null;
   phase: Phase;
@@ -92,6 +95,7 @@ export interface Observation {
   levels: [number, number];
   a_losses: [number, number];
   flower_level: number;
+  level_owner: PlayerId;
   hand: number[];
   wounds: (number | null)[];
   enemy_wounds: (number | null)[];
@@ -104,7 +108,7 @@ export interface Observation {
   results: GameResult[];
   legal_actions: Action[];
 }
-export const RULES: "0.3.8";
+export const RULES: "1.0.0";
 export class Game {
   constructor(seed?: number, first?: PlayerId);
   readonly actor: PlayerId | null;

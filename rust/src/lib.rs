@@ -1,8 +1,8 @@
-//! Native portable rules 0.3.8. Full State is trusted-host data; send observation to players.
+//! Native portable rules 1.0.0. Full State is trusted-host data; send observation to players.
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::collections::HashSet;
-pub const RULES: &str = "0.3.8";
+pub const RULES: &str = "1.0.0";
 type R<T> = Result<T, String>;
 fn need(b: bool, s: &str) -> R<()> {
     if b {
@@ -77,7 +77,7 @@ fn plain(cs: &[u8]) -> Evaluation {
 pub fn evaluate(cards: &[u8], level: u8) -> R<Evaluation> {
     need(
         (2..=14).contains(&level)
-            && [3, 4].contains(&cards.len())
+            && [3, 4, 5].contains(&cards.len())
             && cards.iter().all(|c| *c < 52)
             && cards.iter().collect::<HashSet<_>>().len() == cards.len(),
         "Invalid cards or flower level",
@@ -86,6 +86,11 @@ pub fn evaluate(cards: &[u8], level: u8) -> R<Evaluation> {
     ids.sort();
     let wc = ids.iter().find(|c| wild(**c, level)).copied();
     let others: Vec<u8> = ids.iter().copied().filter(|c| Some(*c) != wc).collect();
+    if ids.len() == 5 {
+        let target = rank(others[0]);
+        need(wc.is_some() && others.len() == 4 && others.iter().all(|c| rank(*c) == target), "Five of a kind needs four natural equal ranks and the flower")?;
+        return Ok(Evaluation { score: 7, kind: 7, rank_key: vec![target], wild: wc.map(|physical| Wild { physical, r#as: target - 2 }) });
+    }
     if ids.len() == 4 {
         let target = rank(others[0]);
         need(
@@ -173,6 +178,7 @@ pub struct State {
     next_first: Option<usize>,
     last_combat: Option<Value>,
     first: usize,
+    level_owner: usize,
     attacker: usize,
     battle_index: u8,
     flower_level: u8,
@@ -201,7 +207,7 @@ impl Game {
         };
         let mut g = Self {
             s: State {
-                schema: 1,
+                schema: 2,
                 rules: RULES.into(),
                 seed,
                 rng: if seed == 0 { 0x6d2b79f5 } else { seed },
@@ -213,6 +219,7 @@ impl Game {
                 next_first: None,
                 last_combat: None,
                 first: 0,
+                level_owner: 0,
                 attacker: 0,
                 battle_index: 0,
                 flower_level: 2,
@@ -255,6 +262,7 @@ impl Game {
         self.s.game += 1;
         self.s.round = 1;
         self.s.first = first;
+        self.s.level_owner = first;
         self.s.attacker = first;
         self.s.battle_index = 0;
         self.s.flower_level = self.s.players[first].level;
@@ -325,6 +333,11 @@ impl Game {
                         }
                     }
                 }
+                for a in 0..n { for b in a+1..n { for c in b+1..n { for d in c+1..n { for e in d+1..n {
+                    let cards=vec![cs[a],cs[b],cs[c],cs[d],cs[e]];
+                    let rs: Vec<u8>=cards.iter().filter(|c| !wild(**c,self.s.flower_level)).map(|c|rank(*c)).collect();
+                    if rs.len()==4 && rs.iter().all(|r| *r==rs[0]) { out.push(json!({"type":"play","cards":cards})); }
+                }}}}}
             }
             "refresh" => {
                 let who = self.actor().unwrap();
@@ -539,9 +552,11 @@ impl Game {
             let gain = self.s.players[loser].wounds.len() - self.s.players[winner].wounds.len();
             self.s.players[winner].level = (old as usize + gain).min(14) as u8;
             self.s.next_first = Some(winner);
-            self.s.phase = if old == 14 { "match_over" } else { "game_over" }.into();
+            let challenger=if self.s.flower_level==14 {Some(self.s.level_owner)} else {None};
+            let match_won=old==14 && challenger==Some(winner);
+            self.s.phase = if match_won { "match_over" } else { "game_over" }.into();
             let mut reset = Value::Null;
-            if self.s.players[loser].level == 14 && old != 14 {
+            if self.s.players[loser].level == 14 && challenger == Some(loser) {
                 self.s.a_losses[loser] += 1;
                 if self.s.a_losses[loser] == 3 {
                     self.s.players[loser].level = 2;
@@ -552,7 +567,7 @@ impl Game {
             if old < 14 && self.s.players[winner].level == 14 {
                 self.s.a_losses[winner] = 0;
             }
-            self.s.results.push(json!({"game":self.s.game,"rounds":self.s.round,"winner":winner,"damage":[self.s.players[0].wounds.len(),self.s.players[1].wounds.len()],"gain":gain,"from":old,"to":self.s.players[winner].level,"match_won":old==14,"aLosses":self.s.a_losses,"a_reset":reset}));
+            self.s.results.push(json!({"game":self.s.game,"rounds":self.s.round,"winner":winner,"damage":[self.s.players[0].wounds.len(),self.s.players[1].wounds.len()],"gain":gain,"from":old,"to":self.s.players[winner].level,"match_won":match_won,"level_owner":self.s.level_owner,"ace_challenger":challenger,"aLosses":self.s.a_losses,"a_reset":reset}));
         } else {
             self.s.phase = "resolved".into();
         }
@@ -596,13 +611,13 @@ impl Game {
         let p = &s.players[who];
         let q = &s.players[1 - who];
         Ok(
-            json!({"rules":RULES,"player":who,"actor":self.actor(),"phase":s.phase,"game":s.game,"round":s.round,"first":s.first,"attacker":s.attacker,"battle_index":s.battle_index,"levels":[p.level,q.level],"a_losses":[s.a_losses[who],s.a_losses[1-who]],"flower_level":s.flower_level,"hand":p.hand,"wounds":p.wounds,"enemy_wounds":q.wounds,"enemy_hand_count":q.hand.len(),"deck_count":s.stock.len(),"discard":s.discard,"active":s.active,"pending":s.pending,"last_combat":s.last_combat,"results":s.results,"legal_actions":if self.actor()==Some(who){self.legal_actions()}else{vec![]}}),
+            json!({"rules":RULES,"player":who,"actor":self.actor(),"phase":s.phase,"game":s.game,"round":s.round,"first":s.first,"attacker":s.attacker,"battle_index":s.battle_index,"levels":[p.level,q.level],"a_losses":[s.a_losses[who],s.a_losses[1-who]],"flower_level":s.flower_level,"level_owner":s.level_owner,"hand":p.hand,"wounds":p.wounds,"enemy_wounds":q.wounds,"enemy_hand_count":q.hand.len(),"deck_count":s.stock.len(),"discard":s.discard,"active":s.active,"pending":s.pending,"last_combat":s.last_combat,"results":s.results,"legal_actions":if self.actor()==Some(who){self.legal_actions()}else{vec![]}}),
         )
     }
     pub fn check(&self) -> R<()> {
         let s = &self.s;
         need(
-            s.schema == 1
+            s.schema == 2 && s.level_owner < 2
                 && s.rules == RULES
                 && s.rng > 0
                 && s.first < 2

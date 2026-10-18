@@ -3,8 +3,8 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 [project]
 name = "threecard-royale"
-version = "0.1.1"
-description = "Portable rules 0.3.8 and an optional Gymnasium environment for 3Card Royale"
+version = "0.2.0"
+description = "Portable rules 1.0.0 and an optional Gymnasium environment for 3Card Royale"
 requires-python = ">=3.10"
 license = "MIT"
 dependencies = []

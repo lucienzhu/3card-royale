@@ -45,7 +45,7 @@ Reset options are `first:0|1` and `levels:[2..14,2..14]`; nonstandard levels are
 | `candidates` | 512×72 / float32 | Current action features, detailed below |
 | `action_mask` | 512 / int8 | 1 exactly where an action is legal |
 
-Candidate columns 0..51 mark cards used/given. Columns 52..56 one-hot play/swap/stop/advance/next-game; 57..58 source hand/wounds; 59 source index/11; 60..63 deck/blind/own-zone/rival-zone; 64..66 known incoming rank/14, suit/3 and ID/51; 67 score/6, 68 type/6, 69 top comparison rank/14, 70 card count/4; 71 reserved zero. Unknown target identities are never encoded. Type IDs are high 0, pair 1, straight 2, flush 3, trips 4, straight flush 5, four of a kind 6. Their scores differ for trips/straight-flush; use score as the ranking.
+Candidate columns 0..51 mark cards used/given. Columns 52..56 one-hot play/swap/stop/advance/next-game; 57..58 source hand/wounds; 59 source index/11; 60..63 deck/blind/own-zone/rival-zone; 64..66 known incoming rank/14, suit/3 and ID/51; 67 score/7, 68 type/7, 69 top comparison rank/14, 70 card count/5; 71 is 1 when this player owns the current Ace challenge, otherwise 0. Unknown target identities are never encoded. Type IDs are high 0, pair 1, straight 2, flush 3, trips 4, straight flush 5, four of a kind 6, five of a kind 7. Their scores differ for trips/straight-flush; use score as the ranking.
 
 `env.action_masks()` returns a boolean mask for mask-aware algorithms. Candidate encodings let a policy associate dynamic indices with actual moves; an index alone has no stable meaning. Algorithms without masking need an explicit masked distribution/wrapper.
 
@@ -56,3 +56,5 @@ Pass `opponent=callable(observation, legal_actions)`. The default is the simple 
 For explicit two-agent self-play, use the turn-based `Game` API, query `actor`, and pass that player's observation to their policy; the host executes `advance` / `next_game` transitions. No PettingZoo API or trained model is claimed. Keep the learner's replay buffer restricted to its own observation/action/reward sequence. A full-information critic, if added, should be an explicit separate training choice.
 
 Run `python -m unittest discover -s tests -p 'test_*.py'` for the official Gym checker, hidden-state invariance, vectorization, masks, episode termination and time limits. Standard API design follows [Gymnasium's custom environment guide](https://gymnasium.farama.org/introduction/create_custom_env/).
+
+Standard 1.0 adds five of a kind (7 points): four natural equal-rank cards plus the shared flower. See [complete standard rules](RULES.md). Five-card plays are included in legal actions. `wild.as` is a virtual face; in five of a kind it may name an already-present representative face without reusing a physical card. Gym score/kind features use /7 and played-card count uses /5.

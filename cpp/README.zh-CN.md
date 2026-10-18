@@ -2,7 +2,7 @@
 
 [English](README.md) · [统一SDK协议](../docs/SDK.zh-CN.md)
 
-原生仅头文件实现：规则 **0.3.8**、SDK **0.1.1**、JSON状态 **schema 1**。运行无需Node、Python或Rust。要求标准C++17和异常支持。本次实际验证AppleClang 21／macOS arm64，其他平台尚未实测。
+原生仅头文件实现：规则 **1.0.0**、SDK **0.2.0**、JSON状态 **schema 2**。运行无需Node、Python或Rust。要求标准C++17和异常支持。本次实际验证AppleClang 21／macOS arm64，其他平台尚未实测。
 
 ```cpp
 #include <threecard_royale/policy.hpp>
@@ -63,3 +63,5 @@ target_link_libraries(my_game PRIVATE threecard_royale::core)
 随源码原样附带MIT授权的[nlohmann/json v3.11.3](https://github.com/nlohmann/json/tree/v3.11.3)单头文件，位于`include/nlohmann/json.hpp`，保留[第三方许可证](third_party/nlohmann-json.LICENSE)。构建无需联网拉依赖。核心采用[MIT许可](LICENSE)，尚未发布C++注册库包。
 
 跨语言检查见[统一SDK文档](../docs/SDK.zh-CN.md)，在原Python／JS／Rust检查命令中增加`--cpp /tmp/royale-cpp/royale-json-cpp`。
+
+标准1.0增加五炸7分：四张自然同点牌＋本局共用花牌。见[完整标准规则](../docs/RULES.zh-CN.md)。合法动作包含五张出牌；`wild.as`只表示虚拟牌面，五炸可引用已存在的同点代表牌，实体ID仍不重复。Gym分数／类别特征改按7归一，出牌数按5归一。

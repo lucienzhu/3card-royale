@@ -1,11 +1,11 @@
-"""Native, UI-free rules 0.3.8. SDK state schema 1; trusted full states are private."""
+"""Native, UI-free rules 1.0.0. SDK state schema 2; trusted full states are private."""
 
 from copy import deepcopy
 from itertools import combinations
 from functools import lru_cache
 import secrets
 
-RULES = "0.3.8"
+RULES = "1.0.0"
 PHASES = ("attack", "defend", "refresh", "resolved", "game_over", "match_over")
 
 
@@ -63,6 +63,10 @@ def _plain(cards):
 def _evaluate(ids, level):
     wc = next((c for c in ids if wild(c, level)), None)
     others = [c for c in ids if c != wc]
+    if len(ids) == 5:
+        target = rank(others[0])
+        require(wc is not None and len(others) == 4 and all(rank(c) == target for c in others), "Five of a kind needs four natural equal ranks and the flower")
+        return {"score": 7, "kind": 7, "rank_key": [target], "wild": {"physical": wc, "as": target - 2}}
     if len(ids) == 4:
         target = rank(others[0])
         require(
@@ -94,10 +98,10 @@ def evaluate(cards, level=2):
     require(isinstance(level, int) and 2 <= level <= 14, "Invalid flower level")
     require(
         isinstance(cards, (list, tuple))
-        and len(cards) in (3, 4)
+        and len(cards) in (3, 4, 5)
         and all(type(c) is int and 0 <= c < 52 for c in cards)
         and len(set(cards)) == len(cards),
-        "Use 3 or 4 distinct card IDs, 0..51",
+        "Use 3, 4 or 5 distinct card IDs, 0..51",
     )
     return deepcopy(_evaluate(tuple(sorted(cards)), level))
 
@@ -123,6 +127,10 @@ def plays(cards, level):
         rest = [c for c in cs if not wild(c, level)]
         if len({rank(c) for c in rest}) == 1:
             out.append(list(cs))
+    for cs in combinations(cards, 5):
+        rest = [c for c in cs if not wild(c, level)]
+        if len(rest) == 4 and len({rank(c) for c in rest}) == 1:
+            out.append(list(cs))
     return out
 
 
@@ -137,7 +145,7 @@ class Game:
             "first must be 0 or 1",
         )
         self.s = {
-            "schema": 1,
+            "schema": 2,
             "rules": RULES,
             "seed": seed,
             "rng": seed or 0x6D2B79F5,
@@ -178,6 +186,7 @@ class Game:
         s.update(
             round=1,
             first=first,
+            level_owner=first,
             attacker=first,
             battle_index=0,
             flower_level=s["players"][first]["level"],
@@ -384,9 +393,11 @@ class Game:
         gain = len(s["players"][loser]["wounds"]) - len(p["wounds"])
         p["level"] = min(14, old + gain)
         s["next_first"] = winner
-        s["phase"] = "match_over" if old == 14 else "game_over"
+        challenger = s["level_owner"] if s["flower_level"] == 14 else None
+        match_won = old == 14 and winner == challenger
+        s["phase"] = "match_over" if match_won else "game_over"
         reset = None
-        if s["players"][loser]["level"] == 14 and old != 14:
+        if s["players"][loser]["level"] == 14 and loser == challenger:
             s["a_losses"][loser] += 1
             if s["a_losses"][loser] == 3:
                 s["players"][loser]["level"] = 2
@@ -403,7 +414,9 @@ class Game:
                 "gain": gain,
                 "from": old,
                 "to": p["level"],
-                "match_won": old == 14,
+                "match_won": match_won,
+                "level_owner": s["level_owner"],
+                "ace_challenger": challenger,
                 "aLosses": list(s["a_losses"]),
                 "a_reset": reset,
             }
@@ -452,6 +465,7 @@ class Game:
                 "levels": [p["level"], q["level"]],
                 "a_losses": [s["a_losses"][who], s["a_losses"][1 - who]],
                 "flower_level": s["flower_level"],
+            "level_owner": s["level_owner"],
                 "hand": p["hand"],
                 "wounds": p["wounds"],
                 "enemy_wounds": q["wounds"],
@@ -479,7 +493,7 @@ class Game:
     def check(self):
         s = self.s
         require(
-            s["schema"] == 1 and s["rules"] == RULES and s["phase"] in PHASES,
+            s["schema"] == 2 and s.get("level_owner") in (0,1) and s["rules"] == RULES and s["phase"] in PHASES,
             "Unsupported SDK state",
         )
         require(type(s["rng"]) is int and 0 < s["rng"] < 2**32, "Invalid RNG state")

@@ -105,7 +105,7 @@ class RoyaleEnv(gym.Env):
             int(o["first"] == self.player),
             int(o["attacker"] == self.player),
             o["battle_index"],
-            (o["pending"]["remaining"] if o["pending"] else 0) / 6,
+            (o["pending"]["remaining"] if o["pending"] else 0) / 7,
             int(o["actor"] == self.player),
             min(o["round"], 1024) / 1024,
             min(o["game"], 1024) / 1024,
@@ -130,10 +130,11 @@ class RoyaleEnv(gym.Env):
                 from .core import evaluate
 
                 e = evaluate(a["cards"], o["flower_level"])
-                f[67] = e["score"] / 6
-                f[68] = e["kind"] / 6
+                f[67] = e["score"] / 7
+                f[68] = e["kind"] / 7
                 f[69] = e["rank_key"][0] / 14
-                f[70] = len(a["cards"]) / 4
+                f[70] = len(a["cards"]) / 5
+                f[71] = float(o["flower_level"] == 14 and o["level_owner"] == self.player)
             if a["type"] == "swap":
                 src = a["source"]
                 c = o[src["zone"]][src["index"]]
@@ -172,7 +173,7 @@ class RoyaleEnv(gym.Env):
         # All fields are public. No seed, RNG, stock order or hidden hand IDs.
         s = self.game.s
         return {
-            "rules": "0.3.8",
+            "rules": "1.0.0",
             "episode": self.episode,
             "phase": s["phase"],
             "player": self.player,

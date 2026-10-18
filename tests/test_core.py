@@ -36,6 +36,7 @@ class CoreTests(unittest.TestCase):
             held = {c for p in s["players"] for c in p["hand"] + p["wounds"]}
             s["stock"] = [c for c in range(52) if c not in held]
             s["a_losses"][1] = losses
+            s.update(level_owner=1, flower_level=14, round=2)
             g = Game.restore(s)
             g.step({"type": "play", "cards": [0, 13, 26, 39]})
             g.step({"type": "play", "cards": [1, 4, 8]})

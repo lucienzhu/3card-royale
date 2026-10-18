@@ -245,8 +245,9 @@ const FOUR_STUDY={
 ;
 'use strict';
 const $=id=>document.getElementById(id);
-const UI_REVISION='sz-product-1';
+const UI_REVISION='sz-standard-1';
 const VARIANT_TEXT={
+ '1.0.0':{name:'1.0 · 标准规则',note:'共用花牌，五伤败北。通常出三张，四炸6分，五炸7分；五炸须四张自然同点牌加花牌。赢家升级后的等级决定下局花牌。',tie:'同花样比点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无效果。',ranking:'五炸7 > 四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。'},
  '0.3.8':{name:'0.3.8 · 共用花牌',note:'首局双方共用♥2作为花牌。此后小局赢家升级后的等级决定下一小局双方共用的花牌；一局内不变。花牌即逢人配／会子／百搭牌。攻防、血牌交换与升级其余规则沿用0.3.7。',tie:'同牌型比较点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无事发生。',ranking:'四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。四炸也可用花牌。'},
  '0.3.7':{name:'0.3.7 · 血牌反击',note:'防守胜出可用自己的手牌或伤牌交换对手盲手牌、公开伤牌、自己的另一牌区，或弃旧摸新。每次1机会，张数与伤势不变；其余沿用0.3.6。',tie:'同牌型比较点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无事发生。',ranking:'四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。四炸允许逢人配。'},
  '0.3.6':{name:'0.3.6 · 防守反击',note:'防守胜出后选自己一张手牌，盲换对手一张，或弃旧摸新；次数随胜出分差变化。小局赢家下局先攻，轮间仍交换；以A开局输三次回到2级，对手保留等级。',tie:'同牌型比较点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无事发生。',ranking:'四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。四炸允许逢人配。'},
@@ -258,8 +259,9 @@ const VARIANT_TEXT={
  '0.3.1a':{name:'0.3.1a · 试验 a',note:'同分直接让防守方新增 1 张扣牌；同分不再翻牌。',tie:'防守方新增 1 张扣牌，无翻牌效果。',ranking:'同牌型不比大小。'},
  '0.3.1b':{name:'0.3.1b · 试验 b',note:'同牌型比点数：进攻胜造成 1 伤，防守胜获得 1 张翻牌机会。完全相同仍由进攻方选机会。',tie:'比较同牌型点数；进攻胜造成 1 伤，防守胜获得 1 张翻牌机会，完全相同由进攻方选 1 张机会。',ranking:'同花顺、顺子比最高点（A23 为 3 高，QKA 为 A 高）；炸弹比点数；对子先比对子、再比单张；同花和高牌按从大到小逐张比，花色不分大小。'}
 };
-let variant=new URLSearchParams(location.search).get('version')||'0.3.8';
-if(!ROLLOUTS[variant])variant='0.3.8';
+function savedVariant(){try{const v=localStorage.getItem('gk031_variant');return ROLLOUTS[v]&&localStorage.getItem('gk033_compact_play_'+v)?v:'1.0.0';}catch(_){return '1.0.0';}}
+let variant=new URLSearchParams(location.search).get('version')||savedVariant();
+if(!ROLLOUTS[variant])variant='1.0.0';
 let ROLLOUT=ROLLOUTS[variant];
 const storageKey=()=> 'gk033_compact_play_'+variant;
 let mode='play',lastBoardMode='play',selected=[],flipMode=null,flipIndices=[],refreshTarget=null,cursor=0,autoTimer=null,aiTimer=null,busy=false,error='';
@@ -280,7 +282,7 @@ function card(id,{back=false,pending=false,selected=false,selectable=false,mini=
  return el;
 }
 function setEmpty(container,text){const el=document.createElement('div');el.className='empty';el.textContent=text;container.append(el);}
-function toggleCard(id){if(!isPlaying())return;error='';if(selected.includes(id))selected=selected.filter(c=>c!==id);else if(selected.length<(GK.allowsFour(variant)?4:3))selected.push(id);else error='已选足，请先取消一张再换牌。';render();}
+function toggleCard(id){if(!isPlaying())return;error='';if(selected.includes(id))selected=selected.filter(c=>c!==id);else if(selected.length<(GK.allowsFive(variant)?5:GK.allowsFour(variant)?4:3))selected.push(id);else error='已选足，请先取消一张再换牌。';render();}
 function toggleFlip(index){if(mode!=='play'||game.phase!=='flip'||game.currentActor()!==0||!flipMode)return;const o=game.flipOptions().find(x=>x.action===flipMode);if(!o.indices.includes(index))return;error='';if(flipIndices.includes(index))flipIndices=flipIndices.filter(i=>i!==index);else if(flipIndices.length<o.count)flipIndices.push(index);else error='已选足，请先取消一张再调整。';render();}
 function damageBar(el,n){const cap=GK.deathThreshold(variant);el.setAttribute('aria-label','伤势 '+n+' / '+cap);el.innerHTML='<b><span class="damage-count">'+n+'</span><small> / '+cap+' 伤</small></b>'+Array.from({length:cap},(_,i)=>'<span aria-hidden="true" class="pip'+(i<n?' filled':'')+'"></span>').join('');}
 function renderPiles(s){
@@ -311,14 +313,14 @@ function openResult(){
  modal.classList.toggle('is-champion',champion);modal.classList.toggle('is-a-reset',!!r.a_reset);modal.classList.toggle('is-loss',!own);modal.classList.toggle('reduce-motion',matchMedia('(prefers-reduced-motion: reduce)').matches);
  $('result-kicker').textContent=match?'整场结束':'第 '+r.game+' 局 · 结算';
  $('result-title').textContent=champion?'恭喜，赢下整场！':match?'这场，对手赢了':own?'这一局，你赢了':'这一局，对手赢了';
- $('result-subtitle').textContent=champion?'以 A 开局，再赢一局。你做到了。':match?'对手以 A 开局赢下了最后一局。':who+(r.to===14?'升到 A':'升了 '+(r.to-r.from)+' 级');
+ $('result-subtitle').textContent=champion?'赢下自己的 A 局，闯关成功。':match?'对手赢下了自己打 A 的闯关局。':who+(r.to===14?(r.from===14?'守住 A，下一局打自己的 A':'升到 A，下一局打自己的 A'):'升了 '+(r.to-r.from)+' 级');
  $('result-a').hidden=!champion;$('result-upgrade').hidden=match;
  $('result-from').textContent=GK.rankLabel(r.from);$('result-to').textContent=GK.rankLabel(r.to);
  $('result-upgrade-note').textContent=r.to===14?'最高级 · A':who+'的级数';
  $('result-own-damage').textContent=r.damage[0];$('result-opp-damage').textContent=r.damage[1];
  $('result-own').classList.toggle('result-winner',own);$('result-opp').classList.toggle('result-winner',!own);
  $('result-net').textContent=match?'本场 '+game.results.length+' 局 · 共 '+game.results.reduce((n,x)=>n+x.rounds,0)+' 轮':'净胜 '+r.gain+' 伤 · 第 '+r.rounds+' 轮结束';
- $('result-hint').textContent=match?(own?'从 2 到 A，这一场属于你。':'再开一场，从 2 重新挑战。'):r.to===14?(own?'下一局以 A 开局，再赢一局就赢整场。':'对手进入 A 级决胜局，仍需再赢一局。'):'下一局由'+(GK.winnerStarts(variant)?(own?'你':'对手'):(own?'对手':'你'))+'先攻。';
+ $('result-hint').textContent=match?(own?'从 2 到 A，这一场属于你。':'再开一场，从 2 重新挑战。'):r.to===14?(own?'下一局打自己的 A，赢下才闯关成功。':'下一局由对手打自己的 A，赢下才闯关成功。'):'下一局由'+(GK.winnerStarts(variant)?(own?'你':'对手'):(own?'对手':'你'))+'先攻。';
  $('result-attempts').replaceChildren();
  if(GK.handExchange(variant)){
   if(r.a_reset){$('result-hint').textContent=(r.a_reset.who===0?'你':'对手')+'冲A三次未果：A → 2；'+(r.a_reset.who===0?'对手':'你')+'保留当前等级。';drawAttemptLights($('result-attempts'),3,false);}
@@ -345,6 +347,7 @@ function continueResult(){
 }
 function drawAttemptLights(el,failed,success){el.classList.add('attempt-lights');el.setAttribute('aria-label','冲A：失败 '+failed+' 次'+(success?'，成功':''));for(let i=0;i<3;i++){const lamp=document.createElement('i');lamp.className=i<failed?'failed':success&&i===failed?'succeeded':'unused';lamp.setAttribute('aria-hidden','true');el.append(lamp);}}
 function renderGoal(s,replay){
+ $('goal-title').textContent=GK.sharedFlower(variant)?'赢下自己的 A 局':'升到 A，再赢一局';
  const names=replay?['A','B']:['你','对手'],levels=s.players.map(p=>p.level),ended=s.phase==='match_over',winner=ended?(s.players[0].table.length>=GK.deathThreshold(variant)?1:0):null;
  const r=replay?ROLLOUT.events[cursor]?.result:currentResult();
  for(const [who,id]of [[0,'goal-own'],[1,'goal-opp']]){const label=$(id);label.textContent=names[who]+' '+GK.rankLabel(levels[who]);if(GK.handExchange(variant)&&(levels[who]===14||r?.a_reset?.who===who)){const lights=document.createElement('span');drawAttemptLights(lights,r?.a_reset?.who===who?3:s.aLosses?.[who]||0,winner===who);label.append(lights);}}
@@ -402,7 +405,7 @@ function drawTable(container,who,s){
  });
  if(!p.table.length)setEmpty(container,'暂无');
 }
-function combatCards(container,move,level){container.replaceChildren();container.classList.toggle('has-four',move?.cards.length===4);if(!move)return;move.cards.forEach((id,i)=>container.append(card(id,{level:move.level??level,badge:move.origins[i].zone==='table'?'明牌':'手牌'})));}
+function combatCards(container,move,level){container.replaceChildren();container.classList.toggle('has-four',move?.cards.length>=4);if(!move)return;move.cards.forEach((id,i)=>container.append(card(id,{level:move.level??level,badge:move.origins[i].zone==='table'?'明牌':'手牌'})));}
 function addButton(text,fn,{disabled=false,primary=false,id=null}={}){const b=document.createElement('button');b.textContent=text;b.disabled=disabled;b.className=primary?'primary':'';if(id)b.id=id;b.addEventListener('click',fn);$('action-buttons').append(b);return b;}
 function tryAction(fn){error='';try{fn();selected=[];flipIndices=[];flipMode=null;refreshTarget=null;persist();}catch(e){error=e.message;}render();driveAI();}
 function describeEffect(combat){if(!combat)return '';if(combat.action==='refresh')return (GK.handExchange(variant)?'已交换 ':'已换 ')+combat.refreshes.length+' / '+combat.amount+' 次，伤势不变';if(combat.action==='damage')return '新增 '+combat.amount+' 张'+(GK.isRefresh(variant)?'明伤牌':'扣牌')+'，伤势 '+combat.before.join(' / ')+' → '+combat.after.join(' / ');if(combat.action==='open')return '翻开自己 '+combat.amount+' 张，解锁出牌；伤势不变';if(combat.action==='lock')return '扣回对方 '+combat.amount+' 张，封锁机会；伤势不变';if(combat.action==='none')return GK.isRefresh(variant)?'没有可换的牌，机会自动结束':'没有翻面目标，伤势不变';return '等待翻面选择；伤势不变';}
@@ -414,11 +417,11 @@ function renderActions(s,event){
  if(p==='attack'||p==='defend'){
   if(game.currentActor()===1){$('action-title').textContent='对手'+(p==='attack'?'进攻':'防守')+'中…';$('action-description').textContent='';return;}
   $('action-title').textContent=p==='attack'?'你进攻':'你防守';
-  $('action-description').textContent=GK.allowsFour(variant)?'三张或同点四炸，手牌与明伤牌可混用':p==='attack'?'手牌、明伤牌均可选':'选三张，应对进攻';
+  $('action-description').textContent=GK.allowsFive(variant)?'三张／四炸／五炸，手牌与伤牌可混用':GK.allowsFour(variant)?'三张或同点四炸，手牌与明伤牌可混用':p==='attack'?'手牌、明伤牌均可选':'选三张，应对进攻';
   $('selection-preview').hidden=false;
-  let evaluation=null;try{if(selected.length===3||GK.allowsFour(variant)&&selected.length===4)evaluation=GK.evaluate(selected,GK.flowerLevel(game,0),variant);}catch(_){}
+  let evaluation=null;try{if(selected.length===3||GK.allowsFour(variant)&&selected.length===4||GK.allowsFive(variant)&&selected.length===5)evaluation=GK.evaluate(selected,GK.flowerLevel(game,0),variant);}catch(_){}
   if(evaluation){const e=evaluation;$('selection-preview').innerHTML='<span class="score-number">'+e.score+'</span>分 · '+e.name+(GK.comparesRanks(variant)?' <small>('+GK.strengthLabel(e)+')</small>':'')+(e.wild?'<br><small>'+GK.label(e.wild.physical)+' → '+GK.label(e.wild.as)+'</small>':'');}
-  else $('selection-preview').textContent=selected.length===4?'四张须组成同点四炸':GK.allowsFour(variant)?'已选 '+selected.length+' · 三张 / 四炸四张':'选牌 '+selected.length+' / 3';
+  else $('selection-preview').textContent=selected.length===5?'五炸须四张自然同点牌加花牌':selected.length===4?'四张须组成同点四炸':GK.allowsFive(variant)?'已选 '+selected.length+' · 3 / 4 / 5':GK.allowsFour(variant)?'已选 '+selected.length+' · 三张 / 四炸四张':'选牌 '+selected.length+' / 3';
   addButton(p==='attack'?'进攻':'防守',()=>tryAction(()=>game.play(0,selected)),{disabled:!evaluation,primary:true,id:'submit-play'});
   addButton('清空',()=>{selected=[];error='';render();},{disabled:!selected.length,id:'clear-selection'});
  }else if(p==='refresh'){
@@ -455,7 +458,7 @@ function renderActions(s,event){
   addButton(game.battleIndex===0?'交换攻防':'补牌 · 下一轮',()=>tryAction(()=>game.advance()),{primary:true,id:'continue-game'});
  }else if(p==='game_over'||p==='match_over'){
   const r=game.results[game.results.length-1];$('action-title').textContent=(r.winner===0?'你赢了':'对手赢了')+(p==='match_over'?'整场':'这一局');$('action-description').textContent='终局伤势 '+r.damage.join(' / ')+'，胜者升 '+r.gain+' 级，'+GK.rankLabel(r.from)+' → '+GK.rankLabel(r.to)+'。';
-  $('selection-preview').hidden=false;$('selection-preview').innerHTML='<strong class="upgrade-jump">'+GK.rankLabel(r.from)+' <span>→</span> '+GK.rankLabel(r.to)+'</strong><small>'+(r.winner===0?'你':'对手')+(p==='match_over'?'以 A 级获胜':'升 '+(r.to-r.from)+' 级')+'</small>';$('action-description').textContent=p==='match_over'?'整场结束':r.to===14?'下一局以 A 级争胜':'继续升级，向 A 前进';
+  $('selection-preview').hidden=false;$('selection-preview').innerHTML='<strong class="upgrade-jump">'+GK.rankLabel(r.from)+' <span>→</span> '+GK.rankLabel(r.to)+'</strong><small>'+(r.winner===0?'你':'对手')+(p==='match_over'?'闯过自己的 A':r.from===14?'赢下小局，下一局打自己的 A':'升 '+(r.to-r.from)+' 级')+'</small>';$('action-description').textContent=p==='match_over'?'整场结束':r.to===14?'下一局以 A 级争胜':'继续升级，向 A 前进';
   if(p==='game_over')addButton('开始下一局',()=>tryAction(()=>game.nextGame()),{primary:true,id:'next-game'});
   else addButton('再玩一场',newMatch,{primary:true,id:'restart-match'});
   addButton('结算',openResult,{id:'show-result'}).setAttribute('aria-label','查看结算');
@@ -466,12 +469,13 @@ function render(){
  for(const e of game.events)GKLocale.registerEvent(e);for(const e of ROLLOUT.events)GKLocale.registerEvent(e);
  const replay=mode==='replay',event=replay?ROLLOUT.events[cursor]:game.lastEvent,s=replay?event.state:game.snapshot();
  document.querySelector('.app-main').classList.toggle('is-replay',replay);$('replay-detail').hidden=!replay;if(replay)$('replay-detail').textContent=event.title+'：'+event.note;
- const v=VARIANT_TEXT[variant];$('version-select').value=variant;$('version-badge').textContent=v.name;$('version-note').textContent=v.note+' 切换时保存当前对局，各版本可分别续玩。';$('rule-title').textContent=v.name+' · 开局与结算';$('variant-rules').textContent=v.note;$('tie-rule').textContent=v.tie;$('ranking-rule').textContent=v.ranking;const scoreText=(variant==='0.3.2'||GK.isRefresh(variant))?'炸弹 5 · 同花顺 4 · 同花 3 · 顺子 2 · 对子 1 · 高牌 0':'同花顺 5 · 炸弹 4 · 同花 3 · 顺子 2 · 对子 1 · 高牌 0';$('score-list').textContent=scoreText;$('rule-score-list').textContent=scoreText;$('rule-fingerprint').textContent='规则 '+variant+' · 指纹 '+ROLLOUT.source_sha256.slice(0,12);document.title='深圳花牌 · '+variant+' 试玩';
+ const v=VARIANT_TEXT[variant];$('version-select').value=variant;$('version-badge').textContent=v.name;$('version-note').textContent=v.note+' 切换时保存当前对局，各版本可分别续玩。';$('rule-title').textContent=v.name+' · 开局与结算';$('variant-rules').textContent=v.note;$('tie-rule').textContent=v.tie;$('ranking-rule').textContent=v.ranking;const scoreText=(variant==='0.3.2'||GK.isRefresh(variant))?'炸弹 5 · 同花顺 4 · 同花 3 · 顺子 2 · 对子 1 · 高牌 0':'同花顺 5 · 炸弹 4 · 同花 3 · 顺子 2 · 对子 1 · 高牌 0';$('score-list').textContent=scoreText;$('rule-score-list').textContent=scoreText;$('rule-fingerprint').textContent='规则 '+variant+' · 指纹 '+ROLLOUT.source_sha256.slice(0,12);document.title='深圳花牌 · '+variant+(GK.allowsFive(variant)?' 标准版':' 试玩');
  const refresh=GK.isRefresh(variant),cap=GK.deathThreshold(variant),four=GK.allowsFour(variant);
  $('quick-upgrade').textContent='双方手牌保密，明伤牌公开。级数从 2 开始，你的 ♥2 起初是逢人配。赢局按双方伤势差升级；升到 A 后，再以 A 开局赢一局，才赢得整场。';
  if(four){$('score-list').textContent='四炸 6 · 三炸 5 · 同花顺 4 · 同花 3 · 顺子 2 · 对子 1 · 高牌 0';$('rule-score-list').textContent=$('score-list').textContent;}
- $('quick-intro').textContent='进攻打的是掉血，防守打的是机会。'+(four?'通常出三张，也可出四张同点炸弹。':'每次选三张，与自动对手交替攻防。');
- $('quick-play-title').textContent=four?'① 三张，或四炸四张':'① 选满三张';
+ if(GK.allowsFive(variant)){$('score-list').textContent='五炸 7 · 四炸 6 · 三炸 5 · 同花顺 4 · 同花 3 · 顺子 2 · 对子 1 · 高牌 0';$('rule-score-list').textContent=$('score-list').textContent;}
+ $('quick-intro').textContent='进攻打的是掉血，防守打的是机会。'+(GK.allowsFive(variant)?'通常出三张，也可出四炸或五炸。':four?'通常出三张，也可出四张同点炸弹。':'每次选三张，与自动对手交替攻防。');
+ $('quick-play-title').textContent=GK.allowsFive(variant)?'① 三张／四炸／五炸':four?'① 三张，或四炸四张':'① 选满三张';
  $('rule-play-step').textContent=four?'进攻者出三张或四张同点炸弹，防守者可以接三张或四炸，张数不必相同。手牌和自己的明伤牌可混用。':'进攻者先选三张公开，防守者看过后选三张。可以混用手牌和自己的正面伤牌，也可以全用明牌。';
  $('four-rule-note').hidden=!four;
  $('own-wound-note').textContent=refresh?'伤牌全亮 · 5 张败北':'明暗都算伤势 · 6 张败北';
@@ -524,7 +528,7 @@ function render(){
  $('menu-flower-text').textContent=shared?'★ 双方共用花牌；按上一小局赢家升级后的等级确定，首局♥2。':'★ 自己的红桃级牌是逢人配。';
  $('flower-heading').textContent=shared?'牌型与花牌':'牌型与逢人配';
  $('flower-boundary').textContent=shared?'A23、QKA可成顺，KA2不可。同组三张不能复制完全相同的虚拟牌。花牌可来自手牌或伤牌区，四炸也可用；自动选最高合法组合并显示花牌替代声明。':'A23、QKA 可以组成顺子，KA2 不可以。同组三张不能复制完全相同的虚拟牌；手牌和明牌都适用。系统自动选择最高牌型，并显示逢人配声明。';
- if(shared){$('rule-start-text').textContent='两人共用52张牌，各8张，手牌保密、伤牌全亮；双方2级，首局花牌♥2。此后小局赢家升级后的等级决定下一小局双方共用的红桃花牌。轮间交换先攻不改变花牌；一小局内固定，下一小局才更新。';$('four-rule-note').textContent='四张出牌只限同点四炸，可用共用花牌。三张与四炸可互相接。四炸6分，天然与使用花牌的四炸不分优先级；四炸同型比点数。';$('quick-upgrade').textContent='赢家按完整伤势差升级、下局先攻。下一局双方按赢家升级后的等级共用花牌。升A后须以A开局再赢；冲A三败仅自己回2，对手保留等级。';}
+ if(shared){$('rule-start-text').textContent='两人共用52张牌，各8张，手牌保密、伤牌全亮；双方2级，首局花牌♥2。此后小局赢家升级后的等级决定下一小局双方共用的红桃花牌。轮间交换先攻不改变花牌；一小局内固定，下一小局才更新。';$('four-rule-note').textContent='四张出牌只限同点四炸，可用共用花牌。三张与四炸可互相接。四炸6分，天然与使用花牌的四炸不分优先级；四炸同型比点数。';$('quick-upgrade').textContent='赢家按伤势差升级并取得下局打级权。个人A级不等于正在闯关；只有打自己的A局，胜负才记闯关成功／失败。三次失败本人回2。';$('rule-upgrade-text').textContent=$('quick-upgrade').textContent;}
  else $('four-rule-note').textContent='四张出牌只限同点四炸，可用自己的逢人配；三张与四炸互相可接。四炸之间比点数，天然与逢人配不分优先级。四炸6分对三炸5分只差1；四炸对高牌差6，完整伤害计入升级。';
  $('quick-tie').textContent='同分处理：'+v.tie;
  $('play-area').hidden=false;$('rule-page').hidden=mode!=='rules';$('replay-controls').hidden=!replay;

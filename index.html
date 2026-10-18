@@ -16,7 +16,7 @@
  <div class="header-controls"><button id="open-rules"><span class="header-label">规则</span></button><button id="open-settings" aria-label="菜单：新开局、版本与记录"><span class="header-label">菜单</span><svg class="header-menu-icon" aria-hidden="true" viewBox="0 0 16 16"><circle cx="2" cy="8" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="14" cy="8" r="1.5"/></svg></button></div>
  <span id="version-badge" hidden></span>
  <section class="match-goal" aria-label="整场升级目标">
-  <div class="goal-heading"><div class="goal-title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v5a5 5 0 0 1-10 0V3Zm0 2H3v2a4 4 0 0 0 4 4m10-6h4v2a4 4 0 0 1-4 4M12 13v5m-4 3h8m-7-3h6"/></svg><div><span>整场目标</span><h2>升到 A，再赢一局</h2></div></div><div class="goal-legend"><span id="goal-own" class="goal-own"></span><span id="goal-opp" class="goal-opp"></span><strong id="goal-status" hidden></strong></div></div>
+  <div class="goal-heading"><div class="goal-title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v5a5 5 0 0 1-10 0V3Zm0 2H3v2a4 4 0 0 0 4 4m10-6h4v2a4 4 0 0 1-4 4M12 13v5m-4 3h8m-7-3h6"/></svg><div><span>整场目标</span><h2 id="goal-title">赢下自己的 A 局</h2></div></div><div class="goal-legend"><span id="goal-own" class="goal-own"></span><span id="goal-opp" class="goal-opp"></span><strong id="goal-status" hidden></strong></div></div>
   <div class="race-track" id="level-track" aria-label="双方升级进度"></div>
  </section>
 </header>
@@ -76,7 +76,7 @@
   <label class="language-field">语言<select id="language-select" data-language-select aria-label="语言"><option value="zh-CN" data-no-i18n>简体中文</option><option value="en" data-no-i18n>English</option></select></label><label class="sz-appearance" data-no-i18n><span data-sz-theme-label>外观</span><select data-sz-theme-select aria-label="外观"><option value="system">跟随系统</option><option value="light">浅色 · 晴日</option><option value="dark">暗色 · 晚风</option></select></label>
   <p id="version-note"></p>
   <p id="replay-detail" hidden></p>
-  <label class="version-field">规则版本<select id="version-select" aria-label="规则版本"><option value="0.3.8">0.3.8 · 共用花牌</option><option value="0.3.7">0.3.7 · 血牌反击</option><option value="0.3.6">0.3.6 · 防守反击</option><option value="0.3.5">0.3.5 · 胜者先攻</option><option value="0.3.4">0.3.4 · 四炸6分试验</option><option value="0.3.3">0.3.3 · 换牌</option><option value="0.3.2">0.3.2 · 翻牌</option><option value="0.3.1b">0.3.1b · 比大小</option><option value="0.3.1a">0.3.1a · 同分伤 1</option><option value="0.3">0.3 · 原版</option></select></label>
+  <label class="version-field">规则版本<select id="version-select" aria-label="规则版本"><option value="1.0.0">1.0 · 标准规则</option><option value="0.3.8">0.3.8 · 共用花牌</option><option value="0.3.7">0.3.7 · 血牌反击</option><option value="0.3.6">0.3.6 · 防守反击</option><option value="0.3.5">0.3.5 · 胜者先攻</option><option value="0.3.4">0.3.4 · 四炸6分试验</option><option value="0.3.3">0.3.3 · 换牌</option><option value="0.3.2">0.3.2 · 翻牌</option><option value="0.3.1b">0.3.1b · 比大小</option><option value="0.3.1a">0.3.1a · 同分伤 1</option><option value="0.3">0.3 · 原版</option></select></label>
   <section class="settings" id="settings"><div class="settings-body"><label>复盘种子（选填）<input id="seed-input" type="number" min="0" max="4294967295" step="1" placeholder="留空随机开局"></label><label>首局先攻<select id="first-input"><option value="random">随机先攻</option><option value="0">你先攻</option><option value="1">对手先攻</option></select></label><button id="new-match" class="primary">开新一场</button><button id="export-match">导出记录</button></div><p class="notice">新场随机发牌，刷新续玩。开新一场会替换当前版本的存档。</p></section>
   <details class="menu-detail"><summary>牌型速查</summary><p id="score-list"></p><p id="menu-flower-text">★ 自己的红桃级牌是逢人配。</p></details>
   <details class="menu-detail"><summary>最近结算</summary><div class="log" id="event-log"></div><p class="budget" id="budget"></p></details>
@@ -84,7 +84,7 @@
   <details class="trial-comparison"><summary>四炸 · 新旧各100场对照</summary><div id="four-study-content"></div></details>
   <details class="trial-comparison"><summary>历史20种子对照</summary><div class="comparison-scroll"><table><thead><tr><th>版本</th><th>单局中位数</th><th>最长单局</th><th>无效果攻防</th></tr></thead><tbody id="comparison-rows"></tbody></table></div><p>旧五版各20场，采用可见信息启发式。相同种子只保证首局发牌相同；后续会分叉。程序结果不代表真人体验。</p></details>
   <div class="identity-note"><span>深圳花牌 · 开放的双人扑克玩法</span><a href="about.html">玩法介绍</a><a href="brand.html">标志与视觉</a><a href="https://github.com/lucienzhu/gk-royale-playtest" target="_blank" rel="noopener">规则与源码 ↗</a></div>
-  <p><a href="probability.html">查看三张牌型概率（不含四炸）↗</a></p>
+  <p><a href="probability.html">查看三张花样概率（不含四炸、五炸）↗</a></p>
  </div>
 </dialog>
 <dialog class="modal result-modal" id="result-modal" aria-labelledby="result-title" aria-describedby="result-subtitle result-hint">
@@ -104,4 +104,4 @@
 <script src="gamecore.js"></script>
 <script src="app/replays.js"></script>
 <script src="app/table.js"></script>
-<script src="app/rule-cases.js"></script><script src="app/rules.js"></script><script src="app/hand-reference.js"></script><script src="app/theme-tokens.js"></script><script src="app/theme.js"></script><script src="app/experience.js"></script></body></html>
+<script src="app/standard-rules.js"></script><script src="app/rule-cases.js"></script><script src="app/rules.js"></script><script src="app/hand-reference.js"></script><script src="app/theme-tokens.js"></script><script src="app/theme.js"></script><script src="app/experience.js"></script></body></html>

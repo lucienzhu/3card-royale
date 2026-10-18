@@ -2,7 +2,7 @@
 
 [简体中文](README.zh-CN.md) · [Shared SDK contract](../docs/SDK.md)
 
-Native, header-only rules **0.3.8**, SDK **0.1.1**, JSON state schema **1**. No Node, Python or Rust runtime is required. Standard C++17 with exceptions is required. Tested with AppleClang 21 on macOS arm64; other platforms have not been verified here.
+Native, header-only rules **1.0.0**, SDK **0.2.0**, JSON state schema **2**. No Node, Python or Rust runtime is required. Standard C++17 with exceptions is required. Tested with AppleClang 21 on macOS arm64; other platforms have not been verified here.
 
 ```cpp
 #include <threecard_royale/policy.hpp>
@@ -63,3 +63,5 @@ There is no compiled library to ship; the target supplies include paths and C++1
 The MIT-licensed [nlohmann/json v3.11.3](https://github.com/nlohmann/json/tree/v3.11.3) single header is vendored unchanged at `include/nlohmann/json.hpp`; its license is in [third_party/nlohmann-json.LICENSE](third_party/nlohmann-json.LICENSE). The build never fetches dependencies. This SDK uses the repository's [MIT license](LICENSE). No C++ registry package has been published.
 
 Cross-runtime verification: follow [SDK validation](../docs/SDK.md#validate-a-port), adding `--cpp /tmp/royale-cpp/royale-json-cpp` to the existing Python/JS/Rust conformance command.
+
+Standard 1.0 adds five of a kind (7 points): four natural equal-rank cards plus the shared flower. See [complete standard rules](../docs/RULES.md). Five-card plays are included in legal actions. `wild.as` is a virtual face; in five of a kind it may name an already-present representative face without reusing a physical card. Gym score/kind features use /7 and played-card count uses /5.
