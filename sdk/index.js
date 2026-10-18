@@ -1,4 +1,4 @@
-/* SDK 0.1.0 / rules 0.3.8. Uses the frozen browser rules engine. */
+/* SDK 0.1.1 / rules 0.3.8. Uses the frozen browser rules engine. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports)
     module.exports = factory(require("../gamecore.js"));

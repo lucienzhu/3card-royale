@@ -3,5 +3,5 @@
 from .core import Game, RULES, evaluate, outcome
 from .policy import choose_action
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __all__ = ["Game", "RULES", "evaluate", "outcome", "choose_action"]

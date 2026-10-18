@@ -1,5 +1,5 @@
 """Cross-language state/action/observation and RNG replay against the frozen JS core.
-Run: python tests/conformance.py --node node --rust rust/target/debug/royale-json
+Run: python tests/conformance.py --node node --rust rust/target/debug/royale-json --cpp /tmp/royale-cpp/royale-json-cpp
 """
 
 import argparse, json, os, subprocess, sys, random, itertools, time
@@ -39,23 +39,28 @@ def main():
     ap.add_argument("--node", default="node")
     ap.add_argument("--rust", required=True)
     ap.add_argument("--report")
+    ap.add_argument("--cpp", help="Native C++ JSON-lines executable")
     args = ap.parse_args()
     js = Bridge([args.node, "tests/js_bridge.cjs"])
     rs = Bridge([str(Path(args.rust).resolve())])
+    bridges = [("JS", js), ("Rust", rs)]
+    if args.cpp:
+        bridges.append(("C++", Bridge([str(Path(args.cpp).resolve())])))
     rnd = random.Random(20261018)
     t = time.time()
     decisions = complete = restores = 0
     routes = set()
     max_actions = 0
 
-    def compare(g, j, r):
+    def compare(g, req):
         nonlocal decisions, max_actions
         expected = {
             "state": g.save(),
             "actions": g.legal_actions(),
             "observations": [g.observation(0), g.observation(1)],
         }
-        for tag, value in [("JS", j), ("Rust", r)]:
+        for tag, bridge in bridges:
+            value = bridge.ask(req)
             assert "error" not in value, (tag, value)
             for k in expected:
                 assert expected[k] == value[k], (
@@ -88,7 +93,7 @@ def main():
             first = None if seed % 2 else seed % 2
             g = Game(seed, first)
             req = {"op": "init", "seed": seed, "first": first}
-            compare(g, js.ask(req), rs.ask(req))
+            compare(g, req)
             for n in range(5000):
                 if g.s["phase"] == "match_over":
                     complete += 1
@@ -100,14 +105,12 @@ def main():
                         if n % 3
                         else rnd.choice(actions)
                     )
-                    j = js.ask({"op": "inspect", "policy": True})
-                    r_policy = rs.ask({"op": "inspect", "policy": True})
-                    assert r_policy["policy"] == choose_action(
-                        g.observation(g.actor), actions
-                    ), "Rust policy parity"
-                    assert (
-                        choose_action(g.observation(g.actor), actions) == j["policy"]
-                    ), "Policy parity"
+                    expected_policy = choose_action(g.observation(g.actor), actions)
+                    for tag, bridge in bridges:
+                        assert (
+                            bridge.ask({"op": "inspect", "policy": True})["policy"]
+                            == expected_policy
+                        ), (tag, "Policy parity")
                 else:
                     action = actions[0]
                 if action["type"] == "swap":
@@ -116,12 +119,12 @@ def main():
                     )
                 g.step(action)
                 req = {"op": "step", "action": action}
-                compare(g, js.ask(req), rs.ask(req))
+                compare(g, req)
                 if n % 53 == 0:
                     state = json.loads(json.dumps(g.save()))
                     g = Game.restore(state)
                     req = {"op": "restore", "state": state}
-                    compare(g, js.ask(req), rs.ask(req))
+                    compare(g, req)
                     restores += 1
             else:
                 raise AssertionError("Conformance match exceeded bound")
@@ -149,7 +152,7 @@ def main():
                 }
                 g = Game.restore(s)
                 req = {"op": "restore", "state": s}
-                compare(g, js.ask(req), rs.ask(req))
+                compare(g, req)
                 actions = g.legal_actions()
                 a = next(
                     x
@@ -164,7 +167,7 @@ def main():
                 )
                 g.step(a)
                 req = {"op": "step", "action": a}
-                compare(g, js.ask(req), rs.ask(req))
+                compare(g, req)
                 routes.add(source + ">" + target)
         # Three failed-A boundaries and four+four round budgets, from fresh synthetic states.
         for losses in (0, 1, 2):
@@ -183,7 +186,7 @@ def main():
             s["a_losses"][1] = losses
             g = Game.restore(s)
             req = {"op": "restore", "state": s}
-            compare(g, js.ask(req), rs.ask(req))
+            compare(g, req)
             for action in [
                 {"type": "play", "cards": [0, 13, 26, 39]},
                 {"type": "play", "cards": [1, 4, 8]},
@@ -191,7 +194,7 @@ def main():
             ]:
                 g.step(action)
                 req = {"op": "step", "action": action}
-                compare(g, js.ask(req), rs.ask(req))
+                compare(g, req)
         g = Game(10, 0)
         s = g.save()
         s["players"] = [
@@ -202,7 +205,7 @@ def main():
         s["stock"] = [c for c in range(52) if c not in held]
         g = Game.restore(s)
         req = {"op": "restore", "state": s}
-        compare(g, js.ask(req), rs.ask(req))
+        compare(g, req)
         for action in [
             {"type": "play", "cards": [0, 13, 26, 39]},
             {"type": "play", "cards": [1, 14, 27, 40]},
@@ -214,9 +217,9 @@ def main():
         ]:
             g.step(action)
             req = {"op": "step", "action": action}
-            compare(g, js.ask(req), rs.ask(req))
+            compare(g, req)
         assert g.s["round"] == 2 and all(len(p["hand"]) == 8 for p in g.s["players"])
-        # Invalid actions must leave state AND RNG untouched in all three hosts.
+        # Invalid actions must leave state AND RNG untouched in all hosts.
         for bad in [
             {"type": "play", "cards": [0, 0, 0]},
             {
@@ -233,7 +236,7 @@ def main():
             except ValueError:
                 pass
             assert g.save() == before
-            for b in (js, rs):
+            for _, b in bridges:
                 assert "error" in b.ask({"op": "step", "action": bad})
                 assert b.ask({"op": "inspect"})["state"] == before
         # All natural triples plus sampled wildcard/four-card hands.
@@ -255,15 +258,16 @@ def main():
         for i in range(0, len(cases), 256):
             batch = cases[i : i + 256]
             want = [evaluate(x["cards"], x["level"]) for x in batch]
-            for b in (js, rs):
+            for _, b in bridges:
                 assert b.ask({"op": "evaluate", "cases": batch}) == {
                     "evaluations": want
                 }, ("Hand mismatch", i)
         result = {
             "status": "passed",
             "rule_version": "0.3.8",
-            "sdk_version": "0.1.0",
-            "native_runtimes": ["JavaScript", "Python", "Rust"],
+            "sdk_version": "0.1.1",
+            "native_runtimes": ["JavaScript", "Python", "Rust"]
+            + (["C++"] if args.cpp else []),
             "full_matches": complete,
             "compared_decision_states": decisions,
             "restored_states": restores,
@@ -272,6 +276,7 @@ def main():
             "swap_routes": sorted(routes),
             "invalid_actions_atomic": True,
             "strategy_js_python_rust_parity": True,
+            "strategy_cpp_parity": bool(args.cpp),
             "seconds": round(time.time() - t, 3),
             "scope": "Synthetic seeded states only. No human balance or enjoyment claim.",
         }
@@ -279,8 +284,8 @@ def main():
             Path(args.report).write_text(json.dumps(result, indent=2) + "\n")
         print(json.dumps(result))
     finally:
-        js.close()
-        rs.close()
+        for _, bridge in bridges:
+            bridge.close()
 
 
 if __name__ == "__main__":

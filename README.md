@@ -59,11 +59,11 @@ Code, rule text and original visual assets are released under the [MIT license](
 
 ## Build with the game
 
-SDK 0.1.0 / rules 0.3.8: JavaScript + TypeScript types, native Python and native Rust share card IDs, actions and a JSON state format. A visible-information strategy opponent and optional Gymnasium environment are included.
+SDK 0.1.1 / rules 0.3.8: JavaScript + TypeScript types, native Python, Rust and C++17 share card IDs, actions and a JSON state format. A visible-information strategy opponent and optional Gymnasium environment are included.
 
 - [Portable SDK and examples](docs/SDK.md)
 - [RL environment, masks and observations](docs/RL.md)
-- [Python source](python/threecard_royale/) · [Rust source](rust/) · [JavaScript API](sdk/)
+- [C++ source & CMake](cpp/) · [Python source](python/threecard_royale/) · [Rust source](rust/) · [JavaScript API](sdk/)
 
 `python -m pip install -e './python[gym]'`, then `python examples/train_random.py`. Build Rust with `cargo build --manifest-path rust/Cargo.toml --locked`. These are source distributions; no registry package has been published.
 

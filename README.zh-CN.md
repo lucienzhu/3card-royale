@@ -59,11 +59,11 @@ node scripts/check.cjs
 
 ## 用它做自己的游戏
 
-SDK 0.1.0／规则0.3.8：JavaScript＋TypeScript类型、Python原生核心、Rust原生核心，共用卡牌编号、动作与JSON状态。提供只看可见信息的基础策略和可选Gymnasium环境。
+SDK 0.1.1／规则0.3.8：JavaScript＋TypeScript类型、Python／Rust／C++17原生核心，共用卡牌编号、动作与JSON状态。提供只看可见信息的基础策略和可选Gymnasium环境。
 
 - [移植核心与示例](docs/SDK.zh-CN.md)
 - [RL环境、掩码与观察](docs/RL.zh-CN.md)
-- [Python源码](python/threecard_royale/) · [Rust源码](rust/) · [JavaScript接口](sdk/)
+- [C++源码与CMake](cpp/README.zh-CN.md) · [Python源码](python/threecard_royale/) · [Rust源码](rust/) · [JavaScript接口](sdk/)
 
 `python -m pip install -e './python[gym]'`后运行`python examples/train_random.py`；Rust用`cargo build --manifest-path rust/Cargo.toml --locked`。目前按仓库源码交付，尚未上传软件包注册库。
 

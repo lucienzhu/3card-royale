@@ -2,7 +2,7 @@
 
 [English](SDK.md) · [RL环境](RL.zh-CN.md) · [规则](RULES.zh-CN.md)
 
-SDK **0.1.0**，规则 **0.3.8**，状态格式 **schema 1**。游戏网站继续沿用原引擎与存档；SDK的JSON状态是独立宿主格式，不覆盖浏览器存档。
+SDK **0.1.1**，规则 **0.3.8**，状态格式 **schema 1**。游戏网站继续沿用原引擎与存档；SDK的JSON状态是独立宿主格式，不覆盖浏览器存档。
 
 | 语言 | 实现 | 入口 |
 | --- | --- | --- |
@@ -10,8 +10,9 @@ SDK **0.1.0**，规则 **0.3.8**，状态格式 **schema 1**。游戏网站继�
 | TypeScript | 同一JS运行时的完整类型，并非第二套规则 | `sdk/index.d.ts` |
 | Python 3.10+ | 原生标准库实现，不需要Node进程 | `python/threecard_royale/core.py` |
 | Rust | 原生库与JSON行协议工具，依赖serde／serde_json | `rust/src/lib.rs` |
+| C++17 | 原生仅头文件核心与策略，附固定JSON依赖，构建无需联网 | `cpp/include/threecard_royale/` |
 
-SDK只暴露当前0.3.8，历史版本留在网页。Python／Rust独立运行，用网页实际引擎交叉回放验证。均以仓库源码交付，未上传npm／PyPI／crates.io。
+SDK只暴露当前0.3.8，历史版本留在网页。C++／Python／Rust独立运行，用网页实际引擎交叉回放验证。均以仓库源码交付，未上传npm／PyPI／crates.io或C++包注册库。
 
 ## 最短接入
 
@@ -40,7 +41,18 @@ let action = choose_action(&observation)?;
 game.step(&action)?;
 ```
 
-Rust明确传入u32种子，实际游戏由宿主生成新熵。固定种子用于复现／实验，三套实现沿用相同xorshift32与Fisher–Yates序列，保存后继续随机流；该随机数不是对抗性联网安全方案。
+```cpp
+#include <threecard_royale/policy.hpp>
+using namespace threecard_royale;
+Game game; // fresh host entropy; Game(42) for reproducible experiments
+const auto actor = game.actor().value();
+game.step(choose_action(game.observation(actor)));
+auto resumed = Game::restore(game.save());
+```
+
+C++的[构建、嵌入与安装说明](../cpp/README.zh-CN.md)；不需要启动JS／Python／Rust进程。
+
+Rust明确传入u32种子，实际游戏由宿主生成新熵。固定种子用于复现／实验，四套运行时实现沿用相同xorshift32与Fisher–Yates序列，保存后继续随机流；该随机数不是对抗性联网安全方案。
 
 浏览器先加载`gamecore.js`再加载`sdk/index.js`，通过`window.ThreeCardRoyale`使用；打包工具也可接CommonJS。JS基础策略是独立CommonJS模块。核心不依赖UI、网络或账号。
 
@@ -69,11 +81,11 @@ Rust明确传入u32种子，实际游戏由宿主生成新熵。固定种子用�
 
 `observation(player)`只含己方手牌、双方公开伤牌（使用后待补位为null）、已出的牌、公开弃牌、手牌／余牌数量、个人等级、共同花牌、A失败灯、阶段与公开结果；仅本人行动时附合法列表。没有对手暗手牌、牌库顺序、种子或RNG。观察值为拷贝，位置索引随状态变化，不要跨step缓存。
 
-状态字段以`sdk/index.d.ts`为准。Rust的JSON行协议支持init／restore／step／inspect／evaluate，专为开发者集成和一致性验证返回完整状态，不能直接作为玩家公开协议。
+状态字段以`sdk/index.d.ts`为准。Rust／C++的JSON行协议支持init／restore／step／inspect／evaluate，专为开发者集成和一致性验证返回完整状态，不能直接作为玩家公开协议。
 
 ## 基础策略
 
-Python／Rust `choose_action`、JS `chooseAction`只接收观察和合法动作。进攻选当前最强组合，防守先少受伤、再争机会，同效优先利用伤牌、保留花牌；换牌按公开点数／花牌或重抽弱牌处理。它是确定性启发式，没有训练，也不代表最优策略。`examples/play.js`可跑有上限的整场，`examples/train_random.py`演示合法掩码采样。
+C++／Python／Rust `choose_action`、JS `chooseAction`只接收观察和合法动作。进攻选当前最强组合，防守先少受伤、再争机会，同效优先利用伤牌、保留花牌；换牌按公开点数／花牌或重抽弱牌处理。它是确定性启发式，没有训练，也不代表最优策略。`examples/play.js`可跑有上限的整场，`examples/train_random.py`演示合法掩码采样。
 
 ## 验证与扩展
 
@@ -81,9 +93,14 @@ Python／Rust `choose_action`、JS `chooseAction`只接收观察和合法动作�
 node scripts/check.cjs
 python -m unittest discover -s tests -p 'test_*.py'
 cargo build --manifest-path rust/Cargo.toml --locked
-python tests/conformance.py --rust rust/target/debug/royale-json
+cmake -S cpp -B /tmp/royale-cpp -DCMAKE_BUILD_TYPE=Release
+cmake --build /tmp/royale-cpp --parallel
+ctest --test-dir /tmp/royale-cpp --output-on-failure
+python tests/conformance.py --rust rust/target/debug/royale-json --cpp /tmp/royale-cpp/royale-json-cpp
 ```
 
 Python全套检查需先安装可选Gym依赖。一致性验证比较完整状态、合法动作顺序、双方观察、牌型、保存恢复，覆盖八条交换路径及重洗。后续移植保持卡牌编号、洗牌算法、补位顺序和花牌等值选择；玩法变化单独升规则版本。
 
 Rust完整对局示例：`cargo run --manifest-path rust/Cargo.toml --locked --example baseline`。
+
+C++完整对局示例：`/tmp/royale-cpp/royale-baseline-cpp`。SDK 0.1.1新增C++，玩法、状态格式与浏览器游戏保持不变。

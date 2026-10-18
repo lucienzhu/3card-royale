@@ -2,7 +2,7 @@
 
 [简体中文](SDK.zh-CN.md) · [RL environment](RL.md) · [Rules](RULES.md)
 
-SDK **0.1.0**, rules **0.3.8**, state schema **1**. The website continues to use its existing engine and saves. The SDK's JSON state is a separate host format, not a browser-save replacement.
+SDK **0.1.1**, rules **0.3.8**, state schema **1**. The website continues to use its existing engine and saves. The SDK's JSON state is a separate host format, not a browser-save replacement.
 
 | Runtime | Implementation | Entry point |
 | --- | --- | --- |
@@ -10,8 +10,9 @@ SDK **0.1.0**, rules **0.3.8**, state schema **1**. The website continues to use
 | TypeScript | Typed interface to the same JS runtime, not a second rules implementation | `sdk/index.d.ts` |
 | Python 3.10+ | Native standard-library rules, no Node process | `python/threecard_royale/core.py` |
 | Rust | Native library and JSON-lines CLI; serde/serde_json dependencies | `rust/src/lib.rs` |
+| C++17 | Native header-only core and baseline; vendored nlohmann/json, offline build | `cpp/include/threecard_royale/` |
 
-Only current 0.3.8 is exposed by the SDK. Historical variants remain in the browser. The Rust and Python implementations run independently and are replay-tested against the actual website engine. Packages are supplied as repository source; they have not been uploaded to npm, PyPI or crates.io.
+Only current 0.3.8 is exposed by the SDK. Historical variants remain in the browser. The C++, Rust and Python implementations run independently and are replay-tested against the actual website engine. Packages are supplied as repository source; they have not been uploaded to npm, PyPI, crates.io or a C++ package registry.
 
 ## Start a game
 
@@ -42,6 +43,17 @@ let action = choose_action(&game.observation(actor)?)?;
 game.step(&action)?;
 ```
 
+```cpp
+#include <threecard_royale/policy.hpp>
+using namespace threecard_royale;
+Game game; // fresh host entropy; Game(42) for reproducible experiments
+const auto actor = game.actor().value();
+game.step(choose_action(game.observation(actor)));
+auto resumed = Game::restore(game.save());
+```
+
+C++: [build, embed and install instructions](../cpp/README.md). It runs natively, without a JS/Python/Rust process.
+
 Rust takes an explicit `u32` seed; the host chooses fresh entropy for real games. Fixed seeds are for debugging and experiments. All runtimes use the same xorshift32/Fisher–Yates sequence and preserve RNG state. This PRNG is for reproducibility, not adversarial online security.
 
 Browser integration: load `gamecore.js`, then `sdk/index.js`; use `window.ThreeCardRoyale`. A browser bundler may instead consume the CommonJS module. The simple JS policy is a separate CommonJS module. No UI, networking, accounts or rendering is required by the core.
@@ -71,11 +83,11 @@ Swap source is your `hand` or `wounds`. Target is `deck`, `blind` (one random ri
 
 `observation(player)` contains only that player's hand, both public wound areas (null while a used slot awaits replacement), revealed plays, public discard cards, hand/deck counts, levels, common flower, failed-A lights, phase, public results and legal actions when it is their turn. It never includes the opponent's hand identities, stock order, seed or RNG. JSON observations are detached copies. Legal actions are state-relative and indices must not be cached after `step`.
 
-SDK saves share the fields in `sdk/index.d.ts`: `schema`, `rules`, `rng`, `seed`, `players`, `phase`, `active`, `pending`, `stock`, `discard`, `flower_level`, turn/round counters, levels/lights and results. The JSON-lines Rust CLI accepts `init`, `restore`, `step`, `inspect`, `evaluate`; it is a **trusted developer bridge** that returns full state for conformance tests, not a public player protocol.
+SDK saves share the fields in `sdk/index.d.ts`: `schema`, `rules`, `rng`, `seed`, `players`, `phase`, `active`, `pending`, `stock`, `discard`, `flower_level`, turn/round counters, levels/lights and results. The JSON-lines Rust and C++ CLIs accepts `init`, `restore`, `step`, `inspect`, `evaluate`; it is a **trusted developer bridge** that returns full state for conformance tests, not a public player protocol.
 
 ## Simple strategy opponent
 
-Python / Rust `choose_action` and JS `chooseAction` receive only observations and legal actions. They attack with the strongest current hand; defend by minimizing incoming wounds, then earning swaps; tie-break toward using wounds and conserving the wildcard. Swaps use visible ranks/wildcards or redraw a weak card. They are deterministic heuristics, not trained agents or optimal play. `examples/play.js` runs an entire bounded match; `examples/train_random.py` demonstrates masked sampling against the baseline.
+C++ / Python / Rust `choose_action` and JS `chooseAction` receive only observations and legal actions. They attack with the strongest current hand; defend by minimizing incoming wounds, then earning swaps; tie-break toward using wounds and conserving the wildcard. Swaps use visible ranks/wildcards or redraw a weak card. They are deterministic heuristics, not trained agents or optimal play. `examples/play.js` runs an entire bounded match; `examples/train_random.py` demonstrates masked sampling against the baseline.
 
 ## Validate a port
 
@@ -83,9 +95,14 @@ Python / Rust `choose_action` and JS `chooseAction` receive only observations an
 node scripts/check.cjs
 python -m unittest discover -s tests -p 'test_*.py'
 cargo build --manifest-path rust/Cargo.toml --locked
-python tests/conformance.py --rust rust/target/debug/royale-json
+cmake -S cpp -B /tmp/royale-cpp -DCMAKE_BUILD_TYPE=Release
+cmake --build /tmp/royale-cpp --parallel
+ctest --test-dir /tmp/royale-cpp --output-on-failure
+python tests/conformance.py --rust rust/target/debug/royale-json --cpp /tmp/royale-cpp/royale-json-cpp
 ```
 
 Install the optional Gym dependencies before the Python suite. Conformance compares complete states, legal-action order, both observations, evaluations and save/restore against the frozen JS engine; it also exercises every directed swap route and reshuffles. Keep the same card IDs, shuffle algorithm, replacement order and wildcard tie-breaking in future ports. A rule change needs a new identified rules version and matching examples.
 
 Rust full-match example: `cargo run --manifest-path rust/Cargo.toml --locked --example baseline`.
+
+C++ full-match example: `/tmp/royale-cpp/royale-baseline-cpp`. SDK 0.1.1 adds C++; rules, state schema and the browser game remain unchanged.
