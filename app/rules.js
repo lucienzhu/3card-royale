@@ -10,8 +10,10 @@
  function layoutShell(){dialog.classList.toggle('rg-compact',mobileQuery.matches);}
  function readingPosition(){const headings=[...standard.querySelectorAll('h2')],top=scroller.getBoundingClientRect().top;let index=0;for(let i=0;i<headings.length;i++)if(headings[i].getBoundingClientRect().top<=top+32)index=i;return {index,offset:headings[index]?.getBoundingClientRect().top-top,scroll:scroller.scrollTop};}
  function restoreReading(position){const h=standard.querySelectorAll('h2')[position.index];if(h&&position.offset!==undefined)scroller.scrollTop+=h.getBoundingClientRect().top-scroller.getBoundingClientRect().top-position.offset;else scroller.scrollTop=position.scroll;}
- function revealContent(){scroller.getAnimations().forEach(a=>a.cancel());if(!matchMedia('(prefers-reduced-motion: reduce)').matches)scroller.animate([{opacity:.35},{opacity:1}],{duration:160,easing:'ease-out'});}
+ function revealContent(){scroller.getAnimations().forEach(a=>a.cancel());if(scroller.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)scroller.animate([{opacity:.35},{opacity:1}],{duration:160,easing:'ease-out'});}
  let step=0,view='visual',zone='own-hand',whole=false,attackPhase=0,attackExample=false,rolesSwapped=false,defenseReady=false,defended=false,refilled=false,ranksOpen=false,swapMode='round',swapGame=null,swapSource=null,swapResult=null,lastLanguage='',lastVersion='',cameraRegion=null,cameraPose=null;
+ let scene=null,sceneBattle=null,sceneCopy=null,routeBounds=null,motionToken=0,motionBusy=false,refillCase=null,sequenceLog=[];
+ const clone=x=>JSON.parse(JSON.stringify(x));
  const mobileQuery=matchMedia('(max-width:900px), (max-height:500px)');
  const t=(zh,en)=>window.GKLocale?.language==='en'?en:zh,version=()=>document.getElementById('version-select').value;
  const cases=()=>window.SZFocusCases[version()],points=n=>t(n+'分',n+' '+(n===1?'pt':'pts'));
@@ -44,21 +46,23 @@
   return [t(r.given+' → '+d+'；你拿回 '+r.received,r.given+' → '+d+'; you receive '+r.received),t(r.received+'补回'+(r.source.zone==='table'?'你的伤牌区，公开。':'你的手牌，保密。')+'张数、伤势不变。',r.received+' replaces your '+(r.source.zone==='table'?'public wound.':'private hand card.')+' Card counts and wounds stay unchanged.')];
  }
  function state(){
+  if(scene)return scene;
   const c=cases();if(step===0||step===1)return c.start;
-  if(step===2)return (attackExample?c.wounded:c)[attackPhase?'attack':'start'];
+  if(step===2)return attackPhase===1?attackComparison():clone((attackExample?c.wounded:c)[attackPhase?'attack':'start']);
   if(step===3)return rolesSwapped?c.swap:c.attack;
-  if(step===4)return defended?c.defend:c.defensePending;
+  if(step===4){const v=clone(defended?c.defend:c.defensePending);if(defended)v.discard=c.defensePending.discard;return v;}
   if(step===5){if(!swapGame)resetSwap();return {hand:swapGame.players.map(p=>p.hand.map(window.GK.label)),wounds:swapGame.players.map(p=>p.table.map(x=>window.GK.label(x.card))),damage:swapGame.injuries(),stock:swapGame.stock.length,discard:swapGame.discard.length};}
-  return refilled?c.refill:c.exchange;
+  return refillCase?refillCase[refilled?'end':'start']:(refilled?c.refill:c.exchange);
  }
  function focusKeys(){
   if(step===0)return [zone];if(step===1)return ['own-hand','wild'];
   if(step===2)return attackPhase===0?['own-hand',...(attackExample?['own-wounds']:[]),'action']:attackPhase===1?['attack','defense','action']:['rival-wounds','piles',...(attackExample?['own-wounds']:[]),'action'];
   if(step===3)return ['attack','defense','action'];if(step===4)return defended?['attack','defense','action']:defenseReady?['own-hand','defense','wild','action']:['attack','action'];
-  if(step===5){if(!swapSource)return ['own-hand',...(swapGame.players[0].table.length?['own-wounds']:[]),'action'];if(swapResult)return ['own-'+(swapResult.source.zone==='hand'?'hand':'wounds'),swapResult.option.exchange==='deck'?'piles':(swapResult.option.who===0?'own-':'rival-')+(swapResult.option.zone==='hand'?'hand':'wounds'),'action'];return [...new Set(['own-'+(swapSource.zone==='hand'?'hand':'wounds'),...options().map(o=>o.exchange==='deck'?'piles':o.exchange==='opponent'?'rival-hand':(o.who===0?'own-':'rival-')+(o.zone==='hand'?'hand':'wounds')),'action'])];}
+  if(step===5){if(!swapSource)return ['own-hand',...(swapGame.players[0].table.length?['own-wounds']:[]),'action'];if(swapResult)return ['own-'+(swapResult.source.zone==='hand'?'hand':'wounds'),swapResult.option.exchange==='deck'?'piles':swapResult.option.exchange==='opponent'?'rival-hand':(swapResult.option.who===0?'own-':'rival-')+(swapResult.option.zone==='hand'?'hand':'wounds'),'action'];return [...new Set(['own-'+(swapSource.zone==='hand'?'hand':'wounds'),...options().map(o=>o.exchange==='deck'?'piles':o.exchange==='opponent'?'rival-hand':(o.who===0?'own-':'rival-')+(o.zone==='hand'?'hand':'wounds')),'action'])];}
   return ['own-hand','rival-hand','piles','action'];
  }
  function coach(){
+  if(sceneCopy)return [...sceneCopy,t('演示中…','Showing…'),''];
   if(step===0)return [...zoneInfo()[zone],t('开始一轮','Start round'),'next'];
   if(step===1)return [t('每人8张手牌，0张伤牌','8 hand cards each, no wounds'),t('你的牌面朝上，对手只有牌背。♥2是共用花牌，可当任意牌。','Your cards are face up, the rival’s hidden. ♥2 is the shared wild card.'),t('试试进攻','Try attacking'),'next'];
   if(step===2){if(!attackPhase)return [t('已选3张 · 同花顺4分','3 selected · Straight flush 4 pts'),t(attackExample?'另例：手牌7♣8♣加公开伤牌6♣，一起出。':'本例已选好6♣7♣8♣。点「进攻」，看牌进入中央。',attackExample?'Another example: play hand 7♣8♣ with public wound 6♣.':'6♣7♣8♣ are selected for this example. Attack to move them into the center.'),t('进攻','Attack'),'attack'];
@@ -68,13 +72,16 @@
   if(step===4&&!defenseReady)return [t('对手先出牌，轮到你防守','The rival attacks. You defend next.'),t('对手用J♠Q♠K♠进攻：同花顺4分。看清对手的牌，再从你的手牌出牌防守。','The rival plays J♠ Q♠ K♠: a straight flush worth 4 points. Check their attack, then choose your defense.'),t('看我的牌','See my hand'),'prepare-defense'];
   if(step===4)return defended?[t('5分 − 4分 = 1次换牌','5 pts − 4 pts = 1 swap'),t('你用♥2当第三张4，组成三炸5分。防守赢的是机会，伤势不变。','♥2 acts as the third 4, making three of a kind for 5 points. Defense earns swaps; damage stays.'),t('用这次机会','Use your swap'),'next']:[t('轮到你防守：出这3张','Your turn: defend with these 3 cards'),t('本例已选4♠4♥和♥2，花牌当第三张4，三炸5分。点「防守」，与对手的4分比较。','4♠ 4♥ and ♥2 are selected. The wild makes three 4s, worth 5 points. Press Defend to compare with the rival’s 4.'),t('防守','Defend'),'defend'];
   if(step===5){if(swapResult)return [...swapCopy(),t('再试一种','Try another'),'swap-reset'];if(swapSource)return [t('交出 '+window.GK.label(value(0,swapSource.zone,swapSource.index))+'，再点 ⇄ 目标','Give '+window.GK.label(value(0,swapSource.zone,swapSource.index))+'. Select a ⇄ target.'),t('对手手牌盲换，伤牌可指定；自己的另一牌区也能换。牌库是弃旧摸新。','Blind-swap a rival hand card, choose a public wound, swap your other zone, or discard and draw from the deck.'),t('重选','Choose again'),'swap-reset'];return [t('先点你的一张手牌或伤牌','Choose one of your hand cards or wounds'),t('再点亮起的⇄。每次1机会，张数不变，不回血；弃牌堆不能换。','Then select a highlighted ⇄. One opportunity, same counts, no healing. Discard is not a target.'),'',''];}
-  return refilled?[t('双方手牌都到8张了','Both hands are back to 8'),t('原2张保留，各补6张。伤牌不计入8张，下一轮对手先攻。','Keep the original 2, draw 6 each. Wounds are separate. The rival attacks first next round.'),t('再看一次','Replay refill'),'refill-replay']:[t('轮末，各把手牌补到8张','Round over: refill each hand to 8'),t('本轮双方各剩2张，保留它们，再各从牌库补6张。伤牌留在原处。','Both have 2 hand cards left. Keep them and draw 6 each. Wounds stay in place.'),t('补到8张','Refill to 8'),'refill'];
+  const kept=(refillCase?.start||cases().exchange).hand.map(h=>h.length),detail=t('你保留'+kept[0]+'张、补'+(8-kept[0])+'张；对手保留'+kept[1]+'张、补'+(8-kept[1])+'张。伤牌不计入8张。','You keep '+kept[0]+' and draw '+(8-kept[0])+'. The rival keeps '+kept[1]+' and draws '+(8-kept[1])+'. Wounds are separate.');
+  return refilled?[t('双方手牌都到8张了','Both hands are back to 8'),detail+t('下一轮对手先攻。',' The rival attacks first next round.'),t('再看一次','Replay refill'),'refill-replay']:[t('轮末，各把手牌补到8张','Round over: refill each hand to 8'),detail,t('补到8张','Refill to 8'),'refill'];
  }
  function battle(){
+  if(sceneBattle)return sceneBattle;
   const first={who:0,name:t('同花顺','Straight flush'),score:4,cards:['♣6','♣7','♣8']},pair={who:1,name:t('对子','Pair'),score:1,cards:['♠5','♥5','♦9']},second={who:1,name:t('同花顺','Straight flush'),score:4,cards:['♠J','♠Q','♠K']},triple={who:0,name:t('三炸','Three-kind'),score:5,cards:['♠4','♥4','♥2']};
-  if(step===2&&attackPhase||step===3&&!rolesSwapped)return [first,pair];
+  if(step===2&&attackPhase===1)return [first,pair];
+  if(step===2&&attackPhase===2||step===3&&!rolesSwapped)return [{...first,cards:[]},{...pair,cards:[]}];
   if(step===4)return [second,defended?triple:{who:0,cards:[]}];
-  if(step===5||step===6&&!refilled)return [second,triple];
+  if(step===5||step===6&&!refilled)return [{...second,cards:[]},{...triple,cards:[]}];
   return [{who:step>=3?1:0,cards:[]},{who:step>=3?0:1,cards:[]}];
  }
  function slot(key,body,classes='',label=''){
@@ -83,7 +90,7 @@
  }
  function hand(who,s){
   const z=(who?'rival':'own')+'-hand',selected=step===2&&!attackPhase?(attackExample?['♣7','♣8']:['♣6','♣7','♣8']):step===4&&defenseReady&&!defended?['♠4','♥4','♥2']:[];
-  let body;if(step===5&&who===0)body=s.hand[0].map((_,i)=>swapCard(0,'hand',i)).join('');else body=s.hand[who].map((c,i)=>face(c,who===1,(who===0&&selected.includes(c)?'selected fg-chosen ':'')+(step===6&&refilled&&i>=2?'fg-added':''),i-2)).join('');
+  let body;if(step===5&&who===0)body=s.hand[0].map((_,i)=>swapCard(0,'hand',i)).join('');else body=s.hand[who].map((c,i)=>face(c,who===1,(who===0&&selected.includes(c)?'selected fg-chosen ':'')+(step===6&&refilled&&i>=(refillCase?.start.hand[who].length??2)?'fg-added':''),i-2)).join('');
   const blind=step===5&&who===1?options().find(o=>o.exchange==='opponent'):null,canBlind=!!blind;
   const row=`<span class="fg-hand-cards">${body}</span>`;
   return slot(z,canBlind?`<button type="button" class="fg-blind is-target" data-fg-target="${optionIndex(blind)}" aria-label="${t('对手手牌，盲换随机一张','Rival hand: blind swap one random card')}">${row}${badge()}</button>`:row,'fg-hand',t((who?'对手':'你的')+s.hand[who].length+'张手牌',s.hand[who].length+' '+(who?'rival':'your')+' hand cards'));
@@ -97,13 +104,15 @@
  function pile(s){const deck=step===5?options().find(o=>o.exchange==='deck'):null;return slot('piles',`<span class="fg-pile-group"><span><small>${t('牌库','Deck')}</small><${deck?'button':'span'} ${deck?'type="button" data-fg-target="'+optionIndex(deck)+'"':''} class="fg-pile fg-stock ${deck?'is-target':''}" ${deck?'aria-label="'+t('牌库，弃旧摸新','Deck: discard and draw')+'"':''}><b>${s.stock}</b><i aria-hidden="true">${window.SZFlowerMark}</i>${deck?badge():''}</${deck?'button':'span'}></span><span class="fg-discard"><small>${t('弃牌','Discard')}</small><span class="fg-pile"><b>${s.discard}</b></span></span></span>`,'fg-piles',t('牌库和弃牌堆','Deck and discard'));}
  function identity(who){return `<span class="fg-identity"><svg class="player-flower player-flower-${who?'gold':'red'}" viewBox="0 0 64 72" role="img" aria-label="${t(who?'金花':'红花',who?'Gold flower':'Red flower')}">${window.SZBloomAssets.flower}</svg>${t(who?'对手':'你',who?'Rival':'You')}</span>`;}
  function tableAction(){
+  if(sceneCopy)return [t('演示中','Showing the move'),t('跟着牌看去向','Follow the moving cards'),''];
   if(step===0)return [t('你进攻','Your attack'),t(version()==='1.0.0'?'选3 / 4 / 5张牌':'选3 / 4张牌',version()==='1.0.0'?'Choose 3 / 4 / 5 cards':'Choose 3 / 4 cards'),''];
   if(step===1)return [t('你进攻','Your attack'),t('8张手牌 · 花牌♥2','8 hand cards · Wild ♥2'),''];
+  if(step===2&&attackPhase===1)return [t('比较牌型','Compare hands'),t('4分 − 1分 = 3伤','4 pts − 1 pt = 3 wounds'),t('看伤牌区','See wounds')];
   if(step===2)return attackPhase?[t('结算完成','Settled'),t('对手 +3伤','Rival +3 wounds'),t('交换攻防','Swap roles')]:[t('你进攻','Your attack'),t('已选3张 · 同花顺4分','3 selected · Straight flush 4 pts'),t('进攻','Attack')];
   if(step===3)return rolesSwapped?[t('对手进攻','Rival attacks'),t('你准备防守 · 暂不补牌','Prepare to defend · No refill'),'']:[t('结算完成','Settled'),t('对手 +3伤','Rival +3 wounds'),t('交换攻防','Swap roles')];
   if(step===4)return defended?[t('防守反击','Defense wins'),t('获得1次换牌机会','1 swap opportunity'),t('换牌','Swap')]:[t('你防守','Your defense'),defenseReady?t('已选3张 · 三炸5分','3 selected · Three-kind 5 pts'):t('对手同花顺4分','Rival straight flush · 4 pts'),t('防守','Defend')];
   if(step===5)return [t('防守反击','Defense wins'),swapResult?t('换牌完成','Swap complete'):swapSource?t('再选交换目标','Choose a swap target'):t('先选自己的一张牌','Choose a card to give'),swapResult?t('补牌 · 下一轮','Refill · Next round'):''];
-  return [refilled?t('对手进攻','Rival attacks'):t('本轮结束','Round over'),refilled?t('双方手牌已补到8张','Both hands refilled to 8'):t('保留余牌，各补6张','Keep 2, draw 6 each'),refilled?'':t('补牌 · 下一轮','Refill · Next round')];
+  return [refilled?t('对手进攻','Rival attacks'):t('本轮结束','Round over'),refilled?t('双方手牌已补到8张','Both hands refilled to 8'):t('只补手牌，伤牌保留','Refill hands; keep wounds'),refilled?'':t('补牌 · 下一轮','Refill · Next round')];
  }
  function board(){const s=state(),b=battle(),a=tableAction(),c=coach(),wild=focusKeys().includes('wild');
   const combat=(v,key)=>slot(key,`<span class="fg-zone-title">${t(key==='attack'?'进攻':'防守',key==='attack'?'Attack':'Defend')} · ${t(v.who?'对手':'你',v.who?'Rival':'You')}<small>${v.name?v.name+' '+points(v.score):'&nbsp;'}</small></span><span class="fg-combat-cards">${v.cards.map(x=>face(x)).join('')||'<span class="fg-empty" aria-hidden="true">—</span>'}</span>`,'fg-combat');
@@ -119,15 +128,15 @@
  function titles(){return [
   [t('先认牌桌，点哪里就讲哪里','Explore the table, one area at a time'),t('点牌区，周围淡下去；位置与实际牌桌一致。','Select an area to focus it. The table keeps the same layout throughout.')],
   [t('开局：8张手牌，0张伤牌','Start with 8 hand cards, no wounds'),t('看下方你的手牌，和上方对手的牌背。','Your hand is below; the rival’s card backs are above.')],
-  [t('你进攻：手牌 → 中央 → 伤牌区','Your attack: hand → center → wounds'),t('同一张桌，跟着高亮看牌去了哪里。','Follow the highlighted areas to see where the cards go.')],
+  [t('你进攻：出牌、弃牌，再摸伤牌','Your attack: play, discard, then draw wounds'),t('出过的牌进弃牌堆；伤牌从牌库另摸。','Played cards go to discard. Wounds are new cards drawn from the deck.')],
   [t('交换攻防，牌区不换位置','Swap roles, keep the table in place'),t('只换谁先进攻。余牌保留，现在还不补牌。','Only the attacker changes. Keep unused cards; no refill yet.')],
   [t('对手先进攻，你再出牌防守','The rival attacks, then you defend'),t('♥2当第三张4；比较5分与4分。','♥2 stands for a third 4. Compare 5 points against 4.')],
   [t('换牌：先选自己的牌，再点目标','Swap: choose your card, then a target'),t('直接在原牌区操作，换回的牌补在交出的位置。','Swap in the actual zones. The received card replaces the one you give.')],
   [t('轮末：手牌补到8张','Round end: refill your hand to 8'),t('保留余牌，只补缺的数量。伤牌不计入8张。','Keep unused cards and draw only what is missing. Wounds are separate.')],
  ];}
- function toolbar(){return `<div class="fg-toolbar"><span>${step===2&&attackExample||step===5&&swapMode==='wounded'?t('另例','Example'):t('教学牌桌','Practice table')}</span><div>${step===2&&attackPhase>0||step===3&&rolesSwapped||step===4&&(defenseReady||defended)?'<button type="button" data-fg-replay>'+t('再看一次','Replay')+'</button>':''}${step===2?'<button type="button" data-fg-example aria-pressed="'+attackExample+'">'+t(attackExample?'回本轮':'另例：伤牌也能出',attackExample?'This round':'Example: play a wound')+'</button>':''}${step===5?'<button type="button" data-fg-swap-mode aria-pressed="'+(swapMode==='wounded')+'">'+t(swapMode==='wounded'?'回本轮':'另例：你有伤牌时',swapMode==='wounded'?'This round':'Example: your wounds')+'</button>':''}<button type="button" data-fg-whole aria-pressed="${whole}">${t(whole?'聚焦讲解':'看全桌',whole?'Focus':'Full table')}</button></div><small class="fg-focus-caption">${coach()[0]}</small></div>`;}
+ function toolbar(){return `<div class="fg-toolbar"><span>${step===2&&attackExample||step===5&&swapMode==='wounded'?t('另例','Example'):t('教学牌桌','Practice table')}</span><div>${step===1||step===2&&attackPhase>0||step===3&&rolesSwapped||step===4&&(defenseReady||defended)?'<button type="button" data-fg-replay>'+t('再看一次','Replay')+'</button>':''}${step===2?'<button type="button" data-fg-example aria-pressed="'+attackExample+'">'+t(attackExample?'回本轮':'另例：伤牌也能出',attackExample?'This round':'Example: play a wound')+'</button>':''}${step===5?'<button type="button" data-fg-swap-mode aria-pressed="'+(swapMode==='wounded')+'">'+t(swapMode==='wounded'?'回本轮':'另例：你有伤牌时',swapMode==='wounded'?'This round':'Example: your wounds')+'</button>':''}<button type="button" data-fg-whole aria-pressed="${whole}">${t(whole?'聚焦讲解':'看全桌',whole?'Focus':'Full table')}</button></div><small class="fg-focus-caption">${coach()[0]}</small></div>`;}
  function hasAction(){return step===2&&attackPhase<2||step===3&&!rolesSwapped||step===4&&!defended||step===6&&!refilled;}
- function reset(){whole=false;cameraRegion=null;attackPhase=0;attackExample=false;rolesSwapped=false;defenseReady=false;defended=false;refilled=false;ranksOpen=false;swapMode='round';swapGame=null;swapSource=null;swapResult=null;}
+ function reset(){whole=false;cameraRegion=null;attackPhase=0;attackExample=false;rolesSwapped=false;defenseReady=false;defended=false;refilled=false;ranksOpen=false;swapMode='round';swapGame=null;swapSource=null;swapResult=null;refillCase=null;}
  function paint(){
   const isStandard=document.getElementById('version-select').value==='1.0.0';
   if(isStandard){standard.innerHTML=window.SZStandardRules[window.GKLocale?.language==='en'?'en':'zh'];standard.querySelector('h1')?.remove();for(const a of standard.querySelectorAll('a[href="docs/RULES.md"],a[href="docs/RULES.zh-CN.md"]'))a.closest('p')?.remove();}
@@ -148,7 +157,7 @@
   const list=titles().map(([title,caption])=>({title,caption})),s=list[step];
   progress.setAttribute('aria-label',t('图解步骤','Guide steps'));
   progress.innerHTML=list.map((x,i)=>`<button type="button" data-rg-step="${i}" aria-label="${i===0?t('牌区','Zones'):i}. ${x.title}" ${i===step?'aria-current="step"':''}>${i===0?t('牌区','Zones'):i}</button>`).join('');
-  navigation.innerHTML=`<button type="button" data-rg-prev ${step===0?'disabled':''}>${t('上一步','Back')}</button><span>${step===0?t('牌区','Zones'):step+' / '+(list.length-1)}</span><button type="button" data-rg-next>${hasAction()?coach()[2]:step===6?t('回到牌桌','Back to game'):step===0?t('开始一轮','Start round'):t('下一步','Next')} <i aria-hidden="true">→</i></button>`;
+  navigation.innerHTML=`<button type="button" data-rg-prev ${step===0?'disabled':''}>${t('上一步','Back')}</button><span>${step===0?t('牌区','Zones'):step+' / '+(list.length-1)}</span><button type="button" data-rg-next ${step===5&&!swapResult?'disabled':''}>${step===5&&!swapResult?t('先完成换牌','Make one swap'):hasAction()?coach()[2]:step===6?t('回到牌桌','Back to game'):step===0?t('开始一轮','Start round'):t('下一步','Next')} <i aria-hidden="true">→</i></button>`;
   const ranks=[...(isStandard?[[t('五炸','Five-bomb'),7]]:[]),[t('四炸','Four-kind'),6],[t('三炸','Three-kind'),5],[t('同花顺','Straight flush'),4],[t('同花','Flush'),3],[t('顺子','Straight'),2],[t('对子','Pair'),1],[t('高牌','High card'),0]];
   const exampleScores=step===2?[4,1]:step===4?[5,4]:[];
   const reference=step!==2&&step!==4?'':`<div class="rg-reference-action"><button type="button" data-rg-ranks aria-expanded="${ranksOpen}" aria-controls="rg-rank-panel">${t('牌型与分数','Ranks & points')}<i aria-hidden="true">${ranksOpen?'−':'+'}</i></button></div><section class="rg-rank-panel" id="rg-rank-panel" aria-label="${t('牌型与分数','Hand ranks and points')}" ${ranksOpen?'':'hidden'}><table class="rg-score-table"><thead><tr><th scope="col">${t('牌型','Hand type')}</th><th scope="col">${t('分数','Points')}</th></tr></thead><tbody>${ranks.map(([name,n])=>`<tr${exampleScores.includes(n)?' class="is-example"':''}><th scope="row">${name}</th><td>${points(n)}</td></tr>`).join('')}</tbody></table><p>${t('同牌型比点数：进攻胜造成1伤，防守胜得1次机会；完全同点无事发生。','Same hand type: compare ranks. Attack rank win deals 1 wound; defense rank win earns 1 swap. Exact ties do nothing.')}${isStandard?t(' 三张、四炸和五炸可互相接；五炸是四张同数加花牌，7分。',' Three-card hands, four-bombs and five-bombs may answer each other. Five-bomb: four natural cards of one rank plus the flower, 7 points.'):t(' 三张和四炸可互相接。',' Three cards and four of a kind may answer each other.')}</p></section>`;
@@ -172,8 +181,8 @@
   const region=cameraRegion||automatic,target=board.querySelector(region==='center'?'.fg-center':'.fg-'+region),height=viewport.clientHeight,width=viewport.clientWidth,bh=board.offsetHeight,bw=board.offsetWidth;
   if(!height||!bh)return;
   const overview=whole||!mobileQuery.matches;
-  const scale=overview?Math.min(1,(height-12)/bh,(width-12)/bw):Math.min(1,(width-12)/bw,(height-12)/Math.min(thSafe(target),bh));
-  const top=target.offsetTop,th=target.offsetHeight,y=overview?(height-bh*scale)/2:bh*scale<=height?(height-bh*scale)/2:Math.max(height-bh*scale-6,Math.min(6,(height-th*scale)/2-top*scale));
+  const scale=routeBounds&&!overview?Math.min(1,(width-12)/bw,(height-12)/(routeBounds.bottom-routeBounds.top)):overview?Math.min(1,(height-12)/bh,(width-12)/bw):Math.min(1,(width-12)/bw,(height-12)/Math.min(thSafe(target),bh));
+  const top=target.offsetTop,th=target.offsetHeight,y=routeBounds&&!overview?(height-(routeBounds.bottom-routeBounds.top)*scale)/2-routeBounds.top*scale:overview?(height-bh*scale)/2:bh*scale<=height?(height-bh*scale)/2:Math.max(height-bh*scale-6,Math.min(6,(height-th*scale)/2-top*scale));
   const pose=`translate(${(width-bw*scale)/2}px, ${y}px) scale(${scale})`;
   // A new lesson reuses the last camera pose, then glides to its next area.
   board.getAnimations().forEach(a=>a.cancel());board.style.transform=pose;
@@ -182,41 +191,98 @@
   for(const b of nav.querySelectorAll('button')){const k=b.dataset.fgCamera,area=board.querySelector(k==='center'?'.fg-center':'.fg-'+k),hasTarget=!!area.querySelector('[data-fg-target]');b.setAttribute('aria-pressed',String(!whole&&region===k));b.classList.toggle('has-target',hasTarget);b.querySelector('small').textContent=hasTarget?'⇄':'';}
   // Hidden parts of the cropped table must not pull keyboard focus out of view.
   for(const b of board.querySelectorAll('button')){const r=b.getBoundingClientRect(),v=viewport.getBoundingClientRect();b.tabIndex=whole||r.top>=v.top&&r.bottom<=v.bottom?0:-1;}
-  if(previousPose&&previousPose!==pose&&!matchMedia('(prefers-reduced-motion: reduce)').matches)board.animate([{transform:previousPose},{transform:pose}],{duration:360,easing:'cubic-bezier(.2,.7,.2,1)'});
+  if(board.animate&&previousPose&&previousPose!==pose&&!matchMedia('(prefers-reduced-motion: reduce)').matches)board.animate([{transform:previousPose},{transform:pose}],{duration:360,easing:'cubic-bezier(.2,.7,.2,1)'});
  }
  function frame(){
   if(view!=='visual'||!dialog.open)return;const board=host.querySelector('.fg-board');if(!board)return;
   layoutMobile();mobileFrame(board);
  }
  function renderFocus(focus){const y=scroller.scrollTop;paint();scroller.scrollTop=y;frame();const requested=dialog.querySelector(focus);(dialog.classList.contains('fg-mobile')&&(!requested||requested.tabIndex===-1||!requested.getClientRects().length)?navigation.querySelector('[data-rg-next]'):requested)?.focus({preventScroll:true});}
- function go(next){if(next>6){document.getElementById('close-rules').click();return;}step=Math.max(0,next);reset();paint();scroller.scrollTop=0;frame();navigation.querySelector('[data-rg-next]').focus({preventScroll:true});}
+ function go(next){cancelMotion();if(next>6){document.getElementById('close-rules').click();return;}const priorStep=step,priorDefended=defended,carry=next===6&&priorStep===5&&swapResult?refillFromGame():null;step=Math.max(0,next);reset();refillCase=carry;paint();scroller.scrollTop=0;frame();navigation.querySelector('[data-rg-next]').focus({preventScroll:true});if(step===1)dealLesson();if(step===4)rivalAttack();if(step===5&&priorStep===4&&priorDefended)collectDefense();}
  function action(key){
+  if(motionBusy)return;
   cameraRegion=null;ranksOpen=false;
   if(key==='next'){go(step+1);return;}
-  if(key==='attack')attackPhase=1;else if(key==='wounds')attackPhase=2;else if(key==='roles')rolesSwapped=true;else if(key==='prepare-defense')defenseReady=true;else if(key==='defend'&&defenseReady)defended=true;else if(key==='refill')refilled=true;else if(key==='refill-replay')refilled=false;else if(key==='swap-reset')resetSwap();
+  if(key==='attack'){attackLesson();return;}if(key==='wounds'){woundLesson();return;}
+  if(key==='defend'&&defenseReady){defendLesson();return;}
+  if(key==='refill'||key==='refill-replay'){refillLesson();return;}
+  if(key==='roles'){rolesSwapped=true;renderFocus('[data-fg-action]');const titles=host.querySelectorAll('.fg-combat .fg-zone-title');if(Element.prototype.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)titles.forEach(el=>el.animate([{opacity:.25},{opacity:1}],{duration:600}));return;}
+  if(key==='prepare-defense')defenseReady=true;else if(key==='swap-reset')resetSwap();
   renderFocus('[data-fg-action]');
  }
+ function attackComparison(){const c=attackExample?cases().wounded:cases(),s=clone(c.attack);s.stock=c.start.stock;s.discard=c.start.discard;s.wounds=clone(c.start.wounds);if(attackExample)s.wounds[0]=[];s.damage=clone(c.start.damage);return s;}
+ const firstAttack=()=>({who:0,name:t('同花顺','Straight flush'),score:4,cards:['♣6','♣7','♣8']}),firstDefense=()=>({who:1,name:t('对子','Pair'),score:1,cards:['♠5','♥5','♦9']}),nextAttack=()=>({who:1,name:t('同花顺','Straight flush'),score:4,cards:['♠J','♠Q','♠K']}),nextDefense=()=>({who:0,name:t('三炸','Three-kind'),score:5,cards:['♠4','♥4','♥2']});
+ const emptyBattle=()=>[{who:0,cards:[]},{who:1,cards:[]}];
+ const fromGame=g=>({hand:g.players.map(p=>p.hand.map(window.GK.label)),wounds:g.players.map(p=>p.table.map(x=>window.GK.label(x.card))),damage:g.injuries(),stock:g.stock.length,discard:g.discard.length});
+ function refillFromGame(){const g=window.GK.Game.restore(swapGame.save()),start=fromGame(g);g.advance();return {start,end:fromGame(g)};}
+ function setScene(s,b,copy){scene=clone(s);sceneBattle=clone(b);sceneCopy=copy;paint();frame();}
+ function cancelMotion(render=true){if(!motionBusy)return;motionToken++;window.SZGuideFlights.cancel();motionBusy=false;scene=sceneBattle=sceneCopy=routeBounds=null;delete dialog.dataset.guideMotion;host.removeAttribute('aria-busy');sequenceLog.push({status:'cancelled'});if(render&&dialog.open){paint();frame();}}
+ async function sequence(name,start,startBattle,segments){
+  cancelMotion(false);const token=++motionToken;motionBusy=true;dialog.dataset.guideMotion=name;host.setAttribute('aria-busy','true');sequenceLog=[];
+  try{
+   setScene(start,startBattle,segments[0].copy);
+   for(const segment of segments){if(token!==motionToken)return;const before=window.SZGuideFlights.capture(host.querySelector('.fg-board'));setScene(segment.s,segment.b,segment.copy);
+    const board=host.querySelector('.fg-board');for(const move of segment.moves){for(const z of [move.from,move.to])board.querySelector('[data-fg-slot="'+(['stock','discard'].includes(z)?'piles':z)+'"]')?.classList.add('is-motion-route');}
+    await window.SZGuideFlights.play(before,board,segment.moves,bounds=>{routeBounds=bounds;frame();});
+    if(token!==motionToken)return;sequenceLog.push({caption:segment.copy[0],...clone(window.SZGuideFlights.lastRun)});
+   }
+  }finally{if(token===motionToken){motionBusy=false;scene=sceneBattle=sceneCopy=routeBounds=null;delete dialog.dataset.guideMotion;host.removeAttribute('aria-busy');paint();frame();navigation.querySelector('[data-rg-next]')?.focus({preventScroll:true});}}
+ }
+ const transfer=(from,index,to,target,kind='play',delay=0,arc=0)=>({from,index,to,target,kind,delay,arc});
+ function dealLesson(){const end=clone(cases().start),start=clone(end);start.hand=[[],[]];start.stock+=16;const mid=clone(start);mid.hand[0]=clone(end.hand[0]);mid.stock-=8;
+  sequence('deal',start,emptyBattle(),[
+   {s:mid,b:emptyBattle(),copy:[t('牌库 → 你的手牌 · 8张','Deck → your hand · 8 cards'),t('你的牌面朝上，只有你能看。','Your cards arrive face up and stay private.')],moves:end.hand[0].map((_,i)=>transfer('stock',0,'own-hand',i,'draw',i*85))},
+   {s:end,b:emptyBattle(),copy:[t('牌库 → 对手手牌 · 8张','Deck → rival hand · 8 cards'),t('对手的牌只显示牌背。双方都是8张，伤牌区为空。','The rival’s cards stay hidden. Both start with 8 cards and no wounds.')],moves:end.hand[1].map((_,i)=>transfer('stock',0,'rival-hand',i,'draw',i*85))}
+  ]);
+ }
+ function attackLesson(){const start=clone(state()),mid=clone(start),end=attackComparison(),a=firstAttack(),d=firstDefense();mid.hand[0]=clone(end.hand[0]);mid.wounds[0]=clone(end.wounds[0]);const moves=a.cards.map((label,i)=>{const wound=attackExample&&i===0;return transfer(wound?'own-wounds':'own-hand',(wound?start.wounds[0]:start.hand[0]).indexOf(label),'attack',i,'play',i*100)});attackPhase=1;
+  sequence('attack',start,emptyBattle(),[
+   {s:mid,b:[a,{who:1,cards:[]}],copy:[t('你先出牌 → 进攻区','Your cards → the attack area'),t(attackExample?'手牌7♣8♣和伤牌6♣一起移到中央。':'6♣7♣8♣离开手牌，组成同花顺4分。',attackExample?'Hand cards 7♣8♣ and wound 6♣ move into the center.':'6♣7♣8♣ leave your hand: straight flush, 4 points.')],moves},
+   {s:end,b:[a,d],copy:[t('对手应对 → 防守区','The rival responds → defense area'),t('对手出5♠5♥9♦，对子1分；比较4分与1分。','The rival plays 5♠5♥9♦, a pair worth 1. Compare 4 points against 1.')],moves:d.cards.map((_,i)=>transfer('rival-hand',i,'defense',i,'play',i*100))}
+  ]);
+ }
+ function woundLesson(){const start=clone(state()),c=attackExample?cases().wounded:cases(),end=clone(c.attack),b=[firstAttack(),firstDefense()],collected=clone(start);collected.discard+=6;const cleared=b.map(v=>({...v,cards:[]})),segments=[{s:collected,b:cleared,copy:[t('出过的6张 → 弃牌堆','6 played cards → discard'),t('先收走双方出过的牌，再摸伤牌。','Collect both played hands before drawing wound cards.')],moves:['attack','defense'].flatMap((z,k)=>[0,1,2].map(i=>transfer(z,i,'discard',0,'discard',(k*3+i)*75)))}];
+  if(attackExample){const replaced=clone(collected);replaced.stock--;replaced.wounds[0]=clone(end.wounds[0]);segments.push({s:replaced,b:cleared,copy:[t('牌库 → 你的伤牌原位','Deck → your used wound slot'),t('伤牌6♣用掉后补K♦，你仍是1伤，不回血。','Replace the played 6♣ with K♦. You still have 1 wound; this does not heal.')],moves:[transfer('stock',0,'own-wounds',0,'replace')]});}
+  segments.push({s:end,b:cleared,copy:[t('牌库 → 对手伤牌区 · 3张','Deck → rival wounds · 3 cards'),t('4分 − 1分 = 3伤。逐张翻开，放入公开伤牌区。','4 points − 1 point = 3 wounds. Reveal each card into the public wound area.')],moves:[0,1,2].map(i=>transfer('stock',0,'rival-wounds',i+(attackExample?1:0),'wound',i*160))});attackPhase=2;sequence('wounds',start,b,segments);
+ }
+ function rivalAttack(){const start=clone(cases().swap),end=clone(cases().defensePending),a=nextAttack();sequence('rival-attack',start,[{who:1,cards:[]},{who:0,cards:[]}],[{s:end,b:[a,{who:0,cards:[]}],copy:[t('现在对手出牌 → 进攻区','Now the rival plays → attack area'),t('J♠Q♠K♠是同花顺4分。对手先出完，才轮到你防守。','J♠Q♠K♠ is a straight flush worth 4. The rival plays first; then you defend.')],moves:[0,1,2].map(i=>transfer('rival-hand',i,'attack',i,'play',i*100))}]);}
+ function defendLesson(){const start=clone(state()),end=clone(cases().defend),a=nextAttack(),d=nextDefense();end.discard=start.discard;defended=true;sequence('defend',start,[a,{who:0,cards:[]}],[{s:end,b:[a,d],copy:[t('你的3张 → 防守区','Your 3 cards → defense area'),t('4♠4♥加花牌♥2，三炸5分，赢过对手4分：获得1次换牌。','4♠4♥ and wild ♥2 make three of a kind: 5 points beat 4, earning one swap.')],moves:d.cards.map((label,i)=>transfer('own-hand',start.hand[0].indexOf(label),'defense',i,'play',i*100))}]);}
+ function collectDefense(){const end=clone(state()),start=clone(end);start.discard-=6;const b=[nextAttack(),nextDefense()];sequence('collect-defense',start,b,[{s:end,b:b.map(v=>({...v,cards:[]})),copy:[t('出过的6张 → 弃牌堆','6 played cards → discard'),t('防守赢了，伤势不变。收牌后，使用这1次换牌机会。','Your defense won; wounds stay unchanged. Collect the cards, then use your one swap.')],moves:['attack','defense'].flatMap((z,k)=>[0,1,2].map(i=>transfer(z,i,'discard',0,'discard',(k*3+i)*75)))}]);}
+ function swapLesson(option){const before=clone(state()),source={...swapSource},given=window.GK.label(value(0,source.zone,source.index)),from='own-'+(source.zone==='hand'?'hand':'wounds'),sourceIndex=source.index;swapGame.refresh(option);swapResult={source,option,given,received:window.GK.label(value(0,source.zone,source.index))};const after=clone(state()),received=swapResult.received;cameraRegion='own';let moves,copy;
+  if(option.exchange==='deck'){moves=[transfer(from,sourceIndex,'discard',0,'discard'),transfer('stock',0,from,sourceIndex,'draw',750)];copy=[t('先弃旧，再从牌库摸1张','Discard first, then draw 1'),t(given+'进弃牌堆；'+received+'从牌库补回原位置。',given+' goes to discard; '+received+' comes from the deck into the same slot.')];}
+  else{const who=option.exchange==='opponent'?1:option.who,z=option.exchange==='opponent'?'hand':option.zone,index=option.exchange==='opponent'?before.hand[1].indexOf(received):option.index,to=(who?'rival-':'own-')+(z==='hand'?'hand':'wounds');moves=[transfer(from,sourceIndex,to,index,'swap',0,18),transfer(to,index,from,sourceIndex,'swap',80,-18)];copy=[t('两张牌，交换原来的位置','Two cards exchange their positions'),t(option.exchange==='opponent'?'对手随机一张牌换给你；你交出的牌进入对手手牌，保持保密。':given+'换到目标区，'+received+'回到你原来的牌位。张数、伤势不变。',option.exchange==='opponent'?'A random rival card comes to you. Your card enters their hidden hand.':given+' moves to the target; '+received+' returns to your original slot. Counts and wounds stay the same.')];}
+  sequence('swap',before,battle(),[{s:after,b:battle(),copy,moves}]);
+ }
+ function refillLesson(){const c=refillCase||{start:cases().exchange,end:cases().refill},start=clone(c.start),end=clone(c.end),mid=clone(start),b=[{who:1,cards:[]},{who:0,cards:[]}];mid.hand[1]=clone(end.hand[1]);const kept=start.hand.map(h=>h.length),drawn=end.hand.map((h,i)=>h.length-kept[i]);mid.stock-=drawn[1];refilled=true;
+  sequence('refill',start,b,[
+   {s:mid,b,copy:[t('牌库 → 对手手牌 · 补'+drawn[1]+'张','Deck → rival hand · draw '+drawn[1]),t('保留原来的'+kept[1]+'张，只补缺少的'+drawn[1]+'张。','Keep the original '+kept[1]+' cards and draw only the missing '+drawn[1]+'.')],moves:end.hand[1].slice(kept[1]).map((_,i)=>transfer('stock',0,'rival-hand',i+kept[1],'draw',i*110))},
+   {s:end,b,copy:[t('牌库 → 你的手牌 · 补'+drawn[0]+'张','Deck → your hand · draw '+drawn[0]),t('你的原'+kept[0]+'张也保留。双方补到8张后，开始下一轮。','Keep your original '+kept[0]+' as well. Once both hands reach 8, the next round begins.')],moves:end.hand[0].slice(kept[0]).map((_,i)=>transfer('stock',0,'own-hand',i+kept[0],'draw',i*110))}
+  ]);
+ }
+ window.SZGuideMotion={get busy(){return motionBusy;},get log(){return sequenceLog;},cancel:()=>cancelMotion()};
+
  function navigate(e){const b=e.target.closest('button');if(!b)return;
+  if(motionBusy){if(b.hasAttribute('data-rg-prev')||b.dataset.rgStep!==undefined)cancelMotion();else return;}
   if(b.dataset.fgAction){action(b.dataset.fgAction);return;}
   if(b.dataset.fgCamera){cameraRegion=b.dataset.fgCamera;whole=false;if(step===0)zone=cameraRegion==='center'?'piles':cameraRegion+'-hand';renderFocus('[data-fg-camera="'+cameraRegion+'"]');return;}
   if(b.hasAttribute('data-fg-whole')){whole=!whole;renderFocus('[data-fg-whole]');return;}
   if(b.hasAttribute('data-fg-example')){cameraRegion=null;whole=false;ranksOpen=false;attackExample=!attackExample;attackPhase=0;renderFocus('[data-fg-example]');return;}
   if(b.hasAttribute('data-fg-swap-mode')){cameraRegion=null;whole=false;ranksOpen=false;swapMode=swapMode==='round'?'wounded':'round';resetSwap();renderFocus('[data-fg-swap-mode]');return;}
-  if(b.hasAttribute('data-fg-replay')){cameraRegion=null;whole=false;ranksOpen=false;attackPhase=0;rolesSwapped=false;defenseReady=false;defended=false;renderFocus('[data-fg-action]');return;}
+  if(b.hasAttribute('data-fg-replay')){cameraRegion=null;whole=false;ranksOpen=false;attackPhase=0;rolesSwapped=false;defenseReady=false;defended=false;renderFocus('[data-fg-action]');if(step===1)dealLesson();if(step===4)rivalAttack();return;}
   if(b.dataset.fgZone){zone=b.dataset.fgZone;cameraRegion=null;whole=false;renderFocus('[data-fg-zone="'+zone+'"]');return;}
   if(b.dataset.fgSource){const [z,i]=b.dataset.fgSource.split(':');swapSource={zone:z,index:Number(i)};cameraRegion=null;whole=false;renderFocus(mobileQuery.matches?'[data-fg-camera="rival"]':'[data-fg-target]');return;}
-  if(b.dataset.fgTarget!==undefined){const option=swapGame.refreshOptions()[Number(b.dataset.fgTarget)];if(!option||option.source.zone!==swapSource?.zone||option.source.index!==swapSource?.index)return;const source={...swapSource},given=window.GK.label(value(0,source.zone,source.index));swapGame.refresh(option);swapResult={source,option,given,received:window.GK.label(value(0,source.zone,source.index))};cameraRegion='own';renderFocus('[data-fg-action]');return;}
+  if(b.dataset.fgTarget!==undefined){const option=swapGame.refreshOptions()[Number(b.dataset.fgTarget)];if(!option||option.source.zone!==swapSource?.zone||option.source.index!==swapSource?.index)return;swapLesson(option);return;}
   if(b.hasAttribute('data-rg-ranks')){ranksOpen=!ranksOpen;b.setAttribute('aria-expanded',String(ranksOpen));b.querySelector('i').textContent=ranksOpen?'−':'+';host.querySelector('#rg-rank-panel').hidden=!ranksOpen;frame();return;}
   if(b.dataset.rgStep!==undefined){go(Number(b.dataset.rgStep));return;}
   if(b.hasAttribute('data-rg-prev')){go(step-1);return;}
   if(b.hasAttribute('data-rg-next')){if(hasAction())action(coach()[3]);else go(step+1);}
  }
- switches.addEventListener('click',e=>{const b=e.target.closest('[data-rg-view]');if(b&&b.dataset.rgView!==view){viewScroll[view]=scroller.scrollTop;view=b.dataset.rgView;if(view==='text')ranksOpen=false;paint();if(view==='visual'&&mobileQuery.matches)frame();else scroller.scrollTop=viewScroll[view];revealContent();}});
- languageButton.addEventListener('click',()=>window.GKLocale.setLanguage(t('en','zh-CN')));
+ switches.addEventListener('click',e=>{const b=e.target.closest('[data-rg-view]');if(b&&b.dataset.rgView!==view){cancelMotion();viewScroll[view]=scroller.scrollTop;view=b.dataset.rgView;if(view==='text')ranksOpen=false;paint();if(view==='visual'&&mobileQuery.matches)frame();else scroller.scrollTop=viewScroll[view];revealContent();}});
+ languageButton.addEventListener('click',()=>{cancelMotion();window.GKLocale.setLanguage(t('en','zh-CN'));});
  dialog.addEventListener('cancel',e=>{if(ranksOpen){e.preventDefault();e.stopImmediatePropagation();ranksOpen=false;renderFocus('[data-rg-ranks]');}},true);
  for(const element of [host,progress,navigation])element.addEventListener('click',navigate);
- function sync(){const language=window.GKLocale?.language||'zh-CN',v=version();if(language!==lastLanguage||v!==lastVersion){const sameVersion=v===lastVersion,position=view==='text'&&sameVersion?readingPosition():null;if(!sameVersion){view=v==='0.3.8'||v==='1.0.0'?'visual':'text';step=0;viewScroll.visual=viewScroll.text=0;reset();}lastLanguage=language;lastVersion=v;paint();if(position)restoreReading(position);else frame();}}
+ function sync(){const language=window.GKLocale?.language||'zh-CN',v=version();if(language!==lastLanguage||v!==lastVersion){cancelMotion(false);const sameVersion=v===lastVersion,position=view==='text'&&sameVersion?readingPosition():null;if(!sameVersion){view=v==='0.3.8'||v==='1.0.0'?'visual':'text';step=0;viewScroll.visual=viewScroll.text=0;reset();}lastLanguage=language;lastVersion=v;paint();if(position)restoreReading(position);else frame();}}
  new MutationObserver(sync).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
- new MutationObserver(()=>{if(dialog.open){sync();frame();}}).observe(dialog,{attributes:true,attributeFilter:['open']});
- document.getElementById('version-select').addEventListener('change',()=>queueMicrotask(sync));const resize=()=>queueMicrotask(()=>{layoutShell();frame();});window.addEventListener('resize',resize);window.visualViewport?.addEventListener('resize',resize);if(window.ResizeObserver)new ResizeObserver(resize).observe(scroller);sync();
+ new MutationObserver(()=>{if(dialog.open){sync();frame();}else cancelMotion(false);}).observe(dialog,{attributes:true,attributeFilter:['open']});
+ document.getElementById('version-select').addEventListener('change',()=>queueMicrotask(sync));const resize=()=>queueMicrotask(()=>{layoutShell();frame();});const resizeCancel=()=>{cancelMotion();resize();};window.addEventListener('resize',resizeCancel);window.visualViewport?.addEventListener('resize',resizeCancel);if(window.ResizeObserver)new ResizeObserver(resize).observe(scroller);document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelMotion();});const reduce=matchMedia('(prefers-reduced-motion: reduce)');reduce.addEventListener?.('change',()=>cancelMotion());close.addEventListener('click',()=>cancelMotion(false));sync();
 })();

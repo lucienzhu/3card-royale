@@ -1,0 +1,15 @@
+/* Motion stays inside the teaching camera and the shared drawer. */
+#rule-page .fg-flight-layer{position:absolute;inset:0;z-index:20;pointer-events:none;overflow:visible}
+#rule-page .fg-flight{position:absolute;left:0;top:0;transform-origin:0 0;pointer-events:none;will-change:transform,opacity}
+#rule-page .fg-flight>.card{position:absolute!important;inset:0!important;margin:0!important;box-sizing:border-box;box-shadow:0 5px 12px #0003}
+#rule-page[data-guide-motion] .fg-board .card{animation:none!important}
+#rule-page[data-guide-motion] .fg-slot{opacity:.45}
+#rule-page[data-guide-motion] .fg-slot.is-motion-route{opacity:1;box-shadow:0 0 0 1.5px var(--accent)}
+#rule-page[data-guide-motion] .fg-slot.is-motion-route .fg-zone-title{color:var(--ink)}
+#rule-page[data-guide-motion] .fg-flight-layer .card{opacity:1}
+#rule-page[data-guide-motion] :is(.fg-board button,.fg-camera-nav button,[data-fg-whole],[data-fg-example],[data-fg-swap-mode],[data-fg-replay],[data-fg-action],[data-rg-next],[data-rg-ranks]){pointer-events:none}
+#rule-page[data-guide-motion] .fg-coach strong{color:var(--accent)}
+#rule-page[data-guide-motion] #rg-navigation [data-rg-next]{opacity:.55}
+#rule-page .fg-coach-copy{scrollbar-gutter:stable}
+
+#rule-page .fg-board :is(.fg-added,.fg-received,.is-changed .card){animation:none!important}
