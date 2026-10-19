@@ -29,7 +29,7 @@
   const card=value(who,z,i),target=options().find(o=>o.exchange==='card'&&o.who===who&&o.zone===z&&o.index===i),source=who===0&&(!swapSource||swapSource.zone===z),selected=who===0&&swapSource?.zone===z&&swapSource.index===i,active=!swapResult&&(target||source);
   const changed=swapResult&&(who===0&&z===swapResult.source.zone&&i===swapResult.source.index||swapResult.option.exchange==='card'&&who===swapResult.option.who&&z===swapResult.option.zone&&i===swapResult.option.index);
   const attrs=active?(target?'data-fg-target="'+optionIndex(target)+'"':'data-fg-source="'+z+':'+i+'"'):'';
-  return `<${active?'button':'div'} ${active?'type="button"':''} class="fg-card-hit ${target?'is-target':''} ${selected?'is-source':''} ${changed?'is-changed':''}" ${attrs} ${active&&!target?'aria-pressed="'+!!selected+'"':''} aria-label="${zoneName(who,z)} ${window.GK.label(card)}${active?t(target?'，点击交换':'，点击交出',target?'; swap for this':'; choose to give'):''}">${face(window.GK.label(card))}${target?badge():''}</${active?'button':'div'}>`;
+  return `<${active?'button':'div'} ${active?'type="button"':''} class="fg-card-hit ${target?'is-target':''} ${selected?'is-source':''} ${changed?'is-changed':''}" ${attrs} ${active&&!target?'aria-pressed="'+!!selected+'"':''} aria-label="${zoneName(who,z)} ${window.GK.label(card)}${active?t(target?'，点击交换':'，点击交出',target?'; swap for this':'; choose to give'):''}">${face(window.GK.label(card),false,selected?'selected':'')}${target?badge():''}</${active?'button':'div'}>`;
  }
  function swapCopy(){
   const r=swapResult,d=r.option.exchange==='deck'?t('弃牌堆','discard'):r.option.exchange==='opponent'?t('对手手牌（随机一张）','rival hand (one random card)'):zoneName(r.option.who,r.option.zone);
@@ -47,7 +47,7 @@
   if(step===0)return [zone];if(step===1)return ['own-hand','wild'];
   if(step===2)return attackPhase===0?['own-hand',...(attackExample?['own-wounds']:[]),'action']:attackPhase===1?['attack','defense','action']:['rival-wounds','piles',...(attackExample?['own-wounds']:[]),'action'];
   if(step===3)return ['attack','defense','action'];if(step===4)return defended?['attack','defense','action']:defenseReady?['own-hand','defense','wild','action']:['attack','action'];
-  if(step===5){if(!swapSource)return ['own-hand','own-wounds','action'];if(swapResult)return ['own-'+(swapResult.source.zone==='hand'?'hand':'wounds'),swapResult.option.exchange==='deck'?'piles':(swapResult.option.who===0?'own-':'rival-')+(swapResult.option.zone==='hand'?'hand':'wounds'),'action'];return ['own-hand','own-wounds','rival-hand','rival-wounds','piles','action'];}
+  if(step===5){if(!swapSource)return ['own-hand',...(swapGame.players[0].table.length?['own-wounds']:[]),'action'];if(swapResult)return ['own-'+(swapResult.source.zone==='hand'?'hand':'wounds'),swapResult.option.exchange==='deck'?'piles':(swapResult.option.who===0?'own-':'rival-')+(swapResult.option.zone==='hand'?'hand':'wounds'),'action'];return [...new Set(['own-'+(swapSource.zone==='hand'?'hand':'wounds'),...options().map(o=>o.exchange==='deck'?'piles':o.exchange==='opponent'?'rival-hand':(o.who===0?'own-':'rival-')+(o.zone==='hand'?'hand':'wounds')),'action'])];}
   return ['own-hand','rival-hand','piles','action'];
  }
  function coach(){
