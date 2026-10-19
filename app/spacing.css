@@ -1,4 +1,4 @@
-/* Keep the table quiet at rest; zone names appear only on hover or focus. */
+/* Zone names are brief mouse-hover hints; clicking never leaves a sticky label. */
 .table .player-title{gap:8px}
 .table .hand-total{font-size:var(--ui-label);line-height:var(--ui-line);font-weight:400;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
 .table .player-zone :is(.hand-group,.wound-group){position:relative}
@@ -7,16 +7,17 @@
  width:max-content;max-width:calc(100vw - 32px);min-height:0;padding:3px 8px;margin:0;
  display:block;background:var(--sz-logo-paper);border:1px solid var(--line);border-radius:5px;
  font-size:var(--ui-label);line-height:18px;font-weight:400;color:var(--muted);white-space:nowrap;
- opacity:0;visibility:hidden;pointer-events:none;transition:opacity 140ms ease;
+ opacity:0;visibility:hidden;pointer-events:none;
+ transition:opacity 160ms ease,visibility 0s linear 160ms;
 }
 .table .player-zone .wound-group{display:block;padding-block:3px}
 .table .player-zone .wound-group>.cards{width:100%;padding-inline:0}
-.table .player-zone .hand-group:focus-within>.rack-label,
-.table .player-zone .wound-group:focus-within>.rack-label{opacity:1;visibility:visible}
 @media(hover:hover) and (pointer:fine){
- .table .player-zone .hand-group:hover>.rack-label,
- .table .player-zone .wound-group:has(.card):hover>.rack-label{opacity:1;visibility:visible}
+ .table .player-zone :is(.hand-group,.wound-group)[data-rack-hint=show]>.rack-label{
+  opacity:1;visibility:visible;transition-delay:0s;
+ }
 }
+.table .player-zone :is(.hand-group,.wound-group)[data-rack-hint=pressed]>.rack-label{opacity:0;visibility:hidden;transition:none}
 /* The axis still occupies56px. Leave a clear corridor around its12px labels. */
 .sz-bloom .fc-progress-summary .fc-win-top,.sz-bloom .fc-progress-summary .fc-ace-attempt.fc-attempt-rival{top:-3px}
 .sz-bloom .fc-progress-summary .fc-win-bottom,.sz-bloom .fc-progress-summary .fc-start-stamp.fc-win-bottom,
