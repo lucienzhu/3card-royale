@@ -186,8 +186,6 @@ dialog:not([open]){display:none}
 :root body .app-header{padding-top:calc(8px + env(safe-area-inset-top))}
 :root body[data-bloom=true] .app-header{height:calc(var(--header) + env(safe-area-inset-top))}
 :root body .app-main{height:calc(var(--app-height,100dvh) - var(--header) - env(safe-area-inset-top))}
-.site-brand-sample{background:#E6EEE9!important;color:#293A36!important;border:0!important}
-.site-brand-sample.night{background:#1E2D43!important;color:#EAF0F8!important}
 .site-demo .sc-card{background:var(--card-face);color:var(--card-ink);border-color:var(--card-edge)}
 .site-demo .sc-card.red{color:var(--card-red)}
 
