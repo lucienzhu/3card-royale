@@ -1,0 +1,42 @@
+/* Step 5: choose the source and destination on the same table as play. */
+.rg-swap-examples{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.rg-swap-examples button,.rg-swap-feedback button{border:1px solid var(--line);border-radius:7px;background:var(--paper);color:var(--muted);font-family:inherit;font-size:12px;font-weight:600;line-height:1.4;padding:7px 10px;min-height:34px}
+.rg-swap-examples button[aria-pressed=true]{color:var(--ink);background:var(--sz-table);border-color:var(--ink)}
+.rg-swap-table{--demo-cardw:38px;--demo-cardh:54px;padding:12px 16px}
+.rg-swap-zone{display:flex;flex-direction:column;align-items:center;gap:4px;margin:8px 0 10px;min-width:0}
+.rg-swap-caption{font-size:12px;line-height:1.4;color:var(--muted);text-align:center}
+.rg-swap-blind{position:relative;border:1px dashed var(--line);border-radius:8px;background:transparent;padding:6px 12px 10px;min-width:116px}
+.rg-swap-blind .rg-demo-hand{padding:0}
+.rg-swap-table .rg-demo-hand,.rg-swap-table .rg-demo-wounds{gap:6px;padding:3px 0;min-height:0}
+.rg-swap-card{position:relative;display:block;flex:none;padding:3px;margin:0;border:1px solid transparent;border-radius:7px;background:transparent;color:var(--ink)}
+.rg-swap-table .rg-swap-card .card{width:44px;height:62px;margin:0;padding:4px;border-radius:5px;pointer-events:none}
+.rg-swap-table .rg-swap-card .rank{font-size:22px;line-height:1}
+.rg-swap-table .rg-swap-card .suit{font-size:13px;margin-top:2px}
+.rg-swap-table .rg-swap-card .center{font-size:25px}
+.rg-swap-table .rg-swap-card.is-source{border:2px solid var(--sz-flower);padding:2px;background:var(--paper)}
+.rg-swap-table button.rg-swap-card:not(.is-target){cursor:pointer}
+.rg-swap-table .is-target{border:1px dashed var(--sz-flower-deep);cursor:pointer;color:var(--sz-flower-deep)}
+.rg-swap-table button.is-target:hover{background:color-mix(in srgb,var(--sz-flower) 9%,var(--sz-table))}
+.rg-swap-badge{position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);padding:0 4px;background:var(--sz-table);font:400 19px/1 var(--rank-font);border-radius:3px;color:var(--sz-flower-deep);pointer-events:none}
+.rg-swap-middle{border-block:1px solid var(--line);padding:10px 0 14px;margin:10px 0}
+.rg-swap-piles{display:flex;justify-content:center;gap:22px}
+.rg-swap-piles>div{display:flex;flex-direction:column;align-items:center;gap:5px}
+.rg-swap-piles small{color:var(--muted);font-size:12px;line-height:1.4}
+.rg-swap-table .rg-demo-pile{width:44px;height:62px;color:var(--ink)}
+.rg-swap-table .rg-demo-pile>b{font-size:22px}
+.rg-swap-table .rg-swap-discard{opacity:.55}
+.rg-swap-empty{min-height:30px;display:flex;align-items:center;font-size:12px;color:var(--muted);line-height:1.4}
+.rg-swap-feedback{display:flex;align-items:start;justify-content:space-between;gap:10px;min-height:58px;margin-top:12px}
+.rg-swap-feedback strong{font-size:14px;line-height:1.6;color:var(--ink);font-weight:600}
+.rg-swap-feedback p{font-size:12px;line-height:1.6;color:var(--muted);margin:4px 0 0}
+.rg-swap-feedback button{flex:none;color:var(--ink)}
+.rg-swap-feedback:focus{outline:none}
+.rg-swap-table button:focus-visible,.rg-swap-examples button:focus-visible,.rg-swap-feedback button:focus-visible{outline:2px solid var(--sz-flower);outline-offset:3px}
+.rg-swap-card.is-changed .card{animation:rg-swap-received .55s ease-out;border-color:var(--sz-flower-deep)}
+.rg-swap-invariants{font-size:12px!important;margin:8px 0 0!important;color:var(--muted)}
+@keyframes rg-swap-received{from{opacity:.25;transform:translateY(7px)}to{opacity:1;transform:none}}
+@media(min-width:700px){.rg-swap-table{padding:14px 24px}.rg-swap-zone{margin:8px 0 12px}.rg-swap-table .rg-demo-player{display:grid;grid-template-columns:100px 1fr 1fr;align-items:center;gap:12px}.rg-swap-table .rg-demo-player header{grid-column:1;grid-row:1;flex-direction:column;align-items:start;gap:8px}.rg-swap-table .rg-demo-own header{grid-column:1}.rg-swap-table .rg-demo-own .rg-swap-zone:nth-child(1){grid-column:3;grid-row:1}.rg-swap-table .rg-demo-own .rg-swap-zone:nth-child(2){grid-column:2;grid-row:1}.rg-swap-middle{padding:14px 0 18px}}
+@media(max-width:400px){.rg-swap-table{padding:10px}.rg-swap-table .rg-demo-player header{font-size:14px}.rg-swap-table .rg-demo-damage .wound-bract{width:7px;height:10px}.rg-swap-zone{gap:3px;margin:6px 0 8px}.rg-swap-table .rg-swap-card .card{width:38px;height:54px}.rg-swap-table .rg-swap-card .rank{font-size:20px}.rg-swap-table .rg-demo-hand,.rg-swap-table .rg-demo-wounds{gap:4px}.rg-swap-table .rg-demo-pile{width:38px;height:54px}.rg-swap-table .rg-demo-pile>b{font-size:20px}.rg-swap-middle{padding:8px 0 12px;margin:8px 0}.rg-swap-table .rg-swap-blind .card{width:38px;height:54px}.rg-swap-feedback{gap:8px}.rg-swap-feedback button{padding:6px 7px}}
+@media(prefers-reduced-motion:reduce){.rg-swap-card.is-changed .card{animation:none}}
+@media(max-width:699px){.rg-swap-table .rg-demo-player{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);column-gap:8px;align-items:start}.rg-swap-table .rg-demo-player header{grid-column:1/-1;grid-row:1}.rg-swap-table .rg-demo-own header{grid-row:2}.rg-swap-table .rg-demo-own .rg-swap-zone:nth-child(2){grid-column:1;grid-row:1}.rg-swap-table .rg-demo-own .rg-swap-zone:nth-child(1){grid-column:2;grid-row:1}.rg-swap-table .rg-demo-wounds{flex-wrap:wrap;gap:3px}.rg-swap-blind{min-width:0;width:100%;box-sizing:border-box;padding:6px 8px 10px}.rg-swap-table .rg-swap-card{padding:3px}.rg-swap-table .rg-swap-card.is-source{padding:2px}.rg-swap-table .rg-demo-rival .rg-swap-card .card{width:31px;height:44px;padding:3px}.rg-swap-table .rg-demo-rival .rg-swap-card .rank{font-size:18px}.rg-swap-table .rg-demo-rival .rg-swap-card .suit{font-size:10px}.rg-swap-table .rg-demo-rival .rg-swap-card .center{font-size:18px}.rg-swap-caption{min-height:34px}.rg-swap-table .rg-demo-wounds:empty{min-height:34px}}
+@media(max-width:699px){.rg-swap-table .rg-demo-own{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}.rg-swap-table .rg-demo-rival .rg-demo-wounds[data-count="4"]{display:grid;grid-template-columns:repeat(2,auto);gap:5px}.rg-swap-table .rg-demo-rival .rg-swap-card{min-width:44px;box-sizing:border-box;display:flex;justify-content:center}}
