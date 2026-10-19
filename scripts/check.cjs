@@ -17,3 +17,5 @@ const g=new GK.Game(20261018,{version:'1.0.0',first:0});for(let i=0;i<24;i++){if
 console.log(`OK: ${scripts} JavaScript files, ${refs} local HTML references, card examples, exact tie and a saved-game round trip.`);
 
 require('../tests/seeds.cjs');
+
+require('../tests/bloom.cjs');

@@ -245,7 +245,7 @@ const FOUR_STUDY={
 ;
 'use strict';
 const $=id=>document.getElementById(id);
-const UI_REVISION='sz-seed-config1';
+const UI_REVISION='sz-bloom1';
 const VARIANT_TEXT={
  '1.0.0':{name:'1.0 · 标准规则',note:'共用花牌，五伤败北。通常出三张，四炸6分，五炸7分；五炸须四张自然同点牌加花牌。赢家升级后的等级决定下局花牌。',tie:'同花样比点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无效果。',ranking:'五炸7 > 四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。'},
  '0.3.8':{name:'0.3.8 · 共用花牌',note:'首局双方共用♥2作为花牌。此后小局赢家升级后的等级决定下一小局双方共用的花牌；一局内不变。花牌即逢人配／会子／百搭牌。攻防、血牌交换与升级其余规则沿用0.3.7。',tie:'同牌型比较点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无事发生。',ranking:'四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。四炸也可用花牌。'},
@@ -279,12 +279,13 @@ function card(id,{back=false,pending=false,selected=false,selectable=false,mini=
  if(pending){el.innerHTML='<span class="pending-mark" aria-hidden="true">↻</span><span class="pending-label">待补</span>';el.setAttribute('aria-label','伤牌已出，结算后补回，仍计伤势');}
  else if(back){el.innerHTML='<span class="motif" aria-hidden="true">'+(window.SZFlowerMark||'✦')+'</span>';el.setAttribute('aria-label',backLabel);}
  else{el.classList.toggle('red',GK.suit(id)===1||GK.suit(id)===3);el.innerHTML='<span class="rank">'+GK.rankLabel(GK.rank(id))+'</span><span class="suit">'+GK.SUITS[GK.suit(id)]+'</span><span class="center">'+GK.SUITS[GK.suit(id)]+'</span>'+(badge?'<span class="badge">'+badge+'</span>':'')+(GK.wild(id,level)?'<span class="wild">★</span>':'');el.setAttribute('aria-label',GK.label(id)+(badge?'，'+badge:'')+(GK.wild(id,level)?(GK.sharedFlower(variant)?'，花牌':'，逢人配'):''));el.dataset.card=String(id);}
+ if(handler&&['交出','可交换','可换'].includes(badge)){el.classList.add('has-swap-icon');el.insertAdjacentHTML('beforeend','<span class="sz-swap-icon" aria-hidden="true">⇄</span>');}
  return el;
 }
 function setEmpty(container,text){const el=document.createElement('div');el.className='empty';el.textContent=text;container.append(el);}
 function toggleCard(id){if(!isPlaying())return;error='';if(selected.includes(id))selected=selected.filter(c=>c!==id);else if(selected.length<(GK.allowsFive(variant)?5:GK.allowsFour(variant)?4:3))selected.push(id);else error='已选足，请先取消一张再换牌。';render();}
 function toggleFlip(index){if(mode!=='play'||game.phase!=='flip'||game.currentActor()!==0||!flipMode)return;const o=game.flipOptions().find(x=>x.action===flipMode);if(!o.indices.includes(index))return;error='';if(flipIndices.includes(index))flipIndices=flipIndices.filter(i=>i!==index);else if(flipIndices.length<o.count)flipIndices.push(index);else error='已选足，请先取消一张再调整。';render();}
-function damageBar(el,n){const cap=GK.deathThreshold(variant);el.setAttribute('aria-label','伤势 '+n+' / '+cap);el.innerHTML='<b><span class="damage-count">'+n+'</span><small> / '+cap+' 伤</small></b>'+Array.from({length:cap},(_,i)=>'<span aria-hidden="true" class="pip'+(i<n?' filled':'')+'"></span>').join('');}
+function damageBar(el,n){const previous=Number(el.dataset.wounds??n);el.dataset.wounds=String(n);const cap=GK.deathThreshold(variant);el.setAttribute('aria-label','伤势 '+n+' / '+cap);el.innerHTML='<b><span class="damage-count">'+n+'</span><small> / '+cap+' 伤</small></b>'+Array.from({length:cap},(_,i)=>'<svg class="wound-bract '+(i<n?'filled':'')+'" viewBox="22 11 20 26" aria-hidden="true">'+window.SZBloomAssets.bract+'</svg>').join('');if(n>previous&&!matchMedia('(prefers-reduced-motion: reduce)').matches){const drop=document.createElementNS('http://www.w3.org/2000/svg','svg');drop.setAttribute('viewBox','22 11 20 26');drop.setAttribute('aria-hidden','true');drop.classList.add('sz-wound-drop');drop.innerHTML=window.SZBloomAssets.bract;el.append(drop);const a=drop.animate([{transform:'translate(0,-10px) rotate(-10deg)',opacity:1},{transform:'translate(12px,25px) rotate(125deg)',opacity:0}],{duration:720,easing:'ease-in',fill:'forwards'});a.finished.then(()=>drop.remove()).catch(()=>drop.remove());}}
 function renderPiles(s){
  const stock=s.stock.length,discard=s.discard.length,low=stock>0&&stock<=5,recycle=stock===0&&discard>0;
  for(const [id,n]of [['stock',stock],['discard',discard]]){$(id+'-count').textContent=n;$(id+'-pile').dataset.depth=String(Math.min(3,Math.ceil(n/12)));}
@@ -293,11 +294,12 @@ function renderPiles(s){
  $('deck-count').classList.toggle('exchange-ready',exchange);$('deck-count').setAttribute('role',exchange?'button':'img');$('deck-count').tabIndex=exchange?0:-1;$('deck-count').onclick=exchange?()=>exchangeHandWith('deck'):null;$('deck-count').onkeydown=exchange?e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();exchangeHandWith('deck');}}:null;
  const note=exchange?'点牌堆：弃旧摸新':recycle?'下次抽牌时重洗弃牌':low?'牌堆将尽':stock===0?'牌堆为空':'';
  $('deck-count').setAttribute('aria-label','牌堆剩余 '+stock+' 张，弃牌 '+discard+' 张'+(note?'；'+note:''));
+ $('deck-count').querySelector('.sz-swap-icon')?.remove();if(exchange)$('deck-count').insertAdjacentHTML('beforeend','<span class="sz-swap-icon" aria-hidden="true">⇄</span>');
  $('deck-count').title='牌堆 '+stock+' · 弃牌 '+discard+(note?' · '+note:'');
 }
 function currentResult(){return ['game_over','match_over'].includes(game.phase)?game.results[game.results.length-1]:null;}
 function resultKey(r){return [variant,game.seed,r.game,r.winner,r.from,r.to].join(':');}
-function stopCelebration(){if(celebrationTimer!==null)clearTimeout(celebrationTimer);celebrationTimer=null;$('result-confetti').replaceChildren();}
+function stopCelebration(){window.SZBloom?.stop();if(celebrationTimer!==null)clearTimeout(celebrationTimer);celebrationTimer=null;$('result-confetti').replaceChildren();}
 function celebrateResult(key){
  if(celebratedResultKey===key)return;
  celebratedResultKey=key;stopCelebration();
@@ -325,12 +327,16 @@ function openResult(){
  if(GK.handExchange(variant)){
   if(r.a_reset){$('result-hint').textContent=(r.a_reset.who===0?'你':'对手')+'冲A三次未果：A → 2；'+(r.a_reset.who===0?'对手':'你')+'保留当前等级。';drawAttemptLights($('result-attempts'),3,false);}
   else if(match){drawAttemptLights($('result-attempts'),game.aLosses[r.winner],true);}
-  else{const loser=1-r.winner;if(game.players[loser].level===14){drawAttemptLights($('result-attempts'),game.aLosses[loser],false);$('result-hint').textContent=(loser===0?'你':'对手')+'冲A还剩 '+(3-game.aLosses[loser])+' 次。';}}
+  else{const loser=1-r.winner;if(GK.sharedFlower(variant)?r.ace_challenger===loser:game.players[loser].level===14){drawAttemptLights($('result-attempts'),game.aLosses[loser],false);$('result-hint').textContent=(loser===0?'你':'对手')+'冲A还剩 '+(3-game.aLosses[loser])+' 次。';}}
  }
+ modal.classList.toggle('has-city',match&&GK.sharedFlower(variant));
+ const bloomHost=$('bloom-result');
+ if(match&&GK.sharedFlower(variant)){window.SZBloom.renderResult(bloomHost,game.results,game.snapshot(),game.events.find(e=>e.kind==='deal')?.state?.levelOwner??0,false);modal.setAttribute('aria-labelledby','bloom-heading');modal.removeAttribute('aria-describedby');}
+ else{window.SZBloom.hideResult(bloomHost);modal.setAttribute('aria-labelledby','result-title');modal.setAttribute('aria-describedby','result-subtitle result-hint');}
  $('result-primary').textContent=match?'再玩一场':'开始下一局';$('result-primary').disabled=false;
  presentedResultKey=key;
  if(!modal.open)modal.showModal();
- if(champion)celebrateResult(key);else stopCelebration();
+ if(match&&GK.sharedFlower(variant)){stopCelebration();window.SZBloom.renderResult(bloomHost,game.results,game.snapshot(),game.events.find(e=>e.kind==='deal')?.state?.levelOwner??0,true);}else if(champion)celebrateResult(key);else stopCelebration();
 }
 function syncResult(){
  const r=currentResult(),modal=$('result-modal');
@@ -347,7 +353,13 @@ function continueResult(){
 }
 function drawAttemptLights(el,failed,success){el.classList.add('attempt-lights');el.setAttribute('aria-label','冲A：失败 '+failed+' 次'+(success?'，成功':''));for(let i=0;i<3;i++){const lamp=document.createElement('i');lamp.className=i<failed?'failed':success&&i===failed?'succeeded':'unused';lamp.setAttribute('aria-hidden','true');el.append(lamp);}}
 function renderGoal(s,replay){
+ document.body.dataset.bloom=String(GK.sharedFlower(variant));
+ if(GK.sharedFlower(variant)){
+  const events=replay?ROLLOUT.events.slice(0,cursor+1):game.events,results=replay?events.filter(e=>e.result).map(e=>e.result):game.results;
+  window.SZBloom.renderProgress($('level-track'),results,s,events.find(e=>e.kind==='deal')?.state?.levelOwner??0,replay);return;
+ }
  $('goal-title').textContent=GK.sharedFlower(variant)?'赢下自己的 A 局':'升到 A，再赢一局';
+ window.SZBloom.clearProgress($('level-track'));
  const names=replay?['A','B']:['你','对手'],levels=s.players.map(p=>p.level),ended=s.phase==='match_over',winner=ended?(s.players[0].table.length>=GK.deathThreshold(variant)?1:0):null;
  const r=replay?ROLLOUT.events[cursor]?.result:currentResult();
  for(const [who,id]of [[0,'goal-own'],[1,'goal-opp']]){const label=$(id);label.textContent=names[who]+' '+GK.rankLabel(levels[who]);if(GK.handExchange(variant)&&(levels[who]===14||r?.a_reset?.who===who)){const lights=document.createElement('span');drawAttemptLights(lights,r?.a_reset?.who===who?3:s.aLosses?.[who]||0,winner===who);label.append(lights);}}
@@ -365,8 +377,8 @@ function drawHand(container,who,s,replay){
  container.replaceChildren();const p=s.players[who];container.style.setProperty('--hand-count',Math.max(1,p.hand.length));container.classList.toggle('hand-cards',who===0||replay);
  if(who===1&&!replay){
   const refresh=canRefresh(),target={who:1,zone:'hand',blind:true};
-  container.classList.toggle('blind-target-selected',refresh&&!!sameTarget(target));
-  for(let i=0;i<p.hand.length;i++)container.append(card(null,{back:true,mini:!refresh,selectable:refresh,handler:refresh?()=>selectRefresh(target):null,backLabel:refresh?(GK.handExchange(variant)?'对手手牌牌背，点击盲交换一张':'对手手牌牌背，点击盲换一张'):'对手手牌，身份保密'}));
+  container.classList.toggle('blind-target-selected',refresh&&!!sameTarget(target));container.classList.remove('sz-blind-swap');
+  for(let i=0;i<p.hand.length;i++)container.append(card(null,{back:true,mini:!refresh,selectable:refresh,handler:refresh?()=>selectRefresh(target):null,backLabel:refresh?(GK.handExchange(variant)?'对手手牌牌背，点击盲交换一张':'对手手牌牌背，点击盲换一张'):'对手手牌，身份保密'}));if(refresh&&p.hand.length){container.classList.add('sz-blind-swap');container.insertAdjacentHTML('beforeend','<button type="button" class="sz-swap-icon sz-swap-button" aria-label="盲换对手">⇄</button>');container.querySelector('.sz-swap-button').onclick=()=>selectRefresh(target);}
   if(!p.hand.length)setEmpty(container,'没有手牌');return;
  }
  container.classList.remove('blind-target-selected');
@@ -407,7 +419,9 @@ function drawTable(container,who,s){
 }
 function combatCards(container,move,level){container.replaceChildren();container.classList.toggle('has-four',move?.cards.length>=4);if(!move)return;move.cards.forEach((id,i)=>container.append(card(id,{level:move.level??level,badge:move.origins[i].zone==='table'?'明牌':'手牌'})));}
 function addButton(text,fn,{disabled=false,primary=false,id=null}={}){const b=document.createElement('button');b.textContent=text;b.disabled=disabled;b.className=primary?'primary':'';if(id)b.id=id;b.addEventListener('click',fn);$('action-buttons').append(b);return b;}
-function tryAction(fn){error='';try{fn();selected=[];flipIndices=[];flipMode=null;refreshTarget=null;persist();}catch(e){error=e.message;}render();driveAI();}
+function captureSwapLayout(){if(!canRefresh()||matchMedia('(prefers-reduced-motion: reduce)').matches)return null;return ['own-hand','own-table','opp-table'].flatMap(id=>[...$(id).querySelectorAll('.card[data-card]')].map(el=>({id:el.dataset.card,zone:id,rect:el.getBoundingClientRect()})));}
+function animateSwapLayout(before){if(!before)return;for(const id of ['own-hand','own-table','opp-table'])for(const el of $(id).querySelectorAll('.card[data-card]')){const old=before.find(x=>x.id===el.dataset.card),r=el.getBoundingClientRect();if(old&&old.zone!==id)el.animate([{transform:`translate(${old.rect.x-r.x}px,${old.rect.y-r.y}px) rotate(-5deg)`,opacity:.7},{transform:'translate(0,0) rotate(0deg)',opacity:1}],{duration:420,easing:'cubic-bezier(.2,.7,.2,1)'});else if(!old)el.animate([{opacity:.3,transform:'translateY(8px)'},{opacity:1,transform:'translateY(0)'}],{duration:350});}}
+function tryAction(fn){const visualBefore=captureSwapLayout();error='';try{fn();selected=[];flipIndices=[];flipMode=null;refreshTarget=null;persist();}catch(e){error=e.message;}render();animateSwapLayout(visualBefore);driveAI();}
 function describeEffect(combat){if(!combat)return '';if(combat.action==='refresh')return (GK.handExchange(variant)?'已交换 ':'已换 ')+combat.refreshes.length+' / '+combat.amount+' 次，伤势不变';if(combat.action==='damage')return '新增 '+combat.amount+' 张'+(GK.isRefresh(variant)?'明伤牌':'扣牌')+'，伤势 '+combat.before.join(' / ')+' → '+combat.after.join(' / ');if(combat.action==='open')return '翻开自己 '+combat.amount+' 张，解锁出牌；伤势不变';if(combat.action==='lock')return '扣回对方 '+combat.amount+' 张，封锁机会；伤势不变';if(combat.action==='none')return GK.isRefresh(variant)?'没有可换的牌，机会自动结束':'没有翻面目标，伤势不变';return '等待翻面选择；伤势不变';}
 function renderActions(s,event){
  $('action-panel').classList.remove('is-hand-exchange');const replay=mode==='replay';$('action-buttons').replaceChildren();$('selection-preview').hidden=true;$('settings').hidden=replay;$('error').textContent=error;
@@ -602,7 +616,7 @@ $('settings-modal').addEventListener('close',()=>{syncResult();driveAI();});
 $('close-result').addEventListener('click',closeResult);
 $('result-review').addEventListener('click',closeResult);
 $('result-primary').addEventListener('click',continueResult);
-$('result-modal').addEventListener('close',()=>{stopCelebration();const r=currentResult();if(mode==='play'&&r&&resultKey(r)===$('result-modal').dataset.resultKey)$('show-result')?.focus({preventScroll:true});});
+$('result-modal').addEventListener('close',()=>{stopCelebration();window.SZBloom.hideResult($('bloom-result'));const r=currentResult();if(mode==='play'&&r&&resultKey(r)===$('result-modal').dataset.resultKey)$('show-result')?.focus({preventScroll:true});});
 $('new-match').addEventListener('click',newMatch);
 $('export-match').addEventListener('click',()=>{const data={version:game.version,ui_revision:UI_REVISION,locale:GKLocale.language,game_name:GKLocale.language==='en'?'3Card Royale':'深圳花牌',seed:game.seed,game_seed:game.gameSeed??null,game_seeds:game.events.filter(e=>e.kind==='deal').map(e=>({game:e.game,seed:e.state?.gameSeed??null})),seed_policy:'continuous-xorshift32-v1',policy:GK.woundExchange(game.version)?GK.WOUND_POLICY:GK.handExchange(game.version)?GK.EXCHANGE_POLICY:GK.winnerStarts(game.version)?GK.WINNER_POLICY:GK.allowsFour(game.version)?GK.FOUR_POLICY:GK.isRefresh(game.version)?GK.REFRESH_POLICY:GK.POLICY,results:game.results,stats:game.stats,events:game.events,save:game.save(),source_sha256:ROLLOUT.source_sha256,...(ROLLOUT.baseline_sha256?{baseline_sha256:ROLLOUT.baseline_sha256}:{})};const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=(GKLocale.language==='en'?'3Card-Royale-':'深圳花牌-')+variant+'-'+game.seed+'-playtest.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
 $('prev-step').addEventListener('click',()=>{stopReplay();replayGo(cursor-1);});$('next-step').addEventListener('click',()=>{stopReplay();replayGo(cursor+1);});
