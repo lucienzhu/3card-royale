@@ -2,7 +2,15 @@
 (()=>{'use strict';
  const host=document.getElementById('rg-guide'),dialog=document.getElementById('rule-page'),scroller=dialog.querySelector('.modal-body');
  const textPanel=document.getElementById('rg-text'),switches=document.getElementById('rg-switch'),progress=document.getElementById('rg-progress'),navigation=document.getElementById('rg-navigation');
- const standard=document.createElement('article');standard.className='standard-rules';standard.hidden=true;textPanel.before(standard);
+ const standard=document.createElement('article');standard.className='standard-rules';standard.dataset.noI18n='';standard.hidden=true;textPanel.before(standard);
+ dialog.classList.add('rg-shell');
+ const head=dialog.querySelector('.modal-head'),close=document.getElementById('close-rules'),headActions=document.createElement('div'),languageButton=document.createElement('button');
+ headActions.className='rg-head-actions';headActions.dataset.noI18n='';languageButton.id='rg-language';languageButton.type='button';headActions.append(languageButton,close);head.append(headActions);
+ const viewScroll={visual:0,text:0};
+ function layoutShell(){dialog.classList.toggle('rg-compact',mobileQuery.matches);}
+ function readingPosition(){const headings=[...standard.querySelectorAll('h2')],top=scroller.getBoundingClientRect().top;let index=0;for(let i=0;i<headings.length;i++)if(headings[i].getBoundingClientRect().top<=top+32)index=i;return {index,offset:headings[index]?.getBoundingClientRect().top-top,scroll:scroller.scrollTop};}
+ function restoreReading(position){const h=standard.querySelectorAll('h2')[position.index];if(h&&position.offset!==undefined)scroller.scrollTop+=h.getBoundingClientRect().top-scroller.getBoundingClientRect().top-position.offset;else scroller.scrollTop=position.scroll;}
+ function revealContent(){scroller.getAnimations().forEach(a=>a.cancel());if(!matchMedia('(prefers-reduced-motion: reduce)').matches)scroller.animate([{opacity:.35},{opacity:1}],{duration:160,easing:'ease-out'});}
  let step=0,view='visual',zone='own-hand',whole=false,attackPhase=0,attackExample=false,rolesSwapped=false,defenseReady=false,defended=false,refilled=false,ranksOpen=false,swapMode='round',swapGame=null,swapSource=null,swapResult=null,lastLanguage='',lastVersion='',cameraRegion=null,cameraPose=null;
  const mobileQuery=matchMedia('(max-width:700px), (max-height:500px) and (max-width:1000px)');
  const t=(zh,en)=>window.GKLocale?.language==='en'?en:zh,version=()=>document.getElementById('version-select').value;
@@ -107,7 +115,8 @@
  function reset(){whole=false;cameraRegion=null;attackPhase=0;attackExample=false;rolesSwapped=false;defenseReady=false;defended=false;refilled=false;ranksOpen=false;swapMode='round';swapGame=null;swapSource=null;swapResult=null;}
  function paint(){
   const isStandard=document.getElementById('version-select').value==='1.0.0';
-  if(isStandard)standard.innerHTML=window.SZStandardRules[window.GKLocale?.language==='en'?'en':'zh'];
+  if(isStandard){standard.innerHTML=window.SZStandardRules[window.GKLocale?.language==='en'?'en':'zh'];standard.querySelector('h1')?.remove();for(const a of standard.querySelectorAll('a[href="docs/RULES.md"],a[href="docs/RULES.zh-CN.md"]'))a.closest('p')?.remove();}
+  layoutShell();languageButton.textContent=t('EN','中文');languageButton.lang=t('en','zh-CN');languageButton.setAttribute('aria-label',t('Switch rules to English','将规则切换为中文'));close.textContent=t('回到牌桌','Back to game');
   const available=isStandard||document.getElementById('version-select').value==='0.3.8';
   switches.parentElement.hidden=!available;
   switches.querySelector('[data-rg-view="visual"]').hidden=!available;
@@ -115,7 +124,7 @@
   const visual=view==='visual'&&available;host.hidden=!visual;textPanel.hidden=visual||isStandard;standard.hidden=visual||!isStandard;
   dialog.classList.toggle('fg-mobile',visual&&mobileQuery.matches);
   switches.setAttribute('aria-label',t('规则展示方式','Rules view'));
-  document.getElementById('rules-heading').textContent=visual?t('跟着牌桌学一轮','Learn a round on the table'):isStandard?t('标准规则 1.0','Standard Rules 1.0'):t('完整文字规则','Full written rules');
+  document.getElementById('rules-heading').textContent=t('规则 ','Rules ')+(isStandard?'1.0':version());dialog.dataset.rulesView=visual?'visual':'text';
   switches.querySelector('[data-rg-view="visual"]').textContent=t('图解','Guide');
   switches.querySelector('[data-rg-view="text"]').textContent=t('文字','Text');
   for(const b of switches.querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.dataset.rgView===(visual?'visual':'text')));
@@ -132,6 +141,7 @@
   layoutMobile();
  }
  function layoutMobile(){
+  layoutShell();
   const enabled=view==='visual'&&!host.hidden&&mobileQuery.matches;
   dialog.classList.toggle('fg-mobile',enabled);
   const board=host.querySelector('.fg-board'),stage=host.querySelector('.rg-stage'),coachNode=host.querySelector('.fg-coach');if(!board||!coachNode)return;
@@ -187,11 +197,12 @@
   if(b.hasAttribute('data-rg-prev')){go(step-1);return;}
   if(b.hasAttribute('data-rg-next')){if(hasAction())action(coach()[3]);else go(step+1);}
  }
- switches.addEventListener('click',e=>{const b=e.target.closest('[data-rg-view]');if(b){view=b.dataset.rgView;paint();scroller.scrollTop=0;frame();}});
+ switches.addEventListener('click',e=>{const b=e.target.closest('[data-rg-view]');if(b&&b.dataset.rgView!==view){viewScroll[view]=scroller.scrollTop;view=b.dataset.rgView;if(view==='text')ranksOpen=false;paint();if(view==='visual'&&mobileQuery.matches)frame();else scroller.scrollTop=viewScroll[view];revealContent();}});
+ languageButton.addEventListener('click',()=>window.GKLocale.setLanguage(t('en','zh-CN')));
  dialog.addEventListener('cancel',e=>{if(ranksOpen){e.preventDefault();e.stopImmediatePropagation();ranksOpen=false;renderFocus('[data-rg-ranks]');}},true);
  for(const element of [host,progress,navigation])element.addEventListener('click',navigate);
- function sync(){const language=window.GKLocale?.language||'zh-CN',v=version();if(language!==lastLanguage||v!==lastVersion){if(v!==lastVersion){view=v==='0.3.8'||v==='1.0.0'?'visual':'text';step=0;reset();}lastLanguage=language;lastVersion=v;paint();}}
+ function sync(){const language=window.GKLocale?.language||'zh-CN',v=version();if(language!==lastLanguage||v!==lastVersion){const sameVersion=v===lastVersion,position=view==='text'&&sameVersion?readingPosition():null;if(!sameVersion){view=v==='0.3.8'||v==='1.0.0'?'visual':'text';step=0;viewScroll.visual=viewScroll.text=0;reset();}lastLanguage=language;lastVersion=v;paint();if(position)restoreReading(position);else frame();}}
  new MutationObserver(sync).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
  new MutationObserver(()=>{if(dialog.open){sync();frame();}}).observe(dialog,{attributes:true,attributeFilter:['open']});
- document.getElementById('version-select').addEventListener('change',()=>queueMicrotask(sync));window.addEventListener('resize',()=>queueMicrotask(frame));window.visualViewport?.addEventListener('resize',()=>queueMicrotask(frame));sync();
+ document.getElementById('version-select').addEventListener('change',()=>queueMicrotask(sync));const resize=()=>queueMicrotask(()=>{layoutShell();frame();});window.addEventListener('resize',resize);window.visualViewport?.addEventListener('resize',resize);sync();
 })();
