@@ -1,0 +1,33 @@
+/* Compact only the live header. Recap and victory axes keep their own spacing. */
+body[data-bloom=true] .app-header,
+body[data-bloom=true] .app-main{--header:96px}
+body[data-bloom=true] .app-header{height:var(--header);padding-block:4px;row-gap:0}
+body[data-bloom=true] .app-header .match-goal{padding-block:0}
+body[data-bloom=true] #level-track,
+body[data-bloom=true] #level-track .fc-progress-summary,
+body[data-bloom=true] #level-track .fc-shared-vine,
+body[data-bloom=true] #level-track .fc-vine-drawing{height:48px}
+body[data-bloom=true] #level-track .fc-win-top,
+body[data-bloom=true] #level-track .fc-attempt-rival{top:-3px}
+body[data-bloom=true] #level-track .fc-win-bottom,
+body[data-bloom=true] #level-track .fc-start-stamp.fc-win-bottom,
+body[data-bloom=true] #level-track .fc-attempt-own{top:29px}
+/* 70 / 148 of the SVG viewBox: labels, Ace check and final bloom share this center. */
+body[data-bloom=true] #level-track .fc-vine-axis{inset:16.7px 0 auto}
+body[data-bloom=true] #level-track .fc-ace-knot,
+body[data-bloom=true] #level-track .fc-final-flower{top:22.7px}
+body[data-bloom=true] .app-main{padding-top:4px}
+@media(max-width:760px) and (max-height:720px){
+ body[data-bloom=true] .app-header,
+ body[data-bloom=true] .app-main{--header:88px}
+}
+@media(min-width:761px){
+ body[data-bloom=true] .app-header,
+ body[data-bloom=true] .app-main{--header:72px}
+ body[data-bloom=true] .app-header{padding-block:8px}
+}
+@media(max-height:480px) and (min-width:600px){
+ body[data-bloom=true] .app-header,
+ body[data-bloom=true] .app-main{--header:64px}
+ body[data-bloom=true] .app-header{padding-block:4px}
+}
