@@ -245,7 +245,7 @@ const FOUR_STUDY={
 ;
 'use strict';
 const $=id=>document.getElementById(id);
-const UI_REVISION='sz-swap-target1';
+const UI_REVISION='sz-motion1';
 const VARIANT_TEXT={
  '1.0.0':{name:'1.0 · 标准规则',note:'共用花牌，五伤败北。通常出三张，四炸6分，五炸7分；五炸须四张自然同点牌加花牌。赢家升级后的等级决定下局花牌。',tie:'同花样比点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无效果。',ranking:'五炸7 > 四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。'},
  '0.3.8':{name:'0.3.8 · 共用花牌',note:'首局双方共用♥2作为花牌。此后小局赢家升级后的等级决定下一小局双方共用的花牌；一局内不变。花牌即逢人配／会子／百搭牌。攻防、血牌交换与升级其余规则沿用0.3.7。',tie:'同牌型比较点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无事发生。',ranking:'四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。四炸也可用花牌。'},
@@ -341,6 +341,7 @@ function openResult(){
  if(match&&GK.sharedFlower(variant)){stopCelebration();window.SZBloom.renderResult(bloomHost,game.results,game.snapshot(),game.events.find(e=>e.kind==='deal')?.state?.levelOwner??0,true);}else if(champion)celebrateResult(key);else stopCelebration();
 }
 function syncResult(){
+ if(window.SZCardMotion.busy)return;
  const r=currentResult(),modal=$('result-modal');
  if(!r){presentedResultKey='';celebratedResultKey='';if(modal.open)modal.close();stopCelebration();return;}
  if(mode!=='play'){if(modal.open)modal.close();stopCelebration();return;}
@@ -421,9 +422,10 @@ function drawTable(container,who,s){
 }
 function combatCards(container,move,level){container.replaceChildren();container.classList.toggle('has-four',move?.cards.length>=4);if(!move)return;move.cards.forEach((id,i)=>container.append(card(id,{level:move.level??level,badge:move.origins[i].zone==='table'?'明牌':'手牌'})));}
 function addButton(text,fn,{disabled=false,primary=false,id=null}={}){const b=document.createElement('button');b.textContent=text;b.disabled=disabled;b.className=primary?'primary':'';if(id)b.id=id;b.addEventListener('click',fn);$('action-buttons').append(b);return b;}
-function captureSwapLayout(){if(!canRefresh()||matchMedia('(prefers-reduced-motion: reduce)').matches)return null;return ['own-hand','own-table','opp-table'].flatMap(id=>[...$(id).querySelectorAll('.card[data-card]')].map(el=>({id:el.dataset.card,zone:id,rect:el.getBoundingClientRect()})));}
-function animateSwapLayout(before){if(!before)return;for(const id of ['own-hand','own-table','opp-table'])for(const el of $(id).querySelectorAll('.card[data-card]')){const old=before.find(x=>x.id===el.dataset.card),r=el.getBoundingClientRect();if(old&&old.zone!==id)el.animate([{transform:`translate(${old.rect.x-r.x}px,${old.rect.y-r.y}px) rotate(-5deg)`,opacity:.7},{transform:'translate(0,0) rotate(0deg)',opacity:1}],{duration:420,easing:'cubic-bezier(.2,.7,.2,1)'});else if(!old)el.animate([{opacity:.3,transform:'translateY(8px)'},{opacity:1,transform:'translateY(0)'}],{duration:350});}}
-function tryAction(fn){const visualBefore=captureSwapLayout();error='';try{fn();selected=[];flipIndices=[];flipMode=null;refreshTarget=null;persist();}catch(e){error=e.message;}render();animateSwapLayout(visualBefore);driveAI();}
+let motionSerial=0;
+function beginTableMotion(){const before=window.SZCardMotion.capture(game);window.SZCardMotion.hold();return {before,serial:++motionSerial};}
+function finishTableMotion(ticket){window.SZCardMotion.play(ticket.before,game).then(()=>{if(ticket.serial===motionSerial&&mode==='play'){render();driveAI();}});}
+function tryAction(fn){if(window.SZCardMotion.busy)return;const ticket=beginTableMotion();error='';try{fn();selected=[];flipIndices=[];flipMode=null;refreshTarget=null;persist();}catch(e){error=e.message;ticket.before=null;}render();finishTableMotion(ticket);}
 function describeEffect(combat){if(!combat)return '';if(combat.action==='refresh')return (GK.handExchange(variant)?'已交换 ':'已换 ')+combat.refreshes.length+' / '+combat.amount+' 次，伤势不变';if(combat.action==='damage')return '新增 '+combat.amount+' 张'+(GK.isRefresh(variant)?'明伤牌':'扣牌')+'，伤势 '+combat.before.join(' / ')+' → '+combat.after.join(' / ');if(combat.action==='open')return '翻开自己 '+combat.amount+' 张，解锁出牌；伤势不变';if(combat.action==='lock')return '扣回对方 '+combat.amount+' 张，封锁机会；伤势不变';if(combat.action==='none')return GK.isRefresh(variant)?'没有可换的牌，机会自动结束':'没有翻面目标，伤势不变';return '等待翻面选择；伤势不变';}
 function renderActions(s,event){
  $('action-panel').classList.remove('is-hand-exchange');const replay=mode==='replay';$('action-buttons').replaceChildren();$('selection-preview').hidden=true;$('settings').hidden=replay;$('error').textContent=error;
@@ -586,10 +588,10 @@ function render(){
  syncResult();
 }
 function driveAI(){
- if(mode!=='play'||$('settings-modal').open||$('result-modal').open||busy||game.currentActor()!==1||!['attack','defend','flip','refresh'].includes(game.phase))return;
- busy=true;render();aiTimer=setTimeout(()=>{busy=false;try{game.aiStep();persist();}catch(e){error=e.message;}render();driveAI();},400);
+ if(window.SZCardMotion.busy||mode!=='play'||$('settings-modal').open||$('result-modal').open||busy||game.currentActor()!==1||!['attack','defend','flip','refresh'].includes(game.phase))return;
+ busy=true;render();aiTimer=setTimeout(()=>{aiTimer=null;busy=false;tryAction(()=>game.aiStep());},400);
 }
-function stopAI(){if(aiTimer){clearTimeout(aiTimer);aiTimer=null;}busy=false;}
+function stopAI(){motionSerial++;window.SZCardMotion.cancel();if(aiTimer){clearTimeout(aiTimer);aiTimer=null;}busy=false;}
 function stopReplay(){if(autoTimer){clearInterval(autoTimer);autoTimer=null;}$('auto-replay').textContent='自动播放';}
 function switchMode(next){stopAI();stopReplay();if(next!=='play')closeResult();if(next==='rules')lastBoardMode=mode;if(next!=='rules'&&mode!=='rules'){selected=[];flipMode=null;flipIndices=[];refreshTarget=null;error='';}mode=next;render();if(next==='play')driveAI();}
 function replayGo(index){cursor=Math.max(0,Math.min(ROLLOUT.events.length-1,Number(index)));error='';render();}
@@ -601,7 +603,7 @@ function syncSeedMode(){const fixed=$('seed-mode').value==='fixed';$('seed-value
 function applySeedPreference(){const p=seedPreference();$('seed-mode').value=p.mode;$('first-input').value=p.first;$('seed-input').value=p.seed===null?'':String(p.seed);syncSeedMode();}
 function saveSeedPreference(){const n=$('seed-input').value.trim()===''?null:Number($('seed-input').value);try{localStorage.setItem(SEED_PREF_KEY,JSON.stringify({mode:$('seed-mode').value,seed:Number.isInteger(n)&&n>=0&&n<=4294967295?n:null,first:$('first-input').value}));}catch(_){}}
 function paintSeedReadout(){$('current-match-seed').textContent=String(game.seed);$('current-game-seed').dataset.missing=String(game.gameSeed==null);$('current-game-seed').textContent=Number.isInteger(game.gameSeed)?String(game.gameSeed):GK.sharedFlower(variant)?'旧存档未记录，下局可见':'历史版本未记录';}
-function newMatch(){const input=$('seed-input'),fixed=$('seed-mode').value==='fixed';if(fixed&&!input.reportValidity())return;stopAI();stopReplay();saveSeedPreference();const seed=fixed?Number(input.value):randomSeed(),first=$('first-input').value;game=new GK.Game(seed,{version:variant,first:first==='random'?undefined:Number(first)});window.gkGame=game;selected=[];flipMode=null;flipIndices=[];refreshTarget=null;error='';$('settings-modal').close();persist();mode='play';render();driveAI();}
+function newMatch(){const input=$('seed-input'),fixed=$('seed-mode').value==='fixed';if(fixed&&!input.reportValidity())return;stopAI();stopReplay();saveSeedPreference();const ticket=beginTableMotion();ticket.before.game=null;const seed=fixed?Number(input.value):randomSeed(),first=$('first-input').value;game=new GK.Game(seed,{version:variant,first:first==='random'?undefined:Number(first)});window.gkGame=game;selected=[];flipMode=null;flipIndices=[];refreshTarget=null;error='';$('settings-modal').close();persist();mode='play';render();finishTableMotion(ticket);}
 function resetReplay(){cursor=0;$('replay-range').max=ROLLOUT.events.length-1;$('replay-jump').replaceChildren();for(const e of ROLLOUT.events)if(e.kind==='deal'||e.kind==='round'||e.kind==='end'){const o=document.createElement('option');o.value=e.index;o.textContent=e.kind==='end'?'第 '+e.game+' 局结算':'第 '+e.game+' 局 / 第 '+e.round+' 轮';$('replay-jump').append(o);}$('replay-note').textContent=variant+' · 固定种子 '+ROLLOUT.seed+' · '+ROLLOUT.results.length+' 局 / '+ROLLOUT.totalRounds+' 轮。双方手牌公开用于复盘，扣牌仍隐藏。策略用于检查执行，不代表最优打法。';}
 $('version-select').addEventListener('change',e=>{stopAI();stopReplay();persist();variant=e.target.value;ROLLOUT=ROLLOUTS[variant];game=loadGame();window.gkGame=game;selected=[];flipMode=null;flipIndices=[];refreshTarget=null;error='';resetReplay();persist();const url=new URL(location.href);url.searchParams.set('version',variant);history.replaceState(null,'',url);render();if(mode==='play')driveAI();});
 document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>switchMode(b.dataset.tab)));

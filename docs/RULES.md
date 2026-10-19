@@ -1,6 +1,10 @@
 # 3Card Royale · Standard Rules 1.0
 
-Three cards. Play your way. One ordinary deck, two players, from 2 to Ace.
+## Start with these three ideas
+
+1. Eight cards. Attack once, defend once.
+2. Attack to wound; defend to swap.
+3. From 2 to Ace. Pass the challenge, and bloom.
 
 [简体中文](RULES.zh-CN.md)
 

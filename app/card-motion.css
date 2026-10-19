@@ -1,0 +1,10 @@
+/* Flights live above the table without changing its layout or hit targets. */
+.sz-card-flight-layer{position:fixed;inset:0;z-index:80;pointer-events:none;overflow:hidden;contain:strict}
+.sz-card-flight{position:absolute;left:0;top:0;transform-origin:0 0;pointer-events:none;will-change:transform,opacity}
+.sz-card-flight>.card{position:absolute!important;inset:0!important;margin:0!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;transform:none!important;outline:none!important;pointer-events:none!important;box-shadow:0 6px 16px #0003!important}
+.sz-card-flight>.card::after{display:none!important}
+.sz-card-flight .badge,.sz-card-flight .sz-swap-icon{display:none!important}
+.sz-motion-arrival{visibility:hidden!important}
+html[data-card-motion] #play-area{cursor:progress}
+html[data-card-motion] #action-buttons{opacity:.55}
+@media(prefers-reduced-motion:reduce){.sz-card-flight-layer{display:none}}
