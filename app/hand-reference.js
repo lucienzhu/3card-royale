@@ -8,7 +8,7 @@
  let open=false,lastLanguage="";
  const t=(zh,en)=>window.GKLocale?.language==='en'?en:zh;
  const example=k=>'<span class="hr-example" role="img" aria-label="'+examples[k].map(GK.label).join(' ')+'">'+examples[k].map(id=>{const suit=GK.SUITS[GK.suit(id)];return '<span class="hr-card '+(suit==='♥'||suit==='♦'?'is-red':'')+'" aria-hidden="true"><b>'+GK.rankLabel(GK.rank(id))+'</b><i>'+suit+'</i></span>';}).join('')+'</span>';
- function mount(){topline.append(host);host.classList.remove('hr-side');paint();}
+ function mount(){(document.querySelector('.hand-tools')||topline).append(host);host.classList.remove('hr-side');paint();}
  function paint(){
   lastLanguage=window.GKLocale?.language||"zh-CN";
   const version=versionSelect.value,ids=[0,1,2,3,4,5];if(GK.allowsFour(version))ids.push(6);if(GK.allowsFive(version)){ids.push(7);const lv=window.gkGame.flowerLevel,r=lv===7?14:7;examples[7]=[r-2,r+11,r+24,r+37,lv+11];}

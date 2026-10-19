@@ -35,6 +35,15 @@
     hand.setAttribute('aria-describedby', side + '-damage ' + side + '-hand-count');
     marks.push([mark, color]);
   }
+  // Context follows the decision it explains: level history above, wild/ranks by your hand.
+  heading.append(document.getElementById('match-meta'));
+  const tools = document.createElement('div');
+  tools.className = 'hand-tools';
+  const ownHand = document.querySelector('.own-hand-group');
+  ownHand.prepend(tools);
+  tools.append(ownHand.querySelector('.player-identity'), document.querySelector('.shared-flower'), document.getElementById('hr-reference'));
+  topline.hidden = true;
+
   function labelColors() {
     const en = document.documentElement.lang.startsWith('en');
     for (const [mark, color] of marks) {
@@ -44,5 +53,5 @@
   }
   labelColors();
   new MutationObserver(labelColors).observe(document.documentElement, {attributes: true, attributeFilter: ['lang']});
-  document.body.classList.add('table-identity-layout');
+  document.body.classList.add('table-identity-layout', 'table-context-layout');
 })();
