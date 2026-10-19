@@ -70,7 +70,7 @@ html[lang=en] .table .combat-title,html[lang=en] .table .combat-title b{font-siz
  .table .actionbar.is-hand-exchange .action-buttons{flex-direction:row;justify-content:flex-end}
  .table .actionbar.is-hand-exchange .action-buttons button{min-height:30px}
 }
-@media(max-height:480px) and (min-width:600px){
+@media(max-height:480px) and (min-width:480px){
  .table .topline{min-height:28px}
  .table .actionbar{min-height:0;gap:3px 6px}
  .table .action-buttons button{min-height:32px;padding:5px 8px;min-width:48px}

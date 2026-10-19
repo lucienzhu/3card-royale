@@ -68,7 +68,7 @@
  :root[lang=en] body.table-identity-layout .app-header .brand{gap:3px}
  :root body.table-identity-layout .app-header .tabs button,:root body.table-identity-layout .app-header .header-controls button{padding-inline:3px}
 }
-@media(max-height:480px) and (min-width:600px){
+@media(max-height:480px) and (min-width:480px){
  :root body.table-identity-layout .app-header,:root body.table-identity-layout .app-main{--header:52px}
  :root body.table-identity-layout .app-header{padding-block:calc(4px + env(safe-area-inset-top)) 4px}
  :root body.table-identity-layout .table-heading{grid-area:top;grid-template-columns:minmax(200px,1fr) auto;gap:24px;align-items:center}
@@ -121,7 +121,7 @@
  :root body.table-context-layout .hand-tools{min-height:32px}
  :root body.table-context-layout .hand-tools #hr-reference #hr-toggle{min-height:32px;padding-block:6px}
 }
-@media(max-height:480px) and (min-width:600px){
+@media(max-height:480px) and (min-width:480px){
  :root body.table-context-layout .table-heading{display:grid;grid-template-columns:minmax(200px,1fr) auto;gap:24px;padding-top:0}
  :root body.table-context-layout .table-heading #match-meta{position:static}
  :root body.table-context-layout .hand-tools{gap:4px;flex-wrap:wrap}
@@ -181,7 +181,7 @@
  :root body.table-stage-layout .opponent-heading #match-meta{font-size:11px}
  :root body.table-stage-layout #action-panel #formula{line-height:16px}
 }
-@media(max-height:480px) and (min-width:600px){
+@media(max-height:480px) and (min-width:480px){
  :root body.table-stage-layout .opponent-heading{flex-wrap:wrap;gap:0 8px}
  :root body.table-stage-layout .app-header #hr-reference #hr-panel{max-height:calc(var(--app-height,100dvh) - 24px)}
 }

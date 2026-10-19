@@ -1,0 +1,140 @@
+/* The lesson renderer follows the live board. Its camera is contained by the shared drawer. */
+:root body #rule-page[data-rules-view=visual]>.modal-body{display:flex;padding:8px 16px;overflow:hidden;scrollbar-gutter:auto}
+:root body #rule-page #rg-guide{display:flex;max-width:none;min-width:0;min-height:0;flex:1}
+:root body #rule-page .rg-stage{display:grid;grid-template-columns:minmax(0,1fr) 216px;grid-template-rows:38px minmax(0,1fr);gap:8px 16px;flex:1;min-height:0;width:100%;padding:0;margin:0}
+:root body #rule-page .rg-step-heading,:root body #rule-page .fg-focus-caption{display:none}
+:root body #rule-page .fg-toolbar{position:static;grid-column:1/-1;margin:0;padding:0;min-height:38px;flex-wrap:nowrap;align-items:center;background:transparent}
+:root body #rule-page .fg-toolbar>div{flex-wrap:nowrap;align-items:center;min-width:0}
+:root body #rule-page .fg-toolbar button{min-height:32px;border:0;background:var(--soft);color:var(--muted);line-height:1.3;padding:6px 8px}
+:root body #rule-page .rg-figure{position:relative;grid-area:2/1;min-width:0;min-height:0;height:100%;width:100%;margin:0;overflow:hidden;border:0;border-radius:14px;background:var(--table);isolation:isolate}
+:root body #rule-page .fg-board{--fw:66px;--fh:92px;--bw:38px;--bh:54px;position:absolute;inset:0 auto auto 0;box-sizing:border-box;width:100%;padding:12px;border:0;border-radius:14px;background:var(--table);background-image:var(--sz-table-finish,none);transform-origin:0 0;will-change:transform;font-size:12px}
+:root body #rule-page .fg-progress{height:56px;margin:0 6px 4px;--fc-paper:var(--table)}
+:root body #rule-page .fg-progress .fc-shared-vine{height:56px}
+:root body #rule-page .fg-player header{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:28px;padding:0 2px}
+:root body #rule-page .fg-player header>small{font-size:12px;line-height:18px;white-space:nowrap;color:var(--muted)}
+:root body #rule-page .fg-identity{display:flex;align-items:center;gap:4px;color:var(--muted);font-size:12px;font-weight:500}
+:root body #rule-page .fg-wild{border:0;padding:0;background:transparent;color:var(--accent);border-radius:3px;font-size:12px;line-height:18px}
+:root body #rule-page .fg-slot{border:0;border-radius:9px;padding:5px;box-sizing:border-box}
+:root body #rule-page .fg-slot.is-context{opacity:.4}
+:root body #rule-page .fg-slot.is-focus{background:transparent;box-shadow:0 0 0 1.5px var(--accent)}
+:root body #rule-page .fg-board.show-whole .fg-slot{opacity:1}
+:root body #rule-page .fg-board.show-whole .fg-slot.is-focus{box-shadow:none}
+:root body #rule-page .fg-board .fg-hand{height:114px;min-height:114px;margin:4px 0}
+:root body #rule-page .fg-hand-cards{display:flex;justify-content:center;align-items:center;height:104px;min-height:104px;padding:10px 0 0}
+:root body #rule-page .fg-board .card{width:var(--fw);height:var(--fh);padding:5px;border-radius:7px}
+:root body #rule-page .fg-board .card+.card{margin-left:-30px}
+:root body #rule-page .fg-board .card .rank{font-size:30px;line-height:1}
+:root body #rule-page .fg-board .card .suit{font-size:17px;line-height:1}
+:root body #rule-page .fg-board .card .center{font-size:34px}
+:root body #rule-page .fg-board .back .motif svg{width:34px;height:38px}
+:root body #rule-page .fg-board .fg-chosen{background:var(--selected);border:2px solid var(--accent);box-shadow:0 3px 8px #0002;transform:translateY(-8px)}
+:root body #rule-page .fg-wounds,:root body #rule-page .fg-board[data-step="5"] .fg-wounds{height:76px;min-height:76px;padding:4px;margin:4px 0}
+:root body #rule-page .fg-wound-label{position:absolute;top:0;left:8px;color:var(--muted);font-size:11px;line-height:14px}
+:root body #rule-page .fg-wound-cards,:root body #rule-page .fg-board[data-step="5"] .fg-wound-cards{height:66px;min-height:66px;padding-top:10px;box-sizing:border-box;gap:5px}
+:root body #rule-page .fg-wound-cards .card{width:34px;height:48px;padding:4px;margin:0;border-radius:5px}
+:root body #rule-page .fg-wound-cards .card .rank{font-size:20px}
+:root body #rule-page .fg-wound-cards .card .suit{font-size:12px}
+:root body #rule-page .fg-wound-cards .card .center{font-size:23px}
+:root body #rule-page .fg-center{margin:6px 0;padding:8px 0;border-block:1px solid var(--line)}
+:root body #rule-page .fg-battle{display:grid;grid-template-columns:minmax(0,1fr) 92px minmax(0,1fr);gap:3px;align-items:end}
+:root body #rule-page .fg-combat{min-height:94px;padding:3px 0}
+:root body #rule-page .fg-combat .fg-zone-title{height:34px;min-height:34px;gap:0;font-size:12px;line-height:16px;font-weight:400}
+:root body #rule-page .fg-combat .fg-zone-title small{font-size:11px;line-height:16px;font-weight:600;white-space:nowrap;color:var(--ink)}
+:root body #rule-page .fg-combat-cards{height:var(--bh);min-height:var(--bh);margin-top:4px;gap:3px}
+:root body #rule-page .fg-combat-cards:has(>.fg-empty){border:0;background:var(--soft);border-radius:7px}
+:root body #rule-page .fg-combat-cards .card{width:var(--bw);height:var(--bh);margin:0;padding:3px;border-radius:5px}
+:root body #rule-page .fg-combat-cards .card .rank{font-size:22px}
+:root body #rule-page .fg-combat-cards .card .suit{font-size:13px}
+:root body #rule-page .fg-combat-cards .card .center{font-size:24px}
+:root body #rule-page .fg-piles{min-height:94px;padding:3px 0;align-items:end}
+:root body #rule-page .fg-pile-group{grid-template-columns:40px 40px;gap:4px;width:84px;padding:0;align-items:end}
+:root body #rule-page .fg-pile-group>span{gap:4px}
+:root body #rule-page .fg-pile-group small{height:34px;line-height:16px;white-space:nowrap;font-size:11px}
+:root body #rule-page .fg-pile{width:40px;min-width:40px;height:var(--bh);min-height:var(--bh);border-color:var(--line)}
+:root body #rule-page .fg-pile>b{font-size:22px;top:4px;left:3px}
+:root body #rule-page .fg-table-action{display:flex;align-items:center;justify-content:space-between;gap:8px;height:64px;min-height:64px;padding:8px 10px;margin-top:6px;background:var(--paper);opacity:1;box-shadow:none}
+:root body #rule-page .fg-table-action>span:first-child{display:flex;flex-direction:column;gap:2px;min-width:0}
+:root body #rule-page .fg-table-action strong{font-size:13px;line-height:18px}
+:root body #rule-page .fg-table-action small{font-size:11px;line-height:16px;color:var(--muted)}
+:root body #rule-page .fg-action-preview{flex:none;max-width:100px;padding:8px 10px;border-radius:7px;background:var(--accent);color:var(--paper);font-size:12px;font-weight:600;text-align:center}
+:root body #rule-page .fg-blind{height:104px;min-height:104px;padding:0}
+:root body #rule-page .fg-card-hit{min-height:44px;min-width:44px;padding:3px}
+:root body #rule-page .fg-hand-cards .fg-card-hit+.fg-card-hit{margin-left:-24px}
+:root body #rule-page .fg-coach{grid-area:2/2;align-self:center;min-height:0;max-height:100%;overflow:auto;padding:16px 0;margin:0;display:block;background:transparent;border:0;box-shadow:none;box-sizing:border-box}
+:root body #rule-page .fg-coach-copy{display:flex;flex-direction:column;gap:12px}
+:root body #rule-page .fg-coach strong{font-size:18px;line-height:1.5;color:var(--ink)}
+:root body #rule-page .fg-coach-copy>span{font-size:14px;line-height:1.75;color:var(--muted)}
+:root body #rule-page .fg-coach>button{display:inline-block;margin-top:12px;min-height:40px;padding:8px 12px;border:0;background:var(--soft);color:var(--ink);font-size:12px}
+:root body #rule-page .fg-camera-nav{display:none}
+:root body #rule-page #rg-navigation{flex:none;min-height:58px;padding:7px 16px;gap:8px;box-sizing:border-box}
+:root body #rule-page #rg-navigation>button{min-height:44px;padding:8px 12px;font-size:14px;line-height:18px}
+:root body #rule-page #rg-navigation>span{min-width:0;font-size:12px}
+:root body #rule-page #rg-navigation .rg-reference-action{margin:0;padding:0}
+:root body #rule-page #rg-navigation [data-rg-ranks]{min-height:40px;padding:4px;border:0;background:transparent;font-size:12px;line-height:16px;color:var(--muted)}
+:root body #rule-page #rg-navigation [data-rg-ranks] i{margin-left:4px}
+:root body #rule-page .rg-rank-panel{position:absolute;inset:0;z-index:5;margin:0;padding:16px;background:var(--paper);border:0;border-radius:0;overflow:auto;overscroll-behavior:contain;box-sizing:border-box}
+:root body #rule-page .rg-rank-panel .rg-score-table{width:100%;font-size:12px}
+:root body #rule-page .rg-rank-panel p{font-size:12px;line-height:1.6}
+:root body #rule-page.fg-mobile>.modal-body{padding:0 12px}
+:root body #rule-page.fg-mobile .rg-stage{display:flex;flex-direction:column;gap:0}
+:root body #rule-page.fg-mobile .fg-toolbar{flex:none}
+:root body #rule-page.fg-mobile .fg-toolbar>span{display:none}
+:root body #rule-page.fg-mobile .fg-toolbar>div{width:100%;justify-content:end;gap:4px}
+:root body #rule-page.fg-mobile .rg-figure{flex:1;min-height:96px}
+:root body #rule-page.fg-mobile .fg-board{max-width:600px;left:0}
+:root body #rule-page.fg-mobile .fg-camera-nav{display:flex;flex:none;padding:4px 0;gap:4px}
+:root body #rule-page.fg-mobile .fg-camera-nav button{min-height:36px;min-width:78px;border:0}
+:root body #rule-page.fg-mobile .fg-coach{flex:0 0 142px;align-self:stretch;max-height:142px;padding:8px 2px;overflow:auto}
+:root body #rule-page.fg-mobile .fg-coach-copy{gap:6px}
+:root body #rule-page.fg-mobile .fg-coach strong{font-size:16px;line-height:1.4}
+:root body #rule-page.fg-mobile .fg-coach-copy>span{font-size:13px;line-height:1.55}
+:root body #rule-page.fg-mobile .fg-coach>button{margin-top:6px;min-height:32px;padding:4px 8px}
+@media(max-width:390px){
+ :root body #rule-page .fg-board{--fw:58px;--fh:82px;--bw:30px;--bh:44px;padding:8px}
+ :root body #rule-page .fg-hand-cards .card+.card{margin-left:-28px}
+ :root body #rule-page .fg-battle{grid-template-columns:minmax(0,1fr) 80px minmax(0,1fr);gap:2px}
+ :root body #rule-page .fg-pile-group{grid-template-columns:36px 36px;width:76px}
+ :root body #rule-page .fg-pile{width:36px;min-width:36px}
+ :root body #rule-page .fg-combat .fg-zone-title{font-size:11px}
+ :root body #rule-page .fg-combat .fg-zone-title small{font-size:10px}
+ :root body #rule-page .fg-combat-cards{gap:2px}
+ :root body #rule-page .fg-combat-cards .card .rank{font-size:18px}
+ :root body #rule-page .fg-combat-cards .card .suit{font-size:11px}
+ :root body #rule-page .fg-action-preview{max-width:84px;padding:7px;font-size:11px}
+ :root body #rule-page #rg-navigation>button{font-size:12px;padding-inline:8px}
+ :root body #rule-page #rg-navigation [data-rg-ranks]{font-size:11px}
+}
+@media(max-height:660px){
+ :root body #rule-page.fg-mobile .fg-coach{flex-basis:118px;max-height:118px;padding-block:6px}
+ :root body #rule-page.fg-mobile .fg-coach strong{font-size:14px}
+ :root body #rule-page.fg-mobile .fg-coach-copy>span{font-size:12px;line-height:1.5}
+}
+@media(max-height:500px) and (min-width:480px){
+ :root body #rule-page.fg-mobile .rg-stage{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(220px,1fr);grid-template-rows:34px minmax(0,1fr) 36px;gap:4px 12px}
+ :root body #rule-page.fg-mobile .fg-toolbar{grid-area:1/1/2/3;min-height:34px}
+ :root body #rule-page.fg-mobile .rg-figure{grid-area:2/1/4/2;height:100%;min-height:0}
+ :root body #rule-page.fg-mobile .fg-coach{grid-area:2/2;align-self:start;max-height:100%;padding:6px 0}
+ :root body #rule-page.fg-mobile .fg-camera-nav{grid-area:3/2;padding:0}
+ :root body #rule-page.fg-mobile .fg-camera-nav button{min-width:0;flex:1;padding-inline:4px}
+ :root body #rule-page #rg-navigation{min-height:50px;padding-block:3px}
+}
+:root body #rule-page.rg-shell #rg-guide{max-width:none}
+:root body #rule-page .fg-board :is(.fg-combat-cards,.fg-wound-cards) .card+.card{margin-left:0}
+
+:root body #rule-page .rg-figure{background:radial-gradient(ellipse at 12% 0%,#FFFFFFA8,transparent 48%),radial-gradient(ellipse at 100% 95%,color-mix(in srgb,var(--mint) 9%,transparent),transparent 55%),var(--table);box-shadow:inset 0 1px 0 #FFFFFFC0,0 8px 24px #133A2B08}
+:root[data-sz-theme=dark] body #rule-page .rg-figure{background:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--mint) 15%,transparent),transparent 45%),radial-gradient(ellipse at 100% 90%,#09181944,transparent 55%),var(--table);box-shadow:inset 0 1px 0 #C2E4DD1A,0 12px 30px #030C1425}
+:root body #rule-page .fg-board{background:transparent}
+
+@media(max-width:390px){:root body #rule-page .fg-pile-group small{font-size:10px}}
+:root body #rule-page button.fg-action-preview{border:0;min-height:36px;font-family:inherit;line-height:16px}
+
+@media(max-height:500px) and (min-width:480px){:root body #rule-page.fg-mobile .fg-board{min-width:380px}}
+/* Secondary lesson actions stay reachable even when translated copy is longer. */
+:root body #rule-page .fg-coach{display:flex;flex-direction:column}
+:root body #rule-page .fg-coach-copy{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain}
+:root body #rule-page .fg-coach>button{flex:none;align-self:flex-start}
+@media(max-height:500px) and (min-width:480px){
+ :root body #rule-page.fg-mobile .rg-figure{grid-area:2/1/3/2}
+ :root body #rule-page.fg-mobile .fg-camera-nav{grid-area:3/1}
+ :root body #rule-page.fg-mobile .fg-coach{grid-area:2/2/4/3;height:100%;max-height:100%;padding-block:6px}
+}

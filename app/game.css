@@ -48,26 +48,26 @@ html,body{touch-action:pan-x pan-y}
 @media(max-height:760px){:root{--handw:54px;--handh:76px;--handstep:33px;--handrank:23px;--woundw:32px;--woundh:46px;--woundrank:14px;--combatw:36px;--combath:50px;--combatrank:19px}.table{gap:4px}.battle{padding-block:5px}.card .suit{font-size:13px}.wound-cards .suit{font-size:10px}.wound-cards .wild{font-size:8px}.pending-mark{font-size:17px}.pending-label{font-size:8px}}
 @media(max-height:650px){:root{--header:80px;--handw:46px;--handh:64px;--handstep:29px;--handrank:19px;--woundw:28px;--woundh:40px;--woundrank:12px;--combatw:32px;--combath:46px;--combatrank:17px;--lift:6px}.app-header{padding-block:3px}.header-controls button{min-height:26px}.brand h1{font-size:17px}.goal-title h2{font-size:11px}.goal-title svg{width:15px;height:15px}.level-step{height:16px}.table{padding:3px 9px;gap:3px}.player-zone{gap:2px}.player-head{min-height:17px}.player-title{font-size:11px}.damage{font-size:11px}.damage small{font-size:8px}.pip{width:5px;height:5px}.hand-cards,.hidden-hand{padding-top:7px;min-height:calc(var(--handh) + 7px)}.wound-cards{min-height:calc(var(--woundh) + 5px);padding-top:5px;gap:4px}.card{padding:3px}.card .suit{font-size:11px;margin-top:1px}.card .center{font-size:23px}.card .wild{font-size:8px;left:3px;bottom:3px}.wound-cards .suit{font-size:9px}.wound-cards .wild{font-size:7px}.wound-cards .center{font-size:16px}.pending-mark{font-size:15px}.pending-label{font-size:7px}.combat-cards .card{padding:3px}.combat-cards .suit{font-size:10px}.combat-cards .center{font-size:18px}.actionbar{min-height:42px}.actionbar h2{font-size:12px}.action-buttons button{min-height:32px;font-size:10px}.preview-score{font-size:10px}.preview-score small{font-size:8px}.formula{font-size:10px;line-height:13px}.battle{gap:3px;padding-block:4px}.card.back .motif{font-size:18px}}
 /* Short landscape mirrors the two racks horizontally around the combat area. */
-@media(max-height:480px) and (min-width:600px){
+@media(max-height:480px) and (min-width:480px){
  :root{--header:62px;--handw:40px;--handh:56px;--handstep:23px;--handrank:16px;--woundw:26px;--woundh:36px;--woundrank:11px;--combatw:28px;--combath:40px;--combatrank:15px}.app-header,.app-main{--header:62px;max-width:1000px}.app-header{grid-template-columns:1fr minmax(220px,42%) auto;gap:0 10px}.brand{grid-column:1;grid-row:1}.header-controls{grid-column:3;grid-row:1}.match-goal{grid-column:2;grid-row:1}.goal-legend{font-size:8px;gap:3px}.goal-title h2{font-size:10px}.goal-title svg{width:13px;height:13px}.goal-heading{margin-bottom:2px}.level-step{font-size:8px;height:16px}.table{grid-template-columns:minmax(0,1fr) minmax(180px,1.1fr) minmax(0,1fr);grid-template-rows:auto auto;grid-template-areas:'top top top' 'enemy battle own';gap:3px 10px;padding:4px 9px}.topline{grid-area:top}.opponent-zone{grid-area:enemy}.own-zone{grid-area:own}.battle{grid-area:battle;border-block:0;border-inline:1px solid #ffffff17;padding:4px 7px}.opponent-zone,.own-zone{display:flex;flex-direction:column}.own-zone .player-head{order:-1}.own-zone .wound-group{order:3}.hand-group>.rack-label{position:static;justify-content:center;max-width:none;min-height:10px;font-size:8px;line-height:10px}.opponent-hand-group{display:flex;flex-direction:column}.wound-group{display:flex;flex-direction:column;gap:0}.wound-group>.cards{padding-right:0;width:100%}.player-title{font-size:10px;gap:3px}.level{font-size:8px}.damage{font-size:10px;gap:2px}.damage small{font-size:7px}.damage b{margin-right:2px}.pip{width:4px;height:4px}.combat-sides{gap:8px}.combat-title{font-size:8px;line-height:11px}.combat-title b{font-size:9px}.combat-cards{gap:3px}.actionbar{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 5px;padding:5px;min-height:0}.actionbar h2{font-size:10px;flex-basis:100%}.preview-score{font-size:9px}.action-buttons{gap:3px}.action-buttons button{font-size:9px;min-height:28px;min-width:40px;padding:3px 5px}.preview-score small{font-size:8px}.field-error{font-size:8px}.rack-label{font-size:8px}.card.back .motif{font-size:16px}
 }
 /* Replay uses identical hand dimensions on both sides, including all four 10s. */
 .is-replay{--handw:44px;--handh:62px;--handstep:27px;--handrank:18px;--woundw:28px;--woundh:40px;--woundrank:12px;--combatw:32px;--combath:46px;--combatrank:17px}.is-replay .hand-cards .card{padding:3px}.is-replay .card .suit{font-size:11px}.is-replay .card .wild{font-size:7px;left:3px;bottom:3px}.is-replay .wound-cards .suit{font-size:9px}.is-replay .wound-cards .wild{font-size:7px}.is-replay .pending-mark{font-size:15px}.is-replay .pending-label{font-size:7px}.is-replay .actionbar{min-height:32px}.is-replay .actionbar h2{font-size:11px}.is-replay .action-buttons:empty{display:none}
 @media(max-height:650px){.is-replay{--handw:38px;--handh:54px;--handstep:24px;--handrank:16px;--woundw:24px;--woundh:34px;--woundrank:10px;--combatw:28px;--combath:40px;--combatrank:15px}.is-replay .wound-cards .suit{font-size:8px}.is-replay .wound-cards .wild{font-size:6px}}
-@media(max-height:480px) and (min-width:600px){.is-replay{--handw:34px;--handh:48px;--handstep:21px;--handrank:14px;--woundw:22px;--woundh:32px;--woundrank:10px;--combatw:26px;--combath:36px;--combatrank:14px}.is-replay .card .suit{font-size:9px}.is-replay .card .wild{font-size:6px}}
+@media(max-height:480px) and (min-width:480px){.is-replay{--handw:34px;--handh:48px;--handstep:21px;--handrank:14px;--woundw:22px;--woundh:32px;--woundrank:10px;--combatw:26px;--combath:36px;--combatrank:14px}.is-replay .card .suit{font-size:9px}.is-replay .card .wild{font-size:6px}}
 @media(min-width:761px) and (min-height:651px) and (max-height:760px){:root{--handw:64px;--handh:90px;--handstep:36px;--handrank:25px;--woundw:36px;--woundh:50px;--woundrank:16px;--combatw:40px;--combath:56px;--combatrank:21px}}
 @media(max-width:639px) and (min-width:600px) and (max-height:480px){:root{--handw:36px;--handh:52px;--handstep:21px;--handrank:14px}.is-replay{--handw:32px;--handh:46px;--handstep:20px;--handrank:13px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
 /* A hidden selection preview must not reserve a second title row. */
 .actionbar:has(#selection-preview[hidden]){grid-template-areas:'title buttons' 'error error';grid-template-rows:1fr auto}
-@media(max-height:480px) and (min-width:600px){.actionbar:has(#selection-preview[hidden]) h2{flex:1;flex-basis:auto}}
+@media(max-height:480px) and (min-width:480px){.actionbar:has(#selection-preview[hidden]) h2{flex:1;flex-basis:auto}}
 
 /* Align mixed-size status text and compensate for the wound rack's lift space. */
 .damage b{display:inline-flex;align-items:center;gap:2px;line-height:1}
 .wound-group>.rack-label{padding-top:6px}
 @media(max-height:650px){.wound-group>.rack-label{padding-top:5px}}
-@media(max-height:480px) and (min-width:600px){.wound-group>.rack-label{padding-top:0}}
+@media(max-height:480px) and (min-width:480px){.wound-group>.rack-label{padding-top:0}}
 .combat-sides>div{display:flex;flex-direction:column}
 .combat-cards{margin-top:auto}
 .combat-cards:empty::after{box-sizing:border-box}
@@ -79,7 +79,7 @@ html,body{touch-action:pan-x pan-y}
 
 /* Fill the visible screen; share spare room between the mirrored player racks. */
 .player-zone{display:flex;flex-direction:column;justify-content:space-between}
-@media(max-height:480px) and (min-width:600px){.table{grid-template-rows:auto minmax(min-content,1fr)}.battle{justify-content:center}}
+@media(max-height:480px) and (min-width:480px){.table{grid-template-rows:auto minmax(min-content,1fr)}.battle{justify-content:center}}
 @media(max-width:599px) and (max-height:650px){.is-replay{--handw:34px;--handh:48px}}
 
 /* Two small public-count piles occupy the gap between attack and defence. */
@@ -96,7 +96,7 @@ html,body{touch-action:pan-x pan-y}
 .stock-pile.is-low{color:#ebcf8c}.stock-pile.is-low .pile-stack{background:#64552e;border-color:#dbb75d;color:#fff0b8}
 .pile[data-depth='0'] .pile-stack{background:transparent;border-style:dashed;border-color:#79927d;color:#8faa96}
 .pile-recycle{position:absolute;left:50%;top:calc(50% + 7px);transform:translate(-50%,-50%);color:#e2c47c;font-size:11px;line-height:1}
-@media(max-height:480px) and (min-width:600px){
+@media(max-height:480px) and (min-width:480px){
  .combat-sides{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px 8px}.combat-sides>div{grid-row:1}
  .pile-indicator{grid-column:1/-1;grid-row:2;justify-self:center;width:auto;height:18px;gap:16px}.pile{flex-direction:row;width:auto;gap:5px}.pile-label{font-size:8px}.pile-stack{width:13px;height:16px}.pile-stack b{font-size:9px}.pile-recycle{top:50%;font-size:10px}
  .pile[data-depth='2'] .pile-stack::before,.pile[data-depth='3'] .pile-stack::before{transform:translate(1px,-1px)}.pile[data-depth='3'] .pile-stack::after{transform:translate(2px,-2px)}
@@ -155,7 +155,7 @@ html[lang="en"] .combat-title{font-size:10px;gap:2px 4px}
 html[lang="en"] .result-content h2{font-size:clamp(21px,5vw,30px);line-height:1.2}
 html[lang="en"] .result-hint{line-height:1.5}
 @media(max-width:360px){html[lang="en"] .brand h1{font-size:16px}html[lang="en"] .header-controls button{font-size:11px;padding-inline:5px}html[lang="en"] .goal-title h2{font-size:10px}html[lang="en"] .goal-legend{font-size:8px;gap:3px}html[lang="en"] .goal-title svg{width:13px;height:13px}html[lang="en"] .actionbar h2{font-size:11px}html[lang="en"] .action-buttons button{font-size:10px;padding-inline:6px}}
-@media(max-height:450px) and (min-width:600px){html[lang="en"] .wound-group>.cards{padding-right:0}html[lang="en"] .brand h1{font-size:16px}html[lang="en"] .goal-title h2{font-size:9px}html[lang="en"] .combat-title{font-size:8px}html[lang="en"] .combat-title b{font-size:8px}html[lang="en"] .action-buttons button{font-size:9px;min-width:37px;padding-inline:5px}}
+@media(max-height:450px) and (min-width:480px){html[lang="en"] .wound-group>.cards{padding-right:0}html[lang="en"] .brand h1{font-size:16px}html[lang="en"] .goal-title h2{font-size:9px}html[lang="en"] .combat-title{font-size:8px}html[lang="en"] .combat-title b{font-size:8px}html[lang="en"] .action-buttons button{font-size:9px;min-width:37px;padding-inline:5px}}
 
 .app-header,.app-main{--header:104px}
 .goal-legend{gap:7px}.goal-legend .goal-own,.goal-legend .goal-opp{display:inline-flex;align-items:center;gap:3px;font-size:10px}
@@ -186,7 +186,7 @@ html[lang="en"] .result-hint{line-height:1.5}
 @media(max-width:360px){.goal-legend .goal-own,.goal-legend .goal-opp{font-size:8px}.goal-legend strong{font-size:8px}.goal-legend{gap:4px}.goal-title h2{font-size:10px}.attempt-lights{gap:2px}.attempt-lights i{width:4px;height:4px}}
 @media(max-height:650px){.app-header,.app-main{--header:95px}.race-track{height:30px}.race-line>span{top:23px}.actionbar.is-hand-exchange{padding-block:4px}.actionbar.is-hand-exchange #action-description{font-size:9px;line-height:12px}}
 @media(max-width:599px) and (max-height:650px){:root{--handw:42px;--handh:58px;--handstep:27px;--handrank:18px}.app-header,.app-main{--header:82px}}
-@media(max-height:450px) and (min-width:600px){.app-header,.app-main{--header:72px}.goal-title h2{font-size:9px}.goal-legend .goal-own,.goal-legend .goal-opp,.goal-legend strong{font-size:7px}.goal-heading{margin-bottom:0}.goal-legend{gap:4px}.race-track{height:29px}.actionbar.is-hand-exchange{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:4px}.actionbar.is-hand-exchange .action-buttons button{font-size:8px;min-height:24px;padding:3px}.actionbar.is-hand-exchange #action-description{font-size:8px;line-height:11px}.actionbar.is-hand-exchange .preview-score{font-size:8px}}
+@media(max-height:450px) and (min-width:480px){.app-header,.app-main{--header:72px}.goal-title h2{font-size:9px}.goal-legend .goal-own,.goal-legend .goal-opp,.goal-legend strong{font-size:7px}.goal-heading{margin-bottom:0}.goal-legend{gap:4px}.race-track{height:29px}.actionbar.is-hand-exchange{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:4px}.actionbar.is-hand-exchange .action-buttons button{font-size:8px;min-height:24px;padding:3px}.actionbar.is-hand-exchange #action-description{font-size:8px;line-height:11px}.actionbar.is-hand-exchange .preview-score{font-size:8px}}
 
 .card.swap-destination{outline:1px dashed #dfc480;outline-offset:-2px}.card.swap-destination:focus-visible{outline:2px solid #dfc480}
 
@@ -253,7 +253,7 @@ html[lang="en"] .brand .brand-sub{letter-spacing:.12em;font-size:7px}
 @media(max-width:400px){.brand{gap:7px}.brand-symbol{width:27px;height:27px}.brand h1{font-size:20px}.brand .brand-sub{font-size:7px;letter-spacing:.1em}.header-controls{gap:2px}html[lang="en"] .brand h1{font-size:17px}}
 @media(max-width:360px){.brand-symbol{width:23px;height:23px}.brand h1{font-size:19px}.brand .brand-sub{font-size:6px}html[lang="en"] .brand h1{font-size:15px}}
 @media(max-height:650px){.brand .brand-sub{display:none}.brand-symbol{width:25px;height:25px}.brand h1{font-size:20px}}
-@media(max-height:450px) and (min-width:600px){.brand-symbol{width:22px;height:22px}.brand h1,html[lang="en"] .brand h1{font-size:16px}.brand{gap:5px}}
+@media(max-height:450px) and (min-width:480px){.brand-symbol{width:22px;height:22px}.brand h1,html[lang="en"] .brand h1{font-size:16px}.brand{gap:5px}}
 @media(prefers-reduced-motion:reduce){.card{transition:none}}
 
 
@@ -285,7 +285,7 @@ html[lang="en"] .brand .brand-sub{letter-spacing:.12em;font-size:7px}
 .rg-refill{display:flex;flex-direction:column;gap:25px;padding:17px 0 10px}.rg-refill>div{display:flex;align-items:center;justify-content:center;gap:23px}.rg-refill>div>strong{font-size:12px;min-width:42px}.rg-refill>div>b{font:700 20px Arial;color:#D83B74}.rg-finish{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:14px;font:700 17px Arial;color:#8b6a2f}.rg-finish span{font-size:12px;color:#9da998}.rg-finish b{color:#aa853d}
 .rg-navigation{display:flex;align-items:center;gap:12px;justify-content:space-between;padding:12px 0;border-top:1px solid #173e3b17;margin-top:14px;position:sticky;bottom:0;background:#F7F4EC;z-index:3}.rg-navigation>span{font:11px Arial;color:#84998a}.rg-navigation button{border:1px solid #173e3b25;border-radius:7px;background:transparent;color:#173E3B;min-height:40px;padding:9px 17px;font-size:12px;font-weight:650}.rg-navigation button:disabled{opacity:.3}.rg-navigation button[data-rg-next]{background:#173E3B;border-color:#173E3B;color:#F7F4EC}.rg-navigation i{font-style:normal;margin-left:10px}.rg-reference{margin-top:18px;padding:15px 0 2px;border-top:1px solid #173e3b17}.rg-reference summary{font-size:11px;color:#647a70;cursor:pointer}.rg-reference p{font-size:12px;line-height:1.7;color:#647a70}.rg-ranks{display:flex;gap:5px;margin-top:14px;flex-wrap:wrap}.rg-ranks>span{display:flex;gap:8px;align-items:center;background:#173e3b07;padding:6px 8px;border-radius:5px;font-size:10px}.rg-ranks b{color:#A52256;font:700 13px Arial}
 @media(max-width:400px){#rule-page .modal-body{padding-inline:16px}#rules-heading{font-size:18px!important}.rg-stage{min-height:350px}.rg-card{width:34px;height:51px;font-size:20px;padding:4px 5px}.rg-cards{gap:3px}.rg-card i{font-size:15px}.rg-duel{gap:4px;grid-template-columns:minmax(0,1fr) 10px minmax(0,1fr)}.rg-step-heading h3{font-size:20px}.rg-figure{margin-top:15px}.rg-result strong{font-size:15px}.rg-counts>span{flex-direction:column;align-items:start}.rg-refill>div{gap:19px}.rg-route{font-size:10px;padding:12px 8px}.rg-exchange{gap:29px}}
-@media(max-height:500px) and (min-width:600px){.rg-stage{min-height:0}.rg-figure{margin-top:10px}.rg-progress{margin-bottom:12px}}
+@media(max-height:500px) and (min-width:480px){.rg-stage{min-height:0}.rg-figure{margin-top:10px}.rg-progress{margin-bottom:12px}}
 @media(prefers-reduced-motion:reduce){#rg-guide *{scroll-behavior:auto}}
 
 /* Equal side columns keep the upgrade race on the table's center line. */
@@ -294,7 +294,7 @@ html[lang="en"] .brand .brand-sub{letter-spacing:.12em;font-size:7px}
  .header-controls {justify-self:end}
  .match-goal {width:100%;justify-self:center}
 }
-@media (max-height:450px) and (min-width:600px) {
+@media (max-height:450px) and (min-width:480px) {
  .app-header {grid-template-columns:minmax(0,1fr) clamp(180px,calc(100% - 340px),460px) minmax(0,1fr)}
  .header-controls {justify-self:end}
  .match-goal {width:100%;justify-self:center}

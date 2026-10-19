@@ -42,7 +42,7 @@
  :root body .sz-drawer>.drawer-tabs{padding-block:3px;gap:6px}
  :root body .sz-drawer>.modal-body{padding:16px;scrollbar-gutter:auto}
 }
-@media(max-height:500px) and (min-width:600px) and (max-width:1000px){:root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal).sz-drawer{--drawer-head:42px;--drawer-tabs:44px}}
+@media(max-height:500px) and (min-width:480px) and (max-width:1000px){:root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal).sz-drawer{--drawer-head:42px;--drawer-tabs:44px}}
 /* The teaching camera stays clipped inside the same flexible content region. */
 :root body #rule-page.sz-drawer.fg-mobile>.modal-body{display:flex;padding:0 12px;overflow:hidden}
 :root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal).sz-drawer.qb-dialog-fallback{width:min(880px,calc(100vw - 32px))!important;height:min(900px,calc(var(--app-height,100dvh) - 32px))!important;max-height:calc(var(--app-height,100dvh) - 32px)!important;inset:0!important;margin:auto!important}
@@ -100,7 +100,7 @@ body.drawer-open{overflow:hidden}
 :root body #replay-modal #play-area{min-height:min-content}
 .drawer-table-placeholder{pointer-events:none;user-select:none}
 @media(max-width:700px){:root body #replay-modal>.modal-body{padding:6px 8px 8px}}
-@media(max-height:500px) and (min-width:600px) and (max-width:1000px){:root body #replay-modal .table{min-height:230px;grid-template-rows:auto minmax(min-content,1fr)}}
+@media(max-height:500px) and (min-width:480px) and (max-width:1000px){:root body #replay-modal .table{min-height:230px;grid-template-rows:auto minmax(min-content,1fr)}}
 
 :root body .sz-drawer:focus{outline:none}
 /* Older WebViews need a real backdrop hit target, not a non-interactive box shadow. */

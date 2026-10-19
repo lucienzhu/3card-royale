@@ -47,7 +47,7 @@ body[data-bloom=true] .app-header{height:128px;padding-block:10px;row-gap:8px}
  .table #action-panel.is-hand-exchange,.table #action-panel.is-hand-exchange:has(#selection-preview[hidden]){grid-template-areas:'title' 'guidance' 'buttons' 'error';grid-template-rows:auto auto auto auto;row-gap:1px}
  .table .actionbar.is-hand-exchange #action-description{display:block;margin:0}
 }
-@media(max-height:480px) and (min-width:600px){
+@media(max-height:480px) and (min-width:480px){
  body[data-bloom=true] .app-header,body[data-bloom=true] .app-main{--header:80px}
  body[data-bloom=true] .app-header{height:80px;padding-block:4px}
  .app-main{padding-top:6px}

@@ -27,7 +27,7 @@ html[lang=en] .table .battle{--pile-cell:max(var(--combatw),40px)}
  .table .actionbar.is-hand-exchange #action-description{display:block;margin:0}
  .table .actionbar.is-hand-exchange :is(.action-buttons,#selection-preview){display:none}
 }
-@media(max-height:480px) and (min-width:600px){
+@media(max-height:480px) and (min-width:480px){
  .table .battle{--combatw:25px;--combath:36px;--combatrank:14px}
  .table .combat-cards{gap:1px}
  .table .combat-cards.has-four{gap:0}
@@ -37,7 +37,7 @@ html[lang=en] .table .battle{--pile-cell:max(var(--combatw),40px)}
  .table .actionbar.is-hand-exchange #selection-preview{display:none}
 }
 /* Compact landscape keeps the full card height in a second centered row. */
-@media(max-height:480px) and (min-width:600px) and (max-width:760px){
+@media(max-height:480px) and (min-width:480px) and (max-width:760px){
  .table .battle{--combatw:26px;--combath:36px;--combatrank:14px}
  .table .combat-sides,html[lang=en] .table .combat-sides{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px 8px}
  .table .combat-sides>div{grid-row:1}

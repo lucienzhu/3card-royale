@@ -26,7 +26,7 @@ body[data-bloom=true] .app-main{padding-top:4px}
  body[data-bloom=true] .app-main{--header:72px}
  body[data-bloom=true] .app-header{padding-block:8px}
 }
-@media(max-height:480px) and (min-width:600px){
+@media(max-height:480px) and (min-width:480px){
  body[data-bloom=true] .app-header,
  body[data-bloom=true] .app-main{--header:64px}
  body[data-bloom=true] .app-header{padding-block:4px}
