@@ -1,0 +1,29 @@
+/* Keep scores explicit and show the physical meaning of damage. */
+.rg-side-label{font-size:12px;color:var(--muted)}
+.rg-side-label b{font-size:14px;color:var(--ink)}
+.rg-side-label b span{white-space:nowrap}
+.rg-reference-action{display:flex;justify-content:flex-end;margin:12px 0 0}
+.rg-reference-action button{display:inline-flex;align-items:center;gap:14px;min-height:36px;padding:6px 10px;border:1px solid var(--line);border-radius:7px;background:var(--paper);color:var(--ink);font-size:12px;font-weight:600;line-height:1.4}
+.rg-reference-action button i{font:normal 18px/1 Arial;color:var(--muted)}
+.rg-reference-action button[aria-expanded=true]{border-color:var(--sz-flower);color:var(--sz-flower-deep)}
+.rg-reference-action button:focus-visible{outline:2px solid var(--sz-flower);outline-offset:2px}
+.rg-rank-panel{margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--sz-table)}
+.rg-rank-panel[hidden]{display:none}
+.rg-score-table{width:100%;border-collapse:collapse;font-size:12px;color:var(--ink)}
+.rg-score-table th,.rg-score-table td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left;font-weight:400}
+.rg-score-table thead th{padding-top:0;font-weight:600;color:var(--muted)}
+.rg-score-table th:last-child,.rg-score-table td{text-align:right;white-space:nowrap}
+.rg-score-table td{font-weight:700}
+.rg-score-table tr.is-example{background:color-mix(in srgb,var(--sz-flower) 9%,transparent)}
+.rg-score-table tr.is-example :is(th,td){font-weight:700;color:var(--sz-flower-deep)}
+.rg-rank-panel p{font-size:12px;line-height:1.6;color:var(--muted);margin:10px 0 0}
+.rg-wound-transfer{display:grid;grid-template-columns:54px 54px minmax(0,150px);justify-content:center;align-items:center;gap:12px;padding:14px;margin-top:14px;border:1px solid var(--line);border-radius:10px}
+.rg-transfer-source,.rg-transfer-target{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0}
+.rg-transfer-source>span:first-child,.rg-transfer-target>span{font-size:12px;line-height:1.4;color:var(--muted);text-align:center}
+.rg-transfer-source .rg-back{background:var(--sz-table);border-color:var(--line);box-shadow:2px -2px 0 var(--paper),3px -3px 0 var(--line);padding:3px}
+.rg-transfer-source svg{width:32px;height:36px}
+.rg-transfer-target>b{font-size:12px;line-height:1.4;color:var(--ink)}
+.rg-transfer-arrow{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--muted)}
+.rg-transfer-arrow b{font-size:12px;white-space:nowrap;font-weight:600}
+.rg-transfer-arrow i{font:normal 24px/1 Arial}
+@media(max-width:400px){.rg-wound-transfer{grid-template-columns:36px 36px minmax(0,1fr);gap:8px;padding:12px 8px}.rg-transfer-target .rg-cards{gap:3px}.rg-transfer-target .rg-card{width:32px;height:48px;font-size:18px;padding:4px}.rg-transfer-target .rg-card i{font-size:13px}.rg-transfer-source .rg-back{width:32px;height:48px}.rg-transfer-source svg{width:26px;height:30px}.rg-transfer-source>span:first-child,.rg-transfer-target>span,.rg-transfer-target>b,.rg-transfer-arrow b{font-size:12px}}
