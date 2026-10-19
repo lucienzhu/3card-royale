@@ -1,0 +1,46 @@
+/* Piles use the same physical card scale as the attack and defense cards. */
+.table .battle{--pile-cell:var(--combatw)}
+html[lang=en] .table .battle{--pile-cell:max(var(--combatw),40px)}
+.table .combat-sides,html[lang=en] .table .combat-sides{grid-template-columns:minmax(0,1fr) calc(2 * var(--pile-cell) + 8px) minmax(0,1fr);column-gap:4px;align-items:stretch}
+.table .pile-indicator,html[lang=en] .table .pile-indicator{grid-column:2;grid-row:1;align-self:stretch;align-items:stretch;justify-self:center;width:calc(2 * var(--pile-cell) + 8px);height:auto;gap:8px}
+.table .pile{flex-direction:column;width:var(--pile-cell);gap:8px}
+.table .pile-label{font-size:var(--ui-label);line-height:17px;min-height:17px;margin:0}
+.table .pile-stack{width:var(--combatw);height:var(--combath);flex:none;margin-top:auto;border-radius:6px}
+.table .pile-stack b{font-family:var(--rank-font);font-size:var(--combatrank);font-weight:700;line-height:1;letter-spacing:-.04em}
+.table .pile-recycle{top:calc(50% + 10px);z-index:3;width:16px;line-height:16px;font-size:12px;text-align:center;background:var(--sz-table);border-radius:50%}
+.table .actionbar.is-hand-exchange .action-buttons{flex-direction:row}
+@media(min-width:761px) and (min-height:651px) and (max-height:800px){.app-main:not(.is-replay){--handw:64px;--handh:90px;--handstep:36px;--handrank:25px;--woundw:32px;--woundh:44px;--woundrank:14px;--combatw:40px;--combath:56px;--combatrank:21px}}
+@media(min-width:761px) and (min-height:481px) and (max-height:650px){
+ .app-main:not(.is-replay){--handw:44px;--handh:62px;--handstep:27px;--handrank:20px;--woundw:26px;--woundh:36px;--woundrank:12px;--combatw:28px;--combath:40px;--combatrank:17px}
+ .table .actionbar.is-hand-exchange #selection-preview{display:none}
+}
+@media(max-width:380px) and (min-height:721px){.table .battle{--combatw:32px;--combath:46px;--combatrank:17px}}
+@media(max-width:760px){.table .battle:has(.combat-cards .card:nth-child(5)){--combatw:32px;--combath:46px;--combatrank:17px}}
+@media(max-width:380px){.table .battle:has(.combat-cards .card:nth-child(5)){--combatw:28px;--combath:40px;--combatrank:16px}}
+@media(max-width:340px){.table .battle:has(.combat-cards .card:nth-child(5)){--combatw:24px;--combath:34px;--combatrank:14px}}
+.table .combat-cards:has(.card:nth-child(5)) .card{padding-inline:0}
+/* Small screens use the existing direct swap targets instead of duplicate buttons. */
+@media(max-height:720px) and (max-width:760px){
+ .table .battle:has(.actionbar.is-hand-exchange) .formula{display:none}
+ .table #action-panel.is-hand-exchange,.table #action-panel.is-hand-exchange:has(#selection-preview[hidden]){display:grid;grid-template-columns:1fr;grid-template-areas:'title' 'guidance' 'error';grid-template-rows:auto auto auto;min-height:0;padding:5px 8px;row-gap:2px}
+ .table .actionbar.is-hand-exchange h2{position:static;width:auto;height:auto;overflow:visible;clip-path:none}
+ .table .actionbar.is-hand-exchange #action-description{display:block;margin:0}
+ .table .actionbar.is-hand-exchange :is(.action-buttons,#selection-preview){display:none}
+}
+@media(max-height:480px) and (min-width:600px){
+ .table .battle{--combatw:25px;--combath:36px;--combatrank:14px}
+ .table .combat-cards{gap:1px}
+ .table .combat-cards.has-four{gap:0}
+ .table .battle:has(.combat-cards .card:nth-child(5)){--combatw:20px;--combath:28px;--combatrank:12px}
+ .table #action-panel.is-hand-exchange,.table #action-panel.is-hand-exchange:has(#selection-preview[hidden]){display:grid;grid-template-columns:1fr;grid-template-areas:'title' 'guidance' 'buttons' 'error';grid-template-rows:auto auto auto auto;padding:4px 8px;row-gap:2px}
+ .table .actionbar.is-hand-exchange .action-buttons{flex-direction:row}
+ .table .actionbar.is-hand-exchange #selection-preview{display:none}
+}
+/* Compact landscape keeps the full card height in a second centered row. */
+@media(max-height:480px) and (min-width:600px) and (max-width:760px){
+ .table .battle{--combatw:26px;--combath:36px;--combatrank:14px}
+ .table .combat-sides,html[lang=en] .table .combat-sides{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px 8px}
+ .table .combat-sides>div{grid-row:1}
+ .table .combat-cards{gap:1px}
+ .table .pile-indicator,html[lang=en] .table .pile-indicator{grid-column:1/-1;grid-row:2}
+}
