@@ -1,0 +1,89 @@
+/* Two table text sizes. Card faces and the brand keep their own visual scales. */
+body{--ui-label:12px;--ui-body:14px;--ui-brand:22px;--ui-line:1.4}
+.app-header .brand h1,html[lang=en] .app-header .brand h1{font-size:var(--ui-brand);line-height:1.15;letter-spacing:-.025em}
+.app-header .header-controls button{font-size:var(--ui-body);font-weight:500;line-height:var(--ui-line)}
+.table .topline{gap:8px;align-items:center;min-height:32px;min-width:0}
+.table .tabs{gap:4px;flex:none}
+.table .tabs button,.table .shared-flower,.table .topline #match-meta,
+.table .topline #hr-reference:not(.hr-side) #hr-toggle{font-family:inherit;font-size:var(--ui-label);line-height:var(--ui-line);letter-spacing:0}
+.table .tabs button{padding:5px 4px;min-height:32px;font-weight:500}
+.table .tabs button[aria-selected=true]{font-weight:650}
+.table .shared-flower{font-weight:600;padding:5px 6px;gap:3px}
+.table .topline #hr-reference:not(.hr-side) #hr-toggle{min-height:32px;padding:5px 8px;gap:5px;font-weight:600}
+.table .topline #match-meta{font-weight:400;white-space:nowrap}
+.table .player-title,.table .damage,.table .damage small{font-size:var(--ui-body);line-height:var(--ui-line)}
+.table .damage small{font-weight:400}
+.table .player-title{font-weight:650}
+.table .damage{font-weight:600;font-variant-numeric:tabular-nums}
+.table .rack-label,.table .hand-group>.rack-label,.table .level,
+.table .combat-title,.table .combat-title b,.table .combat-title .wild-declaration,
+.table .pile-label,.table .pending-label,.table .formula,
+.table .preview-score,.table .preview-score small,.table .field-error,
+.table .actionbar.is-hand-exchange #action-description{font-size:var(--ui-label);line-height:var(--ui-line);letter-spacing:0}
+.table .rack-label,.table .hand-group>.rack-label{min-height:17px}
+.table .combat-title{min-height:17px;margin-bottom:5px}
+.table .combat-title b{font-weight:650;flex-basis:100%;text-align:center}
+.table .pile-label{line-height:17px}
+.table .pile-stack b,.table .score-number,
+.table .actionbar h2,.table .action-buttons button,
+html[lang=en] .table .actionbar h2,html[lang=en] .table .action-buttons button{font-size:var(--ui-body);line-height:var(--ui-line)}
+.table .actionbar h2,.table .action-buttons button{font-weight:600}
+.table .actionbar{min-height:56px;padding:6px 8px;column-gap:12px}
+.table .action-buttons{gap:6px}
+.table .action-buttons button{padding:8px 12px;min-height:40px;min-width:60px}
+.table .actionbar.is-hand-exchange .action-buttons button{font-size:var(--ui-body);min-height:36px;padding:6px 10px}
+.table .actionbar.is-hand-exchange #action-description{margin:2px 0}
+html[lang=en] .table .combat-title,html[lang=en] .table .combat-title b{font-size:var(--ui-label);line-height:var(--ui-line)}
+.app-header .sz-bloom .fc-vine-axis,.app-header .sz-bloom .fc-ace-knot b{font-size:var(--ui-label);line-height:var(--ui-line)}
+.app-main .replay-row button,.app-main .replay-step{font-size:var(--ui-label);line-height:var(--ui-line)}
+/* Space is recovered through wrapping and spacing, never one-off tiny text. */
+@media(max-width:380px){
+ .table .topline{gap:3px}
+ .table .tabs{gap:2px}
+ .table .tabs button{min-height:28px;padding:3px 2px}
+ .table .shared-flower{padding-inline:3px}
+ .table .topline #hr-reference:not(.hr-side) #hr-toggle{min-height:28px;padding:3px 4px;gap:3px}
+ .table .actionbar{column-gap:8px}
+ .table .action-buttons button{padding-inline:9px;min-width:54px}
+ .app-header .brand{gap:5px}
+ .app-header .header-controls button{padding-inline:5px}
+}
+@media(max-height:720px){
+ .table .actionbar{min-height:48px;padding-block:4px}
+ .table .action-buttons button{min-height:36px;padding-block:6px}
+}
+@media(max-height:650px){
+ .table .topline{min-height:28px}
+ .table .tabs button,.table .topline #hr-reference:not(.hr-side) #hr-toggle{min-height:28px;padding-block:3px}
+ .table .shared-flower{padding-block:3px}
+ .table .actionbar.is-hand-exchange .action-buttons button{min-height:30px;padding-block:4px}
+}
+@media(max-height:650px) and (max-width:599px){
+ body[data-bloom=true] .app-header,body[data-bloom=true] .app-main{--header:82px}
+ body[data-bloom=true] .app-header{height:82px;padding-block:0;row-gap:0}
+ .app-main:not(.is-replay){--handh:54px;--woundh:32px}
+ .table .player-zone{gap:1px}
+ .table .battle:has(.actionbar.is-hand-exchange) .formula{display:none}
+ .table #action-panel.is-hand-exchange,.table #action-panel.is-hand-exchange:has(#selection-preview[hidden]){grid-template-columns:1fr;grid-template-areas:'title' 'buttons' 'error';grid-template-rows:auto auto auto;row-gap:2px;min-height:0;padding-block:3px}
+ .table .actionbar.is-hand-exchange h2{position:static;width:auto;height:auto;overflow:visible;clip-path:none}
+ .table .actionbar.is-hand-exchange #action-description{display:none}
+ .table .actionbar.is-hand-exchange .action-buttons{flex-direction:row;justify-content:flex-end}
+ .table .actionbar.is-hand-exchange .action-buttons button{min-height:30px}
+}
+@media(max-height:480px) and (min-width:600px){
+ .table .topline{min-height:28px}
+ .table .actionbar{min-height:0;gap:3px 6px}
+ .table .action-buttons button{min-height:32px;padding:5px 8px;min-width:48px}
+ .table .actionbar.is-hand-exchange .action-buttons button{min-height:30px;padding:4px 8px}
+}
+@media(min-height:481px),(max-width:599px){
+ html[lang=en] .table .combat-sides{grid-template-columns:minmax(0,1fr) 80px minmax(0,1fr)}
+ html[lang=en] .table .pile-indicator{width:80px;gap:18px}
+}
+@media(max-width:360px){
+ html[lang=en] .table .topline{gap:2px}
+ html[lang=en] .table .tabs button{padding-inline:0}
+ html[lang=en] .table .tabs{gap:3px}
+ html[lang=en] .table .shared-flower{padding-inline:2px}
+ html[lang=en] .table .topline #hr-reference:not(.hr-side) #hr-toggle{padding-inline:2px;gap:2px}
+}
