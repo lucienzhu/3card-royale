@@ -245,7 +245,7 @@ const FOUR_STUDY={
 ;
 'use strict';
 const $=id=>document.getElementById(id);
-const UI_REVISION='sz-standard-1';
+const UI_REVISION='sz-seed-config1';
 const VARIANT_TEXT={
  '1.0.0':{name:'1.0 · 标准规则',note:'共用花牌，五伤败北。通常出三张，四炸6分，五炸7分；五炸须四张自然同点牌加花牌。赢家升级后的等级决定下局花牌。',tie:'同花样比点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无效果。',ranking:'五炸7 > 四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。'},
  '0.3.8':{name:'0.3.8 · 共用花牌',note:'首局双方共用♥2作为花牌。此后小局赢家升级后的等级决定下一小局双方共用的花牌；一局内不变。花牌即逢人配／会子／百搭牌。攻防、血牌交换与升级其余规则沿用0.3.7。',tie:'同牌型比较点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无事发生。',ranking:'四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。四炸也可用花牌。'},
@@ -466,6 +466,7 @@ function renderActions(s,event){
  }
 }
 function render(){
+ paintSeedReadout();
  for(const e of game.events)GKLocale.registerEvent(e);for(const e of ROLLOUT.events)GKLocale.registerEvent(e);
  const replay=mode==='replay',event=replay?ROLLOUT.events[cursor]:game.lastEvent,s=replay?event.state:game.snapshot();
  document.querySelector('.app-main').classList.toggle('is-replay',replay);$('replay-detail').hidden=!replay;if(replay)$('replay-detail').textContent=event.title+'：'+event.note;
@@ -578,14 +579,24 @@ function switchMode(next){stopAI();stopReplay();if(next!=='play')closeResult();i
 function replayGo(index){cursor=Math.max(0,Math.min(ROLLOUT.events.length-1,Number(index)));error='';render();}
 window.gkReplayGo=index=>{mode='replay';replayGo(index);};
 window.gkUseGame=g=>{stopAI();stopReplay();variant=g.version;ROLLOUT=ROLLOUTS[variant];resetReplay();game=g;window.gkGame=game;selected=[];flipMode=null;flipIndices=[];refreshTarget=null;error='';mode='play';render();};
-function newMatch(){const input=$('seed-input');if(!input.reportValidity())return;stopAI();stopReplay();const seed=input.value.trim()===''?randomSeed():Number(input.value),first=$('first-input').value;game=new GK.Game(seed,{version:variant,first:first==='random'?undefined:Number(first)});input.value='';window.gkGame=game;selected=[];flipMode=null;flipIndices=[];refreshTarget=null;error='';$('settings-modal').close();persist();mode='play';render();driveAI();}
+const SEED_PREF_KEY='sz-seed-preference-v1';
+function seedPreference(){try{const p=JSON.parse(localStorage.getItem(SEED_PREF_KEY));return {mode:p?.mode==='fixed'?'fixed':'random',seed:Number.isInteger(p?.seed)&&p.seed>=0&&p.seed<=4294967295?p.seed:null,first:['random','0','1'].includes(p?.first)?p.first:'random'};}catch(_){return {mode:'random',seed:null,first:'random'};}}
+function syncSeedMode(){const fixed=$('seed-mode').value==='fixed';$('seed-value-label').hidden=!fixed;$('seed-input').disabled=!fixed;$('seed-input').required=fixed;}
+function applySeedPreference(){const p=seedPreference();$('seed-mode').value=p.mode;$('first-input').value=p.first;$('seed-input').value=p.seed===null?'':String(p.seed);syncSeedMode();}
+function saveSeedPreference(){const n=$('seed-input').value.trim()===''?null:Number($('seed-input').value);try{localStorage.setItem(SEED_PREF_KEY,JSON.stringify({mode:$('seed-mode').value,seed:Number.isInteger(n)&&n>=0&&n<=4294967295?n:null,first:$('first-input').value}));}catch(_){}}
+function paintSeedReadout(){$('current-match-seed').textContent=String(game.seed);$('current-game-seed').textContent=Number.isInteger(game.gameSeed)?String(game.gameSeed):GK.sharedFlower(variant)?'旧存档未记录，下局可见':'历史版本未记录';}
+function newMatch(){const input=$('seed-input'),fixed=$('seed-mode').value==='fixed';if(fixed&&!input.reportValidity())return;stopAI();stopReplay();saveSeedPreference();const seed=fixed?Number(input.value):randomSeed(),first=$('first-input').value;game=new GK.Game(seed,{version:variant,first:first==='random'?undefined:Number(first)});window.gkGame=game;selected=[];flipMode=null;flipIndices=[];refreshTarget=null;error='';$('settings-modal').close();persist();mode='play';render();driveAI();}
 function resetReplay(){cursor=0;$('replay-range').max=ROLLOUT.events.length-1;$('replay-jump').replaceChildren();for(const e of ROLLOUT.events)if(e.kind==='deal'||e.kind==='round'||e.kind==='end'){const o=document.createElement('option');o.value=e.index;o.textContent=e.kind==='end'?'第 '+e.game+' 局结算':'第 '+e.game+' 局 / 第 '+e.round+' 轮';$('replay-jump').append(o);}$('replay-note').textContent=variant+' · 固定种子 '+ROLLOUT.seed+' · '+ROLLOUT.results.length+' 局 / '+ROLLOUT.totalRounds+' 轮。双方手牌公开用于复盘，扣牌仍隐藏。策略用于检查执行，不代表最优打法。';}
 $('version-select').addEventListener('change',e=>{stopAI();stopReplay();persist();variant=e.target.value;ROLLOUT=ROLLOUTS[variant];game=loadGame();window.gkGame=game;selected=[];flipMode=null;flipIndices=[];refreshTarget=null;error='';resetReplay();persist();const url=new URL(location.href);url.searchParams.set('version',variant);history.replaceState(null,'',url);render();if(mode==='play')driveAI();});
 document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>switchMode(b.dataset.tab)));
 $('open-rules').addEventListener('click',()=>switchMode('rules'));
 $('close-rules').addEventListener('click',()=>switchMode(lastBoardMode));
 $('rule-page').addEventListener('cancel',e=>{e.preventDefault();switchMode(lastBoardMode);});
-$('open-settings').addEventListener('click',()=>{stopAI();stopReplay();$('seed-input').value='';$('settings-modal').showModal();});
+$('open-settings').addEventListener('click',()=>{stopAI();stopReplay();applySeedPreference();paintSeedReadout();$('settings-modal').showModal();});
+$('seed-mode').addEventListener('change',()=>{syncSeedMode();saveSeedPreference();});
+$('seed-input').addEventListener('input',saveSeedPreference);
+$('first-input').addEventListener('change',saveSeedPreference);
+$('reuse-seed').addEventListener('click',()=>{$('seed-mode').value='fixed';$('seed-input').value=String(game.seed);const first=game.events.find(e=>e.kind==='deal'&&e.game===1)?.state?.first;$('first-input').value=game.firstWasChosen&&[0,1].includes(first)?String(first):'random';syncSeedMode();saveSeedPreference();$('seed-input').focus();});
 $('close-settings').addEventListener('click',()=>{$('settings-modal').close();driveAI();});
 $('settings-modal').addEventListener('close',()=>{syncResult();driveAI();});
 $('close-result').addEventListener('click',closeResult);
@@ -593,7 +604,7 @@ $('result-review').addEventListener('click',closeResult);
 $('result-primary').addEventListener('click',continueResult);
 $('result-modal').addEventListener('close',()=>{stopCelebration();const r=currentResult();if(mode==='play'&&r&&resultKey(r)===$('result-modal').dataset.resultKey)$('show-result')?.focus({preventScroll:true});});
 $('new-match').addEventListener('click',newMatch);
-$('export-match').addEventListener('click',()=>{const data={version:game.version,ui_revision:UI_REVISION,locale:GKLocale.language,game_name:GKLocale.language==='en'?'3Card Royale':'深圳花牌',seed:game.seed,policy:GK.woundExchange(game.version)?GK.WOUND_POLICY:GK.handExchange(game.version)?GK.EXCHANGE_POLICY:GK.winnerStarts(game.version)?GK.WINNER_POLICY:GK.allowsFour(game.version)?GK.FOUR_POLICY:GK.isRefresh(game.version)?GK.REFRESH_POLICY:GK.POLICY,results:game.results,stats:game.stats,events:game.events,save:game.save(),source_sha256:ROLLOUT.source_sha256,...(ROLLOUT.baseline_sha256?{baseline_sha256:ROLLOUT.baseline_sha256}:{})};const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=(GKLocale.language==='en'?'3Card-Royale-':'深圳花牌-')+variant+'-'+game.seed+'-playtest.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+$('export-match').addEventListener('click',()=>{const data={version:game.version,ui_revision:UI_REVISION,locale:GKLocale.language,game_name:GKLocale.language==='en'?'3Card Royale':'深圳花牌',seed:game.seed,game_seed:game.gameSeed??null,game_seeds:game.events.filter(e=>e.kind==='deal').map(e=>({game:e.game,seed:e.state?.gameSeed??null})),seed_policy:'continuous-xorshift32-v1',policy:GK.woundExchange(game.version)?GK.WOUND_POLICY:GK.handExchange(game.version)?GK.EXCHANGE_POLICY:GK.winnerStarts(game.version)?GK.WINNER_POLICY:GK.allowsFour(game.version)?GK.FOUR_POLICY:GK.isRefresh(game.version)?GK.REFRESH_POLICY:GK.POLICY,results:game.results,stats:game.stats,events:game.events,save:game.save(),source_sha256:ROLLOUT.source_sha256,...(ROLLOUT.baseline_sha256?{baseline_sha256:ROLLOUT.baseline_sha256}:{})};const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=(GKLocale.language==='en'?'3Card-Royale-':'深圳花牌-')+variant+'-'+game.seed+'-playtest.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
 $('prev-step').addEventListener('click',()=>{stopReplay();replayGo(cursor-1);});$('next-step').addEventListener('click',()=>{stopReplay();replayGo(cursor+1);});
 $('replay-range').max=ROLLOUT.events.length-1;$('replay-range').addEventListener('input',e=>{stopReplay();replayGo(e.target.value);});
 $('auto-replay').addEventListener('click',()=>{if(autoTimer){stopReplay();return;}if(cursor===ROLLOUT.events.length-1)replayGo(0);$('auto-replay').textContent='暂停';autoTimer=setInterval(()=>{if(cursor>=ROLLOUT.events.length-1)stopReplay();else replayGo(cursor+1);},1300);});
@@ -611,5 +622,5 @@ function preventPinchZoom(e){if(e.touches.length>1&&e.cancelable)e.preventDefaul
 document.addEventListener('touchstart',preventPinchZoom,{passive:false,capture:true});
 document.addEventListener('touchmove',preventPinchZoom,{passive:false,capture:true});
 for(const type of ['gesturestart','gesturechange','gestureend'])document.addEventListener(type,e=>{if(e.cancelable)e.preventDefault();},{passive:false,capture:true});
-persist();render();driveAI();
+applySeedPreference();persist();render();driveAI();
 GKLocale.init();

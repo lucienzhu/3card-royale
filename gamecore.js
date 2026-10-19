@@ -241,7 +241,7 @@
       return true;
     }
     snapshot() {
-      return clone({players:this.players,stock:this.stock,discard:this.discard,active:this.active,lastCombat:this.lastCombat,lastRefill:this.lastRefill,first:this.first,attacker:this.attacker,phase:this.phase,pendingFlip:this.pendingFlip,roundUses:this.roundUses,...(isRefresh(this.version)?{pendingRefresh:this.pendingRefresh,roundRefreshes:this.roundRefreshes}:{}),...(allowsFour(this.version)?{roundCardsPlayed:this.roundCardsPlayed}:{}),...(handExchange(this.version)?{aLosses:this.aLosses}:{}),...(sharedFlower(this.version)?{version:this.version,flowerLevel:this.flowerLevel,levelOwner:this.levelOwner}:{})});
+      return clone({players:this.players,stock:this.stock,discard:this.discard,active:this.active,lastCombat:this.lastCombat,lastRefill:this.lastRefill,first:this.first,attacker:this.attacker,phase:this.phase,pendingFlip:this.pendingFlip,roundUses:this.roundUses,...(isRefresh(this.version)?{pendingRefresh:this.pendingRefresh,roundRefreshes:this.roundRefreshes}:{}),...(allowsFour(this.version)?{roundCardsPlayed:this.roundCardsPlayed}:{}),...(handExchange(this.version)?{aLosses:this.aLosses}:{}),...(sharedFlower(this.version)?{version:this.version,flowerLevel:this.flowerLevel,levelOwner:this.levelOwner,gameSeed:this.gameSeed??null}:{})});
     }
     emit(kind,title,note,extra={}) {
       this.check();this.bump('snapshots');
@@ -254,7 +254,7 @@
       return this.stock.pop();
     }
     startGame(first) {
-      if(sharedFlower(this.version)){this.flowerLevel=this.players[first].level;this.levelOwner=first;}
+      if(sharedFlower(this.version)){this.flowerLevel=this.players[first].level;this.levelOwner=first;this.gameSeed=this.rng.state;}
       this.game++;this.round=1;this.roundsSeen++;this.first=first;this.attacker=first;this.battleIndex=0;
       this.stock=Array.from({length:52},(_,i)=>i);this.rng.shuffle(this.stock);this.discard=[];this.active=[null,null];
       this.lastCombat=null;this.pendingFlip=null;this.lastRefill=null;this.roundUses=[0,0];this.phase='attack';

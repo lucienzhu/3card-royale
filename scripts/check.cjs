@@ -15,3 +15,5 @@ assert.equal(GK.evaluate(cards(['6♣','7♣','8♣']),2,'1.0.0').score,4);
 assert.equal(GK.outcome(GK.evaluate(cards(['K♣','9♠','4♦']),2,'1.0.0'),GK.evaluate(cards(['K♦','9♣','4♥']),2,'1.0.0'),'1.0.0').effectiveDelta,0);
 const g=new GK.Game(20261018,{version:'1.0.0',first:0});for(let i=0;i<24;i++){if(g.phase==='game_over'||g.phase==='match_over')break;g.aiStep();g.check();}assert.equal(GK.Game.restore(g.save()).version,'1.0.0');
 console.log(`OK: ${scripts} JavaScript files, ${refs} local HTML references, card examples, exact tie and a saved-game round trip.`);
+
+require('../tests/seeds.cjs');

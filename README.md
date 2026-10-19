@@ -12,6 +12,9 @@ An open card game from Shenzhen: build three-card hands, turn wounds into playab
 
 The browser demo plays against the computer. For two people at a table, all you need is a standard 52-card deck. No sign-in, betting, or cash conversion.
 
+
+The demo menu shows the match seed and the current game’s deal seed. New matches use random seeds by default; select Fixed seed to reproduce a match with the same rules, opening setting and actions. The match seed stays fixed while games continue along its random stream, rather than reshuffling from the same seed every game.
+
 ## How a round works
 
 1. Make a three-card hand from your private hand and your face-up wounds. Four of a kind uses four; five of a kind uses five.
