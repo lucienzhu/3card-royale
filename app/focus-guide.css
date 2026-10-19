@@ -99,3 +99,10 @@ button.fg-slot{width:100%;cursor:pointer;font-family:inherit;font-size:12px;text
 .fg-focus-caption{display:none}
 @media(max-height:700px){.fg-toolbar{flex-wrap:wrap;gap:5px}.fg-focus-caption{display:block;flex-basis:100%;font-size:12px;line-height:1.4;color:var(--ink);font-weight:600;padding-bottom:2px}}
 .fg-board .fg-blind{display:block;padding:0 0 3px;min-height:0}
+
+/* The teaching table uses the same raised selection as the live hand. */
+.fg-board .card.selected{transform:translateY(var(--card-raise,-7px))}
+.fg-board .fg-card-hit.is-source{transform:translateY(-7px)}
+.fg-board .fg-card-hit{transition:transform .18s ease}
+.fg-board .fg-hand-cards{padding-top:9px;min-height:calc(var(--fh) + 9px)}
+@media(prefers-reduced-motion:reduce){.fg-board .fg-card-hit{transition:none}}
