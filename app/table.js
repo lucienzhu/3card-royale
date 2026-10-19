@@ -245,7 +245,7 @@ const FOUR_STUDY={
 ;
 'use strict';
 const $=id=>document.getElementById(id);
-const UI_REVISION='sz-guide13';
+const UI_REVISION='sz-swap-target1';
 const VARIANT_TEXT={
  '1.0.0':{name:'1.0 · 标准规则',note:'共用花牌，五伤败北。通常出三张，四炸6分，五炸7分；五炸须四张自然同点牌加花牌。赢家升级后的等级决定下局花牌。',tie:'同花样比点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无效果。',ranking:'五炸7 > 四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。'},
  '0.3.8':{name:'0.3.8 · 共用花牌',note:'首局双方共用♥2作为花牌。此后小局赢家升级后的等级决定下一小局双方共用的花牌；一局内不变。花牌即逢人配／会子／百搭牌。攻防、血牌交换与升级其余规则沿用0.3.7。',tie:'同牌型比较点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无事发生。',ranking:'四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。四炸也可用花牌。'},
@@ -278,8 +278,9 @@ function card(id,{back=false,pending=false,selected=false,selectable=false,mini=
  if(handler){el.type='button';el.addEventListener('click',()=>{const zone=el.parentElement,id=zone.id,index=[...zone.children].indexOf(el);handler();const replacement=$(id)?.children[index];if(replacement?.tagName==='BUTTON')replacement.focus({preventScroll:true});});el.setAttribute('aria-pressed',String(!!selected));}
  if(pending){el.innerHTML='<span class="pending-mark" aria-hidden="true">↻</span><span class="pending-label">待补</span>';el.setAttribute('aria-label','伤牌已出，结算后补回，仍计伤势');}
  else if(back){el.innerHTML='<span class="motif" aria-hidden="true">'+(window.SZFlowerMark||'✦')+'</span>';el.setAttribute('aria-label',backLabel);}
- else{el.classList.toggle('red',GK.suit(id)===1||GK.suit(id)===3);el.innerHTML='<span class="rank">'+GK.rankLabel(GK.rank(id))+'</span><span class="suit">'+GK.SUITS[GK.suit(id)]+'</span><span class="center">'+GK.SUITS[GK.suit(id)]+'</span>'+(badge?'<span class="badge">'+badge+'</span>':'')+(GK.wild(id,level)?'<span class="wild">★</span>':'');el.setAttribute('aria-label',GK.label(id)+(badge?'，'+badge:'')+(GK.wild(id,level)?(GK.sharedFlower(variant)?'，花牌':'，逢人配'):''));el.dataset.card=String(id);}
- if(handler&&['交出','可交换','可换'].includes(badge)){el.classList.add('has-swap-icon');el.insertAdjacentHTML('beforeend','<span class="sz-swap-icon" aria-hidden="true">⇄</span>');}
+ else{el.classList.toggle('red',GK.suit(id)===1||GK.suit(id)===3);el.innerHTML='<span class="rank">'+GK.rankLabel(GK.rank(id))+'</span><span class="suit">'+GK.SUITS[GK.suit(id)]+'</span><span class="center">'+GK.SUITS[GK.suit(id)]+'</span>'+(badge&&badge!=='交出'?'<span class="badge">'+badge+'</span>':'')+(GK.wild(id,level)?'<span class="wild">★</span>':'');el.setAttribute('aria-label',GK.label(id)+(badge?'，'+badge:'')+(GK.wild(id,level)?(GK.sharedFlower(variant)?'，花牌':'，逢人配'):''));el.dataset.card=String(id);}
+ if(handler&&badge==='交出')el.dataset.swapRole='source';
+ if(handler&&['可交换','可换'].includes(badge)){el.dataset.swapRole='target';el.classList.add('has-swap-icon');el.insertAdjacentHTML('beforeend','<span class="sz-swap-icon" aria-hidden="true">⇄</span>');}
  return el;
 }
 function setEmpty(container,text){const el=document.createElement('div');el.className='empty';el.textContent=text;container.append(el);}
@@ -377,7 +378,7 @@ function combatSummary(c,whoName){if(!c)return '';if(c.action==='damage')return 
 function drawHand(container,who,s,replay){
  container.replaceChildren();const p=s.players[who];container.style.setProperty('--hand-count',Math.max(1,p.hand.length));container.classList.toggle('hand-cards',who===0||replay);
  if(who===1&&!replay){
-  const refresh=canRefresh(),target={who:1,zone:'hand',blind:true};
+  const refresh=canRefresh()&&(!GK.handExchange(variant)||!!refreshTarget),target={who:1,zone:'hand',blind:true};
   container.classList.toggle('blind-target-selected',refresh&&!!sameTarget(target));container.classList.remove('sz-blind-swap');
   for(let i=0;i<p.hand.length;i++)container.append(card(null,{back:true,mini:!refresh,selectable:refresh,handler:refresh?()=>selectRefresh(target):null,backLabel:refresh?(GK.handExchange(variant)?'对手手牌牌背，点击盲交换一张':'对手手牌牌背，点击盲换一张'):'对手手牌，身份保密'}));if(refresh&&p.hand.length){container.classList.add('sz-blind-swap');container.insertAdjacentHTML('beforeend','<button type="button" class="sz-swap-icon sz-swap-button" aria-label="盲换对手">⇄</button>');container.querySelector('.sz-swap-button').onclick=()=>selectRefresh(target);}
   if(!p.hand.length)setEmpty(container,'没有手牌');return;
@@ -412,7 +413,7 @@ function drawTable(container,who,s){
   const play=who===0&&isPlaying()&&x.up&&x.card!==null;
   const option=mode==='play'&&game.phase==='flip'&&game.currentActor()===0&&flipMode?game.flipOptions().find(o=>o.action===flipMode):null;
   const flip=option&&option.who===who&&option.indices.includes(index);
-  const target={who,zone:'table',index},refresh=canRefresh()&&(!GK.handExchange(variant)||GK.woundExchange(variant))&&x.card!==null;
+  const target={who,zone:'table',index},refresh=canRefresh()&&(!GK.handExchange(variant)||GK.woundExchange(variant)&&(who===0||!!refreshTarget))&&x.card!==null;
   const sel=play?selected.includes(x.card):flip?flipIndices.includes(index):refresh?!!sameTarget(target):false;
   container.append(card(x.card,{back:!x.up&&x.card!==null,pending:x.card===null,selected:sel,selectable:!!(play||flip||refresh),level:currentFlower(s,who),badge:refresh?(GK.woundExchange(variant)?(who===0&&(!refreshTarget||refreshTarget.zone==='table')?'交出':'可交换'):'可换'):x.up?'可出':'',handler:play?()=>toggleCard(x.card):flip?()=>toggleFlip(index):refresh?()=>selectRefresh(target):null}));
  });
@@ -558,7 +559,7 @@ function render(){
  $('own-level').textContent=(shared?'花牌 ':'')+'♥'+GK.rankLabel(currentFlower(s,0))+(shared?'':' ★');$('opp-level').textContent=(shared?'花牌 ':'')+'♥'+GK.rankLabel(currentFlower(s,1))+(shared?'':' ★');$('own-level').title=shared?'本局双方共用的花牌':'你的逢人配';$('opp-level').title=shared?'本局双方共用的花牌':'对手的逢人配';
  damageBar($('own-damage'),p.table.length);damageBar($('opp-damage'),q.table.length);
  for(const [who,id]of [[0,'own'],[1,'opp']]){const t=s.players[who].table;$(`${id}-table-label`).textContent='伤牌区';$(`${id}-table-label`).title=t.filter(x=>x.up).length+' 明 / '+t.filter(x=>!x.up&&x.card!==null).length+' 暗';drawTable($(`${id}-table`),who,s);}
- $('opp-hand').classList.toggle('hidden-hand',!replay);$('opp-hand').classList.toggle('refresh-targets',canRefresh());$('opp-hand-label').hidden=false;$('opp-hand-label').textContent='手牌区';drawHand($('own-hand'),0,s,replay);drawHand($('opp-hand'),1,s,replay);$('opp-hand-count').textContent=q.hand.length+' 张';$('own-hand-count').textContent=p.hand.length+' 张';$('hand-label').textContent='手牌区';
+ $('opp-hand').classList.toggle('hidden-hand',!replay);$('opp-hand').classList.toggle('refresh-targets',canRefresh()&&(!GK.handExchange(variant)||!!refreshTarget));$('opp-hand-label').hidden=false;$('opp-hand-label').textContent='手牌区';drawHand($('own-hand'),0,s,replay);drawHand($('opp-hand'),1,s,replay);$('opp-hand-count').textContent=q.hand.length+' 张';$('own-hand-count').textContent=p.hand.length+' 张';$('hand-label').textContent='手牌区';
  const attack=s.attacker,moves=s.active.some(Boolean)?s.active:s.lastCombat?.moves??[null,null];
  const whoName=who=>replay?(who===0?'A':'B'):(who===0?'你':'对手');
  $('attack-label').innerHTML='进攻 · '+whoName(attack)+(moves[attack]?' <b>'+moves[attack].name+' '+moves[attack].score+' 分</b>':'');
