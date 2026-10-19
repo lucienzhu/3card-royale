@@ -1,0 +1,101 @@
+/* One spatial model for every lesson. Spotlight changes; table slots stay put. */
+.fg-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 10px;color:var(--muted);font-size:12px;line-height:1.4}
+.fg-toolbar>div{display:flex;flex-wrap:wrap;justify-content:end;gap:6px}
+.fg-toolbar button{min-height:32px;border:1px solid var(--line);border-radius:6px;background:var(--sz-paper);color:var(--ink);padding:5px 8px;font-family:inherit;font-size:12px;line-height:1.4}
+.fg-toolbar button[aria-pressed=true]{border-color:var(--ink);background:var(--sz-table)}
+.fg-board{--fw:44px;--fh:62px;--bw:32px;--bh:45px;position:relative;min-width:0;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--sz-table);color:var(--ink);font-size:12px;line-height:1.4;isolation:isolate}
+.fg-topline{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:28px;margin-bottom:8px;color:var(--muted)}
+.fg-topline>b{font-size:12px;color:var(--ink);border-bottom:2px solid var(--sz-flower);padding-bottom:4px}
+.fg-topline>small{font-size:12px;text-align:right}
+.fg-wild{flex:none;padding:3px 7px;border:1px solid var(--line);border-radius:6px;color:var(--sz-flower-deep);background:var(--sz-paper);font-size:12px;font-weight:600;transition:box-shadow .2s ease}
+.fg-wild.is-focus{box-shadow:0 0 0 2px color-mix(in srgb,var(--sz-gold,#ddb23c) 65%,transparent)}
+.fg-player header{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:24px}
+.fg-player header>span{display:flex;align-items:baseline;gap:6px}
+.fg-player header b{font-size:14px;font-weight:700}
+.fg-player header small{font-size:12px;color:var(--muted)}
+.fg-board .fg-damage{display:flex;align-items:center;gap:3px;font-size:12px;color:var(--ink)}
+.fg-board .fg-damage b,.fg-board .fg-damage small{font-size:12px}
+.fg-board .fg-damage .wound-bract{width:7px;height:10px}
+.fg-slot{position:relative;box-sizing:border-box;border:1px solid transparent;border-radius:8px;padding:6px;min-width:0;background:transparent;color:var(--ink);transition:opacity .22s ease,box-shadow .22s ease,background-color .22s ease}
+button.fg-slot{width:100%;cursor:pointer;font-family:inherit;font-size:12px;text-align:center}
+.fg-slot.is-context{opacity:.32}
+.fg-slot.is-focus{opacity:1;background:var(--sz-paper);box-shadow:0 0 0 1.5px color-mix(in srgb,var(--sz-flower) 55%,transparent);z-index:1}
+.fg-board.show-whole .fg-slot{opacity:1}
+.fg-board.show-whole .fg-slot.is-focus{box-shadow:0 0 0 1px var(--line)}
+.fg-zone-title{display:flex;justify-content:center;align-items:center;gap:5px;color:var(--ink);font-size:12px;font-weight:600;line-height:1.4;text-align:center;min-height:18px}
+.fg-zone-title small{font-size:12px;font-weight:400;color:var(--muted)}
+.fg-hand{min-height:92px;margin-top:5px;margin-bottom:5px}
+.fg-hand-cards{display:flex;align-items:center;justify-content:center;min-width:0;min-height:64px;padding-top:4px;box-sizing:border-box}
+.fg-board .card{width:var(--fw);height:var(--fh);padding:4px;border-radius:6px;box-sizing:border-box;flex:none;transform:none}
+.fg-board .card+.card{margin-left:-14px}
+.fg-board .card .rank{font-size:22px;line-height:1}
+.fg-board .card .suit{font-size:13px;line-height:1;margin-top:2px}
+.fg-board .card .center{font-size:25px}
+.fg-board .card .wild{font-size:9px;bottom:3px;left:4px}
+.fg-board .back .motif{inset:3px;border:0}
+.fg-board .back .motif svg{width:29px;height:33px}
+.fg-board .fg-chosen{border:2px solid var(--sz-flower);box-shadow:0 -3px 0 1px color-mix(in srgb,var(--sz-flower) 55%,transparent);background:color-mix(in srgb,var(--sz-flower) 7%,var(--sz-paper))}
+.fg-board .fg-chosen[data-card="13"]{border-color:var(--sz-gold,#ddb23c)}
+.fg-wounds{min-height:63px;margin-top:5px;margin-bottom:5px}
+.fg-wound-cards{display:flex;align-items:center;justify-content:center;gap:4px;min-height:36px;margin-top:4px}
+.fg-board .fg-wound-cards .card{width:25px;height:34px;margin:0;padding:3px;border-radius:4px}
+.fg-board .fg-wound-cards .rank{font-size:14px}
+.fg-board .fg-wound-cards .suit{font-size:9px;margin-top:1px}
+.fg-board .fg-wound-cards .center{font-size:15px}
+.fg-empty{display:grid;place-items:center;width:100%;height:100%;min-height:28px;color:var(--muted);font-size:16px}
+.fg-center{margin:8px 0;padding:8px 0;border-block:1px solid var(--line)}
+.fg-battle{display:grid;grid-template-columns:minmax(0,1fr) 88px minmax(0,1fr);gap:6px;align-items:stretch}
+.fg-combat{min-height:92px}
+.fg-combat .fg-zone-title{flex-direction:column;gap:2px;min-height:35px}
+.fg-combat-cards{display:flex;justify-content:center;align-items:center;gap:3px;min-height:var(--bh);margin-top:5px}
+.fg-board .fg-combat-cards .card{width:var(--bw);height:var(--bh);padding:3px;margin:0;border-radius:4px}
+.fg-board .fg-combat-cards .rank{font-size:18px}
+.fg-board .fg-combat-cards .suit{font-size:11px;margin-top:1px}
+.fg-board .fg-combat-cards .center{font-size:18px}
+.fg-combat-cards:has(>.fg-empty){border:1px dashed var(--line);border-radius:5px}
+.fg-piles{display:flex;align-items:center;justify-content:center;min-height:92px}
+.fg-pile-group{display:flex;align-items:end;justify-content:center;gap:6px;min-width:0}
+.fg-pile-group>span{display:flex;flex-direction:column;align-items:center;gap:6px}
+.fg-pile-group small{font-size:12px;color:var(--muted);line-height:1.4}
+.fg-pile{display:block;position:relative;box-sizing:border-box;width:var(--bw);height:var(--bh);border:1px solid var(--line);border-radius:4px;background:var(--sz-paper);color:var(--ink);padding:0}
+.fg-pile>b{position:absolute;left:3px;top:4px;font:700 18px/1 var(--rank-font,Arial)}
+.fg-stock{background:var(--sz-table);box-shadow:2px -2px 0 var(--sz-paper),3px -3px 0 var(--line)}
+.fg-stock>i{position:absolute;left:10%;bottom:3px;width:80%;height:45%;opacity:.24;--sz-logo-petal:var(--muted);--sz-logo-center:var(--muted)}
+.fg-stock svg{width:100%;height:100%;display:block}
+.fg-discard{opacity:.65}
+.fg-slot.fg-coach{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:89px;margin-top:8px;padding:9px;background:var(--sz-paper);border:1px solid var(--line);opacity:1;box-shadow:none}
+.fg-coach.is-focus{border-color:color-mix(in srgb,var(--sz-flower) 55%,var(--line))}
+.fg-coach-copy{display:flex;flex-direction:column;gap:4px;min-width:0}
+.fg-coach strong{font-size:14px;line-height:1.4;color:var(--ink);font-weight:700}
+.fg-coach-copy>span{font-size:12px;line-height:1.6;color:var(--muted)}
+.fg-coach>button{flex:none;max-width:112px;min-height:38px;border:1px solid var(--sz-flower);border-radius:8px;background:var(--sz-flower);color:var(--sz-paper);padding:7px 10px;font-family:inherit;font-size:14px;font-weight:700;line-height:1.4}
+.fg-card-hit{position:relative;display:block;flex:none;background:transparent;border:1px solid transparent;border-radius:6px;padding:3px;box-sizing:border-box;color:var(--ink)}
+.fg-hand-cards .fg-card-hit+.fg-card-hit{margin-left:-9px}
+.fg-card-hit .card{pointer-events:none}
+.fg-card-hit.is-source{padding:2px;border:2px solid var(--sz-flower);background:var(--sz-paper)}
+.fg-board .is-target{position:relative;border:1px dashed var(--sz-flower-deep);cursor:pointer}
+.fg-blind{position:relative;display:block;min-width:112px;width:100%;border-radius:6px;background:transparent;padding:2px 4px 8px;color:var(--ink);font-family:inherit}
+.fg-swap-badge{position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);background:var(--sz-paper);padding:0 4px;border-radius:3px;color:var(--sz-flower-deep);font:400 18px/1 var(--rank-font,Arial);pointer-events:none}
+.fg-stock .fg-swap-badge{background:var(--sz-table)}
+.fg-board button:focus-visible,.fg-toolbar button:focus-visible{outline:2px solid var(--sz-flower);outline-offset:3px}
+.fg-board .fg-added,.fg-board .fg-received,.fg-board .is-changed .card{animation:fg-receive .4s both;animation-delay:var(--deal-delay,0ms);border-color:var(--sz-flower)}
+.fg-board .fg-rival .fg-added{animation-name:fg-receive-rival}
+@keyframes fg-receive{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
+@keyframes fg-receive-rival{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+#rg-guide:has(.fg-board) .rg-reference-action{margin-top:12px}
+@media(max-width:600px){.fg-board{--fw:38px;--fh:54px;--bw:25px;--bh:36px;padding:9px}.fg-topline{gap:5px}.fg-topline>small{max-width:115px}.fg-topline .fg-wild{padding:3px 5px}.fg-player header{gap:6px}.fg-player header b{font-size:14px}.fg-board .fg-damage{gap:2px}.fg-board .fg-damage .wound-bract{width:6px;height:9px}.fg-hand{min-height:84px}.fg-hand-cards{min-height:56px}.fg-zone-title{gap:3px}.fg-zone-title>small{font-size:12px}.fg-hand .fg-zone-title{flex-wrap:wrap}.fg-board .card .rank{font-size:20px}.fg-board .back .motif svg{width:25px;height:29px}.fg-battle{grid-template-columns:minmax(0,1fr) 66px minmax(0,1fr);gap:4px}.fg-slot{padding:5px}.fg-combat{min-height:86px}.fg-combat .fg-zone-title{min-height:40px}.fg-board .fg-combat-cards .rank,.fg-pile>b{font-size:15px}.fg-board .fg-combat-cards .suit{font-size:9px}.fg-board .fg-combat-cards .center{font-size:15px}.fg-pile-group{gap:4px}.fg-slot.fg-coach{gap:7px;min-height:97px;padding:8px}.fg-coach>button{max-width:88px;min-width:64px;padding:7px 8px;font-size:14px}.fg-toolbar{align-items:start}.fg-toolbar>span{flex:none;padding-top:7px}.fg-wounds{min-height:59px}.fg-pile-group small{font-size:12px}}
+@media(max-width:360px){.fg-board{--fw:32px;--fh:46px;--bw:21px;--bh:32px;padding:8px}.fg-board .card+.card{margin-left:-10px}.fg-hand-cards .fg-card-hit+.fg-card-hit{margin-left:-8px}.fg-board .card .rank{font-size:18px}.fg-battle{grid-template-columns:minmax(0,1fr) 56px minmax(0,1fr);gap:3px}.fg-combat .fg-zone-title{min-height:58px}.fg-board .fg-combat-cards .card{padding:2px}.fg-board .fg-combat-cards .rank,.fg-pile>b{font-size:13px}.fg-pile-group small{font-size:12px}.fg-player header>span{gap:4px}.fg-board .fg-damage .wound-bract{width:5px;height:8px}.fg-slot.fg-coach{flex-direction:column;align-items:stretch;min-height:120px}.fg-coach>button{max-width:none;width:100%;min-height:36px}.fg-topline>small{max-width:98px}}
+@media(prefers-reduced-motion:reduce){.fg-board *{animation:none!important;transition:none!important}}
+/* Area buttons must retain the same block layout as the noninteractive slots. */
+.fg-slot{display:block}
+.fg-slot.fg-wounds{min-height:46px;height:46px;padding:4px}
+.fg-wounds .fg-zone-title{position:absolute;top:5px;left:5px;max-width:74px;flex-direction:column;align-items:start;gap:1px;text-align:left;line-height:1.3}
+.fg-wounds .fg-zone-title small{line-height:1.3}
+.fg-wound-cards{min-height:36px;height:36px;margin-top:0}
+@media(max-width:600px){.fg-slot.fg-wounds{min-height:43px;height:43px;padding:3px}.fg-wounds .fg-zone-title{font-size:12px;max-width:68px}.fg-wounds .fg-zone-title small{font-size:12px}.fg-hand{min-height:80px}.fg-hand-cards{min-height:54px;padding-top:2px}.fg-center{margin:6px 0;padding:6px 0}.fg-slot.fg-coach{min-height:90px}.fg-topline{margin-bottom:6px}}
+.fg-board .fg-slot:not(.fg-coach):not(.fg-piles){display:block}
+.fg-board .fg-piles{display:flex}
+.fg-toolbar{position:sticky;top:0;z-index:10;padding:5px 0;background:var(--sz-paper)}
+.fg-focus-caption{display:none}
+@media(max-height:700px){.fg-toolbar{flex-wrap:wrap;gap:5px}.fg-focus-caption{display:block;flex-basis:100%;font-size:12px;line-height:1.4;color:var(--ink);font-weight:600;padding-bottom:2px}}
+.fg-board .fg-blind{display:block;padding:0 0 3px;min-height:0}
