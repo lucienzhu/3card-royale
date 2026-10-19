@@ -1,0 +1,41 @@
+/* A used wound stays in its slot until resolution. Give the small card one message. */
+.table .wound-cards .card.pending{
+ display:flex;flex-direction:column;align-items:center;justify-content:center;
+ padding:0;gap:0;background:color-mix(in srgb,var(--muted) 7%,transparent);
+ border:1px dashed color-mix(in srgb,var(--muted) 32%,transparent);
+ color:var(--muted);box-shadow:none;
+}
+.table .card.pending .pending-mark{display:none}
+.table .card.pending .pending-label{
+ display:block;flex:none;white-space:nowrap;font-size:var(--ui-label,12px);
+ font-family:var(--rank-font);line-height:1;letter-spacing:-.03em;text-align:center;
+}
+/* Night surfaces carry the hierarchy. Outlines are reserved for cards and actions. */
+[data-sz-theme=dark] .table{border-color:transparent}
+[data-sz-theme=dark] .app-header .header-controls button{
+ background:transparent;border-color:transparent;
+}
+[data-sz-theme=dark] .table .tabs button{background:transparent}
+[data-sz-theme=dark] .table .shared-flower{
+ background:#F27FAE0A;border-color:transparent;
+}
+[data-sz-theme=dark] .table #hr-toggle{
+ background:#192E3D;border-color:transparent;
+}
+[data-sz-theme=dark] .table #hr-toggle[aria-expanded=true]{background:#304C5C}
+[data-sz-theme=dark] .table .battle{border-color:#B4CAD01A}
+[data-sz-theme=dark] .table .actionbar{border-color:transparent}
+[data-sz-theme=dark] .table .action-buttons button:not(.primary){
+ background:#B4CAD00C;border-color:transparent;
+}
+[data-sz-theme=dark] .table .card.back{border-color:#405B69}
+[data-sz-theme=dark] .table .combat-cards:empty:after{
+ border-color:transparent;background:#111F2C33;color:#9EB7C0;
+}
+[data-sz-theme=dark] .table .pile-stack{border-color:#607D89}
+[data-sz-theme=dark] .table .stock-pile.is-low .pile-stack{border-color:#F2CD5D}
+@media(hover:hover){
+ [data-sz-theme=dark] .app-header .header-controls button:hover,
+ [data-sz-theme=dark] .table #hr-toggle:hover,
+ [data-sz-theme=dark] .table .action-buttons button:not(.primary):not(:disabled):hover{background:#B4CAD018}
+}
