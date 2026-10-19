@@ -79,3 +79,7 @@ Standard 1.0 adds five of a kind (7 points): four natural equal-rank cards plus 
 ## Match flowers
 
 The shared red/gold progress vine now follows the actual game results. Tap it for a game-by-game recap. Passing your own Ace blooms across the Shenzhen skyline in the winner’s color; replaying the animation never changes the game, cards, seed or saved results.
+
+## PNG result cards
+
+Choose Share PNG after a game or match to preview and save a1080×1440 PNG. On supported devices, the preview can open the system share sheet. The image is made locally from the public result and approved skyline; creating or saving it never changes play or uploads a file.

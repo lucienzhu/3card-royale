@@ -19,3 +19,5 @@ console.log(`OK: ${scripts} JavaScript files, ${refs} local HTML references, car
 require('../tests/seeds.cjs');
 
 require('../tests/bloom.cjs');
+
+require("../tests/share-card.cjs");

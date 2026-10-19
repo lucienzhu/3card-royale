@@ -245,7 +245,7 @@ const FOUR_STUDY={
 ;
 'use strict';
 const $=id=>document.getElementById(id);
-const UI_REVISION='sz-layout1';
+const UI_REVISION='sz-share1';
 const VARIANT_TEXT={
  '1.0.0':{name:'1.0 · 标准规则',note:'共用花牌，五伤败北。通常出三张，四炸6分，五炸7分；五炸须四张自然同点牌加花牌。赢家升级后的等级决定下局花牌。',tie:'同花样比点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无效果。',ranking:'五炸7 > 四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。'},
  '0.3.8':{name:'0.3.8 · 共用花牌',note:'首局双方共用♥2作为花牌。此后小局赢家升级后的等级决定下一小局双方共用的花牌；一局内不变。花牌即逢人配／会子／百搭牌。攻防、血牌交换与升级其余规则沿用0.3.7。',tie:'同牌型比较点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无事发生。',ranking:'四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。四炸也可用花牌。'},
@@ -333,6 +333,7 @@ function openResult(){
  const bloomHost=$('bloom-result');
  if(match&&GK.sharedFlower(variant)){window.SZBloom.renderResult(bloomHost,game.results,game.snapshot(),game.events.find(e=>e.kind==='deal')?.state?.levelOwner??0,false);modal.setAttribute('aria-labelledby','bloom-heading');modal.removeAttribute('aria-describedby');}
  else{window.SZBloom.hideResult(bloomHost);modal.setAttribute('aria-labelledby','result-title');modal.setAttribute('aria-describedby','result-subtitle result-hint');}
+ $('result-share').textContent=GKLocale.language==='en'?'Share PNG':'分享卡片';
  $('result-primary').textContent=match?'再玩一场':'开始下一局';$('result-primary').disabled=false;
  presentedResultKey=key;
  if(!modal.open)modal.showModal();
@@ -615,8 +616,9 @@ $('close-settings').addEventListener('click',()=>{$('settings-modal').close();dr
 $('settings-modal').addEventListener('close',()=>{syncResult();driveAI();});
 $('close-result').addEventListener('click',closeResult);
 $('result-review').addEventListener('click',closeResult);
+$('result-share').addEventListener('click',()=>{if(mode!=='play'||!currentResult())return;window.SZShareCard.open({results:game.results,snapshot:game.snapshot(),first:game.events.find(e=>e.kind==='deal')?.state?.levelOwner??0,seed:game.seed,version:variant,match:game.phase==='match_over',lang:GKLocale.language,theme:document.documentElement.dataset.szTheme});});
 $('result-primary').addEventListener('click',continueResult);
-$('result-modal').addEventListener('close',()=>{stopCelebration();window.SZBloom.hideResult($('bloom-result'));const r=currentResult();if(mode==='play'&&r&&resultKey(r)===$('result-modal').dataset.resultKey)$('show-result')?.focus({preventScroll:true});});
+$('result-modal').addEventListener('close',()=>{window.SZShareCard.close();stopCelebration();window.SZBloom.hideResult($('bloom-result'));const r=currentResult();if(mode==='play'&&r&&resultKey(r)===$('result-modal').dataset.resultKey)$('show-result')?.focus({preventScroll:true});});
 $('new-match').addEventListener('click',newMatch);
 $('export-match').addEventListener('click',()=>{const data={version:game.version,ui_revision:UI_REVISION,locale:GKLocale.language,game_name:GKLocale.language==='en'?'3Card Royale':'深圳花牌',seed:game.seed,game_seed:game.gameSeed??null,game_seeds:game.events.filter(e=>e.kind==='deal').map(e=>({game:e.game,seed:e.state?.gameSeed??null})),seed_policy:'continuous-xorshift32-v1',policy:GK.woundExchange(game.version)?GK.WOUND_POLICY:GK.handExchange(game.version)?GK.EXCHANGE_POLICY:GK.winnerStarts(game.version)?GK.WINNER_POLICY:GK.allowsFour(game.version)?GK.FOUR_POLICY:GK.isRefresh(game.version)?GK.REFRESH_POLICY:GK.POLICY,results:game.results,stats:game.stats,events:game.events,save:game.save(),source_sha256:ROLLOUT.source_sha256,...(ROLLOUT.baseline_sha256?{baseline_sha256:ROLLOUT.baseline_sha256}:{})};const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=(GKLocale.language==='en'?'3Card-Royale-':'深圳花牌-')+variant+'-'+game.seed+'-playtest.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
 $('prev-step').addEventListener('click',()=>{stopReplay();replayGo(cursor-1);});$('next-step').addEventListener('click',()=>{stopReplay();replayGo(cursor+1);});
