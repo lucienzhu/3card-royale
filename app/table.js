@@ -245,7 +245,7 @@ const FOUR_STUDY={
 ;
 'use strict';
 const $=id=>document.getElementById(id);
-const UI_REVISION='sz-type1';
+const UI_REVISION='sz-quiet1';
 const VARIANT_TEXT={
  '1.0.0':{name:'1.0 · 标准规则',note:'共用花牌，五伤败北。通常出三张，四炸6分，五炸7分；五炸须四张自然同点牌加花牌。赢家升级后的等级决定下局花牌。',tie:'同花样比点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无效果。',ranking:'五炸7 > 四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。'},
  '0.3.8':{name:'0.3.8 · 共用花牌',note:'首局双方共用♥2作为花牌。此后小局赢家升级后的等级决定下一小局双方共用的花牌；一局内不变。花牌即逢人配／会子／百搭牌。攻防、血牌交换与升级其余规则沿用0.3.7。',tie:'同牌型比较点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无事发生。',ranking:'四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。四炸也可用花牌。'},
@@ -445,7 +445,7 @@ function renderActions(s,event){
    if(game.currentActor()===1){$('action-title').textContent='对手交换手牌中…';$('action-description').textContent='';return;}
    const chosen=refreshTarget?.index!==undefined;
    $('action-title').textContent='防守反击 · 剩余 '+game.pendingRefresh.remaining+' 次';
-   $('action-description').textContent=GK.woundExchange(variant)?(chosen?'② 点目标牌交换，或点牌堆摸新':'① 选自己的手牌或伤牌'):(chosen?'② 点对手牌背交换，或点牌堆摸新':'① 先选自己一张手牌');
+   $('action-description').textContent=GK.woundExchange(variant)?(chosen?'再选交换目标':'选一张交出'):(chosen?'② 点对手牌背交换，或点牌堆摸新':'① 先选自己一张手牌');
    $('selection-preview').hidden=!chosen;if(chosen)$('selection-preview').textContent='交出 '+GK.label(refreshTarget.zone==='table'?game.players[0].table[refreshTarget.index].card:game.players[0].hand[refreshTarget.index]);
    addButton('盲换对手',()=>exchangeHandWith('opponent'),{disabled:!chosen||!game.players[1].hand.length,primary:true,id:'exchange-opponent'});
    addButton('弃旧摸新',()=>exchangeHandWith('deck'),{disabled:!chosen,id:'exchange-deck'});return;
@@ -557,8 +557,8 @@ function render(){
  renderGoal(s,replay);
  $('own-level').textContent=(shared?'花牌 ':'')+'♥'+GK.rankLabel(currentFlower(s,0))+(shared?'':' ★');$('opp-level').textContent=(shared?'花牌 ':'')+'♥'+GK.rankLabel(currentFlower(s,1))+(shared?'':' ★');$('own-level').title=shared?'本局双方共用的花牌':'你的逢人配';$('opp-level').title=shared?'本局双方共用的花牌':'对手的逢人配';
  damageBar($('own-damage'),p.table.length);damageBar($('opp-damage'),q.table.length);
- for(const [who,id]of [[0,'own'],[1,'opp']]){const t=s.players[who].table;$(`${id}-table-label`).textContent='伤牌';$(`${id}-table-label`).title=t.filter(x=>x.up).length+' 明 / '+t.filter(x=>!x.up&&x.card!==null).length+' 暗';drawTable($(`${id}-table`),who,s);}
- $('opp-hand').classList.toggle('hidden-hand',!replay);$('opp-hand').classList.toggle('refresh-targets',canRefresh());$('opp-hand-label').hidden=false;$('opp-hand-label').textContent=replay?'手牌 · 公开':canRefresh()?(GK.handExchange(variant)?'手牌 · 盲交换':'手牌 · 盲换'):'手牌';drawHand($('own-hand'),0,s,replay);drawHand($('opp-hand'),1,s,replay);$('opp-hand-count').textContent=q.hand.length+' 张';$('hand-label').textContent='手牌 · '+p.hand.length+(canRefresh()?(GK.handExchange(variant)?' · 选一张交出':' · 点牌换新'):'');
+ for(const [who,id]of [[0,'own'],[1,'opp']]){const t=s.players[who].table;$(`${id}-table-label`).textContent='伤牌区';$(`${id}-table-label`).title=t.filter(x=>x.up).length+' 明 / '+t.filter(x=>!x.up&&x.card!==null).length+' 暗';drawTable($(`${id}-table`),who,s);}
+ $('opp-hand').classList.toggle('hidden-hand',!replay);$('opp-hand').classList.toggle('refresh-targets',canRefresh());$('opp-hand-label').hidden=false;$('opp-hand-label').textContent='手牌区';drawHand($('own-hand'),0,s,replay);drawHand($('opp-hand'),1,s,replay);$('opp-hand-count').textContent=q.hand.length+' 张';$('own-hand-count').textContent=p.hand.length+' 张';$('hand-label').textContent='手牌区';
  const attack=s.attacker,moves=s.active.some(Boolean)?s.active:s.lastCombat?.moves??[null,null];
  const whoName=who=>replay?(who===0?'A':'B'):(who===0?'你':'对手');
  $('attack-label').innerHTML='进攻 · '+whoName(attack)+(moves[attack]?' <b>'+moves[attack].name+' '+moves[attack].score+' 分</b>':'');

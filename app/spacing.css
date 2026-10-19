@@ -1,0 +1,55 @@
+/* Keep the table quiet at rest; zone names appear only on hover or focus. */
+.table .player-title{gap:8px}
+.table .hand-total{font-size:var(--ui-label);line-height:var(--ui-line);font-weight:400;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.table .player-zone :is(.hand-group,.wound-group){position:relative}
+.table .player-zone .rack-label,.table .player-zone .hand-group>.rack-label{
+ position:absolute;inset:-22px auto auto 50%;transform:translateX(-50%);z-index:12;
+ width:max-content;max-width:calc(100vw - 32px);min-height:0;padding:3px 8px;margin:0;
+ display:block;background:var(--sz-logo-paper);border:1px solid var(--line);border-radius:5px;
+ font-size:var(--ui-label);line-height:18px;font-weight:400;color:var(--muted);white-space:nowrap;
+ opacity:0;visibility:hidden;pointer-events:none;transition:opacity 140ms ease;
+}
+.table .player-zone .wound-group{display:block;padding-block:3px}
+.table .player-zone .wound-group>.cards{width:100%;padding-inline:0}
+.table .player-zone .hand-group:focus-within>.rack-label,
+.table .player-zone .wound-group:focus-within>.rack-label{opacity:1;visibility:visible}
+@media(hover:hover) and (pointer:fine){
+ .table .player-zone .hand-group:hover>.rack-label,
+ .table .player-zone .wound-group:has(.card):hover>.rack-label{opacity:1;visibility:visible}
+}
+/* The axis still occupies56px. Leave a clear corridor around its12px labels. */
+.sz-bloom .fc-progress-summary .fc-win-top,.sz-bloom .fc-progress-summary .fc-ace-attempt.fc-attempt-rival{top:-3px}
+.sz-bloom .fc-progress-summary .fc-win-bottom,.sz-bloom .fc-progress-summary .fc-start-stamp.fc-win-bottom,
+.sz-bloom .fc-progress-summary .fc-ace-attempt.fc-attempt-own{top:37px}
+.sz-bloom .fc-progress-summary .fc-vine-axis,.sz-bloom .fc-progress-summary .fc-ace-knot b,
+.app-header .sz-bloom .fc-vine-axis,.app-header .sz-bloom .fc-ace-knot b{font-size:var(--ui-label);line-height:12px}
+body[data-bloom=true] .app-header,body[data-bloom=true] .app-main{--header:128px}
+body[data-bloom=true] .app-header{height:128px;padding-block:10px;row-gap:8px}
+.app-header .match-goal{padding-block:4px}
+.app-main{padding-top:8px}
+@media(min-width:761px){
+ body[data-bloom=true] .app-header,body[data-bloom=true] .app-main{--header:96px}
+ body[data-bloom=true] .app-header{height:96px;padding-block:8px}
+}
+@media(max-width:760px) and (min-height:651px) and (max-height:720px){
+ body[data-bloom=true] .app-header,body[data-bloom=true] .app-main{--header:112px}
+ body[data-bloom=true] .app-header{height:112px;padding-block:8px;row-gap:6px}
+ .app-header .match-goal{padding-block:0}
+ .app-main{padding-top:6px}
+}
+@media(max-width:599px) and (max-height:650px){
+ body[data-bloom=true] .app-header,body[data-bloom=true] .app-main{--header:96px}
+ body[data-bloom=true] .app-header{height:96px;padding-block:4px;row-gap:6px}
+ .app-header .match-goal{padding-block:0}
+ .app-main{padding-top:6px}
+ .table .player-zone .wound-group{padding-block:0}
+ .table #action-panel.is-hand-exchange,.table #action-panel.is-hand-exchange:has(#selection-preview[hidden]){grid-template-areas:'title' 'guidance' 'buttons' 'error';grid-template-rows:auto auto auto auto;row-gap:1px}
+ .table .actionbar.is-hand-exchange #action-description{display:block;margin:0}
+}
+@media(max-height:480px) and (min-width:600px){
+ body[data-bloom=true] .app-header,body[data-bloom=true] .app-main{--header:80px}
+ body[data-bloom=true] .app-header{height:80px;padding-block:4px}
+ .app-main{padding-top:6px}
+ .table .player-zone .wound-group{padding-block:0}
+}
+@media(prefers-reduced-motion:reduce){.table .player-zone .rack-label{transition:none}}

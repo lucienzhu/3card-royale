@@ -537,6 +537,7 @@ A23、QKA 可以组成顺子，KA2 不可以。同组三张不能复制完全相
   }
   if(title)en[e.title.trim()]=title;if(note)en[e.note.trim()]=note;phrasesDirty=true;
  }
+ Object.assign(en,{'手牌区':'Hand area','伤牌区':'Wound area','选一张交出':'Choose a card','再选交换目标':'Choose a swap target'});
  function setLanguage(next){const normalized=normalize(next);if(!normalized)return;language=normalized;missing.clear();try{localStorage.setItem(KEY,language);}catch(_){}const url=new URL(location.href);url.searchParams.set('lang',language);history.replaceState(null,'',url);apply();}
  function init(){for(const select of document.querySelectorAll('[data-language-select]'))select.addEventListener('change',e=>setLanguage(e.target.value));observer=new MutationObserver(schedule);apply();}
  return {init,apply,text,setLanguage,registerEvent,get language(){return language;},get missing(){return [...missing];},supported:SUPPORTED};
