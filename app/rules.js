@@ -79,8 +79,9 @@
   const g=swapGame,options=swapOptions(),blind=options.find(o=>o.exchange==='opponent'),deck=options.find(o=>o.exchange==='deck'),label=t('对手手牌 · 盲换一张','Rival hand · Swap 1 at random');
   const targetAttrs=o=>o?'data-rg-swap-target="'+swapIndex(o)+'"':'';
   const row=(who,zone)=>g.players[who][zone].map((_,i)=>swapFace(who,zone,i)).join('');
-  const status=swapResult?swapResult.main:swapSource?t('交出 '+window.GK.label(swapValue(0,swapSource.zone,swapSource.index))+'，再点 ⇄ 目标','Give '+window.GK.label(swapValue(0,swapSource.zone,swapSource.index))+'. Now select a ⇄ target.'):t('先点下方你的一张牌','First, select one of your cards below');
-  const note=swapResult?swapResult.detail:swapSource?t('亮起的虚线区域都能换；弃牌堆不能换。','Swap with any highlighted dashed target. Discard is not a target.'):t('手牌或伤牌都可以交出；一次只换一张。','Give a hand card or wound. One card per opportunity.');
+  const completed=swapResult?swapCopy():null;
+  const status=completed?completed.main:swapSource?t('交出 '+window.GK.label(swapValue(0,swapSource.zone,swapSource.index))+'，再点 ⇄ 目标','Give '+window.GK.label(swapValue(0,swapSource.zone,swapSource.index))+'. Now select a ⇄ target.'):t('先点下方你的一张牌','First, select one of your cards below');
+  const note=completed?completed.detail:swapSource?t('亮起的虚线区域都能换；弃牌堆不能换。','Swap with any highlighted dashed target. Discard is not a target.'):t('手牌或伤牌都可以交出；一次只换一张。','Give a hand card or wound. One card per opportunity.');
   return `<div class="rg-swap-examples" role="group" aria-label="${t('选择教学局面','Choose teaching example')}">${[['round',t('继续本轮','This round')],['wounded',t('另例：你有伤牌时','Another example: you have wounds')]].map(([key,name])=>`<button type="button" data-rg-swap-mode="${key}" aria-pressed="${swapMode===key}">${name}</button>`).join('')}</div>
   <div class="rg-demo-table rg-swap-table" data-swap-stage="${swapResult?'done':swapSource?'target':'source'}" aria-label="${t('换牌教学牌桌','Practice swapping on the table')}">
    <div class="rg-demo-topline"><b>${t('换牌','Swap')}</b><span>${t('花牌','Wild')} ♥2</span><span>${t('剩余','Left')} ${g.pendingRefresh?.remaining||0} ${t('次','swap')}</span></div>
@@ -97,11 +98,16 @@
   </div><div class="rg-swap-feedback" tabindex="-1" role="status"><div><strong>${status}</strong><p>${note}</p></div>${swapSource||swapResult?'<button type="button" data-rg-swap-reset>'+t(swapResult?'再试一种':'重选',swapResult?'Try another':'Choose again')+'</button>':''}</div>
   <p class="rg-swap-invariants">${t('1次机会 · 张数不变 · 不回血','1 opportunity · Same card counts · No healing')}</p>`;
  }
+ function swapCopy(){
+  const {given,received,source,option}=swapResult,publicSource=source.zone==='table';
+  const destination=option.exchange==='deck'?t('弃牌堆','discard'):option.exchange==='opponent'?t('对手手牌（随机一张）','rival hand (one random card)'):swapZoneName(option.who,option.zone);
+  return {main:t(given+' → '+destination+'；你拿回 '+received,given+' → '+destination+'; you receive '+received),detail:t(received+'放回'+(publicSource?'你的伤牌区，保持公开。':'你的手牌，只有你能看。')+'张数和伤势都不变。',received+' replaces your '+(publicSource?'face-up wound.':'private hand card.')+' Card counts and wounds stay unchanged.')};
+ }
  function applySwap(option){
-  const source={...swapSource},given=window.GK.label(swapValue(0,source.zone,source.index)),destination=option.exchange==='deck'?t('弃牌堆','discard'):option.exchange==='opponent'?t('对手手牌（随机一张）','rival hand (one random card)'):swapZoneName(option.who,option.zone);
+  const source={...swapSource},given=window.GK.label(swapValue(0,source.zone,source.index));
   swapGame.refresh(option);
-  const received=window.GK.label(swapValue(0,source.zone,source.index)),publicSource=source.zone==='table';
-  swapResult={source,option,main:t(given+' → '+destination+'；你拿回 '+received,given+' → '+destination+'; you receive '+received),detail:t(received+'放回'+(publicSource?'你的伤牌区，保持公开。':'你的手牌，只有你能看。')+'张数和伤势都不变。',received+' replaces your '+(publicSource?'face-up wound.':'private hand card.')+' Card counts and wounds stay unchanged.')};
+  const received=window.GK.label(swapValue(0,source.zone,source.index));
+  swapResult={source,option,given,received};
  }
  const zoneCopy=()=>({
   hand:{title:t('手牌：只有自己能看','Hand: private to its owner'),body:t('可与自己的伤牌一起选来出牌；一轮结束时，手牌补到8张。','Private to you. Play these with your wounds; refill to 8 at round end.')},
