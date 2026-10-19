@@ -128,3 +128,71 @@
  :root body.table-context-layout .hand-tools #hr-reference #hr-toggle{min-width:50px;padding-inline:4px}
  :root body.table-context-layout .hand-tools #hr-reference #hr-panel{max-height:calc(var(--app-height,100dvh) - 32px)}
 }
+
+/* One table context row; commands live with the app navigation. */
+:root body.table-stage-layout .table-heading{display:block;padding-top:0}
+:root body.table-stage-layout .opponent-heading,:root body.table-stage-layout .hand-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:26px}
+:root body.table-stage-layout .opponent-heading #match-meta{position:static;margin:0;font-size:12px;line-height:18px;color:var(--muted);white-space:nowrap}
+:root body.table-stage-layout .app-header #hr-reference{position:relative;inset:auto;transform:none;margin:0;flex:none;z-index:40}
+:root body.table-stage-layout .app-header #hr-reference #hr-toggle{min-width:0;min-height:40px;padding:8px 6px;border:0;background:transparent;color:var(--muted);font-size:14px;line-height:20px;gap:0}
+:root body.table-stage-layout .app-header #hr-reference #hr-toggle i{display:none}
+:root body.table-stage-layout .app-header #hr-reference #hr-toggle[aria-expanded=true]{color:var(--ink);background:var(--soft)}
+:root body.table-stage-layout .app-header #hr-reference #hr-panel{position:fixed;inset:50% auto auto 50%;transform:translate(-50%,-50%);width:min(360px,calc(100vw - 32px));max-width:none;max-height:calc(var(--app-height,100dvh) - 80px);padding:16px 20px;overflow:auto;overscroll-behavior:contain;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 48px #0003;z-index:50}
+:root body.table-stage-layout .menu-replay-shortcut{padding:8px 24px;border-bottom:1px solid var(--line)}
+:root body.table-stage-layout .menu-replay-shortcut button{width:100%;text-align:left;border:0;background:transparent;padding:10px 0;font-size:14px;color:var(--ink)}
+:root body.table-stage-layout .menu-replay-shortcut button::after{content:'↗';float:right;color:var(--muted)}
+/* Result and selection share reserved space, so a combat outcome adds no new row. */
+:root body.table-stage-layout #action-panel,
+:root body.table-stage-layout #action-panel:has(#selection-preview[hidden]),
+:root body.table-stage-layout #action-panel.is-hand-exchange,
+:root body.table-stage-layout #action-panel:has(#next-game){
+ display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:minmax(0,1fr);grid-template-areas:'copy buttons';gap:0 10px;height:76px;min-height:76px;box-sizing:border-box;align-items:center;
+}
+:root body.table-stage-layout #action-panel .action-copy{grid-area:copy;min-width:0;max-height:100%;overflow:auto;scrollbar-width:thin;overscroll-behavior:contain;display:flex;flex-direction:column;justify-content:center;gap:1px}
+:root body.table-stage-layout #action-panel .action-copy>*{margin:0;flex:none}
+:root body.table-stage-layout #action-panel #formula{font-size:12px;line-height:18px;text-align:left;font-weight:500}
+:root body.table-stage-layout #action-panel #action-buttons{grid-area:buttons;align-self:center}
+:root body.table-stage-layout #action-panel #error:empty{display:none}
+:root body.table-stage-layout #action-panel:has(#error:not(:empty)){height:auto;grid-template-rows:auto auto;grid-template-areas:'copy buttons' 'error error'}
+:root body.table-stage-layout #action-panel #error{grid-area:error}
+:root body.table-stage-layout #action-panel .upgrade-jump{font-size:18px;line-height:20px}
+:root body.table-stage-layout .combat-title{height:54px;min-height:54px;align-content:flex-start}
+@media(max-width:760px){
+ :root body.table-stage-layout .app-header #hr-reference #hr-toggle{font-size:12px;padding-inline:4px}
+ :root body.table-stage-layout #action-panel .preview-score small{font-size:11px}
+}
+@media(min-width:361px) and (max-width:760px) and (min-height:740px){
+ :root body.table-stage-layout .app-main:not(.is-replay){--handw:74px;--handh:104px;--handstep:38px;--handrank:32px}
+}
+@media(min-width:410px) and (max-width:760px) and (min-height:800px){
+ :root body.table-stage-layout .app-main:not(.is-replay){--handw:80px;--handh:112px;--handstep:41px;--handrank:34px}
+}
+@media(min-width:1100px) and (min-height:801px){
+ :root body.table-stage-layout .app-main:not(.is-replay){--handw:94px;--handh:132px;--handstep:52px;--handrank:36px}
+}
+@media(max-height:720px){
+ :root body.table-stage-layout #action-panel,:root body.table-stage-layout #action-panel:has(#selection-preview[hidden]),:root body.table-stage-layout #action-panel.is-hand-exchange,:root body.table-stage-layout #action-panel:has(#next-game){height:64px;min-height:64px}
+ :root body.table-stage-layout .combat-title{height:48px;min-height:48px;align-content:flex-start}
+}
+@media(max-width:380px){:root body.table-stage-layout .app-header #hr-reference #hr-toggle{padding-inline:3px}}
+@media(max-height:650px){
+ :root body.table-stage-layout #action-panel,:root body.table-stage-layout #action-panel:has(#selection-preview[hidden]),:root body.table-stage-layout #action-panel.is-hand-exchange,:root body.table-stage-layout #action-panel:has(#next-game){height:60px;min-height:60px}
+ :root body.table-stage-layout .opponent-heading,:root body.table-stage-layout .hand-tools{min-height:22px}
+ :root body.table-stage-layout .opponent-heading #match-meta{font-size:11px}
+ :root body.table-stage-layout #action-panel #formula{line-height:16px}
+}
+@media(max-height:480px) and (min-width:600px){
+ :root body.table-stage-layout .opponent-heading{flex-wrap:wrap;gap:0 8px}
+ :root body.table-stage-layout .app-header #hr-reference #hr-panel{max-height:calc(var(--app-height,100dvh) - 24px)}
+}
+/* Compact results retain all three facts without scrolling or growing the frame. */
+:root body.table-stage-layout #action-panel .preview-score:has(.upgrade-jump) small{display:none}
+:root body.table-stage-layout #action-panel .upgrade-jump{display:inline-flex;align-items:center;white-space:nowrap}
+@media(max-height:720px){
+ :root body.table-stage-layout #action-panel:has(.upgrade-jump) #action-buttons{flex-direction:column;align-items:stretch;gap:4px}
+ :root body.table-stage-layout #action-panel:has(.upgrade-jump) #action-buttons button{min-height:24px;padding:2px 6px;font-size:12px;line-height:16px}
+ :root body.table-stage-layout #action-panel:has(.upgrade-jump) #action-title{font-size:12px;line-height:16px}
+ :root body.table-stage-layout #action-panel:has(.upgrade-jump) .upgrade-jump{font-size:16px;line-height:16px}
+ :root body.table-stage-layout #action-panel:has(.upgrade-jump) #formula{font-size:11px;line-height:16px}
+ :root body.table-stage-layout #action-panel:has(.upgrade-jump) .action-copy{gap:0}
+}

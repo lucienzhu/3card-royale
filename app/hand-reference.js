@@ -8,14 +8,14 @@
  let open=false,lastLanguage="";
  const t=(zh,en)=>window.GKLocale?.language==='en'?en:zh;
  const example=k=>'<span class="hr-example" role="img" aria-label="'+examples[k].map(GK.label).join(' ')+'">'+examples[k].map(id=>{const suit=GK.SUITS[GK.suit(id)];return '<span class="hr-card '+(suit==='♥'||suit==='♦'?'is-red':'')+'" aria-hidden="true"><b>'+GK.rankLabel(GK.rank(id))+'</b><i>'+suit+'</i></span>';}).join('')+'</span>';
- function mount(){(document.querySelector('.hand-tools')||topline).append(host);host.classList.remove('hr-side');paint();}
+ function mount(){(document.querySelector('.app-header .tabs')||topline).append(host);host.classList.remove('hr-side');paint();}
  function paint(){
   lastLanguage=window.GKLocale?.language||"zh-CN";
   const version=versionSelect.value,ids=[0,1,2,3,4,5];if(GK.allowsFour(version))ids.push(6);if(GK.allowsFive(version)){ids.push(7);const lv=window.gkGame.flowerLevel,r=lv===7?14:7;examples[7]=[r-2,r+11,r+24,r+37,lv+11];}
   ids.sort((a,b)=>GK.points(b,version)-GK.points(a,version));
   host.dataset.open=String(open);button.setAttribute('aria-expanded',String(open));
   button.setAttribute('aria-label',t('查看牌型大小和分数','View hand ranks and points'));
-  button.innerHTML='<span>'+t(wide.matches?'牌型 · 分数':'牌型',wide.matches?'Hand ranks':'Ranks')+'</span><i aria-hidden="true">'+(open?'−':'+')+'</i>';
+  button.innerHTML='<span>'+t('牌型','Ranks')+'</span><i aria-hidden="true">'+(open?'−':'+')+'</i>';
   panel.hidden=!open;panel.setAttribute('aria-label',t('牌型大小与分数','Hand ranks and points'));
   panel.innerHTML='<table><caption>'+t('牌型由大到小','Hands, strongest first')+'</caption><thead><tr><th scope="col">'+t('大 → 小','Strong → weak')+'</th><th scope="col">'+t('分','Pts')+'</th></tr></thead><tbody>'+ids.map(k=>'<tr data-hr-kind="'+k+'"><th scope="row">'+t(k===4?'三炸':GK.NAMES[k],english[k])+(k>=6?'<small>'+t(k===7?'5张 · 含花牌':'4张',k===7?'5 cards · wildcard':'4 cards')+'</small>':'')+example(k)+'</th><td>'+GK.points(k,version)+'</td></tr>').join('')+'</tbody></table><p class="hr-note">'+(GK.allowsFive(version)?t('五炸含本局花牌；其余按原牌面判型','Five of a kind uses the shared flower; other examples use printed faces'):t('示例按原牌面判型','Natural hands shown'))+'</p>';
  }

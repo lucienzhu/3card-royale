@@ -245,7 +245,7 @@ const FOUR_STUDY={
 ;
 'use strict';
 const $=id=>document.getElementById(id);
-const UI_REVISION='sz-table2';
+const UI_REVISION='sz-table3';
 const VARIANT_TEXT={
  '1.0.0':{name:'1.0 · 标准规则',note:'共用花牌，五伤败北。通常出三张，四炸6分，五炸7分；五炸须四张自然同点牌加花牌。赢家升级后的等级决定下局花牌。',tie:'同花样比点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无效果。',ranking:'五炸7 > 四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。'},
  '0.3.8':{name:'0.3.8 · 共用花牌',note:'首局双方共用♥2作为花牌。此后小局赢家升级后的等级决定下一小局双方共用的花牌；一局内不变。花牌即逢人配／会子／百搭牌。攻防、血牌交换与升级其余规则沿用0.3.7。',tie:'同牌型比较点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无事发生。',ranking:'四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。四炸也可用花牌。'},
@@ -572,7 +572,7 @@ function render(){
  $('battle-round').textContent='第 '+(replay?event.game:game.game)+' 局 / 第 '+(replay?event.round:game.round)+' 轮';$('battle-status').textContent=whoName(attack)+'进攻';
  if(s.lastCombat){const c=s.lastCombat;$('formula').textContent=combatSummary(c,whoName);$('formula').title=describeEffect(c);}
  else $('formula').textContent='';
- $('formula').hidden=!s.lastCombat;
+ $('formula').hidden=!s.lastCombat||!['resolved','game_over','match_over'].includes(s.phase);
  renderPiles(s);
  if(GK.woundExchange(variant)&&canRefresh()&&refreshTarget){
   for(const id of ['opp-hand','opp-table',refreshTarget.zone==='hand'?'own-table':'own-hand'])for(const el of $(id).querySelectorAll('button.card'))el.classList.add('swap-destination');

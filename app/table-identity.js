@@ -35,13 +35,30 @@
     hand.setAttribute('aria-describedby', side + '-damage ' + side + '-hand-count');
     marks.push([mark, color]);
   }
-  // Context follows the decision it explains: level history above, wild/ranks by your hand.
-  heading.append(document.getElementById('match-meta'));
-  const tools = document.createElement('div');
-  tools.className = 'hand-tools';
   const ownHand = document.querySelector('.own-hand-group');
-  ownHand.prepend(tools);
-  tools.append(ownHand.querySelector('.player-identity'), document.querySelector('.shared-flower'), document.getElementById('hr-reference'));
+  const ownHeading = document.createElement('div');
+  ownHeading.className = 'hand-tools';
+  ownHand.prepend(ownHeading);
+  ownHeading.append(ownHand.querySelector('.player-identity'), document.querySelector('.shared-flower'));
+  const oppHand = document.querySelector('.opponent-hand-group');
+  const oppHeading = document.createElement('div');
+  oppHeading.className = 'opponent-heading';
+  oppHand.prepend(oppHeading);
+  oppHeading.append(oppHand.querySelector('.player-identity'), document.getElementById('match-meta'));
+  const replay = tabs.querySelector('[data-tab="replay"]');
+  const menuShortcut = document.createElement('div');
+  menuShortcut.className = 'menu-replay-shortcut';
+  document.querySelector('#settings-modal .modal-head').after(menuShortcut);
+  menuShortcut.append(replay);
+  replay.removeAttribute('role');
+  replay.addEventListener('click', () => document.getElementById('settings-modal').close());
+  const ranks = document.getElementById('hr-reference');
+  tabs.append(ranks);
+  const action = document.getElementById('action-panel');
+  const copy = document.createElement('div');
+  copy.className = 'action-copy';
+  action.prepend(copy);
+  for (const id of ['action-title','action-description','selection-preview','formula']) copy.append(document.getElementById(id));
   topline.hidden = true;
 
   function labelColors() {
@@ -53,5 +70,5 @@
   }
   labelColors();
   new MutationObserver(labelColors).observe(document.documentElement, {attributes: true, attributeFilter: ['lang']});
-  document.body.classList.add('table-identity-layout', 'table-context-layout');
+  document.body.classList.add('table-identity-layout', 'table-context-layout', 'table-stage-layout');
 })();
