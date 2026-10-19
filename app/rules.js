@@ -3,7 +3,8 @@
  const host=document.getElementById('rg-guide'),dialog=document.getElementById('rule-page'),scroller=dialog.querySelector('.modal-body');
  const textPanel=document.getElementById('rg-text'),switches=document.getElementById('rg-switch'),progress=document.getElementById('rg-progress'),navigation=document.getElementById('rg-navigation');
  const standard=document.createElement('article');standard.className='standard-rules';standard.hidden=true;textPanel.before(standard);
- let step=0,view='visual',zone='own-hand',whole=false,attackPhase=0,attackExample=false,rolesSwapped=false,defended=false,refilled=false,ranksOpen=false,swapMode='round',swapGame=null,swapSource=null,swapResult=null,lastLanguage='',lastVersion='';
+ let step=0,view='visual',zone='own-hand',whole=false,attackPhase=0,attackExample=false,rolesSwapped=false,defended=false,refilled=false,ranksOpen=false,swapMode='round',swapGame=null,swapSource=null,swapResult=null,lastLanguage='',lastVersion='',cameraRegion=null,cameraPose=null;
+ const mobileQuery=matchMedia('(max-width:700px), (max-height:500px) and (max-width:1000px)');
  const t=(zh,en)=>window.GKLocale?.language==='en'?en:zh,version=()=>document.getElementById('version-select').value;
  const cases=()=>window.SZFocusCases[version()],points=n=>t(n+'分',n+' '+(n===1?'pt':'pts'));
  const id=label=>Array.from({length:52},(_,i)=>i).find(i=>window.GK.label(i)===label);
@@ -102,7 +103,7 @@
  ];}
  function toolbar(){return `<div class="fg-toolbar"><span>${step===2&&attackExample||step===5&&swapMode==='wounded'?t('另例','Example'):t('教学牌桌','Practice table')}</span><div>${step===2&&attackPhase>0||step===3&&rolesSwapped||step===4&&defended?'<button type="button" data-fg-replay>'+t('再看一次','Replay')+'</button>':''}${step===2?'<button type="button" data-fg-example aria-pressed="'+attackExample+'">'+t(attackExample?'回本轮':'另例：伤牌也能出',attackExample?'This round':'Example: play a wound')+'</button>':''}${step===5?'<button type="button" data-fg-swap-mode aria-pressed="'+(swapMode==='wounded')+'">'+t(swapMode==='wounded'?'回本轮':'另例：你有伤牌时',swapMode==='wounded'?'This round':'Example: your wounds')+'</button>':''}<button type="button" data-fg-whole aria-pressed="${whole}">${t(whole?'聚焦讲解':'看全桌',whole?'Focus':'Full table')}</button></div><small class="fg-focus-caption">${coach()[0]}</small></div>`;}
  function hasAction(){return step===2&&attackPhase<2||step===3&&!rolesSwapped||step===4&&!defended||step===6&&!refilled;}
- function reset(){whole=false;attackPhase=0;attackExample=false;rolesSwapped=false;defended=false;refilled=false;ranksOpen=false;swapMode='round';swapGame=null;swapSource=null;swapResult=null;}
+ function reset(){whole=false;cameraRegion=null;attackPhase=0;attackExample=false;rolesSwapped=false;defended=false;refilled=false;ranksOpen=false;swapMode='round';swapGame=null;swapSource=null;swapResult=null;}
  function paint(){
   const isStandard=document.getElementById('version-select').value==='1.0.0';
   if(isStandard)standard.innerHTML=window.SZStandardRules[window.GKLocale?.language==='en'?'en':'zh'];
@@ -111,6 +112,7 @@
   switches.querySelector('[data-rg-view="visual"]').hidden=!available;
   if(!available)view='text';
   const visual=view==='visual'&&available;host.hidden=!visual;textPanel.hidden=visual||isStandard;standard.hidden=visual||!isStandard;
+  dialog.classList.toggle('fg-mobile',visual&&mobileQuery.matches);
   switches.setAttribute('aria-label',t('规则展示方式','Rules view'));
   document.getElementById('rules-heading').textContent=visual?t('跟着牌桌学一轮','Learn a round on the table'):isStandard?t('标准规则 1.0','Standard Rules 1.0'):t('完整文字规则','Full written rules');
   switches.querySelector('[data-rg-view="visual"]').textContent=t('图解','Guide');
@@ -125,37 +127,67 @@
   const ranks=[...(isStandard?[[t('五炸','Five-bomb'),7]]:[]),[t('四炸','Four-kind'),6],[t('三炸','Three-kind'),5],[t('同花顺','Straight flush'),4],[t('同花','Flush'),3],[t('顺子','Straight'),2],[t('对子','Pair'),1],[t('高牌','High card'),0]];
   const exampleScores=step===2?[4,1]:step===4?[5,4]:[];
   const reference=step!==2&&step!==4?'':`<div class="rg-reference-action"><button type="button" data-rg-ranks aria-expanded="${ranksOpen}" aria-controls="rg-rank-panel">${t('牌型与分数','Ranks & points')}<i aria-hidden="true">${ranksOpen?'−':'+'}</i></button></div><section class="rg-rank-panel" id="rg-rank-panel" aria-label="${t('牌型与分数','Hand ranks and points')}" ${ranksOpen?'':'hidden'}><table class="rg-score-table"><thead><tr><th scope="col">${t('牌型','Hand type')}</th><th scope="col">${t('分数','Points')}</th></tr></thead><tbody>${ranks.map(([name,n])=>`<tr${exampleScores.includes(n)?' class="is-example"':''}><th scope="row">${name}</th><td>${points(n)}</td></tr>`).join('')}</tbody></table><p>${t('同牌型比点数：进攻胜造成1伤，防守胜得1次机会；完全同点无事发生。','Same hand type: compare ranks. Attack rank win deals 1 wound; defense rank win earns 1 swap. Exact ties do nothing.')}${isStandard?t(' 三张、四炸和五炸可互相接；五炸是四张同数加花牌，7分。',' Three-card hands, four-bombs and five-bombs may answer each other. Five-bomb: four natural cards of one rank plus the flower, 7 points.'):t(' 三张和四炸可互相接。',' Three cards and four of a kind may answer each other.')}</p></section>`;
-  host.innerHTML=`<article class="rg-stage" aria-live="polite"><div class="rg-step-heading"><h3>${s.title}</h3><p>${s.caption}</p></div>${toolbar()}<div class="rg-figure">${board()}</div>${reference}</article>`;
+  host.innerHTML=`<article class="rg-stage" aria-live="polite"><div class="rg-step-heading"><h3>${s.title}</h3><p>${s.caption}</p></div>${toolbar()}<div class="rg-figure">${board()}</div><nav class="fg-camera-nav" aria-label="${t('牌桌位置','Table position')}">${[['rival',t('对手','Rival')],['center',t('中央','Center')],['own',t('你','You')]].map(([key,label])=>`<button type="button" data-fg-camera="${key}"><i aria-hidden="true"></i>${label}<small></small></button>`).join('')}</nav>${reference}</article>`;
+  layoutMobile();
+ }
+ function layoutMobile(){
+  const enabled=view==='visual'&&!host.hidden&&mobileQuery.matches;
+  dialog.classList.toggle('fg-mobile',enabled);
+  const board=host.querySelector('.fg-board'),stage=host.querySelector('.rg-stage'),coachNode=host.querySelector('.fg-coach');if(!board||!coachNode)return;
+  if(enabled){stage.append(coachNode);const reference=host.querySelector('.rg-reference-action');if(reference)navigation.querySelector('span').replaceChildren(reference);const panel=host.querySelector('.rg-rank-panel');if(panel)host.querySelector('.rg-figure').append(panel);}
+  else{board.querySelector('.fg-center').append(coachNode);const reference=navigation.querySelector('.rg-reference-action');if(reference){stage.append(reference);navigation.querySelector('span').textContent=step?step+' / 6':t('牌区','Zones');}const panel=host.querySelector('.rg-rank-panel');if(panel)stage.append(panel);board.style.removeProperty('transform');board.inert=false;board.getAnimations().forEach(a=>a.cancel());for(const b of board.querySelectorAll('button'))b.removeAttribute('tabindex');cameraPose=null;}
+ }
+ function mobileFrame(board){
+  const viewport=host.querySelector('.rg-figure'),panel=host.querySelector('.rg-rank-panel'),nav=host.querySelector('.fg-camera-nav');
+  const key=focusKeys().find(k=>k!=='action'&&k!=='wild')||'own-hand';
+  const automatic=step===2?(attackPhase===0?'own':attackPhase===1?'center':'rival'):step===3?'center':step===4?(defended?'center':'own'):step===5&&swapSource&&!swapResult?'rival':key.startsWith('rival')?'rival':key.startsWith('own')?'own':'center';
+  const region=cameraRegion||automatic,target=board.querySelector(region==='center'?'.fg-center':'.fg-'+region),height=viewport.clientHeight,width=viewport.clientWidth,bh=board.offsetHeight,bw=board.offsetWidth;
+  if(!height||!bh)return;
+  const scale=whole?Math.min(1,(height-12)/bh,(width-12)/bw):1;
+  const top=target.offsetTop,th=target.offsetHeight,y=whole?(height-bh*scale)/2:bh<=height?(height-bh)/2:Math.max(height-bh-6,Math.min(6,(height-th)/2-top));
+  const pose=`translate(${(width-bw*scale)/2}px, ${y}px) scale(${scale})`;
+  // A new lesson reuses the last camera pose, then glides to its next area.
+  board.getAnimations().forEach(a=>a.cancel());board.style.transform=pose;
+  const previousPose=cameraPose;cameraPose=pose;viewport.dataset.region=whole?'whole':region;scroller.scrollTop=0;
+  board.inert=!!ranksOpen;nav.inert=!!ranksOpen;if(panel)panel.hidden=!ranksOpen;
+  for(const b of nav.querySelectorAll('button')){const k=b.dataset.fgCamera,area=board.querySelector(k==='center'?'.fg-center':'.fg-'+k),hasTarget=!!area.querySelector('[data-fg-target]');b.setAttribute('aria-pressed',String(!whole&&region===k));b.classList.toggle('has-target',hasTarget);b.querySelector('small').textContent=hasTarget?'⇄':'';}
+  // Hidden parts of the cropped table must not pull keyboard focus out of view.
+  for(const b of board.querySelectorAll('button')){const r=b.getBoundingClientRect(),v=viewport.getBoundingClientRect();b.tabIndex=whole||r.top>=v.top&&r.bottom<=v.bottom?0:-1;}
+  if(previousPose&&previousPose!==pose&&!matchMedia('(prefers-reduced-motion: reduce)').matches)board.animate([{transform:previousPose},{transform:pose}],{duration:360,easing:'cubic-bezier(.2,.7,.2,1)'});
  }
  function frame(){
   if(view!=='visual'||!dialog.open)return;const board=host.querySelector('.fg-board'),bar=host.querySelector('.fg-toolbar');if(!board)return;
+  layoutMobile();if(dialog.classList.contains('fg-mobile')){mobileFrame(board);return;}
   const area=scroller.getBoundingClientRect(),top=(bar?.getBoundingClientRect().height||0)+8,available=area.height-top,keys=focusKeys().filter(k=>k!=='action'&&k!=='wild'),primary=keys.includes('own-hand')?'own-hand':keys[0],target=board.querySelector('[data-fg-slot="'+primary+'"]')||board;
   const r=target.getBoundingClientRect(),c=board.querySelector('.fg-coach').getBoundingClientRect(),b=board.getBoundingClientRect(),spanTop=Math.min(r.top,c.top),spanBottom=Math.max(r.bottom,c.bottom);
   const y=whole||b.height<=available?b.top:spanBottom-spanTop<=available?spanTop:r.top;
   scroller.scrollTop+=y-area.top-top;
  }
- function renderFocus(focus){const y=scroller.scrollTop;paint();scroller.scrollTop=y;frame();dialog.querySelector(focus)?.focus({preventScroll:true});}
+ function renderFocus(focus){const y=scroller.scrollTop;paint();scroller.scrollTop=y;frame();const requested=dialog.querySelector(focus);(dialog.classList.contains('fg-mobile')&&(!requested||requested.tabIndex===-1||!requested.getClientRects().length)?navigation.querySelector('[data-rg-next]'):requested)?.focus({preventScroll:true});}
  function go(next){if(next>6){document.getElementById('close-rules').click();return;}step=Math.max(0,next);reset();paint();scroller.scrollTop=0;frame();navigation.querySelector('[data-rg-next]').focus({preventScroll:true});}
  function action(key){
+  cameraRegion=null;ranksOpen=false;
   if(key==='next'){go(step+1);return;}
   if(key==='attack')attackPhase=1;else if(key==='wounds')attackPhase=2;else if(key==='roles')rolesSwapped=true;else if(key==='defend')defended=true;else if(key==='refill')refilled=true;else if(key==='refill-replay')refilled=false;else if(key==='swap-reset')resetSwap();
   renderFocus('[data-fg-action]');
  }
  function navigate(e){const b=e.target.closest('button');if(!b)return;
   if(b.dataset.fgAction){action(b.dataset.fgAction);return;}
+  if(b.dataset.fgCamera){cameraRegion=b.dataset.fgCamera;whole=false;if(step===0)zone=cameraRegion==='center'?'piles':cameraRegion+'-hand';renderFocus('[data-fg-camera="'+cameraRegion+'"]');return;}
   if(b.hasAttribute('data-fg-whole')){whole=!whole;renderFocus('[data-fg-whole]');return;}
-  if(b.hasAttribute('data-fg-example')){attackExample=!attackExample;attackPhase=0;renderFocus('[data-fg-example]');return;}
-  if(b.hasAttribute('data-fg-swap-mode')){swapMode=swapMode==='round'?'wounded':'round';resetSwap();renderFocus('[data-fg-swap-mode]');return;}
-  if(b.hasAttribute('data-fg-replay')){attackPhase=0;rolesSwapped=false;defended=false;renderFocus('[data-fg-action]');return;}
-  if(b.dataset.fgZone){zone=b.dataset.fgZone;renderFocus('[data-fg-zone="'+zone+'"]');return;}
-  if(b.dataset.fgSource){const [z,i]=b.dataset.fgSource.split(':');swapSource={zone:z,index:Number(i)};renderFocus('[data-fg-target]');return;}
-  if(b.dataset.fgTarget!==undefined){const option=swapGame.refreshOptions()[Number(b.dataset.fgTarget)];if(!option||option.source.zone!==swapSource?.zone||option.source.index!==swapSource?.index)return;const source={...swapSource},given=window.GK.label(value(0,source.zone,source.index));swapGame.refresh(option);swapResult={source,option,given,received:window.GK.label(value(0,source.zone,source.index))};renderFocus('[data-fg-action]');return;}
-  if(b.hasAttribute('data-rg-ranks')){ranksOpen=!ranksOpen;b.setAttribute('aria-expanded',String(ranksOpen));b.querySelector('i').textContent=ranksOpen?'−':'+';host.querySelector('#rg-rank-panel').hidden=!ranksOpen;return;}
+  if(b.hasAttribute('data-fg-example')){cameraRegion=null;whole=false;ranksOpen=false;attackExample=!attackExample;attackPhase=0;renderFocus('[data-fg-example]');return;}
+  if(b.hasAttribute('data-fg-swap-mode')){cameraRegion=null;whole=false;ranksOpen=false;swapMode=swapMode==='round'?'wounded':'round';resetSwap();renderFocus('[data-fg-swap-mode]');return;}
+  if(b.hasAttribute('data-fg-replay')){cameraRegion=null;whole=false;ranksOpen=false;attackPhase=0;rolesSwapped=false;defended=false;renderFocus('[data-fg-action]');return;}
+  if(b.dataset.fgZone){zone=b.dataset.fgZone;cameraRegion=null;whole=false;renderFocus('[data-fg-zone="'+zone+'"]');return;}
+  if(b.dataset.fgSource){const [z,i]=b.dataset.fgSource.split(':');swapSource={zone:z,index:Number(i)};cameraRegion=null;whole=false;renderFocus(mobileQuery.matches?'[data-fg-camera="rival"]':'[data-fg-target]');return;}
+  if(b.dataset.fgTarget!==undefined){const option=swapGame.refreshOptions()[Number(b.dataset.fgTarget)];if(!option||option.source.zone!==swapSource?.zone||option.source.index!==swapSource?.index)return;const source={...swapSource},given=window.GK.label(value(0,source.zone,source.index));swapGame.refresh(option);swapResult={source,option,given,received:window.GK.label(value(0,source.zone,source.index))};cameraRegion='own';renderFocus('[data-fg-action]');return;}
+  if(b.hasAttribute('data-rg-ranks')){ranksOpen=!ranksOpen;b.setAttribute('aria-expanded',String(ranksOpen));b.querySelector('i').textContent=ranksOpen?'−':'+';host.querySelector('#rg-rank-panel').hidden=!ranksOpen;if(mobileQuery.matches)frame();return;}
   if(b.dataset.rgStep!==undefined){go(Number(b.dataset.rgStep));return;}
   if(b.hasAttribute('data-rg-prev')){go(step-1);return;}
   if(b.hasAttribute('data-rg-next')){if(hasAction())action(coach()[3]);else go(step+1);}
  }
  switches.addEventListener('click',e=>{const b=e.target.closest('[data-rg-view]');if(b){view=b.dataset.rgView;paint();scroller.scrollTop=0;frame();}});
+ dialog.addEventListener('cancel',e=>{if(ranksOpen){e.preventDefault();e.stopImmediatePropagation();ranksOpen=false;renderFocus('[data-rg-ranks]');}},true);
  for(const element of [host,progress,navigation])element.addEventListener('click',navigate);
  function sync(){const language=window.GKLocale?.language||'zh-CN',v=version();if(language!==lastLanguage||v!==lastVersion){if(v!==lastVersion){view=v==='0.3.8'||v==='1.0.0'?'visual':'text';step=0;reset();}lastLanguage=language;lastVersion=v;paint();}}
  new MutationObserver(sync).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
