@@ -245,7 +245,7 @@ const FOUR_STUDY={
 ;
 'use strict';
 const $=id=>document.getElementById(id);
-const UI_REVISION='sz-table3';
+const UI_REVISION='sz-table4';
 const VARIANT_TEXT={
  '1.0.0':{name:'1.0 · 标准规则',note:'共用花牌，五伤败北。通常出三张，四炸6分，五炸7分；五炸须四张自然同点牌加花牌。赢家升级后的等级决定下局花牌。',tie:'同花样比点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无效果。',ranking:'五炸7 > 四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。'},
  '0.3.8':{name:'0.3.8 · 共用花牌',note:'首局双方共用♥2作为花牌。此后小局赢家升级后的等级决定下一小局双方共用的花牌；一局内不变。花牌即逢人配／会子／百搭牌。攻防、血牌交换与升级其余规则沿用0.3.7。',tie:'同牌型比较点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无事发生。',ranking:'四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。四炸也可用花牌。'},
@@ -310,7 +310,7 @@ function celebrateResult(key){
  celebrationTimer=setTimeout(stopCelebration,4300);
 }
 function openResult(){
- const r=currentResult();if(mode!=='play'||!r||$('settings-modal').open||$('rule-page').open)return;
+ const r=currentResult();if(mode!=='play'||!r||$('settings-modal').open||$('rule-page').open||$('player-name-dialog')?.open)return;
  const key=resultKey(r),match=game.phase==='match_over',own=r.winner===0,champion=match&&own,who=own?'你':'对手',modal=$('result-modal');
  modal.dataset.resultKey=key;modal.dataset.outcome=champion?'champion':match?'match-loss':own?'round-win':'round-loss';
  modal.classList.toggle('is-champion',champion);modal.classList.toggle('is-a-reset',!!r.a_reset);modal.classList.toggle('is-loss',!own);modal.classList.toggle('reduce-motion',matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -334,6 +334,7 @@ function openResult(){
  const bloomHost=$('bloom-result');
  if(match&&GK.sharedFlower(variant)){window.SZBloom.renderResult(bloomHost,game.results,game.snapshot(),game.events.find(e=>e.kind==='deal')?.state?.levelOwner??0,false);modal.setAttribute('aria-labelledby','bloom-heading');modal.removeAttribute('aria-describedby');}
  else{window.SZBloom.hideResult(bloomHost);modal.setAttribute('aria-labelledby','result-title');modal.setAttribute('aria-describedby','result-subtitle result-hint');}
+ const playerName=window.SZPlayer.get();$('result-title').toggleAttribute('data-no-i18n',!!playerName&&own);if(playerName&&own)$('result-title').textContent=GKLocale.language==='en'?playerName+(match?', you won the match!':', you won this game.'):(playerName+(match?'，你赢下了整场！':'，这一局你赢了。'));
  $('result-share').textContent=GKLocale.language==='en'?'Share PNG':'分享卡片';
  $('result-primary').textContent=match?'再玩一场':'开始下一局';$('result-primary').disabled=false;
  presentedResultKey=key;
@@ -556,7 +557,7 @@ function render(){
  document.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===mode)));
  $('match-meta').textContent=replay?'程序回放 · 第 '+event.game+' 局':'第 '+game.game+' 局 · 第 '+game.round+' 轮';
  if(mode==='rules')return;
- const p=s.players[0],q=s.players[1];$('own-name').textContent=replay?'A':'你';$('opp-name').textContent=replay?'B':'对手';
+ const p=s.players[0],q=s.players[1];window.SZPlayer.sync(replay);$('opp-name').textContent=replay?'B':'对手';
  renderGoal(s,replay);
  $('own-level').textContent=(shared?'花牌 ':'')+'♥'+GK.rankLabel(currentFlower(s,0))+(shared?'':' ★');$('opp-level').textContent=(shared?'花牌 ':'')+'♥'+GK.rankLabel(currentFlower(s,1))+(shared?'':' ★');$('own-level').title=shared?'本局双方共用的花牌':'你的逢人配';$('opp-level').title=shared?'本局双方共用的花牌':'对手的逢人配';
  damageBar($('own-damage'),p.table.length);damageBar($('opp-damage'),q.table.length);
@@ -581,6 +582,10 @@ function render(){
  const physical=s.stock.length+s.discard.length+s.players.reduce((n,p)=>n+p.hand.length+p.table.filter(x=>x.card!==null).length,0)+s.active.reduce((n,m)=>n+(m?m.cards.length:0),0);
  $('card-check').textContent='实体牌 '+physical+' / 52';
  renderActions(s,event);
+ const compactNames=['High card','Pair','Straight','Flush','Trips','Straight flush','4 of a kind','5 of a kind'];
+ for(const [who,id]of [[attack,'attack-label'],[1-attack,'defend-label']])if(moves[who]){const m=moves[who],b=$(id).querySelector('b');b.dataset.noI18n='';b.textContent=GKLocale.language==='en'?(compactNames[m.kind??GK.NAMES.indexOf(m.name)]+' '+m.score+' pts'):(m.name+' '+m.score+' 分');}
+ const declarations=moves.flatMap((m,who)=>m?.wild?[((GKLocale.language==='en')?(who===attack?'Attack':'Defend'):(who===attack?'进攻':'防守'))+' '+GK.label(m.wild.physical)+' → '+GK.label(m.wild.as)]:[]);
+ $('combat-wild-info').textContent=declarations.join(' · ');$('combat-wild-info').hidden=!declarations.length||['game_over','match_over'].includes(s.phase);
  const events=replay?ROLLOUT.events.slice(0,cursor+1):game.events;$('event-log').replaceChildren();
  for(const e of events.slice(-8).reverse()){const item=document.createElement('div');item.className='log-item';const b=document.createElement('b');b.textContent=e.title;const span=document.createElement('span');span.textContent=e.note;item.append(b,span);$('event-log').append(item);}
  const r=s.lastRefill;$('budget').textContent=r?'上一轮：保留 '+r.before.join(' / ')+' 张，补手牌 '+r.drawn.join(' / ')+' 张；桌面补位 '+r.tableUses.join(' / ')+' 张。'+(GK.isRefresh(variant)?'换牌另抽 '+(r.refreshDraws||[0,0]).join(' / ')+' 张。':''):'保留全部余牌，轮末只补到八张。明牌用后补位，伤势不变。';
@@ -588,7 +593,7 @@ function render(){
  syncResult();
 }
 function driveAI(){
- if(window.SZCardMotion.busy||mode!=='play'||$('settings-modal').open||$('result-modal').open||busy||game.currentActor()!==1||!['attack','defend','flip','refresh'].includes(game.phase))return;
+ if(window.SZCardMotion.busy||mode!=='play'||$('settings-modal').open||$('result-modal').open||$('player-name-dialog')?.open||busy||game.currentActor()!==1||!['attack','defend','flip','refresh'].includes(game.phase))return;
  busy=true;render();aiTimer=setTimeout(()=>{aiTimer=null;busy=false;tryAction(()=>game.aiStep());},400);
 }
 function stopAI(){motionSerial++;window.SZCardMotion.cancel();if(aiTimer){clearTimeout(aiTimer);aiTimer=null;}busy=false;}
@@ -619,7 +624,7 @@ $('close-settings').addEventListener('click',()=>{$('settings-modal').close();dr
 $('settings-modal').addEventListener('close',()=>{syncResult();driveAI();});
 $('close-result').addEventListener('click',closeResult);
 $('result-review').addEventListener('click',closeResult);
-$('result-share').addEventListener('click',()=>{if(mode!=='play'||!currentResult())return;window.SZShareCard.open({results:game.results,snapshot:game.snapshot(),first:game.events.find(e=>e.kind==='deal')?.state?.levelOwner??0,seed:game.seed,version:variant,match:game.phase==='match_over',lang:GKLocale.language,theme:document.documentElement.dataset.szTheme});});
+$('result-share').addEventListener('click',()=>{if(mode!=='play'||!currentResult())return;window.SZShareCard.open({results:game.results,snapshot:game.snapshot(),first:game.events.find(e=>e.kind==='deal')?.state?.levelOwner??0,seed:game.seed,version:variant,match:game.phase==='match_over',lang:GKLocale.language,theme:document.documentElement.dataset.szTheme,playerName:window.SZPlayer.get()});});
 $('result-primary').addEventListener('click',continueResult);
 $('result-modal').addEventListener('close',()=>{window.SZShareCard.close();stopCelebration();window.SZBloom.hideResult($('bloom-result'));const r=currentResult();if(mode==='play'&&r&&resultKey(r)===$('result-modal').dataset.resultKey)$('show-result')?.focus({preventScroll:true});});
 $('new-match').addEventListener('click',newMatch);
@@ -642,4 +647,8 @@ document.addEventListener('touchstart',preventPinchZoom,{passive:false,capture:t
 document.addEventListener('touchmove',preventPinchZoom,{passive:false,capture:true});
 for(const type of ['gesturestart','gesturechange','gestureend'])document.addEventListener(type,e=>{if(e.cancelable)e.preventDefault();},{passive:false,capture:true});
 applySeedPreference();persist();render();driveAI();
+window.addEventListener('sz-profile-open',stopAI);
+window.addEventListener('sz-profile-close',()=>{render();driveAI();});
+window.addEventListener('sz-profile-locale',()=>render());
+window.addEventListener('sz-player-namechange',()=>{render();if($('result-modal').open)openResult();});
 GKLocale.init();
