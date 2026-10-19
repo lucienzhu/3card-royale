@@ -4,7 +4,7 @@
  const textPanel=document.getElementById('rg-text'),switches=document.getElementById('rg-switch');
  const progress=document.getElementById('rg-progress'),navigation=document.getElementById('rg-navigation'),scroller=dialog.querySelector('.modal-body');
  const standard=document.createElement('article');standard.className='standard-rules';standard.hidden=true;textPanel.before(standard);
- let step=0,view='visual',exchange='rival',sourceZone='hand',zone='hand',lastLanguage='',lastVersion='';
+ let step=0,view='visual',exchange='rival',sourceZone='hand',zone='hand',swapDetails=false,lastLanguage='',lastVersion='';
  const data=window.SZRuleCases;
  const t=(zh,en)=>window.GKLocale?.language==='en'?en:zh;
  const card=(label,extra='')=>{const suit=(label.match(/[♠♥♣♦]/)||[''])[0],rank=label.replace(/[♠♥♣♦]/g,'');return `<span class="rg-card ${suit==='♥'||suit==='♦'?'red':''} ${extra}" aria-label="${rank}${suit}"><b>${rank}</b><i>${suit}</i>${extra.includes('wound')?'<small>'+t('伤','W')+'</small>':''}${extra.includes('wild')?'<small>✦</small>':''}</span>`;};
@@ -16,6 +16,11 @@
  const metric=(who,from,to)=>`<span>${who}<b>${from} <i>→</i> ${to}</b></span>`;
  const counts=(a,b)=>`<div class="rg-counts">${metric(t('你的手牌','Your hand'),a[0],a[1])}${metric(t('对手手牌','Rival hand'),b[0],b[1])}</div>`;
  const hiddenCard=()=>'<span class="rg-card rg-back" aria-label="'+t('未知牌','Unknown card')+'"><b>?</b><i>✦</i></span>';
+ const opening=()=>`<div class="rg-opening">
+  <section class="rg-opening-player"><header><strong>${t('对手','Rival')}</strong><small>${t('8张 · 牌面保密','8 cards · Hidden')}</small></header><div class="rg-opening-hand" aria-label="${t('对手的8张手牌，牌面保密','Rival’s 8 hidden hand cards')}">${Array.from({length:8},()=>'<span class="rg-card rg-back" aria-hidden="true">'+window.SZFlowerMark+'</span>').join('')}</div><div class="rg-opening-wounds"><span>${t('伤牌区','Wound area')}</span><b>${t('空 · 0伤','Empty · 0 wounds')}</b></div></section>
+  <section class="rg-opening-player"><header><strong>${t('你','You')}</strong><small>${t('8张 · 只有你能看','8 cards · Only you can see')}</small></header><div class="rg-opening-hand">${['6♣','7♣','8♣','4♠','4♥','2♥','9♠','Q♥'].map(c=>card(c,c==='2♥'?'wild':'')).join('')}</div><div class="rg-opening-wounds"><span>${t('伤牌区','Wound area')}</span><b>${t('空 · 0伤','Empty · 0 wounds')}</b></div></section>
+ </div><p class="rg-opening-note">${t('本例由你先攻；♥2是双方共用的花牌，可当任意牌。','You attack first in this example. ♥2 is the shared flower and can stand for any card.')}</p>
+ <div class="rg-opening-next"><b>${t('你进攻','You attack')}</b><i>→</i><b>${t('对手进攻','Rival attacks')}</b><i>→</i><b>${t('双方补牌','Both refill')}</b></div><p class="rg-opening-result">${t('双方各进攻一次，才补手牌。','Refill only after both players have attacked.')}</p>`;
  function exchangeCase(){
   const wound=sourceZone==='table',give=wound?'K♦':'9♠',other=wound?'9♠':'K♦';
   const own=t(wound?'你的伤牌':'你的手牌',wound?'Your wound':'Your hand');
@@ -44,7 +49,7 @@
  const zoneCopy=()=>({
   hand:{title:t('手牌：只有自己能看','Hand: private to its owner'),body:t('可与自己的伤牌一起选来出牌；一轮结束时，手牌补到8张。','Private to you. Play these with your wounds; refill to 8 at round end.')},
   wound:{title:t('伤牌：双方公开，都算伤势','Wounds: public, and count as damage'),body:t('自己的伤牌也能出，用后原位补一张，仍算伤。达到5伤就输小局。','Face up. Play your wounds, then replace them; damage stays. At 5 wounds, you lose.')},
-  battle:{title:t('攻防区：比较这次出的牌','Combat: compare the played cards'),body:t('进攻和防守各出3张；四炸可出4张。在这里比较牌型与分数。','Play 3 cards, or a 4-card bomb. Compare hand types and scores here.')},
+  battle:{title:t('攻防区：比较这次出的牌','Combat: compare the played cards'),body:document.getElementById('version-select').value==='1.0.0'?t('通常各出3张；四炸4张，五炸5张。在这里比较牌型与分数。','Usually play 3 cards; 4 for a four-bomb, 5 for a five-bomb. Compare hand types and scores here.'):t('进攻和防守各出3张；四炸可出4张。在这里比较牌型与分数。','Play 3 cards, or a 4-card bomb. Compare hand types and scores here.')},
   piles:{title:t('共用牌库与弃牌堆','Shared draw and discard piles'),body:t('补牌从牌库摸；出过或换掉的牌进弃牌堆。牌库空了，就重洗弃牌。','Draw here. Played or replaced cards go to discard; reshuffle it when the deck is empty.')},
  });
  function zoneMap(){
@@ -67,33 +72,34 @@
  }
  const steps=()=>[
   {title:t('先认牌区，再开始','Know the table first'),caption:t('点击任一牌区，看它的用途。','Select any zone to learn what it does.'),body:zoneMap},
-  {title:t('先看这一轮的起点','Start of this round'),caption:t('例子从双方各有1伤开始。花牌都是♥2。','Both players already have 1 wound. The shared flower is ♥2.'),body:()=>`<div class="rg-route"><b>${t('你进攻','You attack')}</b><i>→</i><b>${t('对手进攻','Rival attacks')}</b><i>→</i><b>${t('补手牌','Refill')}</b></div><div class="rg-start-row"><strong>${t('对手','Rival')}</strong><div>${stack(8)}<small>${t('手牌保密','Private hand')}</small></div><div>${cards(['J♦'])}${damage(1)}</div></div><div class="rg-start-row"><strong>${t('你','You')}</strong><div>${stack(8)}<small>${t('8张手牌','8 hand cards')}</small></div><div>${cards(['6♣'],['wound'])}${damage(1)}</div></div>${result(t('各进攻一次，才算一轮','A round = one attack each'))}`},
-  {title:t('你进攻：伤牌也能出','Your attack: use a wound'),caption:t('手里的7、8，搭上公开伤牌6。','Combine your hand’s 7 and 8 with your face-up wound 6.'),body:()=>duel({label:t('你 · 进攻','You · Attack'),name:t('同花顺','Straight flush'),score:4,cards:['6♣','7♣','8♣'],extras:['wound']},{label:t('对手 · 防守','Rival · Defend'),name:t('对子','Pair'),score:1,cards:['5♠','5♥','9♦']})+result(t('4 − 1 = 对手 +3伤','4 − 1 = rival +3 wounds'),t('对手的伤势：1 → 4','Rival wounds: 1 → 4'))+`<div class="rg-replace">${card('6♣','wound')}<span>${t('弃掉后原位补','Discard, replace')}<b>→</b></span>${card('K♦','wound')}<strong>${t('仍是1伤','Still 1 wound')}</strong></div>`+counts([8,6],[8,5])},
-  {title:t('交换攻防，先不补手牌','Swap roles. No refill yet.'),caption:t('现在由对手进攻，你用剩下的牌来防守。','The rival attacks next. Defend with the cards you have left.'),body:()=>`<div class="rg-role-swap"><div><b>${t('你','You')}</b>${stack(6)}<strong>${t('防守','Defend')}</strong></div><span aria-hidden="true">⇄</span><div><b>${t('对手','Rival')}</b>${stack(5)}<strong>${t('进攻','Attack')}</strong></div></div>${result(t('这时不摸牌','Do not draw yet'),t('公开伤牌也仍可参与出牌','Your face-up wounds are still playable'))}<div class="rg-wound-pair"><span>${t('你','You')}${damage(1)}</span><span>${t('对手','Rival')}${damage(4)}</span></div>`},
-  {title:t('你守住了，赢1次机会','Defend to earn 1 swap'),caption:t('♥2是共用花牌，这里当作第三张4。','♥2 is the shared flower. Here it becomes a third 4.'),body:()=>duel({label:t('对手 · 进攻','Rival · Attack'),name:t('同花顺','Straight flush'),score:4,cards:['J♠','Q♠','K♠']},{label:t('你 · 防守','You · Defend'),name:t('三炸','Three of a kind'),score:5,cards:['4♠','4♥','2♥'],extras:['','','wild']})+`<div class="rg-wild-note">♥2 <span>→</span> ${data.defense.wild?window.GK.label(data.defense.wild.as):'♣4'} · ${t('花牌可代任意牌','Flower = wildcard')}</div>`+result(t('5 − 4 = 1次交换','5 − 4 = 1 swap'),t('防守赢的是机会，伤势不变','Defense earns opportunity. Wounds stay unchanged.'))+counts([6,3],[5,2])},
-  {title:t('1次机会，任选一种交换','1 swap. Choose any route.'),caption:t('先选自己的手牌或伤牌，再选交换目标。','Choose your hand card or wound, then pick its destination.'),body:exchangeCase},
-  {title:t('一轮结束，各补到8张','Round over. Refill to 8.'),caption:t('保留剩余手牌，只补缺的数量。','Keep your unused cards. Draw only the missing cards.'),body:()=>`<div class="rg-refill"><div><strong>${t('你','You')}</strong>${stack(3)}<b>+5</b>${stack(8)}</div><div><strong>${t('对手','Rival')}</strong>${stack(2)}<b>+6</b>${stack(8)}</div></div><div class="rg-wound-pair"><span>${t('你','You')}${damage(1)}</span><span>${t('对手','Rival')}${damage(4)}</span></div>${result(t('下一轮，对手先攻','Next round, the rival attacks first'),t('伤牌保留，不回血。达到5伤就输小局。','Wounds remain. No healing. 5 wounds loses the game.'))}<div class="rg-finish">2 <span>→</span> A <span>+</span> ${t('再赢一局','win again')} <b>⚑</b></div>`},
+  {title:t('开局：各8张，伤牌区留空','Start: 8 cards each, no wounds'),caption:t('上方是对手，下方是你。先看清自己的牌。','Rival above, you below. Your own cards are face up.'),body:opening},
+  {title:t('你进攻，对手受伤','You attack. The rival takes wounds.'),caption:t('你从手牌出6♣7♣8♣，对手出三张牌防守。','Play 6♣7♣8♣ from your hand. The rival defends with three cards.'),body:()=>duel({label:t('你 · 进攻','You · Attack'),name:t('同花顺','Straight flush'),score:4,cards:['6♣','7♣','8♣']},{label:t('对手 · 防守','Rival · Defend'),name:t('对子','Pair'),score:1,cards:['5♠','5♥','9♦']})+result(t('4 − 1 = 对手 +3伤','4 − 1 = rival +3 wounds'),t('从牌库翻出3张，放进对手伤牌区。','Draw 3 cards face up into the rival’s wound area.'))+`<div class="rg-wound-pair"><span>${t('你','You')}${damage(0)}</span><span>${t('对手','Rival')}${damage(3)}</span></div>`+counts([8,5],[8,5])+`<details class="rg-more"><summary>${t('伤牌以后也能出吗？','Can wounds be played later?')}</summary><p>${t('能。下面另举一例：若你有6♣伤牌，可和手牌一起出；用后原位补一张，伤势不减少。','Yes. In a later situation, a wound such as 6♣ can be played with your hand. Replace it afterward; damage stays unchanged.')}</p><div class="rg-replace">${card('6♣','wound')}<span>${t('用后原位补','Play, replace')}<b>→</b></span>${card('K♦','wound')}<strong>${t('仍是1伤','Still 1 wound')}</strong></div></details>`},
+  {title:t('交换攻防，先不补手牌','Swap roles. No refill yet.'),caption:t('现在由对手进攻，你用剩下的牌来防守。','The rival attacks next. Defend with the cards you have left.'),body:()=>`<div class="rg-role-swap"><div><b>${t('你','You')}</b>${stack(5)}<strong>${t('防守','Defend')}</strong></div><span aria-hidden="true">⇄</span><div><b>${t('对手','Rival')}</b>${stack(5)}<strong>${t('进攻','Attack')}</strong></div></div>${result(t('这时不摸牌','Do not draw yet'),t('一轮还没结束，双方都用剩下的牌。','The round is still in progress. Both players use their remaining cards.'))}<div class="rg-wound-pair"><span>${t('你','You')}${damage(0)}</span><span>${t('对手','Rival')}${damage(3)}</span></div>`},
+  {title:t('你守住了，赢1次机会','Defend to earn 1 swap'),caption:t('♥2是共用花牌，这里当作第三张4。','♥2 is the shared flower. Here it becomes a third 4.'),body:()=>duel({label:t('对手 · 进攻','Rival · Attack'),name:t('同花顺','Straight flush'),score:4,cards:['J♠','Q♠','K♠']},{label:t('你 · 防守','You · Defend'),name:t('三炸','Three of a kind'),score:5,cards:['4♠','4♥','2♥'],extras:['','','wild']})+`<div class="rg-wild-note">♥2 <span>→</span> ${data.defense.wild?window.GK.label(data.defense.wild.as):'♣4'} · ${t('花牌可代任意牌','Flower = wildcard')}</div>`+result(t('5 − 4 = 1次交换','5 − 4 = 1 swap'),t('防守赢的是机会，伤势不变','Defense earns opportunity. Wounds stay unchanged.'))+counts([5,2],[5,2])},
+  {title:t('用这次机会，换一张更好的牌','Use your swap to improve a card'),caption:t('本例用手牌9♠，换对手公开的10♦伤牌。','Swap your hand’s 9♠ for the rival’s face-up wound 10♦.'),body:()=>`<div class="rg-exchange"><div><small>${t('你的手牌','Your hand')}</small>${card('9♠')}</div><strong aria-hidden="true">⇄</strong><div><small>${t('对手伤牌','Rival’s wound')}</small>${card('10♦','wound')}</div></div>${result(t('10♦进你手里，9♠留在对手伤牌区','10♦ enters your hand; 9♠ becomes their wound'),t('双方仍各2张手牌，伤势仍是0／3。','Both still have 2 hand cards. Wounds remain 0 / 3.'))}<details class="rg-more" ${swapDetails?'open':''}><summary>${t('还有哪些换牌方式？','What other swaps are possible?')}</summary><p>${t('另看已有伤牌的局面：以下每种只花1次机会，任选其一，不是依次执行。','Explore a separate position where you already have a wound. Each route costs 1 opportunity; choose one, not all.')}</p>${exchangeCase()}</details>`},
+  {title:t('一轮结束，各补到8张','Round over. Refill to 8.'),caption:t('双方都进攻过了，现在保留余牌、补齐手牌。','Both have attacked. Now keep your unused cards and refill.'),body:()=>`<div class="rg-refill"><div><strong>${t('你','You')}</strong>${stack(2)}<b>+6</b>${stack(8)}</div><div><strong>${t('对手','Rival')}</strong>${stack(2)}<b>+6</b>${stack(8)}</div></div><div class="rg-wound-pair"><span>${t('你','You')}${damage(0)}</span><span>${t('对手','Rival')}${damage(3)}</span></div>${result(t('下一轮，对手先攻','Next round, the rival attacks first'),t('伤牌保留，不回血。达到5伤就输小局。','Wounds remain. No healing. 5 wounds loses the game.'))}`},
  ];
  function paint(){
-  const isStandard=document.getElementById('version-select').value==='1.0.0';standard.hidden=!isStandard;
-  if(isStandard){standard.innerHTML=window.SZStandardRules[window.GKLocale?.language==='en'?'en':'zh'];switches.parentElement.hidden=true;host.hidden=true;textPanel.hidden=true;progress.hidden=true;navigation.hidden=true;document.getElementById('rules-heading').textContent=t('标准规则 1.0','Standard Rules 1.0');return;}
-  const available=document.getElementById('version-select').value==='0.3.8';
+  const isStandard=document.getElementById('version-select').value==='1.0.0';
+  if(isStandard)standard.innerHTML=window.SZStandardRules[window.GKLocale?.language==='en'?'en':'zh'];
+  const available=isStandard||document.getElementById('version-select').value==='0.3.8';
   switches.parentElement.hidden=!available;
   switches.querySelector('[data-rg-view="visual"]').hidden=!available;
   if(!available)view='text';
-  const visual=view==='visual'&&available;host.hidden=!visual;textPanel.hidden=visual;
+  const visual=view==='visual'&&available;host.hidden=!visual;textPanel.hidden=visual||isStandard;standard.hidden=visual||!isStandard;
   switches.setAttribute('aria-label',t('规则展示方式','Rules view'));
-  document.getElementById('rules-heading').textContent=visual?t('看图学一轮','One round, illustrated'):t('完整文字规则','Full written rules');
+  document.getElementById('rules-heading').textContent=visual?t('看图学一轮','One round, illustrated'):isStandard?t('标准规则 1.0','Standard Rules 1.0'):t('完整文字规则','Full written rules');
   switches.querySelector('[data-rg-view="visual"]').textContent=t('图解','Guide');
   switches.querySelector('[data-rg-view="text"]').textContent=t('文字','Text');
   for(const b of switches.querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.dataset.rgView===(visual?'visual':'text')));
   progress.hidden=!visual;navigation.hidden=!visual;
-  if(!visual){textPanel.querySelector('details.full-rules').open=true;return;}
+  if(!visual){if(!isStandard)textPanel.querySelector('details.full-rules').open=true;return;}
   const list=steps(),s=list[step];
   progress.setAttribute('aria-label',t('图解步骤','Guide steps'));
   progress.innerHTML=list.map((x,i)=>`<button type="button" data-rg-step="${i}" aria-label="${i===0?t('牌区','Zones'):i}. ${x.title}" ${i===step?'aria-current="step"':''}>${i===0?t('牌区','Zones'):i}</button>`).join('');
   navigation.innerHTML=`<button type="button" data-rg-prev ${step===0?'disabled':''}>${t('上一步','Back')}</button><span>${step===0?t('牌区','Zones'):step+' / '+(list.length-1)}</span><button type="button" data-rg-next>${step===list.length-1?t('回到牌桌','Back to game'):step===0?t('开始一轮','Start round'):t('下一步','Next')} <i aria-hidden="true">→</i></button>`;
-  host.innerHTML=`<article class="rg-stage" aria-live="polite"><div class="rg-step-heading"><h3>${s.title}</h3><p>${s.caption}</p></div><div class="rg-figure">${s.body()}</div></article><details class="rg-reference" ${step===0?'hidden':''}><summary>${t('牌型速查 · 同分怎么办','Hand ranks · ties')}</summary><div class="rg-ranks">${[[t('四炸','Four-kind'),6],[t('三炸','Three-kind'),5],[t('同花顺','Straight flush'),4],[t('同花','Flush'),3],[t('顺子','Straight'),2],[t('对子','Pair'),1],[t('高牌','High card'),0]].map(([name,n])=>`<span>${name}<b>${n}</b></span>`).join('')}</div><p>${t('同牌型比点数：进攻胜造成1伤，防守胜得1次机会；完全同点无事发生。三张和四炸可互相接。','Same hand type: compare ranks. Attack rank win deals 1 wound; defense rank win earns 1 swap. Exact ties do nothing. Three cards and four of a kind may answer each other.')}</p></details>`;
+  const ranks=[...(isStandard?[[t('五炸','Five-bomb'),7]]:[]),[t('四炸','Four-kind'),6],[t('三炸','Three-kind'),5],[t('同花顺','Straight flush'),4],[t('同花','Flush'),3],[t('顺子','Straight'),2],[t('对子','Pair'),1],[t('高牌','High card'),0]];
+  host.innerHTML=`<article class="rg-stage" aria-live="polite"><div class="rg-step-heading"><h3>${s.title}</h3><p>${s.caption}</p></div><div class="rg-figure">${s.body()}</div></article><details class="rg-reference" ${step===0?'hidden':''}><summary>${t('牌型速查 · 同分怎么办','Hand ranks · ties')}</summary><div class="rg-ranks">${ranks.map(([name,n])=>`<span>${name}<b>${n}</b></span>`).join('')}</div><p>${t('同牌型比点数：进攻胜造成1伤，防守胜得1次机会；完全同点无事发生。','Same hand type: compare ranks. Attack rank win deals 1 wound; defense rank win earns 1 swap. Exact ties do nothing.')}${isStandard?t(' 三张、四炸和五炸可互相接；五炸是四张同数加花牌，7分。',' Three-card hands, four-bombs and five-bombs may answer each other. Five-bomb: four natural cards of one rank plus the flower, 7 points.'):t(' 三张和四炸可互相接。',' Three cards and four of a kind may answer each other.')}</p></details>`;
  }
  switches.addEventListener('click',e=>{const b=e.target.closest('[data-rg-view]');if(b){view=b.dataset.rgView;paint();scroller.scrollTop=0;}});
  function navigate(e){
@@ -101,15 +107,15 @@
   if(b.dataset.rgStep!==undefined)step=Number(b.dataset.rgStep);
   else if(b.hasAttribute('data-rg-prev'))step=Math.max(0,step-1);
   else if(b.hasAttribute('data-rg-next')){if(step===steps().length-1){document.getElementById('close-rules').click();return;}step++;}
-  else if(b.dataset.rgExchange)exchange=b.dataset.rgExchange;
-  else if(b.dataset.rgSource)sourceZone=b.dataset.rgSource;
+  else if(b.dataset.rgExchange){exchange=b.dataset.rgExchange;swapDetails=true;}
+  else if(b.dataset.rgSource){sourceZone=b.dataset.rgSource;swapDetails=true;}
   else if(b.dataset.rgZone)zone=b.dataset.rgZone;
   else return;
   const focus=b.dataset.rgSpot?'[data-rg-spot="'+b.dataset.rgSpot+'"]':b.dataset.rgSource?'[data-rg-source="'+b.dataset.rgSource+'"]':b.hasAttribute('data-rg-next')?'[data-rg-next]':b.hasAttribute('data-rg-prev')?'[data-rg-prev]':b.dataset.rgExchange?'[data-rg-exchange="'+b.dataset.rgExchange+'"]':'[data-rg-step="'+b.dataset.rgStep+'"]';
   paint();if(!b.dataset.rgExchange&&!b.dataset.rgSource&&!b.dataset.rgZone)scroller.scrollTop=0;dialog.querySelector(focus)?.focus({preventScroll:true});
  }
  for(const element of [host,progress,navigation])element.addEventListener('click',navigate);
- function sync(){const language=window.GKLocale?.language||'zh-CN',version=document.getElementById('version-select').value;if(language!==lastLanguage||version!==lastVersion){if(version!==lastVersion){view=version==='0.3.8'?'visual':'text';step=0;}lastLanguage=language;lastVersion=version;paint();}}
+ function sync(){const language=window.GKLocale?.language||'zh-CN',version=document.getElementById('version-select').value;if(language!==lastLanguage||version!==lastVersion){if(version!==lastVersion){view=version==='0.3.8'||version==='1.0.0'?'visual':'text';step=0;}lastLanguage=language;lastVersion=version;paint();}}
  new MutationObserver(sync).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
  new MutationObserver(()=>{if(dialog.open)sync();}).observe(dialog,{attributes:true,attributeFilter:['open']});
  document.getElementById('version-select').addEventListener('change',()=>queueMicrotask(sync));

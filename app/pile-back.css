@@ -1,0 +1,6 @@
+/* A quiet card-back motif; the public count remains the dominant information. */
+.table .pile-stack b{position:absolute;top:7%;left:10%;z-index:1}
+.table .pile-back{position:absolute;left:50%;bottom:4%;width:78%;height:53%;transform:translateX(-50%);opacity:.24;pointer-events:none;--sz-logo-petal:var(--muted);--sz-logo-center:var(--muted)}
+.table .pile-back svg{display:block;width:100%;height:100%}
+.table .pile[data-depth='0'] .pile-back{display:none}
+[data-sz-theme=dark] .table .pile-back{opacity:.28}

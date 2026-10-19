@@ -1,0 +1,27 @@
+/* Opening: one viewpoint, empty wounds, one clear action next. */
+.rg-opening{display:grid;gap:14px}
+.rg-opening-player{min-width:0;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--sz-table)}
+.rg-opening-player header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;font-size:14px}
+.rg-opening-player header small,.rg-opening-wounds{font-size:12px;color:var(--muted)}
+.rg-opening-player header small{font-weight:400}
+.rg-opening-hand{display:flex;justify-content:center;align-items:center;min-height:67px;padding:0 6px}
+.rg-opening-hand .rg-card{width:46px;height:66px;margin-left:-12px;font-size:22px;box-shadow:none}
+.rg-opening-hand .rg-card:first-child{margin-left:0}
+.rg-opening-hand .rg-back{background:var(--paper);border-color:var(--line)}
+.rg-opening-hand .rg-back svg{width:28px;height:32px}
+.rg-opening-wounds{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:36px;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.rg-opening-wounds b{font-size:12px;font-weight:400}
+.rg-opening-note{margin:12px 0 0;color:var(--muted);font-size:12px;line-height:1.6}
+.rg-opening-next{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:8px;font-size:12px;text-align:center;margin-top:18px}
+.rg-opening-next b{font-weight:500;padding:9px 6px;border-radius:6px;color:var(--muted)}
+.rg-opening-next b:first-child{color:var(--sz-flower-deep);background:color-mix(in srgb,var(--sz-flower) 12%,transparent);font-weight:700}
+.rg-opening-next i{font-style:normal;color:var(--muted)}
+.rg-opening-result{font-size:14px;font-weight:600;text-align:center;margin:12px 0 0;color:var(--ink)}
+.rg-more{margin-top:16px;border-top:1px solid var(--line);padding-top:12px;color:var(--muted);font-size:12px;line-height:1.6}
+.rg-more summary{cursor:pointer;font-size:12px;color:var(--muted)}
+.rg-more[open]>summary{margin-bottom:12px}
+.rg-more p{margin:0 0 12px}
+.rg-swap-current{margin:12px 0;color:var(--muted);font-size:12px;line-height:1.6;text-align:center}
+.rg-more .rg-swap-picker{margin-top:12px}
+@media(max-width:400px){.rg-opening{gap:10px}.rg-opening-player{padding:12px}.rg-opening-player header{margin-bottom:12px}.rg-opening-hand .rg-card{width:38px;height:56px;font-size:20px;margin-left:-11px;padding:4px}.rg-opening-hand{min-height:56px;padding:0}.rg-opening-hand .rg-card i{font-size:15px}.rg-opening-wounds{margin-top:10px}.rg-opening-next{gap:4px;margin-top:14px}.rg-opening-next b{padding-inline:3px}}
+@media(max-width:340px){.rg-opening-hand .rg-card{width:32px;height:48px;margin-left:-9px;font-size:18px}.rg-opening-hand .rg-card i{font-size:13px}.rg-opening-hand{min-height:48px}.rg-opening-player header small{max-width:75%;text-align:right;line-height:1.4}}
