@@ -192,5 +192,5 @@
  function sync(){const language=window.GKLocale?.language||'zh-CN',v=version();if(language!==lastLanguage||v!==lastVersion){if(v!==lastVersion){view=v==='0.3.8'||v==='1.0.0'?'visual':'text';step=0;reset();}lastLanguage=language;lastVersion=v;paint();}}
  new MutationObserver(sync).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
  new MutationObserver(()=>{if(dialog.open){sync();frame();}}).observe(dialog,{attributes:true,attributeFilter:['open']});
- document.getElementById('version-select').addEventListener('change',()=>queueMicrotask(sync));window.addEventListener('resize',()=>queueMicrotask(frame));sync();
+ document.getElementById('version-select').addEventListener('change',()=>queueMicrotask(sync));window.addEventListener('resize',()=>queueMicrotask(frame));window.visualViewport?.addEventListener('resize',()=>queueMicrotask(frame));sync();
 })();

@@ -8,7 +8,7 @@
  let open=false,lastLanguage="";
  const t=(zh,en)=>window.GKLocale?.language==='en'?en:zh;
  const example=k=>'<span class="hr-example" role="img" aria-label="'+examples[k].map(GK.label).join(' ')+'">'+examples[k].map(id=>{const suit=GK.SUITS[GK.suit(id)];return '<span class="hr-card '+(suit==='♥'||suit==='♦'?'is-red':'')+'" aria-hidden="true"><b>'+GK.rankLabel(GK.rank(id))+'</b><i>'+suit+'</i></span>';}).join('')+'</span>';
- function mount(){(wide.matches?battle:topline).append(host);host.classList.toggle('hr-side',wide.matches);paint();}
+ function mount(){topline.append(host);host.classList.remove('hr-side');paint();}
  function paint(){
   lastLanguage=window.GKLocale?.language||"zh-CN";
   const version=versionSelect.value,ids=[0,1,2,3,4,5];if(GK.allowsFour(version))ids.push(6);if(GK.allowsFive(version)){ids.push(7);const lv=window.gkGame.flowerLevel,r=lv===7?14:7;examples[7]=[r-2,r+11,r+24,r+37,lv+11];}
@@ -21,7 +21,7 @@
  }
  function close(focus=false){if(!open)return;open=false;paint();if(focus)button.focus({preventScroll:true});}
  button.addEventListener('click',()=>{open=!open;paint();});
- document.addEventListener('click',e=>{if(!wide.matches&&!e.composedPath().includes(host))close();});
+ document.addEventListener('click',e=>{if(!e.composedPath().includes(host))close();});
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&open&&!document.querySelector('dialog[open]')){e.preventDefault();close(true);}});
  versionSelect.addEventListener('change',()=>queueMicrotask(paint));
  new MutationObserver(()=>{if((window.GKLocale?.language||"zh-CN")!==lastLanguage)paint();}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
