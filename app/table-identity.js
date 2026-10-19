@@ -51,7 +51,6 @@
   document.querySelector('#settings-modal .modal-head').after(menuShortcut);
   menuShortcut.append(replay);
   replay.removeAttribute('role');
-  replay.addEventListener('click', () => document.getElementById('settings-modal').close());
   const ranks = document.getElementById('hr-reference');
   tabs.append(ranks);
   const action = document.getElementById('action-panel');

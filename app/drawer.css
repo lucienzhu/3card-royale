@@ -1,11 +1,11 @@
 /* One shell for rules and table settings. Only its content changes. */
-:root body :is(#settings-modal,#rule-page).sz-drawer{
+:root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal).sz-drawer{
  --drawer-head:58px;--drawer-tabs:54px;--drawer-gutter:20px;
  box-sizing:border-box;inset:0;margin:auto;width:min(880px,calc(100vw - 32px));max-width:none;
  height:min(900px,calc(var(--app-height,100dvh) - 32px));max-height:calc(var(--app-height,100dvh) - 32px);
  padding:0;overflow:hidden;border:0;border-radius:18px;background:var(--paper);color:var(--ink);
 }
-:root body :is(#settings-modal,#rule-page).sz-drawer[open]{display:flex;flex-direction:column}
+:root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal).sz-drawer[open]{display:flex;flex-direction:column}
 :root body .sz-drawer::backdrop{background:#111A1673;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
 :root body .sz-drawer>.modal-head{
  position:relative;box-sizing:border-box;flex:0 0 var(--drawer-head);height:var(--drawer-head);min-height:var(--drawer-head);
@@ -30,7 +30,7 @@
 :root body #settings-modal.sz-drawer .menu-replay-shortcut button{min-height:44px;padding:8px 0}
 :root body .sz-drawer .drawer-head-actions button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 @media(max-width:700px),(max-height:500px) and (max-width:1000px){
- :root body :is(#settings-modal,#rule-page).sz-drawer{
+ :root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal).sz-drawer{
   --drawer-head:48px;--drawer-tabs:48px;--drawer-gutter:12px;
   inset:var(--app-top,0px) 0 auto;margin:0;width:100%;height:var(--app-height,100dvh);max-height:var(--app-height,100dvh);
   border-radius:0;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
@@ -42,8 +42,70 @@
  :root body .sz-drawer>.drawer-tabs{padding-block:3px;gap:6px}
  :root body .sz-drawer>.modal-body{padding:16px;scrollbar-gutter:auto}
 }
-@media(max-height:500px) and (min-width:600px) and (max-width:1000px){:root body :is(#settings-modal,#rule-page).sz-drawer{--drawer-head:42px;--drawer-tabs:44px}}
+@media(max-height:500px) and (min-width:600px) and (max-width:1000px){:root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal).sz-drawer{--drawer-head:42px;--drawer-tabs:44px}}
 /* The teaching camera stays clipped inside the same flexible content region. */
 :root body #rule-page.sz-drawer.fg-mobile>.modal-body{display:flex;padding:0 12px;overflow:hidden}
-:root body :is(#settings-modal,#rule-page).sz-drawer.qb-dialog-fallback{width:min(880px,calc(100vw - 32px))!important;height:min(900px,calc(var(--app-height,100dvh) - 32px))!important;max-height:calc(var(--app-height,100dvh) - 32px)!important;inset:0!important;margin:auto!important}
-@media(max-width:700px),(max-height:500px) and (max-width:1000px){:root body :is(#settings-modal,#rule-page).sz-drawer.qb-dialog-fallback{width:100%!important;height:var(--app-height,100dvh)!important;max-height:var(--app-height,100dvh)!important;inset:var(--app-top,0px) 0 auto!important;margin:0!important}}
+:root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal).sz-drawer.qb-dialog-fallback{width:min(880px,calc(100vw - 32px))!important;height:min(900px,calc(var(--app-height,100dvh) - 32px))!important;max-height:calc(var(--app-height,100dvh) - 32px)!important;inset:0!important;margin:auto!important}
+@media(max-width:700px),(max-height:500px) and (max-width:1000px){:root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal).sz-drawer.qb-dialog-fallback{width:100%!important;height:var(--app-height,100dvh)!important;max-height:var(--app-height,100dvh)!important;inset:var(--app-top,0px) 0 auto!important;margin:0!important}}
+
+/* Navigation is a single row, with one shared hit area and text rhythm. */
+:root body.table-identity-layout .app-header{grid-template-columns:minmax(0,1fr) auto;column-gap:12px}
+:root body.table-identity-layout .app-header .app-navigation{grid-area:1/2;display:flex;gap:8px;align-items:center}
+:root body.table-identity-layout .app-header .app-navigation button,
+:root body.table-stage-layout .app-header .app-navigation #hr-reference #hr-toggle{
+ display:flex;align-items:center;justify-content:center;position:relative;flex:none;min-width:44px;height:44px;min-height:44px;
+ padding:0 8px;margin:0;font-family:inherit;font-size:14px;line-height:20px;font-weight:500;
+ border:0;border-radius:6px;background:transparent;color:var(--muted);white-space:nowrap;
+}
+:root body.table-identity-layout .app-header .app-navigation button[aria-current=page]{color:var(--ink)}
+:root body.table-identity-layout .app-header .app-navigation button::after{display:none}
+:root body.table-identity-layout .app-header .app-navigation button[aria-current=page]::after{content:'';display:block;position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:16px;height:2px;border-radius:2px;background:var(--accent)}
+:root body.table-identity-layout .app-header .app-navigation button:focus-visible{outline:2px solid var(--accent);outline-offset:0}
+:root body.table-stage-layout .app-header #hr-reference{z-index:auto}
+@media(hover:hover){:root body.table-identity-layout .app-header .app-navigation button:hover{background:var(--soft);color:var(--ink)}}
+@media(max-width:760px){
+ :root body.table-identity-layout .app-header{column-gap:6px}
+ :root body.table-identity-layout .app-header .app-navigation{gap:0}
+ :root body.table-identity-layout .app-header .app-navigation button,
+ :root body.table-stage-layout .app-header .app-navigation #hr-reference #hr-toggle{font-size:12px;padding-inline:6px}
+}
+@media(max-width:360px){
+ :root body.table-identity-layout .app-header{padding-inline:8px;column-gap:4px}
+ :root[lang=en] body.table-identity-layout .app-header .brand h1{max-width:76px;white-space:normal;line-height:1.05;font-size:14px}
+ :root body.table-identity-layout .app-header .brand h1{font-size:16px}
+ :root body.table-identity-layout .app-header .app-navigation button,
+ :root body.table-stage-layout .app-header .app-navigation #hr-reference #hr-toggle{padding-inline:4px}
+}
+body.drawer-open{overflow:hidden}
+:root body .sz-drawer{box-shadow:0 24px 80px #0004;will-change:transform,opacity}
+:root body .sz-drawer[hidden]:not([open]){display:none}
+.sz-drawer[data-drawer-motion=opening]::backdrop{animation:drawer-backdrop-in 240ms ease-out both}
+.sz-drawer[data-drawer-motion=closing]::backdrop{animation:drawer-backdrop-in 200ms ease-in reverse both}
+@keyframes drawer-backdrop-in{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.sz-drawer::backdrop{animation:none!important}}
+/* The same reference now occupies the common shell, not an anchored popover. */
+:root body #ranks-modal #hr-panel{position:static;transform:none;width:100%;max-width:640px;max-height:none;margin:auto;padding:0;overflow:visible;border:0;background:transparent;box-shadow:none;color:var(--ink)}
+:root body #ranks-modal #hr-panel th,:root body #ranks-modal #hr-panel td{padding:12px 0;line-height:1.5;border-bottom:1px solid var(--line);font-size:14px}
+:root body #ranks-modal #hr-panel th:last-child{width:48px}
+:root body #ranks-modal #hr-panel thead th{font-size:12px;color:var(--muted)}
+:root body #ranks-modal #hr-panel tbody td{font-size:20px;color:var(--accent)}
+:root body #ranks-modal #hr-panel small,:root body #ranks-modal #hr-panel .hr-note{color:var(--muted);font-size:12px;line-height:1.6}
+:root body #ranks-modal #hr-panel .hr-example{margin-top:6px}
+/* Replay uses the real renderer and controls in the common shell. */
+:root body #replay-modal>.modal-body{padding:8px 12px 12px;overflow:auto;display:flex;scrollbar-gutter:auto}
+:root body #replay-modal #replay-controls{border-radius:0;background:var(--paper);box-shadow:none;border-bottom:1px solid var(--line);padding-inline:var(--drawer-gutter)}
+:root body #replay-modal .drawer-replay-stage{height:auto;min-height:0;width:100%;max-width:none;margin:0;padding:0;flex:1}
+:root body #replay-modal .table{padding:8px 12px;min-height:470px;grid-template-rows:auto minmax(min-content,1fr) auto minmax(min-content,1fr);touch-action:pan-y}
+:root body #replay-modal #action-panel{height:58px;min-height:58px}
+:root body #replay-modal #play-area{min-height:min-content}
+.drawer-table-placeholder{pointer-events:none;user-select:none}
+@media(max-width:700px){:root body #replay-modal>.modal-body{padding:6px 8px 8px}}
+@media(max-height:500px) and (min-width:600px) and (max-width:1000px){:root body #replay-modal .table{min-height:230px;grid-template-rows:auto minmax(min-content,1fr)}}
+
+:root body .sz-drawer:focus{outline:none}
+/* Older WebViews need a real backdrop hit target, not a non-interactive box shadow. */
+.drawer-fallback-backdrop{position:fixed;inset:0;z-index:999;background:#111A1673;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+:root body .sz-drawer.qb-dialog-fallback{z-index:1000;box-shadow:0 24px 80px #0004!important}
+.drawer-fallback-backdrop[data-drawer-motion=opening]{animation:drawer-backdrop-in 240ms ease-out both}
+.drawer-fallback-backdrop[data-drawer-motion=closing]{animation:drawer-backdrop-in 200ms ease-in reverse both}
+@media(prefers-reduced-motion:reduce){.drawer-fallback-backdrop{animation:none!important}}
