@@ -4,7 +4,7 @@
  const textPanel=document.getElementById('rg-text'),switches=document.getElementById('rg-switch');
  const progress=document.getElementById('rg-progress'),navigation=document.getElementById('rg-navigation'),scroller=dialog.querySelector('.modal-body');
  const standard=document.createElement('article');standard.className='standard-rules';standard.hidden=true;textPanel.before(standard);
- let step=0,view='visual',zone='hand',swapMode='round',swapGame=null,swapSource=null,swapResult=null,ranksOpen=false,rolesSwapped=false,lastLanguage='',lastVersion='';
+ let step=0,view='visual',zone='hand',swapMode='round',swapGame=null,swapSource=null,swapResult=null,ranksOpen=false,rolesSwapped=false,refilled=false,lastLanguage='',lastVersion='';
  const data=window.SZRuleCases;
  const t=(zh,en)=>window.GKLocale?.language==='en'?en:zh;
  const card=(label,extra='')=>{const suit=(label.match(/[♠♥♣♦]/)||[''])[0],rank=label.replace(/[♠♥♣♦]/g,'');return `<span class="rg-card ${suit==='♥'||suit==='♦'?'red':''} ${extra}" aria-label="${rank}${suit}"><b>${rank}</b><i>${suit}</i>${extra.includes('wound')?'<small>'+t('伤','W')+'</small>':''}${extra.includes('wild')?'<small>✦</small>':''}</span>`;};
@@ -48,6 +48,20 @@
   host.querySelector('[data-rg-role-note]').textContent=rolesSwapped?t('现在对手先出牌，你来防守。双方仍各5张；完成这次攻防后，才补到8张。','The rival plays first, then you defend. Both still have 5 cards; refill to 8 after this second combat.'):t('你已经进攻过一次。点操作区的「交换攻防」，继续这一轮。','You have attacked once. Click “Swap roles” in the action bar to continue the round.');
   host.querySelector('[data-rg-role-replay]').hidden=!rolesSwapped;
   navigation.querySelector('[data-rg-next]').innerHTML=(rolesSwapped?t('看你如何防守','See how you defend'):t('试试交换攻防','Try swapping roles'))+' <i aria-hidden="true">→</i>';
+ }
+ function refillTable(){
+  const before=data.states.exchange,s=refilled?data.states.refill:before,kept=before.handCounts;
+  const hand=who=>s.hand[who].map((label,i)=>{const added=refilled&&i>=kept[who],html=tableCard(label,who===1);return html.replace('class="card','data-rg-refill-card="'+(added?'added':'kept')+'" style="--deal-delay:'+Math.max(0,i-kept[who])*55+'ms" class="card'+(added?' rg-refill-added':''));}).join('');
+  const count=who=>`<span class="rg-refill-count"><b>${s.handCounts[who]} ${t('张手牌','hand cards')}</b>${refilled?'<small>'+t('保留'+kept[who]+' · 新补'+(8-kept[who]),'Kept '+kept[who]+' · Drew '+(8-kept[who]))+'</small>':''}</span>`;
+  const title=refilled?t('双方手牌都到8张了','Both hands are back to 8'):t('轮末，补齐手牌','Round over. Refill hands.');
+  const note=refilled?t('各保留2张，各从牌库补6张。下一轮，对手先攻。','Keep 2 each, draw 6 each. The rival attacks first next round.'):t('本轮双方各剩2张手牌，各补6张，就到8张。','Each player has 2 hand cards left. Draw 6 each to reach 8.');
+  return `<div class="rg-demo-table rg-refill-table" data-refill-stage="${refilled?'after':'before'}" aria-label="${t('轮末补牌教学桌','Round-end refill practice table')}">
+   <div class="rg-demo-topline"><b>${refilled?t('下一轮','Next round'):t('一轮结束','Round over')}</b><span>${t('花牌','Wild')} ♥2</span><span>${t('第1局 · 第','Game 1 · Round ')}${refilled?'2':'1'}${t('轮','')}</span></div>
+   <section class="rg-demo-player rg-demo-rival"><header><span><b>${t('对手','Rival')}</b>${count(1)}</span>${tableDamage(s.damage[1])}</header><div class="rg-demo-hand" data-rg-refill-rival-hand aria-label="${t('对手'+s.handCounts[1]+'张手牌，牌面保密','Rival’s '+s.handCounts[1]+' hidden hand cards')}">${hand(1)}</div><div class="rg-demo-wounds" data-rg-refill-rival-wounds aria-label="${t('对手3张伤牌，补牌不改变伤牌','Rival’s 3 wounds stay unchanged')}">${tableFaces(s.wounds[1])}</div></section>
+   <section class="rg-refill-middle"><div class="rg-demo-piles" aria-label="${t('牌库'+s.stock+'张，弃牌12张','Deck '+s.stock+', discard 12')}"><div><small>${t('牌库','Deck')}</small><span class="rg-demo-pile rg-demo-stock"><b>${s.stock}</b><i aria-hidden="true">${window.SZFlowerMark}</i></span></div><div><small>${t('弃牌','Discard')}</small><span class="rg-demo-pile"><b>12</b></span></div></div>
+   <div class="rg-demo-actionbar"><div><strong>${title}</strong><small>${note}</small></div><div class="rg-demo-actions">${refilled?'':`<button type="button" data-rg-refill>${t('补到8张','Refill to 8')}</button>`}</div></div></section>
+   <section class="rg-demo-player rg-demo-own"><div class="rg-demo-wounds" data-rg-refill-own-wounds aria-label="${t('你的伤牌区仍为空','Your wound area stays empty')}"></div><div class="rg-demo-hand" data-rg-refill-own-hand aria-label="${t('你的'+s.handCounts[0]+'张手牌','Your '+s.handCounts[0]+' hand cards')}">${hand(0)}</div><header><span><b>${t('你','You')}</b>${count(0)}</span>${tableDamage(s.damage[0])}</header></section>
+  </div><div class="rg-refill-note"><p>${t('只把手牌补到8张；伤牌留在原处，不计入这8张。','Refill your hand to 8. Wounds stay in place and do not count toward those 8 cards.')}</p>${refilled?'<button type="button" data-rg-refill-replay>'+t('再看一次','Replay refill')+'</button>':''}</div>`;
  }
  const woundTransfer=()=>`<div class="rg-wound-transfer" aria-label="${t('3伤：从牌库摸3张，公开放入对手伤牌区','3 wounds: draw 3 cards from the deck into the rival’s public wound area')}">
   <div class="rg-transfer-source"><span>${t('牌库','Deck')}</span><span class="rg-card rg-back">${window.SZFlowerMark}</span></div>
@@ -140,7 +154,7 @@
   {title:t('轮到对手进攻了','The rival attacks next'),caption:t('你已进攻一次；一轮双方各攻一次。跟着牌桌点一下，看接下来谁先出牌。','You have attacked once. Each player attacks once per round. Try the table below to see who plays next.'),body:roleTable},
   {title:t('你守住了，赢1次机会','Defend to earn 1 swap'),caption:t('♥2是共用花牌，这里当作第三张4。','♥2 is the shared flower. Here it becomes a third 4.'),body:()=>duel({label:t('对手 · 进攻','Rival · Attack'),name:t('同花顺','Straight flush'),score:4,cards:['J♠','Q♠','K♠']},{label:t('你 · 防守','You · Defend'),name:t('三炸','Three of a kind'),score:5,cards:['4♠','4♥','2♥'],extras:['','','wild']})+`<div class="rg-wild-note">♥2 <span>→</span> ${data.defense.wild?window.GK.label(data.defense.wild.as):'♣4'} · ${t('花牌可代任意牌','Flower = wildcard')}</div>`+result(t('5分 − 4分 = 1次交换','5 pts − 4 pts = 1 swap'),t('防守赢的是机会，伤势不变','Defense earns opportunity. Wounds stay unchanged.'))+counts([5,2],[5,2])},
   {title:t('在牌桌上试一次换牌','Try a swap on the table'),caption:t('先选你的一张牌，再点带 ⇄ 的目标。牌会在原位换好。','Select one of your cards, then a ⇄ target. See both cards change in place.'),body:swapTable},
-  {title:t('一轮结束，各补到8张','Round over. Refill to 8.'),caption:t('双方都进攻过了，现在保留余牌、补齐手牌。','Both have attacked. Now keep your unused cards and refill.'),body:()=>`<div class="rg-refill"><div><strong>${t('你','You')}</strong>${stack(2)}<b>+6</b>${stack(8)}</div><div><strong>${t('对手','Rival')}</strong>${stack(2)}<b>+6</b>${stack(8)}</div></div><div class="rg-wound-pair"><span>${t('你','You')}${damage(0)}</span><span>${t('对手','Rival')}${damage(3)}</span></div>${result(t('下一轮，对手先攻','Next round, the rival attacks first'),t('伤牌保留，不回血。达到5伤就输小局。','Wounds remain. No healing. 5 wounds loses the game.'))}`},
+  {title:t('手牌，补到8张','Refill your hand to 8'),caption:t('双方各进攻一次后，保留剩余手牌，只补缺的数量。','After both players have attacked, keep unused hand cards and draw only what is missing.'),body:refillTable},
  ];
  function paint(){
   const isStandard=document.getElementById('version-select').value==='1.0.0';
@@ -160,10 +174,10 @@
   const list=steps(),s=list[step];
   progress.setAttribute('aria-label',t('图解步骤','Guide steps'));
   progress.innerHTML=list.map((x,i)=>`<button type="button" data-rg-step="${i}" aria-label="${i===0?t('牌区','Zones'):i}. ${x.title}" ${i===step?'aria-current="step"':''}>${i===0?t('牌区','Zones'):i}</button>`).join('');
-  navigation.innerHTML=`<button type="button" data-rg-prev ${step===0?'disabled':''}>${t('上一步','Back')}</button><span>${step===0?t('牌区','Zones'):step+' / '+(list.length-1)}</span><button type="button" data-rg-next>${step===list.length-1?t('回到牌桌','Back to game'):step===0?t('开始一轮','Start round'):t('下一步','Next')} <i aria-hidden="true">→</i></button>`;
+  navigation.innerHTML=`<button type="button" data-rg-prev ${step===0?'disabled':''}>${t('上一步','Back')}</button><span>${step===0?t('牌区','Zones'):step+' / '+(list.length-1)}</span><button type="button" data-rg-next>${step===list.length-1?(refilled?t('回到牌桌','Back to game'):t('试试补到8张','Try refilling to 8')):step===0?t('开始一轮','Start round'):t('下一步','Next')} <i aria-hidden="true">→</i></button>`;
   const ranks=[...(isStandard?[[t('五炸','Five-bomb'),7]]:[]),[t('四炸','Four-kind'),6],[t('三炸','Three-kind'),5],[t('同花顺','Straight flush'),4],[t('同花','Flush'),3],[t('顺子','Straight'),2],[t('对子','Pair'),1],[t('高牌','High card'),0]];
   const exampleScores=step===2?[4,1]:step===4?[5,4]:[];
-  const reference=step===0||step===3||step===5?'':`<div class="rg-reference-action"><button type="button" data-rg-ranks aria-expanded="${ranksOpen}" aria-controls="rg-rank-panel">${t('牌型与分数','Ranks & points')}<i aria-hidden="true">${ranksOpen?'−':'+'}</i></button></div><section class="rg-rank-panel" id="rg-rank-panel" aria-label="${t('牌型与分数','Hand ranks and points')}" ${ranksOpen?'':'hidden'}><table class="rg-score-table"><thead><tr><th scope="col">${t('牌型','Hand type')}</th><th scope="col">${t('分数','Points')}</th></tr></thead><tbody>${ranks.map(([name,n])=>`<tr${exampleScores.includes(n)?' class="is-example"':''}><th scope="row">${name}</th><td>${points(n)}</td></tr>`).join('')}</tbody></table><p>${t('同牌型比点数：进攻胜造成1伤，防守胜得1次机会；完全同点无事发生。','Same hand type: compare ranks. Attack rank win deals 1 wound; defense rank win earns 1 swap. Exact ties do nothing.')}${isStandard?t(' 三张、四炸和五炸可互相接；五炸是四张同数加花牌，7分。',' Three-card hands, four-bombs and five-bombs may answer each other. Five-bomb: four natural cards of one rank plus the flower, 7 points.'):t(' 三张和四炸可互相接。',' Three cards and four of a kind may answer each other.')}</p></section>`;
+  const reference=step===0||step===3||step===5||step===6?'':`<div class="rg-reference-action"><button type="button" data-rg-ranks aria-expanded="${ranksOpen}" aria-controls="rg-rank-panel">${t('牌型与分数','Ranks & points')}<i aria-hidden="true">${ranksOpen?'−':'+'}</i></button></div><section class="rg-rank-panel" id="rg-rank-panel" aria-label="${t('牌型与分数','Hand ranks and points')}" ${ranksOpen?'':'hidden'}><table class="rg-score-table"><thead><tr><th scope="col">${t('牌型','Hand type')}</th><th scope="col">${t('分数','Points')}</th></tr></thead><tbody>${ranks.map(([name,n])=>`<tr${exampleScores.includes(n)?' class="is-example"':''}><th scope="row">${name}</th><td>${points(n)}</td></tr>`).join('')}</tbody></table><p>${t('同牌型比点数：进攻胜造成1伤，防守胜得1次机会；完全同点无事发生。','Same hand type: compare ranks. Attack rank win deals 1 wound; defense rank win earns 1 swap. Exact ties do nothing.')}${isStandard?t(' 三张、四炸和五炸可互相接；五炸是四张同数加花牌，7分。',' Three-card hands, four-bombs and five-bombs may answer each other. Five-bomb: four natural cards of one rank plus the flower, 7 points.'):t(' 三张和四炸可互相接。',' Three cards and four of a kind may answer each other.')}</p></section>`;
   host.innerHTML=`<article class="rg-stage" aria-live="polite"><div class="rg-step-heading"><h3>${s.title}</h3><p>${s.caption}</p></div>${reference}<div class="rg-figure">${s.body()}</div></article>`;
   if(step===3)paintRoleState();
  }
@@ -177,8 +191,13 @@
    const scroll=scroller.scrollTop;host.querySelector('.rg-figure').innerHTML=swapTable();scroller.scrollTop=scroll;
    const focus=mode?'[data-rg-swap-mode="'+mode+'"]':src?'[data-rg-swap-target]':'.rg-swap-feedback';host.querySelector(focus)?.focus({preventScroll:true});return;
   }
+  if(b.hasAttribute('data-rg-refill')||b.hasAttribute('data-rg-refill-replay')||step===6&&!refilled&&b.hasAttribute('data-rg-next')){
+   refilled=!b.hasAttribute('data-rg-refill-replay');const scroll=scroller.scrollTop;host.querySelector('.rg-figure').innerHTML=refillTable();scroller.scrollTop=scroll;
+   navigation.querySelector('[data-rg-next]').innerHTML=(refilled?t('回到牌桌','Back to game'):t('试试补到8张','Try refilling to 8'))+' <i aria-hidden="true">→</i>';
+   host.querySelector(refilled?'[data-rg-refill-replay]':'[data-rg-refill]')?.focus({preventScroll:true});return;
+  }
   if(b.hasAttribute('data-rg-ranks')){ranksOpen=!ranksOpen;b.setAttribute('aria-expanded',String(ranksOpen));b.querySelector('i').textContent=ranksOpen?'−':'+';host.querySelector('#rg-rank-panel').hidden=!ranksOpen;return;}
-  if(b.dataset.rgStep!==undefined||b.hasAttribute('data-rg-prev')||b.hasAttribute('data-rg-next')){ranksOpen=false;rolesSwapped=false;swapGame=null;swapSource=null;swapResult=null;swapMode='round';}
+  if(b.dataset.rgStep!==undefined||b.hasAttribute('data-rg-prev')||b.hasAttribute('data-rg-next')){ranksOpen=false;rolesSwapped=false;refilled=false;swapGame=null;swapSource=null;swapResult=null;swapMode='round';}
   if(b.dataset.rgStep!==undefined)step=Number(b.dataset.rgStep);
   else if(b.hasAttribute('data-rg-prev'))step=Math.max(0,step-1);
   else if(b.hasAttribute('data-rg-next')){if(step===steps().length-1){document.getElementById('close-rules').click();return;}step++;}
@@ -188,7 +207,7 @@
   paint();if(!b.dataset.rgZone)scroller.scrollTop=0;dialog.querySelector(focus)?.focus({preventScroll:true});
  }
  for(const element of [host,progress,navigation])element.addEventListener('click',navigate);
- function sync(){const language=window.GKLocale?.language||'zh-CN',version=document.getElementById('version-select').value;if(language!==lastLanguage||version!==lastVersion){if(version!==lastVersion){swapGame=null;swapSource=null;swapResult=null;swapMode='round';view=version==='0.3.8'||version==='1.0.0'?'visual':'text';step=0;}lastLanguage=language;lastVersion=version;paint();}}
+ function sync(){const language=window.GKLocale?.language||'zh-CN',version=document.getElementById('version-select').value;if(language!==lastLanguage||version!==lastVersion){if(version!==lastVersion){refilled=false;swapGame=null;swapSource=null;swapResult=null;swapMode='round';view=version==='0.3.8'||version==='1.0.0'?'visual':'text';step=0;}lastLanguage=language;lastVersion=version;paint();}}
  new MutationObserver(sync).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
  new MutationObserver(()=>{if(dialog.open)sync();}).observe(dialog,{attributes:true,attributeFilter:['open']});
  document.getElementById('version-select').addEventListener('change',()=>queueMicrotask(sync));

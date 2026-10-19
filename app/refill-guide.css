@@ -1,0 +1,28 @@
+/* Step 6 uses the current table cards; keep the two originals and add only six. */
+.rg-refill-table{padding:12px 16px}
+.rg-refill-table .rg-demo-player header>span{gap:8px;align-items:center}
+.rg-refill-count{display:flex;align-items:baseline;gap:7px;color:var(--muted);font-size:12px}
+.rg-refill-count>b{font-size:12px;font-weight:500}
+.rg-refill-count>small{font-size:12px;line-height:1.4}
+.rg-refill-table[data-refill-stage=after] .rg-refill-count>b{color:var(--sz-flower-deep);font-weight:700}
+.rg-refill-table .rg-demo-hand{height:76px;box-sizing:border-box;padding:9px 0;min-width:0}
+.rg-refill-table .rg-demo-hand .card{box-sizing:border-box}
+.rg-refill-table .rg-demo-wounds{min-height:38px}
+.rg-refill-table .rg-demo-own .rg-demo-wounds{min-height:20px}
+.rg-refill-middle{padding:12px 0;margin:6px 0;border-block:1px solid var(--line)}
+.rg-refill-table .rg-demo-piles{margin-bottom:10px}
+.rg-refill-table .rg-demo-pile{width:34px;height:47px}
+.rg-refill-table .rg-demo-actionbar{grid-template-columns:minmax(0,1fr) auto;margin-top:8px}
+.rg-refill-table[data-refill-stage=after] .rg-demo-actionbar{grid-template-columns:minmax(0,1fr)}
+.rg-refill-table[data-refill-stage=after] .rg-demo-actions{display:none}
+.rg-refill-note{display:flex;gap:12px;justify-content:space-between;align-items:start;margin-top:12px}
+.rg-refill-note p{font-size:12px;line-height:1.6;margin:0;color:var(--muted)}
+.rg-refill-note button{flex:none;min-height:34px;padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:var(--paper);color:var(--ink);font-size:12px;line-height:1.4}
+.rg-refill-note button:focus-visible,.rg-refill-table button:focus-visible{outline:2px solid var(--sz-flower);outline-offset:3px}
+.rg-refill-table .rg-demo-own .rg-refill-added{animation:rg-refill-own .45s both;animation-delay:var(--deal-delay);border-color:var(--sz-flower)}
+.rg-refill-table .rg-demo-rival .rg-refill-added{animation:rg-refill-rival .45s both;animation-delay:var(--deal-delay);border-color:var(--sz-gold,var(--line))}
+@keyframes rg-refill-own{from{opacity:0;transform:translateY(-17px)}to{opacity:1;transform:none}}
+@keyframes rg-refill-rival{from{opacity:0;transform:translateY(17px)}to{opacity:1;transform:none}}
+@media(max-width:400px){.rg-refill-table{padding:10px}.rg-refill-table .rg-demo-player header{font-size:14px}.rg-refill-table .rg-demo-player header>span{gap:6px;align-items:start}.rg-refill-count{flex-direction:column;gap:2px}.rg-refill-table .rg-demo-hand{height:68px}.rg-refill-table .rg-demo-damage{gap:2px}.rg-refill-table .rg-demo-damage .wound-bract{width:6px;height:9px}.rg-refill-table .rg-demo-actionbar{grid-template-columns:minmax(0,1fr);gap:8px}.rg-refill-table .rg-demo-actions{min-width:0}.rg-refill-table .rg-demo-actions button{width:100%}.rg-refill-middle{padding:10px 0}.rg-refill-note{gap:8px}}
+@media(max-width:340px){.rg-refill-table .rg-demo-hand .card{width:34px;height:49px;padding:3px}.rg-refill-table .rg-demo-hand .card+.card{margin-left:-9px}.rg-refill-table .rg-demo-hand .rank{font-size:19px}.rg-refill-table .rg-demo-hand .suit{font-size:11px}.rg-refill-table .rg-demo-player header{gap:4px}.rg-refill-table .rg-demo-damage .wound-bract{width:5px;height:8px}.rg-refill-table .rg-demo-damage{gap:1px}}
+@media(prefers-reduced-motion:reduce){.rg-refill-table .rg-refill-added{animation:none!important}}
