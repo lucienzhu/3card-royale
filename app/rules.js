@@ -3,7 +3,7 @@
  const host=document.getElementById('rg-guide'),dialog=document.getElementById('rule-page'),scroller=dialog.querySelector('.modal-body');
  const textPanel=document.getElementById('rg-text'),switches=document.getElementById('rg-switch'),progress=document.getElementById('rg-progress'),navigation=document.getElementById('rg-navigation');
  const standard=document.createElement('article');standard.className='standard-rules';standard.hidden=true;textPanel.before(standard);
- let step=0,view='visual',zone='own-hand',whole=false,attackPhase=0,attackExample=false,rolesSwapped=false,defended=false,refilled=false,ranksOpen=false,swapMode='round',swapGame=null,swapSource=null,swapResult=null,lastLanguage='',lastVersion='',cameraRegion=null,cameraPose=null;
+ let step=0,view='visual',zone='own-hand',whole=false,attackPhase=0,attackExample=false,rolesSwapped=false,defenseReady=false,defended=false,refilled=false,ranksOpen=false,swapMode='round',swapGame=null,swapSource=null,swapResult=null,lastLanguage='',lastVersion='',cameraRegion=null,cameraPose=null;
  const mobileQuery=matchMedia('(max-width:700px), (max-height:500px) and (max-width:1000px)');
  const t=(zh,en)=>window.GKLocale?.language==='en'?en:zh,version=()=>document.getElementById('version-select').value;
  const cases=()=>window.SZFocusCases[version()],points=n=>t(n+'分',n+' '+(n===1?'pt':'pts'));
@@ -46,7 +46,7 @@
  function focusKeys(){
   if(step===0)return [zone];if(step===1)return ['own-hand','wild'];
   if(step===2)return attackPhase===0?['own-hand',...(attackExample?['own-wounds']:[]),'action']:attackPhase===1?['attack','defense','action']:['rival-wounds','piles',...(attackExample?['own-wounds']:[]),'action'];
-  if(step===3)return ['attack','defense','action'];if(step===4)return defended?['attack','defense','action']:['own-hand','defense','wild','action'];
+  if(step===3)return ['attack','defense','action'];if(step===4)return defended?['attack','defense','action']:defenseReady?['own-hand','defense','wild','action']:['attack','action'];
   if(step===5){if(!swapSource)return ['own-hand','own-wounds','action'];if(swapResult)return ['own-'+(swapResult.source.zone==='hand'?'hand':'wounds'),swapResult.option.exchange==='deck'?'piles':(swapResult.option.who===0?'own-':'rival-')+(swapResult.option.zone==='hand'?'hand':'wounds'),'action'];return ['own-hand','own-wounds','rival-hand','rival-wounds','piles','action'];}
   return ['own-hand','rival-hand','piles','action'];
  }
@@ -57,7 +57,8 @@
    if(attackPhase===1)return [t('4分 − 1分 = 3伤','4 pts − 1 pt = 3 wounds'),t('你同花顺4分，对手对子1分。进攻赢的差值变成伤害。','Your straight flush scores 4, their pair 1. An attack win deals the difference as wounds.'),t('看伤牌区','See wounds'),'wounds'];
    return [t('3伤，就是3张公开伤牌','3 wounds means 3 face-up wound cards'),t(attackExample?'6♣伤牌用后补回K♦，仍是1伤；对手再摸3张，1伤变4伤。':'从牌库摸3张放到对手伤牌区，0伤变3伤。手牌不会补在这里。',attackExample?'Replace played wound 6♣ with K♦: still 1 wound. The rival draws 3 more, going from 1 to 4.':'Draw 3 face-up cards into the rival’s wound area: 0 to 3 wounds. These are not hand cards.'),t('交换攻防','Swap roles'),'next'];}
   if(step===3)return rolesSwapped?[t('现在对手进攻，你防守','Now the rival attacks; you defend'),t('手牌没有互换，也没有补牌。双方各进攻一次，才算一轮。','Hands stay with their owners. No refill yet: each player attacks once per round.'),t('继续防守','Defend next'),'next']:[t('你已经进攻过一次','You have attacked once'),t('点和牌桌一样的「交换攻防」，看中央角色变化。','Use the same “Swap roles” action as the real table. Watch the center labels.'),t('交换攻防','Swap roles'),'roles'];
-  if(step===4)return defended?[t('5分 − 4分 = 1次换牌','5 pts − 4 pts = 1 swap'),t('你用♥2当第三张4，组成三炸5分。防守赢的是机会，伤势不变。','♥2 acts as the third 4, making three of a kind for 5 points. Defense earns swaps; damage stays.'),t('用这次机会','Use your swap'),'next']:[t('对手已出同花顺4分','The rival attacks with a 4-point straight flush'),t('本例已选4♠4♥和♥2。花牌代第三张4，点「防守」试试。','4♠4♥ and ♥2 are selected. The wild stands for a third 4. Try defending.'),t('防守','Defend'),'defend'];
+  if(step===4&&!defenseReady)return [t('对手先出牌，轮到你防守','The rival attacks. You defend next.'),t('对手用J♠Q♠K♠进攻：同花顺4分。看清对手的牌，再从你的手牌出牌防守。','The rival plays J♠ Q♠ K♠: a straight flush worth 4 points. Check their attack, then choose your defense.'),t('看我的牌','See my hand'),'prepare-defense'];
+  if(step===4)return defended?[t('5分 − 4分 = 1次换牌','5 pts − 4 pts = 1 swap'),t('你用♥2当第三张4，组成三炸5分。防守赢的是机会，伤势不变。','♥2 acts as the third 4, making three of a kind for 5 points. Defense earns swaps; damage stays.'),t('用这次机会','Use your swap'),'next']:[t('轮到你防守：出这3张','Your turn: defend with these 3 cards'),t('本例已选4♠4♥和♥2，花牌当第三张4，三炸5分。点「防守」，与对手的4分比较。','4♠ 4♥ and ♥2 are selected. The wild makes three 4s, worth 5 points. Press Defend to compare with the rival’s 4.'),t('防守','Defend'),'defend'];
   if(step===5){if(swapResult)return [...swapCopy(),t('再试一种','Try another'),'swap-reset'];if(swapSource)return [t('交出 '+window.GK.label(value(0,swapSource.zone,swapSource.index))+'，再点 ⇄ 目标','Give '+window.GK.label(value(0,swapSource.zone,swapSource.index))+'. Select a ⇄ target.'),t('对手手牌盲换，伤牌可指定；自己的另一牌区也能换。牌库是弃旧摸新。','Blind-swap a rival hand card, choose a public wound, swap your other zone, or discard and draw from the deck.'),t('重选','Choose again'),'swap-reset'];return [t('先点你的一张手牌或伤牌','Choose one of your hand cards or wounds'),t('再点亮起的⇄。每次1机会，张数不变，不回血；弃牌堆不能换。','Then select a highlighted ⇄. One opportunity, same counts, no healing. Discard is not a target.'),'',''];}
   return refilled?[t('双方手牌都到8张了','Both hands are back to 8'),t('原2张保留，各补6张。伤牌不计入8张，下一轮对手先攻。','Keep the original 2, draw 6 each. Wounds are separate. The rival attacks first next round.'),t('再看一次','Replay refill'),'refill-replay']:[t('轮末，各把手牌补到8张','Round over: refill each hand to 8'),t('本轮双方各剩2张，保留它们，再各从牌库补6张。伤牌留在原处。','Both have 2 hand cards left. Keep them and draw 6 each. Wounds stay in place.'),t('补到8张','Refill to 8'),'refill'];
  }
@@ -70,10 +71,10 @@
  }
  function slot(key,body,classes='',label=''){
   const active=focusKeys().includes(key),tag=step===0&&key!=='action'?'button':'div',click=step===0&&key!=='action'?'type="button" data-fg-zone="'+key+'" aria-pressed="'+active+'"':'';
-  return `<${tag} ${click} class="fg-slot ${classes} ${active?'is-focus':'is-context'}" data-fg-slot="${key}" ${label?'aria-label="'+label+'"':''}>${body}</${tag}>`;
+  return `<${tag} ${click} class="fg-slot ${classes} ${active?'is-focus':step===4&&defenseReady&&key==='attack'?'is-reference':'is-context'}" data-fg-slot="${key}" ${label?'aria-label="'+label+'"':''}>${body}</${tag}>`;
  }
  function hand(who,s){
-  const z=(who?'rival':'own')+'-hand',selected=step===2&&!attackPhase?(attackExample?['♣7','♣8']:['♣6','♣7','♣8']):step===4&&!defended?['♠4','♥4','♥2']:[];
+  const z=(who?'rival':'own')+'-hand',selected=step===2&&!attackPhase?(attackExample?['♣7','♣8']:['♣6','♣7','♣8']):step===4&&defenseReady&&!defended?['♠4','♥4','♥2']:[];
   let body;if(step===5&&who===0)body=s.hand[0].map((_,i)=>swapCard(0,'hand',i)).join('');else body=s.hand[who].map((c,i)=>face(c,who===1,(who===0&&selected.includes(c)?'selected fg-chosen ':'')+(step===6&&refilled&&i>=2?'fg-added':''),i-2)).join('');
   const blind=step===5&&who===1?options().find(o=>o.exchange==='opponent'):null,canBlind=!!blind;
   const row=`<span class="fg-zone-title">${t(who?'对手手牌':'你的手牌',who?'Rival hand':'Your hand')}<small>${step===6&&refilled?t('保留2 · 新补6','Kept 2 · Drew 6'):step===5&&who?t('盲换随机1张','Blind swap 1 at random'):t(who?'保密':'只有你能看',who?'Hidden':'Private')}</small></span><span class="fg-hand-cards">${body}</span>`;
@@ -85,7 +86,7 @@
  function pile(s){const deck=step===5?options().find(o=>o.exchange==='deck'):null;return slot('piles',`<span class="fg-pile-group"><span><small>${t('牌库','Deck')}</small><${deck?'button':'span'} ${deck?'type="button" data-fg-target="'+optionIndex(deck)+'"':''} class="fg-pile fg-stock ${deck?'is-target':''}" ${deck?'aria-label="'+t('牌库，弃旧摸新','Deck: discard and draw')+'"':''}><b>${s.stock}</b><i aria-hidden="true">${window.SZFlowerMark}</i>${deck?badge():''}</${deck?'button':'span'}></span><span class="fg-discard"><small>${t('弃牌','Discard')}</small><span class="fg-pile"><b>${s.discard}</b></span></span></span>`,'fg-piles',t('牌库和弃牌堆','Deck and discard'));}
  function board(){const s=state(),b=battle(),c=coach(),wild=focusKeys().includes('wild');
   const combat=(v,key)=>slot(key,`<span class="fg-zone-title">${t(key==='attack'?'进攻':'防守',key==='attack'?'Attack':'Defend')} · ${t(v.who?'对手':'你',v.who?'Rival':'You')}<small>${v.name?v.name+' '+points(v.score):t('等待出牌','Waiting')}</small></span><span class="fg-combat-cards">${v.cards.map(x=>face(x)).join('')||'<span class="fg-empty">—</span>'}</span>`,'fg-combat');
-  return `<div class="fg-board ${whole?'show-whole':''}" data-step="${step}" data-phase="${step===2?attackPhase:step===3?+rolesSwapped:step===4?+defended:step===5?(swapResult?'done':swapSource?'target':'source'):+refilled}" data-example="${step===2&&attackExample||step===5&&swapMode==='wounded'?'wounded':'round'}" aria-label="${t('同一张教学牌桌','One consistent practice table')}">
+  return `<div class="fg-board ${whole?'show-whole':''}" data-step="${step}" data-phase="${step===2?attackPhase:step===3?+rolesSwapped:step===4?(defended?2:defenseReady?1:0):step===5?(swapResult?'done':swapSource?'target':'source'):+refilled}" data-example="${step===2&&attackExample||step===5&&swapMode==='wounded'?'wounded':'round'}" aria-label="${t('同一张教学牌桌','One consistent practice table')}">
    <div class="fg-topline"><b>${t('对局','Play')}</b><span class="fg-wild ${wild?'is-focus':''}">${t('花牌','Wild')} ♥2</span><small>${step===2&&attackExample||step===5&&swapMode==='wounded'?t('已有伤牌 · 另例','Separate wounded example'):t('第1局 · 第','Game 1 · Round ')+(step===6&&refilled?'2':'1')+t('轮','')}</small></div>
    <section class="fg-player fg-rival"><header><span><b>${t('对手','Rival')}</b><small>${s.hand[1].length} ${t('张','cards')}</small></span>${woundBar(s.damage[1])}</header>${hand(1,s)}${wounds(1,s)}</section>
    <section class="fg-center"><div class="fg-battle">${combat(b[0],'attack')}${pile(s)}${combat(b[1],'defense')}</div>${slot('action',`<span class="fg-coach-copy"><strong>${c[0]}</strong><span>${c[1]}</span></span>${c[2]?'<button type="button" data-fg-action="'+c[3]+'">'+c[2]+'</button>':''}`,'fg-coach')}</section>
@@ -97,13 +98,13 @@
   [t('开局：8张手牌，0张伤牌','Start with 8 hand cards, no wounds'),t('看下方你的手牌，和上方对手的牌背。','Your hand is below; the rival’s card backs are above.')],
   [t('你进攻：手牌 → 中央 → 伤牌区','Your attack: hand → center → wounds'),t('同一张桌，跟着高亮看牌去了哪里。','Follow the highlighted areas to see where the cards go.')],
   [t('交换攻防，牌区不换位置','Swap roles, keep the table in place'),t('只换谁先进攻。余牌保留，现在还不补牌。','Only the attacker changes. Keep unused cards; no refill yet.')],
-  [t('你防守：花牌帮你赢机会','Your defense: the wild earns a swap'),t('♥2当第三张4；比较5分与4分。','♥2 stands for a third 4. Compare 5 points against 4.')],
+  [t('对手先进攻，你再出牌防守','The rival attacks, then you defend'),t('♥2当第三张4；比较5分与4分。','♥2 stands for a third 4. Compare 5 points against 4.')],
   [t('换牌：先选自己的牌，再点目标','Swap: choose your card, then a target'),t('直接在原牌区操作，换回的牌补在交出的位置。','Swap in the actual zones. The received card replaces the one you give.')],
   [t('轮末：手牌补到8张','Round end: refill your hand to 8'),t('保留余牌，只补缺的数量。伤牌不计入8张。','Keep unused cards and draw only what is missing. Wounds are separate.')],
  ];}
- function toolbar(){return `<div class="fg-toolbar"><span>${step===2&&attackExample||step===5&&swapMode==='wounded'?t('另例','Example'):t('教学牌桌','Practice table')}</span><div>${step===2&&attackPhase>0||step===3&&rolesSwapped||step===4&&defended?'<button type="button" data-fg-replay>'+t('再看一次','Replay')+'</button>':''}${step===2?'<button type="button" data-fg-example aria-pressed="'+attackExample+'">'+t(attackExample?'回本轮':'另例：伤牌也能出',attackExample?'This round':'Example: play a wound')+'</button>':''}${step===5?'<button type="button" data-fg-swap-mode aria-pressed="'+(swapMode==='wounded')+'">'+t(swapMode==='wounded'?'回本轮':'另例：你有伤牌时',swapMode==='wounded'?'This round':'Example: your wounds')+'</button>':''}<button type="button" data-fg-whole aria-pressed="${whole}">${t(whole?'聚焦讲解':'看全桌',whole?'Focus':'Full table')}</button></div><small class="fg-focus-caption">${coach()[0]}</small></div>`;}
+ function toolbar(){return `<div class="fg-toolbar"><span>${step===2&&attackExample||step===5&&swapMode==='wounded'?t('另例','Example'):t('教学牌桌','Practice table')}</span><div>${step===2&&attackPhase>0||step===3&&rolesSwapped||step===4&&(defenseReady||defended)?'<button type="button" data-fg-replay>'+t('再看一次','Replay')+'</button>':''}${step===2?'<button type="button" data-fg-example aria-pressed="'+attackExample+'">'+t(attackExample?'回本轮':'另例：伤牌也能出',attackExample?'This round':'Example: play a wound')+'</button>':''}${step===5?'<button type="button" data-fg-swap-mode aria-pressed="'+(swapMode==='wounded')+'">'+t(swapMode==='wounded'?'回本轮':'另例：你有伤牌时',swapMode==='wounded'?'This round':'Example: your wounds')+'</button>':''}<button type="button" data-fg-whole aria-pressed="${whole}">${t(whole?'聚焦讲解':'看全桌',whole?'Focus':'Full table')}</button></div><small class="fg-focus-caption">${coach()[0]}</small></div>`;}
  function hasAction(){return step===2&&attackPhase<2||step===3&&!rolesSwapped||step===4&&!defended||step===6&&!refilled;}
- function reset(){whole=false;cameraRegion=null;attackPhase=0;attackExample=false;rolesSwapped=false;defended=false;refilled=false;ranksOpen=false;swapMode='round';swapGame=null;swapSource=null;swapResult=null;}
+ function reset(){whole=false;cameraRegion=null;attackPhase=0;attackExample=false;rolesSwapped=false;defenseReady=false;defended=false;refilled=false;ranksOpen=false;swapMode='round';swapGame=null;swapSource=null;swapResult=null;}
  function paint(){
   const isStandard=document.getElementById('version-select').value==='1.0.0';
   if(isStandard)standard.innerHTML=window.SZStandardRules[window.GKLocale?.language==='en'?'en':'zh'];
@@ -140,7 +141,7 @@
  function mobileFrame(board){
   const viewport=host.querySelector('.rg-figure'),panel=host.querySelector('.rg-rank-panel'),nav=host.querySelector('.fg-camera-nav');
   const key=focusKeys().find(k=>k!=='action'&&k!=='wild')||'own-hand';
-  const automatic=step===2?(attackPhase===0?'own':attackPhase===1?'center':'rival'):step===3?'center':step===4?(defended?'center':'own'):step===5&&swapSource&&!swapResult?'rival':key.startsWith('rival')?'rival':key.startsWith('own')?'own':'center';
+  const automatic=step===2?(attackPhase===0?'own':attackPhase===1?'center':'rival'):step===3?'center':step===4?(!defenseReady||defended?'center':'own'):step===5&&swapSource&&!swapResult?'rival':key.startsWith('rival')?'rival':key.startsWith('own')?'own':'center';
   const region=cameraRegion||automatic,target=board.querySelector(region==='center'?'.fg-center':'.fg-'+region),height=viewport.clientHeight,width=viewport.clientWidth,bh=board.offsetHeight,bw=board.offsetWidth;
   if(!height||!bh)return;
   const scale=whole?Math.min(1,(height-12)/bh,(width-12)/bw):1;
@@ -168,7 +169,7 @@
  function action(key){
   cameraRegion=null;ranksOpen=false;
   if(key==='next'){go(step+1);return;}
-  if(key==='attack')attackPhase=1;else if(key==='wounds')attackPhase=2;else if(key==='roles')rolesSwapped=true;else if(key==='defend')defended=true;else if(key==='refill')refilled=true;else if(key==='refill-replay')refilled=false;else if(key==='swap-reset')resetSwap();
+  if(key==='attack')attackPhase=1;else if(key==='wounds')attackPhase=2;else if(key==='roles')rolesSwapped=true;else if(key==='prepare-defense')defenseReady=true;else if(key==='defend'&&defenseReady)defended=true;else if(key==='refill')refilled=true;else if(key==='refill-replay')refilled=false;else if(key==='swap-reset')resetSwap();
   renderFocus('[data-fg-action]');
  }
  function navigate(e){const b=e.target.closest('button');if(!b)return;
@@ -177,7 +178,7 @@
   if(b.hasAttribute('data-fg-whole')){whole=!whole;renderFocus('[data-fg-whole]');return;}
   if(b.hasAttribute('data-fg-example')){cameraRegion=null;whole=false;ranksOpen=false;attackExample=!attackExample;attackPhase=0;renderFocus('[data-fg-example]');return;}
   if(b.hasAttribute('data-fg-swap-mode')){cameraRegion=null;whole=false;ranksOpen=false;swapMode=swapMode==='round'?'wounded':'round';resetSwap();renderFocus('[data-fg-swap-mode]');return;}
-  if(b.hasAttribute('data-fg-replay')){cameraRegion=null;whole=false;ranksOpen=false;attackPhase=0;rolesSwapped=false;defended=false;renderFocus('[data-fg-action]');return;}
+  if(b.hasAttribute('data-fg-replay')){cameraRegion=null;whole=false;ranksOpen=false;attackPhase=0;rolesSwapped=false;defenseReady=false;defended=false;renderFocus('[data-fg-action]');return;}
   if(b.dataset.fgZone){zone=b.dataset.fgZone;cameraRegion=null;whole=false;renderFocus('[data-fg-zone="'+zone+'"]');return;}
   if(b.dataset.fgSource){const [z,i]=b.dataset.fgSource.split(':');swapSource={zone:z,index:Number(i)};cameraRegion=null;whole=false;renderFocus(mobileQuery.matches?'[data-fg-camera="rival"]':'[data-fg-target]');return;}
   if(b.dataset.fgTarget!==undefined){const option=swapGame.refreshOptions()[Number(b.dataset.fgTarget)];if(!option||option.source.zone!==swapSource?.zone||option.source.index!==swapSource?.index)return;const source={...swapSource},given=window.GK.label(value(0,source.zone,source.index));swapGame.refresh(option);swapResult={source,option,given,received:window.GK.label(value(0,source.zone,source.index))};cameraRegion='own';renderFocus('[data-fg-action]');return;}

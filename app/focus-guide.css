@@ -106,3 +106,5 @@ button.fg-slot{width:100%;cursor:pointer;font-family:inherit;font-size:12px;text
 .fg-board .fg-card-hit{transition:transform .18s ease}
 .fg-board .fg-hand-cards{padding-top:9px;min-height:calc(var(--fh) + 9px)}
 @media(prefers-reduced-motion:reduce){.fg-board .fg-card-hit{transition:none}}
+
+:root body .rule-page .fg-slot.is-reference{opacity:1}
