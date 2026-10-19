@@ -1,0 +1,49 @@
+/* One shell for rules and table settings. Only its content changes. */
+:root body :is(#settings-modal,#rule-page).sz-drawer{
+ --drawer-head:58px;--drawer-tabs:54px;--drawer-gutter:20px;
+ box-sizing:border-box;inset:0;margin:auto;width:min(880px,calc(100vw - 32px));max-width:none;
+ height:min(900px,calc(var(--app-height,100dvh) - 32px));max-height:calc(var(--app-height,100dvh) - 32px);
+ padding:0;overflow:hidden;border:0;border-radius:18px;background:var(--paper);color:var(--ink);
+}
+:root body :is(#settings-modal,#rule-page).sz-drawer[open]{display:flex;flex-direction:column}
+:root body .sz-drawer::backdrop{background:#111A1673;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+:root body .sz-drawer>.modal-head{
+ position:relative;box-sizing:border-box;flex:0 0 var(--drawer-head);height:var(--drawer-head);min-height:var(--drawer-head);
+ padding:8px var(--drawer-gutter);gap:8px;background:var(--paper);
+}
+:root body .sz-drawer>.modal-head h2{font-size:18px!important;white-space:nowrap;line-height:1.3!important;margin:0}
+:root body .sz-drawer .drawer-head-actions{display:flex;flex:none;align-items:center;gap:8px}
+:root body .sz-drawer .drawer-head-actions button{min-height:36px;padding:6px 8px;white-space:nowrap;font-size:12px;line-height:1.4;background:transparent;border:0;color:var(--muted)}
+:root body .sz-drawer :is(#rg-language,#menu-language){min-width:44px;color:var(--ink)}
+:root body .sz-drawer>.drawer-tabs{box-sizing:border-box;flex:0 0 var(--drawer-tabs);height:var(--drawer-tabs);min-height:var(--drawer-tabs);padding:6px var(--drawer-gutter);gap:12px;align-items:center;background:var(--paper);border-bottom:1px solid var(--line)}
+:root body .sz-drawer :is(.qb-menu-tabs,#rg-switch){gap:4px}
+:root body .sz-drawer .qb-menu-tabs{gap:16px}
+:root body .sz-drawer :is(.qb-menu-tabs,#rg-switch) button{min-height:34px;min-width:48px;padding:6px 8px;font-size:12px;line-height:1.4}
+:root body .sz-drawer>.modal-body{display:block;flex:1 1 0;min-height:0;box-sizing:border-box;padding:16px var(--drawer-gutter);overflow-y:auto;overflow-x:hidden;scrollbar-gutter:stable;scroll-behavior:auto;overflow-anchor:none;overscroll-behavior:contain}
+:root body #settings-modal.sz-drawer .qb-menu-panel{width:100%;max-width:720px;margin:0 auto;padding:0 0 24px}
+:root body #settings-modal.sz-drawer .qb-menu-panel[hidden]{display:none!important}
+:root body #settings-modal.sz-drawer .language-field{display:none}
+:root body #settings-modal.sz-drawer .menu-preferences{grid-template-columns:1fr}
+:root body #settings-modal.sz-drawer .sz-appearance{margin:0;max-width:none}
+:root body #settings-modal.sz-drawer .sz-appearance select{width:min(100%,320px);max-width:320px}
+:root body #settings-modal.sz-drawer .menu-replay-shortcut{padding:0 0 12px;margin:0 0 12px;border:0;border-bottom:1px solid var(--line)}
+:root body #settings-modal.sz-drawer .menu-replay-shortcut button{min-height:44px;padding:8px 0}
+:root body .sz-drawer .drawer-head-actions button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+@media(max-width:700px),(max-height:500px) and (max-width:1000px){
+ :root body :is(#settings-modal,#rule-page).sz-drawer{
+  --drawer-head:48px;--drawer-tabs:48px;--drawer-gutter:12px;
+  inset:var(--app-top,0px) 0 auto;margin:0;width:100%;height:var(--app-height,100dvh);max-height:var(--app-height,100dvh);
+  border-radius:0;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+ }
+ :root body .sz-drawer>.modal-head{padding-block:4px}
+ :root body .sz-drawer>.modal-head h2{font-size:16px!important}
+ :root body .sz-drawer .drawer-head-actions{gap:4px}
+ :root body .sz-drawer .drawer-head-actions button{min-height:40px}
+ :root body .sz-drawer>.drawer-tabs{padding-block:3px;gap:6px}
+ :root body .sz-drawer>.modal-body{padding:16px;scrollbar-gutter:auto}
+}
+@media(max-height:500px) and (min-width:600px) and (max-width:1000px){:root body :is(#settings-modal,#rule-page).sz-drawer{--drawer-head:42px;--drawer-tabs:44px}}
+/* The teaching camera stays clipped inside the same flexible content region. */
+:root body #rule-page.sz-drawer.fg-mobile>.modal-body{display:flex;padding:0 12px;overflow:hidden}
+:root body :is(#settings-modal,#rule-page).sz-drawer.qb-dialog-fallback{width:min(880px,calc(100vw - 32px))!important;height:min(900px,calc(var(--app-height,100dvh) - 32px))!important;max-height:calc(var(--app-height,100dvh) - 32px)!important;inset:0!important;margin:auto!important}
+@media(max-width:700px),(max-height:500px) and (max-width:1000px){:root body :is(#settings-modal,#rule-page).sz-drawer.qb-dialog-fallback{width:100%!important;height:var(--app-height,100dvh)!important;max-height:var(--app-height,100dvh)!important;inset:var(--app-top,0px) 0 auto!important;margin:0!important}}
