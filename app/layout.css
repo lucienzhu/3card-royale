@@ -1,0 +1,39 @@
+/* Shared control rhythm; empty wound racks retain the same geometry as filled racks. */
+.player-zone .wound-group:has(.empty),.player-zone .wound-group:not(:has(.empty)){display:grid;padding-block:3px}
+.wound-cards.is-empty .empty{visibility:hidden}
+.wound-group{flex:none}
+.settings-modal{--menu-control:44px;--menu-label:13px;--menu-body:13px;--menu-value:16px;width:min(600px,calc(100vw - 24px))}
+.settings-modal .modal-head{padding:14px 20px;gap:12px}
+.settings-modal .modal-head h2{font-size:20px;line-height:1.35}
+.settings-modal .modal-head button{font-size:13px;min-height:36px;padding:7px 12px;flex:none}
+.settings-modal .modal-body{padding:20px;display:flex;flex-direction:column;gap:16px}
+.settings-modal :is(.language-field,.sz-appearance,.version-field){display:grid;grid-template-columns:1fr;gap:7px;padding:0;margin:0;border:0;font-size:var(--menu-label);line-height:1.4}
+.settings-modal .menu-preferences{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.settings-modal :is(select,input){font-size:var(--menu-value);font-family:inherit;line-height:1.3;min-height:var(--menu-control);width:100%;max-width:none;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--sz-logo-paper);color:var(--ink)}
+.settings-modal :is(select,input):focus-visible{outline-color:var(--sz-flower-deep)}
+.settings-modal .modal-body>p{font-size:var(--menu-body);line-height:1.65;margin:0;color:var(--muted)}
+.settings-modal #version-note{order:0}
+.settings-modal .settings{margin:0}
+.settings-modal .seed-readout{margin:0;padding:14px 0;gap:16px}
+.settings-modal .seed-readout span{font-size:12px;line-height:1.4}
+.settings-modal .seed-readout output{font-size:15px;line-height:1.5;font-weight:600}
+.settings-modal #current-game-seed[data-missing=true]{font-family:inherit;font-size:13px;line-height:1.5;font-weight:400;color:var(--muted)}
+.settings-modal .settings .seed-help,.settings-modal .notice{font-size:12px;line-height:1.65;margin:10px 0 0;color:var(--muted)}
+.settings-modal .settings-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px 12px;margin:16px 0 0;align-items:start}
+.settings-modal .settings-body label{font-size:var(--menu-label);line-height:1.4;gap:7px}
+.settings-modal .seed-fixed-row{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end}
+.settings-modal .seed-fixed-row #seed-value-label{grid-column:auto}
+.settings-modal #reuse-seed{font-size:13px;white-space:normal}
+.settings-modal .settings-body button{font-family:inherit;font-size:14px;line-height:1.3;min-height:var(--menu-control);padding:10px 12px;align-self:start;width:auto}
+.settings-modal .menu-match-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;grid-column:1/-1;border-top:1px solid var(--line);padding-top:16px;margin-top:2px}
+.settings-modal .menu-match-actions button{width:100%;min-height:var(--menu-control);font-size:14px}
+.settings-modal :is(.menu-detail,.trial-comparison){margin:0;padding-top:14px;font-size:13px}
+.settings-modal :is(.menu-detail,.trial-comparison) summary{line-height:1.5;min-height:24px}
+.settings-modal :is(.menu-detail,.trial-comparison) p,.settings-modal .log-item{font-size:12px;line-height:1.65}
+.settings-modal .identity-note{margin-top:0;font-size:12px}
+.table .action-buttons button{font-size:12px;min-height:40px;padding:8px 12px}
+.table .actionbar h2{font-size:13px;line-height:1.4}
+@media(max-width:480px){.settings-modal .modal-head{padding:12px 16px}.settings-modal .modal-body{padding:16px;gap:14px}.settings-modal .modal-head h2{font-size:18px}.settings-modal .seed-fixed-row{grid-template-columns:1fr}.settings-modal #reuse-seed{justify-self:start;padding:0;min-height:32px;border:0;background:transparent;color:var(--sz-flower-deep);font-size:13px;text-decoration:underline;text-underline-offset:3px}.settings-modal .seed-readout{gap:12px}}
+@media(max-width:599px) and (max-height:650px){.player-zone .wound-group:has(.empty),.player-zone .wound-group:not(:has(.empty)){padding-block:0}.table .action-buttons button{min-height:32px;font-size:11px;padding:5px 8px}.table .actionbar h2{font-size:12px}}
+@media(max-width:760px) and (min-height:651px) and (max-height:720px){.app-main:not(.is-replay){--handw:56px;--handh:80px;--handstep:33px;--handrank:24px;--woundw:32px;--woundh:44px;--woundrank:14px}body[data-bloom=true] .app-header,body[data-bloom=true] .app-main{--header:98px}body[data-bloom=true] .app-header{height:98px;padding-block:4px}.app-header .brand-symbol{width:27px;height:27px}.app-header .brand h1{font-size:19px}.header-controls button{min-height:30px;padding-block:4px}}
+@media(max-height:480px) and (min-width:600px){.player-zone .wound-group:has(.empty),.player-zone .wound-group:not(:has(.empty)){display:flex;flex-direction:column;padding:0}.table .action-buttons button{min-height:28px;font-size:10px;padding:4px 7px}.table .actionbar h2{font-size:11px}}

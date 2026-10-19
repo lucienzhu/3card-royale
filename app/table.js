@@ -245,7 +245,7 @@ const FOUR_STUDY={
 ;
 'use strict';
 const $=id=>document.getElementById(id);
-const UI_REVISION='sz-bloom1';
+const UI_REVISION='sz-layout1';
 const VARIANT_TEXT={
  '1.0.0':{name:'1.0 · 标准规则',note:'共用花牌，五伤败北。通常出三张，四炸6分，五炸7分；五炸须四张自然同点牌加花牌。赢家升级后的等级决定下局花牌。',tie:'同花样比点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无效果。',ranking:'五炸7 > 四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。'},
  '0.3.8':{name:'0.3.8 · 共用花牌',note:'首局双方共用♥2作为花牌。此后小局赢家升级后的等级决定下一小局双方共用的花牌；一局内不变。花牌即逢人配／会子／百搭牌。攻防、血牌交换与升级其余规则沿用0.3.7。',tie:'同牌型比较点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无事发生。',ranking:'四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。四炸也可用花牌。'},
@@ -598,7 +598,7 @@ function seedPreference(){try{const p=JSON.parse(localStorage.getItem(SEED_PREF_
 function syncSeedMode(){const fixed=$('seed-mode').value==='fixed';$('seed-value-label').hidden=!fixed;$('seed-input').disabled=!fixed;$('seed-input').required=fixed;}
 function applySeedPreference(){const p=seedPreference();$('seed-mode').value=p.mode;$('first-input').value=p.first;$('seed-input').value=p.seed===null?'':String(p.seed);syncSeedMode();}
 function saveSeedPreference(){const n=$('seed-input').value.trim()===''?null:Number($('seed-input').value);try{localStorage.setItem(SEED_PREF_KEY,JSON.stringify({mode:$('seed-mode').value,seed:Number.isInteger(n)&&n>=0&&n<=4294967295?n:null,first:$('first-input').value}));}catch(_){}}
-function paintSeedReadout(){$('current-match-seed').textContent=String(game.seed);$('current-game-seed').textContent=Number.isInteger(game.gameSeed)?String(game.gameSeed):GK.sharedFlower(variant)?'旧存档未记录，下局可见':'历史版本未记录';}
+function paintSeedReadout(){$('current-match-seed').textContent=String(game.seed);$('current-game-seed').dataset.missing=String(game.gameSeed==null);$('current-game-seed').textContent=Number.isInteger(game.gameSeed)?String(game.gameSeed):GK.sharedFlower(variant)?'旧存档未记录，下局可见':'历史版本未记录';}
 function newMatch(){const input=$('seed-input'),fixed=$('seed-mode').value==='fixed';if(fixed&&!input.reportValidity())return;stopAI();stopReplay();saveSeedPreference();const seed=fixed?Number(input.value):randomSeed(),first=$('first-input').value;game=new GK.Game(seed,{version:variant,first:first==='random'?undefined:Number(first)});window.gkGame=game;selected=[];flipMode=null;flipIndices=[];refreshTarget=null;error='';$('settings-modal').close();persist();mode='play';render();driveAI();}
 function resetReplay(){cursor=0;$('replay-range').max=ROLLOUT.events.length-1;$('replay-jump').replaceChildren();for(const e of ROLLOUT.events)if(e.kind==='deal'||e.kind==='round'||e.kind==='end'){const o=document.createElement('option');o.value=e.index;o.textContent=e.kind==='end'?'第 '+e.game+' 局结算':'第 '+e.game+' 局 / 第 '+e.round+' 轮';$('replay-jump').append(o);}$('replay-note').textContent=variant+' · 固定种子 '+ROLLOUT.seed+' · '+ROLLOUT.results.length+' 局 / '+ROLLOUT.totalRounds+' 轮。双方手牌公开用于复盘，扣牌仍隐藏。策略用于检查执行，不代表最优打法。';}
 $('version-select').addEventListener('change',e=>{stopAI();stopReplay();persist();variant=e.target.value;ROLLOUT=ROLLOUTS[variant];game=loadGame();window.gkGame=game;selected=[];flipMode=null;flipIndices=[];refreshTarget=null;error='';resetReplay();persist();const url=new URL(location.href);url.searchParams.set('version',variant);history.replaceState(null,'',url);render();if(mode==='play')driveAI();});
