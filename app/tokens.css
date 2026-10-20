@@ -1,0 +1,126 @@
+/* Design system v2 (2026-10-21): 红花、白鹭、黑盘；金是花牌和对手的花；绿板只在品牌上，不进牌桌。Loaded last; it supersedes every earlier palette layer. Rules, seeds and saves are untouched. */
+@font-face{font-family:"SZ Rank";src:url("../assets/fonts/archivo-rank.woff2") format("woff2");font-weight:800;font-style:normal;font-display:swap}
+:root,[data-sz-theme=light]{color-scheme:light;--paper:#F6F7F6;--panel:#FFFEFA;--table:#ECEEED;--soft:#ECEEED;--ink:#2A3331;--muted:#606A66;--line:#D6DAD7;--red:#C5416B;--red-text:#C5416B;--red-tint:#FAE4EB;--red-deep:#962C4F;--leaf:#16765F;--leaf-text:#16765F;--leaf-tint:#E4F1EC;--gold-base:#ECCE80;--gold-edge:#A17C35;--gold-center:#F2CD5D;--accent:var(--red);--flower:var(--red);--gold:#A17C35;--gold-text:#8A6520;--gold-tint:#F8EFD4;--mint:var(--gold);--card-face:#FFFEFA;--card-ink:#2A3331;--card-red:#C5416B;--card-edge:#D6DAD7;--back:var(--gold-base);--back-edge:var(--gold-edge);--back-ink:#C5416B;--selected:#FAE4EB;--primary-ink:#FFFEFA;--shadow:0 2px 3px #15372E14,0 6px 12px #15372E08;--flat-shadow:0 1px 1.5px #15372E1F;--lift-shadow:0 1px 2px #15372E1F,0 6px 14px #15372E33;--lift-shadow-strong:0 2px 3px #15372E26,0 10px 22px #15372E40;--sz-paper:var(--paper);--sz-ink:var(--ink);--sz-sea:var(--ink);--sz-table:var(--table);--sz-flower:var(--red);--sz-flower-deep:var(--red);--sz-mint:var(--gold);--sz-gold:var(--gold);--cream:var(--paper);--sz-brand-red:#C5416B;--sz-brand-gold:#F2CD5D;--sz-logo-petal:#C5416B;--sz-logo-center:#F2CD5D;--sz-logo-paper:var(--paper);--sz-logo-edge:#A17C35;--r-sm:4px;--r:8px;--r-lg:16px;--rank-font:"SZ Rank",Arial,Helvetica,sans-serif}
+[data-sz-theme=dark]{color-scheme:dark;--paper:#121417;--panel:#24282D;--table:#1A1D21;--soft:#24282D;--ink:#F4F7F5;--muted:#A8AEB5;--line:#393F46;--red:#C5416B;--red-text:#E38BA6;--red-tint:#3C2A35;--red-deep:#E38BA6;--leaf:#2E8F78;--leaf-text:#7FC9B4;--leaf-tint:#1F3A33;--accent:var(--red);--flower:var(--red);--gold:#E4C46A;--gold-text:#E4C46A;--gold-tint:#3A3324;--mint:var(--gold);--back:var(--gold-base);--back-edge:var(--gold-edge);--back-ink:#C5416B;--selected:#FAE4EB;--primary-ink:#FFFEFA;--shadow:0 2px 3px #00000040,0 6px 12px #00000030;--flat-shadow:0 1px 2px #00000059;--lift-shadow:0 1px 2px #00000059,0 8px 18px #00000080;--lift-shadow-strong:0 2px 3px #00000066,0 12px 26px #00000099;--sz-logo-paper:#24282D;--sz-logo-edge:#A17C35}
+html,:root body,[data-sz-theme=dark] body{background:var(--paper);color:var(--ink)}
+/* surfaces: no glow, three radii */
+:root body .table,[data-sz-theme=dark] .table,:root[data-sz-theme=dark] body .table{background:var(--table);box-shadow:none;border-radius:var(--r-lg)}
+:root body .modal,[data-sz-theme=dark] .modal{border-radius:var(--r-lg)}
+:root body .table .actionbar,[data-sz-theme=dark] .table .actionbar{background:var(--paper);border-radius:var(--r)}
+:root body #hr-panel,[data-sz-theme=dark] #hr-panel{border-radius:var(--r-lg);background:var(--panel);border-color:var(--line)}
+:root body .settings-modal :is(select,input),[data-sz-theme=dark] .settings-modal :is(select,input){border-radius:var(--r);background:var(--panel);border-color:var(--line);color:var(--ink)}
+[data-sz-theme=dark] .table #hr-toggle{background:var(--panel)}
+[data-sz-theme=dark] .table .shared-flower{background:transparent}
+/* buttons: filled red, or ink text with an underline */
+:root body .primary,:root body button.primary,[data-sz-theme=dark] button.primary,:root body .table .action-buttons .primary,[data-sz-theme=dark] .table .action-buttons .primary,:root body .result-actions .primary,:root body .rule-page #rg-navigation .primary,:root body .rule-page #rg-navigation [data-rg-next],:root body .rule-page .rg-next{background:var(--red)!important;border-color:transparent;color:#FFFEFA!important;box-shadow:none;border-radius:var(--r)}
+:root body .primary:active,:root body .table .action-buttons .primary:active{background:var(--red-deep)!important}
+:root body .table .action-buttons button:not(.primary),[data-sz-theme=dark] .table .action-buttons button:not(.primary){color:var(--ink);background:transparent;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:4px}
+:root body button:disabled{opacity:.4}
+:root body .table .tabs button:after,:root body.table-identity-layout .app-header .tabs button[aria-selected=true]::after,.qb-menu-tabs button[aria-selected=true]:after{background:var(--red)}
+/* small red text on dark surfaces uses the lighter red */
+:root body .table .formula,:root body .table .score-number,:root body #hr-panel tbody td,:root body .table .shared-flower,:root body .goal-own,:root body .rule-page #rg-progress button[aria-current=step]{color:var(--red-text)}
+:root body .goal-opp{color:var(--gold-text)}
+/* hand-type badge */
+:root body .table .preview-score{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:999px;background:var(--red-tint);color:var(--red-text);font-size:12px;font-weight:650;line-height:1.6;width:max-content;max-width:100%}
+:root body .table .preview-score .score-number{font-size:12px;color:inherit}
+:root body .table .preview-score small{color:inherit;font-weight:500;font-size:11px}
+/* cards: one component, --rk sets the index; suits are shapes */
+/* depth: cards on the table lie flat at one size (combat and wounds); held cards are bigger and cast a shadow */
+:root body .wound-cards{min-height:calc(var(--combath) + 6px)}
+:root body .wound-cards .card,[data-sz-theme=dark] .wound-cards .card{--rk:var(--combatrank);width:var(--combatw);height:var(--combath);padding:4px;border-radius:6px}
+:root body .wound-cards.many-wounds .card+.card{margin-left:calc(-.5 * var(--combatw))}
+:root body .opponent-wound-group .wound-cards.many-wounds .card+.card{margin-left:calc(-.6 * var(--combatw))}
+@media(max-width:599px) and (max-height:650px){:root body .wound-group{--combatw:28px;--combath:40px;--combatrank:16px}}
+@media(max-width:380px) and (min-height:721px){:root body .wound-group{--combatw:32px;--combath:46px;--combatrank:17px}}
+@media(max-height:480px) and (min-width:480px){:root body .wound-group{--combatw:25px;--combath:36px;--combatrank:14px}}
+/* wound track beside the name: count in the rank face, five bracts, filled in the identity colour */
+:root body .table .damage,[data-sz-theme=dark] .table .damage{display:inline-flex;align-items:center;gap:3px;margin-left:10px;font-size:12px;line-height:1;color:var(--muted)}
+:root body .table .damage b{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+:root body .table .damage .wound-bract{width:12px;height:15px;flex:none;opacity:1}
+:root body .table .damage .wound-bract:not(.filled) path{fill:color-mix(in srgb,var(--ink) 22%,transparent)}
+:root body .card,[data-sz-theme=dark] .card{--rk:var(--handrank);background:var(--card-face);border-color:var(--card-edge);color:var(--card-ink);border-radius:var(--r);box-shadow:var(--flat-shadow);padding:5px}
+:root body .hand-cards .card,:root body .hidden-hand .card,[data-sz-theme=dark] .hand-cards .card,[data-sz-theme=dark] .hidden-hand .card{box-shadow:var(--lift-shadow)}
+:root body .hand-cards .card.selected,[data-sz-theme=dark] .hand-cards .card.selected{box-shadow:var(--lift-shadow-strong)}
+:root body .wound-cards .card{--rk:var(--woundrank);padding:3px;border-radius:6px}
+:root body .combat-cards .card{--rk:var(--combatrank);padding:4px;border-radius:6px}
+:root body .card.red,[data-sz-theme=dark] .card.red{color:var(--card-red)}
+:root body .card .rank{display:block;width:var(--rk);text-align:center;font-family:var(--rank-font);font-weight:800;font-size:var(--rk);line-height:1;letter-spacing:-.05em;font-variant-numeric:lining-nums tabular-nums}
+:root body .card .rank.ten{letter-spacing:-.12em;transform:scaleX(.82);transform-origin:50% 50%}
+:root body .card .suit{display:block;width:calc(var(--rk) * .66);height:calc(var(--rk) * .66);margin:calc(var(--rk) * .1) 0 0 calc(var(--rk) * .17);font-size:0;line-height:0;color:inherit}
+:root body .card .center{position:absolute;right:6px;bottom:6px;width:45%;height:45%;font-size:0;line-height:0;opacity:.16;color:inherit}
+:root body .card .suit svg,:root body .card .center svg{display:block;width:100%;height:100%;fill:currentColor;overflow:visible}
+:root body .card.selected,[data-sz-theme=dark] .card.selected{background:var(--selected);outline:2px solid var(--red);outline-offset:-2px;border-color:var(--red)}
+/* the flower card is the gold logo card */
+:root body .card:has(.wild),[data-sz-theme=dark] .card:has(.wild),:root body .card:has(.wild).selected,[data-sz-theme=dark] .card:has(.wild).selected{background:var(--gold-base);border-color:var(--gold-edge);color:#C5416B;--paper:var(--gold-base);--card-face:var(--gold-base)}
+:root body .card:has(.wild) .center{display:none}
+/* the flower on the 花牌 is a watermark like the suit on every other card: same corner, same translucent red */
+:root body .card .wild{display:block;position:absolute;left:auto;right:4px;bottom:4px;width:55%;aspect-ratio:1/1;height:auto;font-size:0;line-height:0;color:inherit;background:none;pointer-events:none;opacity:.2;--sz-logo-petal:currentColor;--sz-logo-center:currentColor}
+:root body .card .wild svg{display:block;width:100%;height:100%;overflow:visible}
+/* backs: the logo card itself in both themes (gold ground, gold edge, the full red flower with gold centres); the 花牌 face shares the ground but carries an index */
+:root body .card.back,[data-sz-theme=dark] .card.back,[data-sz-theme=dark] .table .card.back{background:var(--back);border-color:var(--back-edge);color:var(--back-ink);box-shadow:none}
+:root body .card.back::after{content:"";position:absolute;inset:4px;border:1px solid color-mix(in srgb,var(--back-edge) 45%,transparent);border-radius:4px;pointer-events:none}
+:root body .card.back.mini::after,:root body .hidden-hand .card.back::after{inset:3px;border-radius:3px}
+:root body .card.back .motif,:root body .back{--sz-logo-petal:var(--red);--sz-logo-center:var(--gold-center)}
+:root body .card.back .motif svg,:root body .back svg{opacity:1;color:var(--red)}
+:root body .back{background:var(--back);color:var(--back-ink)}
+/* piles */
+:root body .table .pile-stack,[data-sz-theme=dark] .table .pile-stack{background:var(--back);border-color:var(--back-edge);color:var(--back-ink);border-radius:var(--r)}
+:root body .table .pile-stack:before,:root body .table .pile-stack:after{background:var(--back);border-color:var(--back-edge)}
+:root body .table .discard-pile .pile-stack{background:transparent;border-color:var(--line);color:var(--muted)}
+:root body .table .discard-pile .pile-stack:before,:root body .table .discard-pile .pile-stack:after{background:var(--table);border-color:var(--line)}
+:root body .table .stock-pile.is-low .pile-stack,[data-sz-theme=dark] .table .stock-pile.is-low .pile-stack{background:var(--back);border-color:var(--red);color:var(--red);box-shadow:0 0 0 1px var(--red)}
+/* identities: you are the red flower, the rival is the gold flower; wounds are bracts */
+:root body.table-identity-layout .player-flower-red path[fill="#DEB04A"]{fill:var(--gold-center)}
+:root body .table .wound-bract.filled,:root body .table .wound-bract.filled path{fill:var(--red);opacity:1}
+:root body .table #opp-damage .wound-bract.filled,:root body .table #opp-damage .wound-bract.filled path{fill:var(--gold)}
+:root body .race-track{--own-race:var(--red);--opp-race:var(--gold)}
+/* the bloom belongs to the game: always the red flower with gold centres */
+:root body #bloom-result .fc-gold-flower path[fill="#D83B74"]{fill:var(--red)}
+:root body #bloom-result .fc-gold-flower path[fill="#DEB04A"]{fill:var(--gold-center)}
+/* swap targets: one mark per zone, the icon on the zone corner; the old per-card arrows are gone */
+:root body .sz-swap-icon,:root body .sz-swap-button{display:none}
+:root body .card.swap-destination,:root body .card.has-swap-icon{outline:0}
+:root body .card.swap-destination:focus-visible{outline:2px solid var(--red);outline-offset:-2px}
+:root body .cards:has(.card.swap-destination),:root body .sz-blind-swap,:root body #deck-count.exchange-ready{position:relative;outline:1.5px dashed var(--red);outline-offset:4px;border-radius:10px}
+:root body .cards:has(.card.swap-destination)::after,:root body .sz-blind-swap::after,:root body #deck-count.exchange-ready::after{content:"";position:absolute;top:-10px;right:-6px;width:22px;height:22px;border-radius:50%;background:var(--red) url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20stroke%3D%22%23FFFEFA%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M3%205.5h8.2l-2.2-2.2M13%2010.5H4.8l2.2%202.2%22%2F%3E%3C%2Fsvg%3E") center/14px no-repeat;box-shadow:0 1px 3px #0004;z-index:3;pointer-events:none}
+:root body .blind-target-selected{outline-color:var(--red)}
+/* sizes: bigger ranks on mid-size desktops; flat hands where there is room */
+@media(min-width:761px) and (min-height:651px) and (max-height:760px){:root body .app-main:not(.is-replay){--handrank:28px}}
+@media(min-width:900px){:root body .app-main:not(.is-replay){--handstep:calc(var(--handw) + 6px)}}
+/* settings: actions first, seeds under Advanced */
+:root body .settings-modal .menu-match-actions{display:grid;grid-template-columns:1fr;gap:8px;border:0;padding:0;margin:0 0 4px}
+:root body .settings-modal .menu-match-actions button{width:100%;min-height:46px;font-size:14px;border-radius:var(--r)}
+:root body .settings-modal .menu-match-actions button:not(.primary){background:transparent;border:0;color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:4px}
+:root body .settings-modal .qb-advanced{border-top:1px solid var(--line);margin-top:8px}
+:root body .settings-modal .qb-advanced summary{font-size:14px;min-height:48px;padding:14px 0;cursor:pointer}
+:root body .settings-modal .qb-advanced .seed-readout{border:0;padding:4px 0 12px;margin:0}
+:root body .settings-modal .qb-advanced .seed-fixed-row{padding-bottom:12px}
+/* result sheet: a bottom sheet with one sentence, the new level, both wounds, two actions */
+:root body .result-modal{width:min(480px,100vw);max-width:none}
+:root body .result-sheet,[data-sz-theme=dark] .result-sheet{background:var(--paper);border:0;border-radius:var(--r-lg);box-shadow:0 24px 80px #101A1840}
+:root body .result-head{padding:12px 20px 0;font:650 11px/1.4 Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--red-text)}
+:root body .result-head button{color:var(--muted);font-size:22px}
+:root body .result-content h2{font-size:24px;letter-spacing:-.02em;line-height:1.3;margin:4px 0 2px}
+:root body #result-subtitle{font-size:14px;color:var(--muted)}
+:root body #result-modal .result-emblem{display:none}
+:root body #result-modal .result-upgrade{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600}
+:root body #result-modal #result-to{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-sm);padding:2px 8px;font-family:var(--rank-font);font-weight:800;color:var(--ink)}
+:root body #result-modal #result-from{background:transparent;color:var(--muted);padding:0}
+:root body #result-modal .result-damage{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+:root body #result-modal .result-damage>div{border-radius:var(--r);background:color-mix(in srgb,var(--ink) 6%,transparent);color:var(--muted);padding:10px 12px}
+:root body #result-modal .result-damage .result-winner{background:var(--gold-tint);color:var(--gold-text)}
+:root body #result-modal #result-own.result-winner{background:var(--red-tint);color:var(--red-text)}
+:root body #result-modal .result-damage strong{font-family:var(--rank-font);font-size:20px;color:inherit}
+:root body #result-modal .result-actions{display:grid;gap:6px;background:var(--paper);border:0;padding:12px 20px 20px}
+:root body #result-modal .result-actions button{width:100%;min-height:46px;border-radius:var(--r);font-size:14px;font-weight:600}
+:root body #result-modal .result-actions button:not(.primary){background:transparent;border:0;color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:4px}
+@media(max-width:760px){:root body .result-modal{position:fixed;inset:auto 0 0;margin:0;width:100%}:root body .result-sheet{border-radius:var(--r-lg) var(--r-lg) 0 0;max-height:calc(100dvh - 48px)}}
+/* hand reference: name line, example cards on their own line, score on the right */
+/* hand reference: the same card component at a reading size; the 五炸 example shows this game's 花牌 */
+:root body #hr-panel .hr-example{display:flex;gap:6px;align-items:center;margin-top:8px}
+:root body #hr-panel .hr-example .card{--rk:20px;flex:none;width:46px;height:64px;padding:5px;border-radius:var(--r);margin:0}
+:root body .settings-modal .menu-match-actions .primary{order:-1}
+/* stock pile carries the same flower as the backs */
+:root body .table .pile-back{color:var(--red);opacity:1;--sz-logo-petal:var(--red);--sz-logo-center:var(--gold-center)}
+:root body .table .pile-back svg path,:root body .table .pile-back svg g{fill:var(--red)}
+:root body .table .pile-back svg path[fill^="var(--sz-logo-center"]{fill:var(--gold-center)}

@@ -6,7 +6,7 @@
  const english=['High card','Pair','Straight','Flush','Three of a kind','Straight flush','Four of a kind','Five of a kind'];
  let open=false,lastLanguage="";
  const t=(zh,en)=>window.GKLocale?.language==='en'?en:zh;
- const example=k=>'<span class="hr-example" role="img" aria-label="'+examples[k].map(GK.label).join(' ')+'">'+examples[k].map(id=>{const suit=GK.SUITS[GK.suit(id)];return '<span class="hr-card '+(suit==='♥'||suit==='♦'?'is-red':'')+'" aria-hidden="true"><b>'+GK.rankLabel(GK.rank(id))+'</b><i>'+suit+'</i></span>';}).join('')+'</span>';
+ const example=k=>{const ids=examples[k],lv=window.gkGame?.flowerLevel;return '<span class="hr-example" role="img" aria-label="'+ids.map(GK.label).join(' ')+'">'+ids.map((id,i)=>{const el=window.card(id,{level:k===7&&i===ids.length-1?lv:0});el.setAttribute('aria-hidden','true');el.removeAttribute('aria-label');return el.outerHTML;}).join('')+'</span>';};
  function mount(){(document.querySelector('.app-header .tabs')||topline).append(host);host.classList.remove('hr-side');paint();}
  function paint(){
   lastLanguage=window.GKLocale?.language||"zh-CN";

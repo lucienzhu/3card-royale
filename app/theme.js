@@ -11,13 +11,13 @@
   root.dataset.szTheme=mode;root.dataset.szThemePreference=preference;document.querySelector('meta[name="theme-color"]')?.setAttribute('content',palette.paper);
   for(const field of document.querySelectorAll('[data-sz-theme-select]')){
    field.value=preference;field.setAttribute('aria-label',t('外观','Appearance'));
-   for(const option of field.options)option.textContent=option.value==='system'?t('跟随系统','System'):option.value==='light'?t('浅色 · 晴日','Light · Day'):t('暗色 · 晚风','Dark · Dusk');
+   for(const option of field.options)option.textContent=option.value==='system'?t('跟随系统','System'):option.value==='light'?t('浅色 · 白鹭','Light · Egret'):t('深色 · 黑盘','Dark · Board');
   }
   for(const e of document.querySelectorAll('[data-sz-theme-label]'))e.textContent=t('外观','Appearance');
   for(const e of document.querySelectorAll('[data-sz-theme-choice]'))e.setAttribute('aria-pressed',String(e.dataset.szThemeChoice===mode));
   const swatches=document.querySelector('.swatches[data-sz-palette]');
-  if(swatches){const labels=mode==='light'?['瓷白','墨色','三角梅花红','板绿','花心金']:['夜蓝','柔白','三角梅花红','板绿','花心金'];swatches.innerHTML=['paper','ink','flower','mint','sun'].map((k,i)=>`<div class="swatch"><i style="background:${k==='flower'?'#C5416B':k==='sun'?'#C5A365':k==='mint'?'#16765F':palette[k]}"></i><b>${labels[i]}</b><small>${k==='flower'?'#C5416B':k==='sun'?'#C5A365':k==='mint'?'#16765F':palette[k]}</small></div>`).join('');}
-  const status=document.querySelector('[data-sz-theme-status]');if(status)status.textContent=mode==='light'?'晴日 · 瓷白与板绿，花红做识别。':'晚风 · 夜蓝与柔光，花红做识别。';
+  if(swatches){const labels=mode==='light'?['白鹭','墨','红花','对手金','牌背']:['黑盘','白鹭','红花','对手金','牌背'];const vals=[palette.paper,palette.ink,palette.red,palette.gold,tokens.card.back];swatches.innerHTML=labels.map((l,i)=>`<div class="swatch"><i style="background:${vals[i]}"></i><b>${l}</b><small>${vals[i]}</small></div>`).join('');}
+  const status=document.querySelector('[data-sz-theme-status]');if(status)status.textContent=mode==='light'?'白鹭 · 白底；你是红花，对手是金花。':'黑盘 · 黑底；你是红花，对手是金花。';
  }
  function choose(value){if(!['system','light','dark'].includes(value))return;preference=value;try{localStorage.setItem(key,value);}catch{}render();}
  document.addEventListener('change',e=>{if(e.target.matches('[data-sz-theme-select]'))choose(e.target.value);});
