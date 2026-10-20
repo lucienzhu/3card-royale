@@ -2,7 +2,7 @@
  * No opponent hand identities, stock order, RNG or game mutations enter here. */
 (()=>{'use strict';
  const zones=['own-hand','own-table','opp-hand','opp-table','attack-cards','defend-cards'];
- const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+ const motion=window.SZMotion;
  let active=null,held=false,lastRun=null;
  const rect=el=>{const r=el?.getBoundingClientRect();return r&&r.width&&r.height?{x:r.x,y:r.y,w:r.width,h:r.height}:null;};
  const cssProperties=['background','color','border','border-radius','padding','font-family','font-size','font-weight','line-height','letter-spacing','opacity','display','position','left','right','top','bottom','width','height'];
@@ -72,14 +72,14 @@
  function cancel(){if(active)active.finish('cancelled');else release();}
  function play(before,g){
   if(active)cancel();
-  if(!before||reduced.matches||!Element.prototype.animate||document.hidden){release();lastRun={status:'instant',flights:[]};return Promise.resolve();}
+  if(!before||!motion.enabled()||document.hidden){release();lastRun={status:'instant',reason:document.hidden?'hidden':!before?'no-source':'preference',flights:[]};return Promise.resolve();}
   const after=capture(g),moves=plan(before,after);lastRun={status:'playing',flights:moves.flights.map(f=>({kind:f.kind,from:f.source.zone,to:f.dest.zone,delay:f.delay,duration:f.duration,back:f.back})),hiddenHandIdentities:false};
   if(!moves.flights.length&&!moves.shifts.length){release();lastRun.status='unchanged';return Promise.resolve();}
   hold();return new Promise(resolve=>{
    const layer=document.createElement('div');layer.className='sz-card-flight-layer';layer.setAttribute('aria-hidden','true');document.body.append(layer);
    const animations=[],arrivals=new Set();let done=false,timer;
    const finish=status=>{if(done)return;done=true;clearTimeout(timer);for(const a of animations)a.cancel();for(const node of arrivals)node.classList.remove('sz-motion-arrival');layer.remove();active=null;release();lastRun.status=status;resolve();};active={finish};
-   const animate=(el,frames,options)=>{const a=el.animate(frames,options);animations.push(a);return a;};
+   const animate=(el,frames,options)=>{const a=motion.animate(el,frames,options);animations.push(a);return a;};
    try{
     for(const f of moves.flights){
      const a=f.source.rect,b=f.dest.rect,visual=f.dest.picture||f.source.picture;if(!visual)continue;
@@ -101,8 +101,8 @@
  }
  function pictureClone(p){const el=p.cloneNode(true);el.style.opacity='1';el.style.visibility='visible';el.style.transform='none';return el;}
  // Navigation and viewport changes settle immediately into the true game state.
- window.addEventListener('resize',cancel,{passive:true});window.visualViewport?.addEventListener('resize',cancel,{passive:true});document.addEventListener('visibilitychange',()=>{if(document.hidden)cancel();});
- if(reduced.addEventListener)reduced.addEventListener('change',cancel);
+ motion.watchViewport(cancel);document.addEventListener('visibilitychange',()=>{if(document.hidden)cancel();});
+ window.addEventListener('sz-motion-preference',()=>{if(!motion.enabled())cancel();});
  for(const type of ['click','keydown'])document.addEventListener(type,e=>{if(held&&e.target.closest?.('#play-area')&&(type==='click'||['Enter',' '].includes(e.key))){e.preventDefault();e.stopImmediatePropagation();}},true);
  window.SZCardMotion={capture,hold,play,cancel,get busy(){return held;},get lastRun(){return lastRun;}};
 })();

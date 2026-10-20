@@ -245,7 +245,7 @@ const FOUR_STUDY={
 ;
 'use strict';
 const $=id=>document.getElementById(id);
-const UI_REVISION='sz-guide-motion1';
+const UI_REVISION='sz-mobile-motion1';
 const VARIANT_TEXT={
  '1.0.0':{name:'1.0 · 标准规则',note:'共用花牌，五伤败北。通常出三张，四炸6分，五炸7分；五炸须四张自然同点牌加花牌。赢家升级后的等级决定下局花牌。',tie:'同花样比点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无效果。',ranking:'五炸7 > 四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。'},
  '0.3.8':{name:'0.3.8 · 共用花牌',note:'首局双方共用♥2作为花牌。此后小局赢家升级后的等级决定下一小局双方共用的花牌；一局内不变。花牌即逢人配／会子／百搭牌。攻防、血牌交换与升级其余规则沿用0.3.7。',tie:'同牌型比较点数；进攻点数胜伤1，防守点数胜交换1次；完全同点无事发生。',ranking:'四炸6 > 三炸5 > 同花顺4 > 同花3 > 顺子2 > 对子1 > 高牌0。四炸也可用花牌。'},
@@ -259,8 +259,7 @@ const VARIANT_TEXT={
  '0.3.1a':{name:'0.3.1a · 试验 a',note:'同分直接让防守方新增 1 张扣牌；同分不再翻牌。',tie:'防守方新增 1 张扣牌，无翻牌效果。',ranking:'同牌型不比大小。'},
  '0.3.1b':{name:'0.3.1b · 试验 b',note:'同牌型比点数：进攻胜造成 1 伤，防守胜获得 1 张翻牌机会。完全相同仍由进攻方选机会。',tie:'比较同牌型点数；进攻胜造成 1 伤，防守胜获得 1 张翻牌机会，完全相同由进攻方选 1 张机会。',ranking:'同花顺、顺子比最高点（A23 为 3 高，QKA 为 A 高）；炸弹比点数；对子先比对子、再比单张；同花和高牌按从大到小逐张比，花色不分大小。'}
 };
-function savedVariant(){try{const v=localStorage.getItem('gk031_variant');return ROLLOUTS[v]&&localStorage.getItem('gk033_compact_play_'+v)?v:'1.0.0';}catch(_){return '1.0.0';}}
-let variant=new URLSearchParams(location.search).get('version')||savedVariant();
+let variant=new URLSearchParams(location.search).get('version')||'1.0.0';
 if(!ROLLOUTS[variant])variant='1.0.0';
 let ROLLOUT=ROLLOUTS[variant];
 const storageKey=()=> 'gk033_compact_play_'+variant;
@@ -286,7 +285,7 @@ function card(id,{back=false,pending=false,selected=false,selectable=false,mini=
 function setEmpty(container,text){const el=document.createElement('div');el.className='empty';el.textContent=text;container.append(el);}
 function toggleCard(id){if(!isPlaying())return;error='';if(selected.includes(id))selected=selected.filter(c=>c!==id);else if(selected.length<(GK.allowsFive(variant)?5:GK.allowsFour(variant)?4:3))selected.push(id);else error='已选足，请先取消一张再换牌。';render();}
 function toggleFlip(index){if(mode!=='play'||game.phase!=='flip'||game.currentActor()!==0||!flipMode)return;const o=game.flipOptions().find(x=>x.action===flipMode);if(!o.indices.includes(index))return;error='';if(flipIndices.includes(index))flipIndices=flipIndices.filter(i=>i!==index);else if(flipIndices.length<o.count)flipIndices.push(index);else error='已选足，请先取消一张再调整。';render();}
-function damageBar(el,n){const previous=Number(el.dataset.wounds??n);el.dataset.wounds=String(n);const cap=GK.deathThreshold(variant);el.setAttribute('aria-label','伤势 '+n+' / '+cap);el.innerHTML='<b><span class="damage-count">'+n+'</span><small> / '+cap+' 伤</small></b>'+Array.from({length:cap},(_,i)=>'<svg class="wound-bract '+(i<n?'filled':'')+'" viewBox="22 11 20 26" aria-hidden="true">'+window.SZBloomAssets.bract+'</svg>').join('');if(n>previous&&!matchMedia('(prefers-reduced-motion: reduce)').matches){const drop=document.createElementNS('http://www.w3.org/2000/svg','svg');drop.setAttribute('viewBox','22 11 20 26');drop.setAttribute('aria-hidden','true');drop.classList.add('sz-wound-drop');drop.innerHTML=window.SZBloomAssets.bract;el.append(drop);const a=drop.animate([{transform:'translate(0,-10px) rotate(-10deg)',opacity:1},{transform:'translate(12px,25px) rotate(125deg)',opacity:0}],{duration:720,easing:'ease-in',fill:'forwards'});a.finished.then(()=>drop.remove()).catch(()=>drop.remove());}}
+function damageBar(el,n){const previous=Number(el.dataset.wounds??n);el.dataset.wounds=String(n);const cap=GK.deathThreshold(variant);el.setAttribute('aria-label','伤势 '+n+' / '+cap);el.innerHTML='<b><span class="damage-count">'+n+'</span><small> / '+cap+' 伤</small></b>'+Array.from({length:cap},(_,i)=>'<svg class="wound-bract '+(i<n?'filled':'')+'" viewBox="22 11 20 26" aria-hidden="true">'+window.SZBloomAssets.bract+'</svg>').join('');if(n>previous&&Element.prototype.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches){const drop=document.createElementNS('http://www.w3.org/2000/svg','svg');drop.setAttribute('viewBox','22 11 20 26');drop.setAttribute('aria-hidden','true');drop.classList.add('sz-wound-drop');drop.innerHTML=window.SZBloomAssets.bract;el.append(drop);const a=drop.animate([{transform:'translate(0,-10px) rotate(-10deg)',opacity:1},{transform:'translate(12px,25px) rotate(125deg)',opacity:0}],{duration:720,easing:'ease-in',fill:'forwards'});a.finished.then(()=>drop.remove()).catch(()=>drop.remove());}}
 function renderPiles(s){
  const stock=s.stock.length,discard=s.discard.length,low=stock>0&&stock<=5,recycle=stock===0&&discard>0;
  for(const [id,n]of [['stock',stock],['discard',discard]]){$(id+'-count').textContent=n;$(id+'-pile').dataset.depth=String(Math.min(3,Math.ceil(n/12)));}

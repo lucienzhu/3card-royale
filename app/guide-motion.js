@@ -1,7 +1,7 @@
 /* Teaching-only flights. Coordinates and pictures come from the practice table;
  * the live game's cards, state and random source are never read. */
 (()=>{'use strict';
- const reduced=matchMedia('(prefers-reduced-motion: reduce)');let active=null,lastRun=null;
+ const motion=window.SZMotion;let active=null,lastRun=null;
  const styles=['background','color','border','border-radius','padding','font-family','font-size','font-weight','line-height','letter-spacing','display','position','left','right','top','bottom','width','height'];
  const cardSelector=z=>z==='stock'?'.fg-stock':z==='discard'?'.fg-discard .fg-pile':`[data-fg-slot="${z}"] .card`;
  function picture(el){const p=el.cloneNode(true),a=[el,...el.querySelectorAll('*')],b=[p,...p.querySelectorAll('*')];a.forEach((n,i)=>{const s=getComputedStyle(n);for(const k of styles)b[i].style.setProperty(k,s.getPropertyValue(k));for(const attr of [...b[i].attributes])if(attr.name.startsWith('data-')||attr.name.startsWith('aria-')||['id','tabindex','title'].includes(attr.name))b[i].removeAttribute(attr.name);});p.classList.remove('selected','fg-chosen','fg-added','fg-received');p.style.transform='none';p.style.animation='none';p.style.opacity='1';p.style.visibility='visible';p.querySelectorAll('.badge,.fg-swap-badge').forEach(n=>n.remove());p.setAttribute('aria-hidden','true');return p;}
@@ -10,12 +10,12 @@
  async function play(before,board,moves,frame){
   cancel();const after=capture(board),flights=moves.map(m=>({...m,source:before[m.from]?.[m.index||0],dest:after[m.to]?.[m.target||0]})).filter(m=>m.source&&m.dest);
   lastRun={status:'playing',flights:flights.map(({from,to,kind,delay=0})=>({from,to,kind,delay})),bounds:null};
-  if(!flights.length||reduced.matches||!Element.prototype.animate||document.hidden){lastRun.status='instant';return;}
+  if(!flights.length||!motion.enabled()||document.hidden){lastRun.status='instant';return;}
   const rects=flights.flatMap(f=>[f.source.rect,f.dest.rect]),bounds={top:Math.min(...rects.map(r=>r.y))-28,bottom:Math.max(...rects.map(r=>r.y+r.h))+28};lastRun.bounds=bounds;
   return new Promise(resolve=>{
    let done=false,timer;const animations=[],hidden=new Map(),layer=document.createElement('div');layer.className='fg-flight-layer';layer.setAttribute('aria-hidden','true');board.append(layer);
    const finish=status=>{if(done)return;done=true;clearTimeout(timer);animations.forEach(a=>a.cancel());hidden.forEach((v,n)=>n.style.visibility=v);layer.remove();active=null;lastRun.status=status;resolve();};active={finish};
-   const animate=(node,keyframes,opts)=>{const a=node.animate(keyframes,opts);animations.push(a);return a;};
+   const animate=(node,keyframes,opts)=>{const a=motion.animate(node,keyframes,opts);animations.push(a);return a;};
    let back=after['rival-hand'][0]?.picture||before['rival-hand'][0]?.picture;if(!back){const sample=window.card(null,{back:true});board.append(sample);back=picture(sample);sample.remove();}
    try{
     frame(bounds);const mobile=document.getElementById('rule-page').classList.contains('fg-mobile'),lead=mobile?380:80;
@@ -33,6 +33,6 @@
    }catch(e){lastRun.error=String(e);finish('fallback');}
   });
  }
- if(reduced.addEventListener)reduced.addEventListener('change',cancel);
+ window.addEventListener('sz-motion-preference',()=>{if(!motion.enabled())cancel();});
  window.SZGuideFlights={capture,play,cancel,get lastRun(){return lastRun;}};
 })();

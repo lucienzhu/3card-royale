@@ -1,0 +1,8 @@
+.sz-motion-setting{margin-block:16px;min-width:0}
+:root body #settings-modal .sz-motion-setting label{display:grid;gap:8px}
+:root body #settings-modal .sz-motion-setting label span{white-space:nowrap}
+:root body #settings-modal .sz-motion-setting select{width:100%;min-height:44px;max-width:100%;font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:8px 12px}
+.sz-motion-setting p{font-size:12px;line-height:1.6;color:var(--muted);margin:8px 0 0}
+/* An explicit preference can enable essential routes while the rest of the
+   interface keeps honoring the OS's reduced-motion setting. */
+html[data-card-motion-preference=on] .sz-card-flight-layer{display:block}
