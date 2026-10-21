@@ -79,8 +79,8 @@ html,:root body,[data-sz-theme=dark] body{background:var(--paper);color:var(--in
 /* a pile reads as a stack: one or two cards peek out below and to the right of the top card; no ring, no red */
 :root body .table .pile{isolation:isolate}
 :root body .table .pile-stack{isolation:auto;box-shadow:var(--flat-shadow)}
-:root body .table .pile-stack::before,:root body .table .pile-stack::after{content:"";display:block;position:absolute;inset:0;box-sizing:border-box;border:1px solid var(--back-edge);border-radius:inherit;background:var(--back);box-shadow:var(--flat-shadow);z-index:-1;transform:translate(3px,3px)}
-:root body .table .pile-stack::after{z-index:-2;transform:translate(6px,6px);filter:brightness(.94)}
+:root body .table .pile-stack::before,:root body .table .pile-stack::after{content:"";display:block;position:absolute;inset:0;box-sizing:border-box;border:1px solid var(--back-edge);border-radius:inherit;background:var(--back);box-shadow:var(--flat-shadow);z-index:-1;transform:translate(1.5px,1.5px)}
+:root body .table .pile-stack::after{z-index:-2;transform:translate(3px,3px);filter:brightness(.94)}
 :root body .table .pile[data-depth="1"] .pile-stack::after,:root body .table .pile[data-depth="0"] .pile-stack::before,:root body .table .pile[data-depth="0"] .pile-stack::after{display:none}
 :root body .table .discard-pile .pile-stack::before,:root body .table .discard-pile .pile-stack::after{background:var(--table);border-color:var(--line);box-shadow:none;filter:none}
 :root body .table .discard-pile .pile-stack{background:transparent;border-color:var(--line);color:var(--muted)}
@@ -156,12 +156,12 @@ html,:root body,[data-sz-theme=dark] body{background:var(--paper);color:var(--in
 :root body .table .pile-back{position:absolute;inset:4px;left:4px;bottom:4px;width:auto;height:auto;transform:none;border:1px solid color-mix(in srgb,var(--gold-edge) 45%,transparent);border-radius:4px;display:grid;place-items:center;pointer-events:none}
 :root body .table .pile-back svg{width:64%;height:64%}
 /* tutorial board piles follow the table: count above the card, the stock is a stacked back, the discard a quiet stack */
-:root body #rule-page .fg-pile{margin-top:18px;border-radius:6px;background:var(--card-face);border-color:var(--line);box-shadow:3px 3px 0 -1px var(--table),3px 3px 0 0 var(--line)}
+:root body #rule-page .fg-pile{margin-top:18px;border-radius:6px;background:var(--card-face);border-color:var(--line);box-shadow:1.5px 1.5px 0 -1px var(--table),1.5px 1.5px 0 0 var(--line)}
 :root body #rule-page .fg-pile>b{position:absolute;left:50%;top:-19px;transform:translateX(-50%);font:800 15px/1 var(--rank-font);color:var(--ink);letter-spacing:0}
 :root body #rule-page .fg-discard{opacity:1}
 :root body #rule-page .fg-discard .fg-pile{background:transparent}
 :root body #rule-page .fg-discard .fg-pile>b{color:var(--muted)}
-:root body #rule-page .fg-stock,:root body #rule-page .fg-board .fg-stock.is-target{background:var(--back);border-color:var(--back-edge);box-shadow:3px 3px 0 -1px var(--back),3px 3px 0 0 var(--back-edge),6px 6px 0 -1px var(--back),6px 6px 0 0 var(--back-edge)}
+:root body #rule-page .fg-stock,:root body #rule-page .fg-board .fg-stock.is-target{background:var(--back);border-color:var(--back-edge);box-shadow:1.5px 1.5px 0 -1px var(--back),1.5px 1.5px 0 0 var(--back-edge),3px 3px 0 -1px var(--back),3px 3px 0 0 var(--back-edge)}
 :root body #rule-page .fg-stock::after{content:"";position:absolute;inset:3px;border:1px solid color-mix(in srgb,var(--back-edge) 45%,transparent);border-radius:3px;pointer-events:none}
 :root body #rule-page .fg-stock>i{position:absolute;inset:0;left:0;bottom:0;width:auto;height:auto;display:grid;place-items:center;opacity:1;--sz-logo-petal:var(--red);--sz-logo-center:var(--gold-center)}
 :root body #rule-page .fg-stock svg{width:64%;height:64%}
