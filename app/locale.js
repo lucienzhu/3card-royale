@@ -86,7 +86,7 @@ const GKLocale=(()=>{
 对局信息	Game info
 查看三张牌型概率（不含四炸）↗	Three-card probabilities (no four of a kind) ↗
 新场随机发牌，刷新续玩。开新一场会替换当前版本的存档。	New matches use random deals. Reload to continue. Starting a new match replaces this version’s saved game.
-★ 自己的红桃级牌是逢人配。	★ The heart card matching your level is wild.
+本局花牌：双方共用的红桃级牌，可代任意牌。	This game's flower card: the shared heart of the current level, wild for any card.
 四炸 · 新旧各100场对照	Four of a kind · 100 matches per version
 历史20种子对照	Earlier study · 20 seeds per version
 四炸版	Four-card variant

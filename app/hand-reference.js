@@ -16,7 +16,7 @@
   button.setAttribute('aria-label',t('查看牌型大小和分数','View hand ranks and points'));
   button.innerHTML='<span>'+t('牌型','Ranks')+'</span><i aria-hidden="true">'+(open?'−':'+')+'</i>';
   panel.hidden=window.SZDrawer?false:!open;panel.setAttribute('aria-label',t('牌型大小与分数','Hand ranks and points'));
-  panel.innerHTML='<table><caption>'+t('牌型由大到小','Hands, strongest first')+'</caption><thead><tr><th scope="col">'+t('大 → 小','Strong → weak')+'</th><th scope="col">'+t('分','Pts')+'</th></tr></thead><tbody>'+ids.map(k=>'<tr data-hr-kind="'+k+'"><th scope="row">'+t(k===4?'三炸':GK.NAMES[k],english[k])+(k>=6?'<small>'+t(k===7?'5张 · 含花牌':'4张',k===7?'5 cards · wildcard':'4 cards')+'</small>':'')+example(k)+'</th><td>'+GK.points(k,version)+'</td></tr>').join('')+'</tbody></table><p class="hr-note">'+(GK.allowsFive(version)?t('五炸含本局花牌；其余按原牌面判型','Five of a kind uses the shared flower; other examples use printed faces'):t('示例按原牌面判型','Natural hands shown'))+'</p>';
+  panel.innerHTML='<table><caption>'+t('牌型由大到小','Hands, strongest first')+'</caption><thead><tr><th scope="col">'+t('大 → 小','Strong → weak')+'</th><th scope="col">'+t('分','Pts')+'</th></tr></thead><tbody>'+ids.map(k=>'<tr data-hr-kind="'+k+'"><th scope="row"><span class="hr-name">'+t(k===4?'三炸':GK.NAMES[k],english[k])+(k>=6?'<small>'+t(k===7?'5张 · 含花牌':'4张',k===7?'5 cards · wildcard':'4 cards')+'</small>':'')+'</span>'+example(k)+'</th><td>'+GK.points(k,version)+'</td></tr>').join('')+'</tbody></table><p class="hr-note">'+(GK.allowsFive(version)?t('五炸含本局花牌；其余按原牌面判型','Five of a kind uses the shared flower; other examples use printed faces'):t('示例按原牌面判型','Natural hands shown'))+'</p>';
  }
  window.SZHandReference={paint};
  versionSelect.addEventListener('change',()=>queueMicrotask(paint));
