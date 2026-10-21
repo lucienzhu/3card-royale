@@ -424,7 +424,7 @@ A23、QKA 可以组成顺子，KA2 不可以。同组三张不能复制完全相
  Object.assign(en,{'3CARD ROYALE':'SHENZHEN FLOWER CARDS','深圳花牌':'3Card Royale','深圳花牌：一副扑克牌的双人攻防游戏。与自动对手试玩，进攻造成伤势，防守争取换牌机会。':'3Card Royale: a two-player game with one standard deck. Attack to deal damage. Defend to gain exchanges.','深圳花牌 · 开放的双人扑克玩法':'3Card Royale · An open two-player card game','标志与视觉':'Visual identity','规则与源码 ↗':'Rules & source ↗'});
  phrases.splice(0,phrases.length,...Object.entries(en).sort((a,b)=>b[0].length-a[0].length));
  // These inline phrases precede bold text without a source-space in Chinese.
- en['先看']='Explore ';en['，再看']=', then ';
+ en['先看']='Explore ';en['深圳花牌标志']='3Card Royale logo';en['，再看']=', then ';
  function text(source){
   if(language==='zh-CN')return String(source).replace(/金花大乱斗|金花拳/g,'深圳花牌');
   const s=String(source),trim=s.trim();if(!HAN.test(s))return trim==='3CARD ROYALE'?s.replace(trim,'SHENZHEN FLOWER CARDS'):s;
@@ -468,6 +468,11 @@ A23、QKA 可以组成顺子，KA2 不可以。同组三张不能复制完全相
    [/^随机持有逢人配：(.*)。$/,(_,s)=>`Chance to hold the wildcard: ${s}.`],
    [/^普通牌 · (\d+) 种三张选法$/,(_,n)=>`Ordinary cards · ${n} three-card combinations`],
    [/^(\d+) 张$/,(_,n)=>`${n} cards`],
+   [/^\((\w+) 对 \/ (\w+) 单张\)$/,(_,r,k)=>`(${r}s + ${k})`],
+   [/^\((\w+) 高顺\)$/,(_,r)=>`(${r}-high)`],
+   [/^\((\w+) 炸弹\)$/,(_,r)=>`(three ${r}s)`],
+   [/^\((\w+) 四炸\)$/,(_,r)=>`(four ${r}s)`],
+   [/^\((\w+) 五炸\)$/,(_,r)=>`(five ${r}s)`],
    [/^(\d+) 种选法$/,(_,n)=>`${n} combinations`],
    [/^([\w♥]+) 级 · ♥(\w+)$/,(_,n,r)=>`Level ${n} · ♥${r}`],
    [/^从完整 52 张牌随机取 (\d+) 张时，持有 ♥(\w+) 的概率。已持有时的同花顺条件率只计算了 2 级，此处不显示其他级数的条件曲线。$/,(_,n,r)=>`Chance to hold ♥${r} in ${n} random cards from the full deck. Conditional straight-flush curves are available only at level 2.`],

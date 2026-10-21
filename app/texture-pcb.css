@@ -1,0 +1,37 @@
+/* chips: the circuit-board Easter egg (app/texture-chips.js, switched on in settings). The table becomes a board in 板绿 solder mask; text on it turns light, the action panel becomes a dark module. Materials as on a real board, each a solid colour in its own group so overlaps never darken: copper under the mask (traces, tented vias, the ground pour), exposed gold finish (pads, test points, fiducials, plated holes), white silkscreen, drill holes, populated passives. Signals run along the buses; the status LEDs and their driving path are lit on a layer of their own. */
+html[data-sz-chips] body .table{position:relative;isolation:isolate;--sig-me:#FF86AB;--sig-opp:#FFD45E;--table:#16765F;--paper:#0B3328;--panel:#0E3A2E;--soft:#0E3A2E;--ink:#F2F7F3;--muted:#B5D3C5;--line:#4E9A82;--red-text:#F3A6BD;--red-tint:#4A2A36;--gold-text:#F0D27A;--gold-tint:#3A3A22;--selected:#FAE4EB}
+html[data-sz-chips][data-sz-theme=dark] body .table{--table:#0F5546;--paper:#082A21;--panel:#0B3328;--soft:#0B3328;--line:#3E7F6B}
+/* the layers never take part in layout, and stay out of sight while the egg is off */
+body .table>:is(.sz-chips,.sz-pulse,.sz-signal){position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+html:not([data-sz-chips]) body .table>:is(.sz-chips,.sz-pulse,.sz-signal){display:none}
+html[data-sz-chips] body .table .battle{border-color:transparent}
+html[data-sz-chips] body .table :is(.sz-chips,.sz-pulse,.sz-signal){position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;overflow:visible;fill:none;stroke:none;stroke-linecap:round;stroke-linejoin:round}
+html[data-sz-chips] body .table .sz-chips{--cu-c:#45AE8C;--cu-a:.62;--pour-a:.3;--fin-c:#E6C46A;--fin-a:.95;--sk-c:#F4F7F2;--sk-a:.82;--hole-c:#06241B;--hole-a:.72;--open-c:#CDB97C;--open-a:.55;--term-c:#D8DCDA;--body-c:#A07C54;--part-a:.95;--lens-c:#F4F2EA;--die-c:#6F6A5E}
+html[data-sz-chips][data-sz-theme=dark] body .table .sz-chips{--cu-c:#379A7A;--cu-a:.6;--pour-a:.3;--fin-c:#DDBA5E;--sk-c:#E9EFEA;--sk-a:.75}
+html[data-sz-chips] body .table .sz-chips .g-pour{opacity:var(--pour-a);fill:var(--cu-c)}
+html[data-sz-chips] body .table .sz-chips .g-open{opacity:var(--open-a);fill:var(--open-c)}
+html[data-sz-chips] body .table .sz-chips .g-cu{opacity:var(--cu-a)}
+html[data-sz-chips] body .table .sz-chips .g-cu .t{stroke:var(--cu-c);fill:none}
+html[data-sz-chips] body .table .sz-chips .g-cu .via{fill:var(--cu-c)}
+html[data-sz-chips] body .table .sz-chips .g-fin{opacity:var(--fin-a);fill:var(--fin-c)}
+html[data-sz-chips] body .table .sz-chips .g-part{opacity:var(--part-a)}
+html[data-sz-chips] body .table .sz-chips .term{fill:var(--term-c)}
+html[data-sz-chips] body .table .sz-chips .body{fill:var(--body-c)}
+html[data-sz-chips] body .table .sz-chips .lens{fill:var(--lens-c)}
+html[data-sz-chips] body .table .sz-chips .die{fill:var(--die-c)}
+html[data-sz-chips] body .table .sz-chips .g-sk{opacity:var(--sk-a)}
+html[data-sz-chips] body .table .sz-chips .sk{stroke:var(--sk-c);stroke-width:.9;fill:none}
+html[data-sz-chips] body .table .sz-chips .skf,html[data-sz-chips] body .table .sz-chips .skt{fill:var(--sk-c)}
+html[data-sz-chips] body .table .sz-chips .skt{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:600;letter-spacing:.04em}
+html[data-sz-chips] body .table .sz-chips .sklogo{--sz-logo-petal:var(--sk-c);--sz-logo-center:transparent;overflow:visible}
+html[data-sz-chips] body .table .sz-chips .g-hole{opacity:var(--hole-a);fill:var(--hole-c)}
+/* signals: a bright packet runs along each bus now and then, a faster one in the actor's colour along the path that lights an LED; decorative motion follows the system setting */
+html[data-sz-chips] body .table .sz-pulse .pk,html[data-sz-chips] body .table .sz-signal .pk{fill:none;stroke-dasharray:var(--dash) calc(var(--len) * 1px);stroke-dashoffset:var(--dash);animation:sz-packet var(--cyc) linear var(--del) infinite}
+html[data-sz-chips] body .table .sz-pulse .pk.core{stroke:#FFF6D8}
+html[data-sz-chips] body .table .sz-pulse .pk.glow{stroke:#FFD978;opacity:.32}
+@keyframes sz-packet{0%{stroke-dashoffset:var(--dash)}55%,100%{stroke-dashoffset:calc(var(--len) * -1px)}}
+html[data-sz-chips] body .table .sz-signal .sig-path .base{opacity:.55}
+html[data-sz-chips] body .table .sz-signal .sig-path .halo{opacity:.16}
+html[data-sz-chips] body .table .sz-signal .sig-led{animation:sz-breathe 2.6s ease-in-out infinite}
+@keyframes sz-breathe{0%,100%{opacity:1}50%{opacity:.72}}
+@media (prefers-reduced-motion:reduce){html[data-sz-chips] body .table .sz-pulse{display:none}html[data-sz-chips] body .table .sz-signal .pk{display:none}html[data-sz-chips] body .table .sz-signal .sig-led{animation:none}}

@@ -562,7 +562,7 @@ function render(){
  damageBar($('own-damage'),p.table.length);damageBar($('opp-damage'),q.table.length);
  for(const [who,id]of [[0,'own'],[1,'opp']]){const t=s.players[who].table;$(`${id}-table-label`).textContent='伤牌区';$(`${id}-table-label`).title=t.filter(x=>x.up).length+' 明 / '+t.filter(x=>!x.up&&x.card!==null).length+' 暗';drawTable($(`${id}-table`),who,s);}
  $('opp-hand').classList.toggle('hidden-hand',!replay);$('opp-hand').classList.toggle('refresh-targets',canRefresh()&&(!GK.handExchange(variant)||!!refreshTarget));$('opp-hand-label').hidden=false;$('opp-hand-label').textContent='手牌区';drawHand($('own-hand'),0,s,replay);drawHand($('opp-hand'),1,s,replay);$('opp-hand-count').textContent=q.hand.length+' 张';$('own-hand-count').textContent=p.hand.length+' 张';$('hand-label').textContent='手牌区';
- const attack=s.attacker,moves=s.active.some(Boolean)?s.active:s.lastCombat?.moves??[null,null];
+ const attack=s.attacker,moves=s.active.some(Boolean)?s.active:s.lastCombat?.moves??[null,null];{const tb=document.querySelector('.table');if(tb){tb.dataset.szPhase=s.phase||'';tb.dataset.szAttacker=String(attack??'');}}
  const whoName=who=>replay?(who===0?'A':'B'):(who===0?'你':'对手');
  $('attack-label').innerHTML='进攻 · '+whoName(attack)+(moves[attack]?' <b>'+moves[attack].name+' '+moves[attack].score+' 分</b>':'');
  $('defend-label').innerHTML='防守 · '+whoName(1-attack)+(moves[1-attack]?' <b>'+moves[1-attack].name+' '+moves[1-attack].score+' 分</b>':'');

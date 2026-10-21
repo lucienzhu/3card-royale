@@ -25,7 +25,7 @@ html,:root body,[data-sz-theme=dark] body{background:var(--paper);color:var(--in
 :root body .table .formula,:root body .table .score-number,:root body #hr-panel tbody td,:root body .goal-own,:root body .rule-page #rg-progress button[aria-current=step]{color:var(--red-text)}
 :root body .goal-opp{color:var(--gold-text)}
 /* hand-type badge */
-:root body .table .preview-score{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:999px;background:var(--red-tint);color:var(--red-text);font-size:12px;font-weight:650;line-height:1.6;width:max-content;max-width:100%}
+:root body .table .preview-score{display:inline-flex;flex-wrap:wrap;align-items:baseline;column-gap:4px;row-gap:0;white-space:nowrap;padding:2px 9px;border-radius:11px;background:var(--red-tint);color:var(--red-text);font-size:12px;font-weight:650;line-height:1.6;width:max-content;max-width:100%}
 :root body .table .preview-score .score-number{font-size:12px;color:inherit}
 :root body .table .preview-score small{color:inherit;font-weight:500;font-size:11px}
 /* cards: one component, --rk sets the index; suits are shapes */
@@ -176,3 +176,57 @@ html,:root body,[data-sz-theme=dark] body{background:var(--paper);color:var(--in
 :root body .table .pile-back{color:var(--red);opacity:1;--sz-logo-petal:var(--red);--sz-logo-center:var(--gold-center)}
 :root body .table .pile-back svg path,:root body .table .pile-back svg g{fill:var(--red)}
 :root body .table .pile-back svg path[fill^="var(--sz-logo-center"]{fill:var(--gold-center)}
+/* the wound rack's right padding only made room for a label that is hidden now; centre the rack under the hand */
+:root body .wound-group>.cards{padding-right:0}
+/* the circuit-board Easter egg: a switch in settings */
+:root body .settings-modal .sz-egg{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0;padding:0;border:0;font-size:var(--menu-label,13px);line-height:1.4;color:var(--ink);cursor:pointer}
+:root body .sz-egg-text small{display:block;margin-top:2px;color:var(--muted);font-size:12px;line-height:1.4}
+:root body .sz-egg input[type=checkbox]{-webkit-appearance:none;appearance:none;flex:none;position:relative;box-sizing:border-box;width:44px;height:26px;min-width:44px;min-height:0;max-height:26px;padding:0;margin:0;border:0;border-radius:13px;background:var(--line);cursor:pointer;transition:background-color .2s}
+:root body .sz-egg input[type=checkbox]::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#FFFEFA;box-shadow:0 1px 2px #10231B40;transition:transform .2s}
+:root body .sz-egg input[type=checkbox]:checked{background:var(--red)}
+:root body .sz-egg input[type=checkbox]:checked::after{transform:translateX(18px)}
+:root body .sz-egg input[type=checkbox]:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){:root body .sz-egg input[type=checkbox],:root body .sz-egg input[type=checkbox]::after{transition:none}}
+/* the menu's active tab needs no underline: its ink colour and weight already say which one it is */
+:root body.table-identity-layout .app-header .app-navigation button[aria-current=page]::after{display:none}
+/* the wild card chip: rank and suit side by side on a small gold token, so it never makes your heading row taller */
+:root body .table .shared-flower .card{display:inline-flex;flex-direction:row;align-items:center;justify-content:center;gap:2px;--rk:16px;width:auto;min-width:0;height:24px;padding:0 7px 0 6px;border-radius:5px}
+:root body .table .shared-flower .card .rank{line-height:1}
+:root body .table .shared-flower .card .suit{margin:0}
+/* Phone portrait: room for your hand. The menu gets shorter, the level track gets thinner, the rival's backs get smaller, and the space goes to the cards you play with. */
+@media (max-width:600px) and (min-height:540px){
+ :root body[data-bloom=true] .app-header{height:calc(44px + env(safe-area-inset-top));padding-top:calc(3px + env(safe-area-inset-top));padding-bottom:3px}
+ :root body .app-header .brand{gap:8px}
+ :root body .app-header .brand :is(img,svg){width:26px;height:26px}
+ :root body .app-header .brand h1{font-size:19px;line-height:24px}
+ :root body .app-header .app-navigation{min-height:38px;height:38px}
+ :root body .app-header .app-navigation :is(a,button){font-size:15px;min-height:38px;padding-block:0}
+ :root body .table{position:relative}
+ /* the level track: 32px instead of 48, flowers a little smaller and closer to the line; the line sits at 70/148 of the drawing, as before */
+ :root body[data-bloom=true] #level-track,:root body[data-bloom=true] #level-track .fc-progress-summary,:root body[data-bloom=true] #level-track .fc-shared-vine,:root body[data-bloom=true] #level-track .fc-vine-drawing{height:32px}
+ :root body[data-bloom=true] #level-track .fc-player-flower{width:14px;height:15.75px}
+ :root body[data-bloom=true] #level-track .fc-win-stamp{width:14px}
+ :root body[data-bloom=true] #level-track :is(.fc-win-top,.fc-attempt-rival){top:-2px}
+ :root body[data-bloom=true] #level-track :is(.fc-win-bottom,.fc-start-stamp.fc-win-bottom,.fc-attempt-own){top:16.5px}
+ :root body[data-bloom=true] #level-track .fc-vine-axis{inset:9.1px 0 auto}
+ :root body[data-bloom=true] #level-track :is(.fc-ace-knot,.fc-final-flower){top:15.1px}
+ :root body .hand-tools{min-height:26px}
+ /* the rival's hand is backs only: smaller */
+ :root body .app-main .opponent-hand-group{--handw:40px;--handh:56px;--handstep:26px;--handrank:18px}
+}
+/* your hand grows with the height the phone gives it */
+@media (max-width:600px) and (min-height:540px) and (max-height:579px){:root body .app-main:not(.is-replay) .own-hand-group{--handw:52px;--handh:74px;--handstep:32px;--handrank:25px}}
+@media (max-width:600px) and (min-height:580px) and (max-height:599px){:root body .app-main:not(.is-replay) .own-hand-group{--handw:58px;--handh:82px;--handstep:34px;--handrank:27px}}
+@media (max-width:600px) and (min-height:600px) and (max-height:649px){:root body .app-main:not(.is-replay) .own-hand-group{--handw:64px;--handh:90px;--handstep:36px;--handrank:30px}}
+@media (max-width:600px) and (min-height:650px) and (max-height:719px){:root body .app-main:not(.is-replay) .own-hand-group{--handw:70px;--handh:98px;--handstep:38px;--handrank:32px}}
+@media (max-width:600px) and (min-height:720px) and (max-height:799px){:root body .app-main:not(.is-replay) .own-hand-group{--handw:76px;--handh:106px;--handstep:39px;--handrank:34px}}
+@media (max-width:600px) and (min-height:800px){:root body .app-main:not(.is-replay) .own-hand-group{--handw:84px;--handh:118px;--handstep:38px;--handrank:37px}}
+@media (max-width:389px) and (min-height:800px){:root body .app-main:not(.is-replay) .own-hand-group{--handstep:35px}}
+/* eight cards must still fit across a narrow phone */
+@media (max-width:374px) and (min-height:540px){:root body .app-main:not(.is-replay) .own-hand-group{--handstep:34px}}
+/* the selection preview may need a second line on a narrow phone: the panel grows instead of clipping it */
+:root body .table .actionbar{height:auto;min-height:64px}
+/* in-app browsers that enlarge text would break the fitted layout */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+/* on the narrowest phones the English wordmark cannot share a line with the menu: the mark stays, the name is kept for screen readers */
+@media (max-width:380px){html[lang=en] body .app-header .brand h1{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}}
