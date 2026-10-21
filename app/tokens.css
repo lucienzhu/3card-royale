@@ -34,7 +34,11 @@ html,:root body,[data-sz-theme=dark] body{background:var(--paper);color:var(--in
 @media(max-width:380px) and (min-height:721px){:root body .wound-group{--combatw:32px;--combath:46px;--combatrank:17px}}
 @media(max-height:480px) and (min-width:480px){:root body .wound-group{--combatw:25px;--combath:36px;--combatrank:14px}}
 /* wound track beside the name: count in the rank face, five bracts, filled in the identity colour */
-:root body .table .damage,[data-sz-theme=dark] .table .damage{display:inline-flex;align-items:center;gap:3px;margin-left:10px;font-size:12px;line-height:1;color:var(--muted)}
+/* both heading rows read the same way: flower, name, wound track from the left; the meta or the flower chip at the right */
+:root body .table .opponent-heading,:root body .table .hand-tools{justify-content:flex-start;gap:10px}
+:root body .table .hand-tools .player-identity{margin-right:0}
+:root body .table .opponent-heading #match-meta,:root body .table .hand-tools .shared-flower{margin-left:auto}
+:root body .table .damage,[data-sz-theme=dark] .table .damage{display:inline-flex;align-items:center;gap:3px;margin:0;font-size:12px;line-height:1;color:var(--muted)}
 :root body .table .damage b{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 :root body .table .damage .wound-bract{width:12px;height:15px;flex:none;opacity:1}
 :root body .table .damage .wound-bract:not(.filled) path{fill:color-mix(in srgb,var(--ink) 22%,transparent)}
