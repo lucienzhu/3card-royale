@@ -17,4 +17,8 @@ const png={name:'shenzhen-flower-match-42-5.png',type:'image/png'},both={share()
 let pay=S.sharePayload(png,both,d);assert.deepEqual(Object.keys(pay),['files']);assert.deepEqual(pay.files,[png]);
 for(const nav of [linkOnly,{share(){}}])for(const lang of ['zh-CN','en']){pay=S.sharePayload(png,nav,{...d,lang});assert.deepEqual(Object.keys(pay).sort(),['title','url']);assert.equal(pay.url,S.SHARE_URL);assert.equal(pay.title,lang==='en'?'3Card Royale':'深圳花牌');}
 for(const nav of [undefined,{},{canShare:()=>true},{share(){},canShare(){throw new TypeError('blocked');}}])assert.equal(S.sharePayload(png,nav,d),null);
-console.log(JSON.stringify({share_card:'passed',share_payload:'png_alone_or_link_alone',render_cases:cases,width:S.WIDTH,height:S.HEIGHT,results_unchanged:true,self_contained_svg:true}));
+// The copy path hands WeChat the image itself; it needs clipboard.write and a ClipboardItem that takes PNG.
+const clip={clipboard:{write(){}}},Item=function(){},PngItem=Object.assign(function(){},{supports:t=>t==='image/png'}),NoPng=Object.assign(function(){},{supports:()=>false});
+assert.equal(S.copySupported(clip,Item),true);assert.equal(S.copySupported(clip,PngItem),true);
+for(const [nav,I] of [[clip,NoPng],[clip,undefined],[{},Item],[undefined,Item],[{clipboard:{}},Item],[clip,Object.assign(function(){},{supports(){throw new Error('x');}})]])assert.equal(S.copySupported(nav,I),false);
+console.log(JSON.stringify({share_card:'passed',share_payload:'png_alone_or_link_alone',copy_image:'png',render_cases:cases,width:S.WIDTH,height:S.HEIGHT,results_unchanged:true,self_contained_svg:true}));
