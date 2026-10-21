@@ -85,13 +85,13 @@ html,:root body,[data-sz-theme=dark] body{background:var(--paper);color:var(--in
 :root body .table .pile-stack,[data-sz-theme=dark] .table .pile-stack{background:var(--back);border-color:var(--back-edge);color:var(--back-ink);border-radius:var(--r)}
 /* a pile reads as a stack: one or two cards peek out below and to the right of the top card; no ring, no red */
 :root body .table .pile{isolation:isolate}
-:root body .table .pile-stack{isolation:auto;box-shadow:var(--flat-shadow)}
-:root body .table .pile-stack::before,:root body .table .pile-stack::after{content:"";display:block;position:absolute;inset:0;box-sizing:border-box;border:1px solid var(--back-edge);border-radius:inherit;background:var(--back);box-shadow:var(--flat-shadow);z-index:-1;transform:translate(1.5px,1.5px)}
+:root body .table .pile-stack{isolation:auto;box-shadow:none}
+:root body .table .pile-stack::before,:root body .table .pile-stack::after{content:"";display:block;position:absolute;inset:0;box-sizing:border-box;border:1px solid var(--back-edge);border-radius:inherit;background:var(--back);box-shadow:none;z-index:-1;transform:translate(1.5px,1.5px)}
 :root body .table .pile-stack::after{z-index:-2;transform:translate(3px,3px);filter:brightness(.94)}
 :root body .table .pile[data-depth="1"] .pile-stack::after,:root body .table .pile[data-depth="0"] .pile-stack::before,:root body .table .pile[data-depth="0"] .pile-stack::after{display:none}
 :root body .table .discard-pile .pile-stack::before,:root body .table .discard-pile .pile-stack::after{background:var(--table);border-color:var(--line);box-shadow:none;filter:none}
 :root body .table .discard-pile .pile-stack{background:transparent;border-color:var(--line);color:var(--muted)}
-:root body .table .stock-pile.is-low .pile-stack,[data-sz-theme=dark] .table .stock-pile.is-low .pile-stack{background:var(--back);border-color:var(--back-edge);color:var(--back-ink);box-shadow:var(--flat-shadow)}
+:root body .table .stock-pile.is-low .pile-stack,[data-sz-theme=dark] .table .stock-pile.is-low .pile-stack{background:var(--back);border-color:var(--back-edge);color:var(--back-ink);box-shadow:none}
 /* identities: you are the red flower, the rival is the gold flower; wounds are bracts */
 :root body.table-identity-layout .player-flower-red path[fill="#DEB04A"]{fill:var(--gold-center)}
 :root body .table .wound-bract.filled,:root body .table .wound-bract.filled path{fill:var(--red);opacity:1}
