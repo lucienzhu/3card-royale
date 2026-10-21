@@ -10,7 +10,7 @@ One card, one flower, two players; everything else is paper and ink. The bougain
 | Egret white (白鹭) | day ground: page `#F6F7F6`, table `#ECEEED`, panels `#FFFEFA`; text at night | `#F6F7F6` |
 | Board black (黑盘) | night ground: page `#121417`, table `#1A1D21`, panels `#24282D`; day text `#2A3331` | `#121417` |
 | The gold card | mark, card back and flower card: face `#ECCE80`, edge `#A17C35`, centres `#F2CD5D` | `#ECCE80` |
-| Rival gold | the rival's flower, bracts and vine marker; as text `#866300` (day) / `#E4C46A` (night) | `#AD7F0B` |
+| Rival gold | the rival's flower, bracts and vine marker; as text `#946F06` (day) / `#E4C46A` (night) | `#C4931C` |
 | Circuit green (绿板) | brand and website only, never on the table | `#16765F` |
 
 The red flower and the gold card are identical in both themes; only grounds and functional text switch for contrast. These are design cues, not official city colours or demographic research.
