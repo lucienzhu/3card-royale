@@ -2,18 +2,18 @@
 
 [简体中文](DESIGN.zh-CN.md) · [Visual identity](https://lucienzhu.github.io/gk-royale-playtest/brand.html?lang=en)
 
-One card, one flower, two players; everything else is paper and ink. The bougainvillea mark ties a game made in Shenzhen to an ordinary deck: three identical bracts rotated by 120°, each with a small golden centre. The mark is a flat gold card, with no metallic light and no texture. The card back is that same card, and the flower card is that card with an index.
+One card, one flower, two players; the ground is Shenzhen's green, the flower its red. The bougainvillea mark ties a game made in Shenzhen to an ordinary deck: three identical bracts rotated by 120°, each with a small golden centre. The mark is a flat gold card, with no metallic light and no texture. The card back is that same card, and the flower card is that card with an index.
 
 | Name | Role | Value |
 | --- | --- | --- |
-| Red flower (红花) | the flower, your identity, primary buttons, selection | `#C5416B` (small text on black uses `#E38BA6`) |
-| Egret white (白鹭) | day ground: page `#F6F7F6`, table `#ECEEED`, panels `#FFFEFA`; text at night | `#F6F7F6` |
-| Board black (黑盘) | night ground: page `#121417`, table `#1A1D21`, panels `#24282D`; day text `#2A3331` | `#121417` |
+| Red flower (红花) | the flower, your identity, primary buttons, selection | `#C5416B` (small text: `#B2365A` by day, `#E38BA6` by night) |
+| Green plate (绿牌) | day ground, the pale green of a new-energy licence plate: page `#EDF4EF`, table `#E2ECE5`, panels `#F7FBF8` | `#EDF4EF` |
+| Mainboard (主板) | night ground, the deep green of a motherboard's solder mask: page `#0C2118`, table `#112A1F`, panels `#152E23`; text `#10231B` by day, `#EAF3EE` by night | `#0C2118` |
 | The gold card | mark, card back and flower card: face `#ECCE80`, edge `#A17C35`, centres `#F2CD5D` | `#ECCE80` |
-| Rival gold | the rival's flower, bracts and vine marker; as text `#946F06` (day) / `#E4C46A` (night) | `#C4931C` |
-| Circuit green (绿板) | brand and website only, never on the table | `#16765F` |
+| Rival gold | the rival's flower, bracts and vine marker; as text `#866300` (day) / `#E4C46A` (night) | `#D6A41C` |
+| Circuit green (板绿) | the saturated brand green, on the brand page only; the green plate and the mainboard are its palest and deepest ends | `#16765F` |
 
-The red flower and the gold card are identical in both themes; only grounds and functional text switch for contrast. These are design cues, not official city colours or demographic research.
+The red flower and the gold card are identical in both themes; only the depth of the green ground and functional text switch for contrast. These are design cues, not official city colours or demographic research.
 
 The card is one component: a white face with an index in ink or flower red. Ranks use a thirteen-glyph subset of Archivo 800 (OFL); suits are inline SVG written into the card, 0.66 of the rank size, stacked in one column with it, and "10" is narrowed. Cards that lie on the table (attack, defence, wounds) share one size and cast no shadow; held cards are larger and lifted with a shadow. The flower on the flower card is a translucent watermark in the same corner as every other card's suit watermark.
 
