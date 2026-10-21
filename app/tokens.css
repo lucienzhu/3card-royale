@@ -18,8 +18,8 @@ html,:root body,[data-sz-theme=dark] body{background:var(--paper);color:var(--in
 :root body button:disabled{opacity:.4}
 :root body .table .tabs button:after,:root body.table-identity-layout .app-header .tabs button[aria-selected=true]::after,.qb-menu-tabs button[aria-selected=true]:after{background:var(--red)}
 /* the flower-card chip is a miniature of the card itself: label in ink, a 22×31 gold card with the red heart index */
-:root body .table .shared-flower,[data-sz-theme=dark] .table .shared-flower{display:inline-flex;align-items:center;gap:6px;padding:0;color:var(--ink);font-size:12px;font-weight:600}
-:root body .table .shared-flower .card{--rk:11px;flex:none;width:22px;height:31px;padding:3px;border-radius:4px;margin:0;box-shadow:var(--flat-shadow);cursor:default}
+:root body .table .shared-flower,[data-sz-theme=dark] .table .shared-flower{display:inline-flex;align-items:center;gap:7px;padding:0;color:var(--ink);font-size:13px;font-weight:600}
+:root body .table .shared-flower .card{--rk:16px;flex:none;width:32px;height:45px;padding:4px;border-radius:5px;margin:0;box-shadow:var(--flat-shadow);cursor:default}
 :root body .table .shared-flower .card .wild,:root body .table .shared-flower .card .center{display:none}
 /* small red text on dark surfaces uses the lighter red */
 :root body .table .formula,:root body .table .score-number,:root body #hr-panel tbody td,:root body .goal-own,:root body .rule-page #rg-progress button[aria-current=step]{color:var(--red-text)}
