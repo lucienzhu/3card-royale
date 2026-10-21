@@ -82,4 +82,4 @@ The shared red/gold progress vine now follows the actual game results. Tap it fo
 
 ## PNG result cards
 
-Choose Share PNG after a game or match to preview and save a1080×1440 PNG. On supported devices, the preview can open the system share sheet. The image is made locally from the public result and approved skyline; creating or saving it never changes play or uploads a file.
+Choose Share PNG after a game or match to preview and save a 1080×1440 PNG. On supported devices, the preview can open the system share sheet with the PNG alone and no caption, so WeChat’s Send to Friend opens the friend list; devices that cannot share images share the game link instead. The image is made locally from the public result and approved skyline; creating or saving it never changes play or uploads a file.

@@ -12,4 +12,9 @@ assert.throws(()=>S.summarize({results:[]}));assert.throws(()=>S.summarize({...i
 for(const version of ['0.3.8','0.3.7']){const data=S.summarize({...input,version,match:false}),svg=S.makeSVG(data,ctx.window.SZBloomAssets,ctx.window.SZShareAssets.cityStyle,B);assert(svg.includes('规则 '+version));assert(!svg.includes('闯关成功'));}
 const privateState=S.summarize({...input,snapshot:{...input.snapshot,players:[{level:14,hand:[1,2,3]},{level:5,hand:[11,12,13]}]}});assert(privateState.snapshot.players.every(p=>!('hand' in p)));
 const bad=S.summarize({...input,match:false,version:'<script>&"'});assert(S.makeSVG(bad,ctx.window.SZBloomAssets,ctx.window.SZShareAssets.cityStyle,B).includes('&lt;script&gt;&amp;&quot;'));assert.equal(JSON.stringify(input),before);
-console.log(JSON.stringify({share_card:'passed',render_cases:cases,width:S.WIDTH,height:S.HEIGHT,results_unchanged:true,self_contained_svg:true}));
+// WeChat on iOS: a share carries one kind of item, never a title or text beside the PNG.
+const png={name:'shenzhen-flower-match-42-5.png',type:'image/png'},both={share(){},canShare:()=>true},linkOnly={share(){},canShare:x=>!('files' in x)};
+let pay=S.sharePayload(png,both,d);assert.deepEqual(Object.keys(pay),['files']);assert.deepEqual(pay.files,[png]);
+for(const nav of [linkOnly,{share(){}}])for(const lang of ['zh-CN','en']){pay=S.sharePayload(png,nav,{...d,lang});assert.deepEqual(Object.keys(pay).sort(),['title','url']);assert.equal(pay.url,S.SHARE_URL);assert.equal(pay.title,lang==='en'?'3Card Royale':'深圳花牌');}
+for(const nav of [undefined,{},{canShare:()=>true},{share(){},canShare(){throw new TypeError('blocked');}}])assert.equal(S.sharePayload(png,nav,d),null);
+console.log(JSON.stringify({share_card:'passed',share_payload:'png_alone_or_link_alone',render_cases:cases,width:S.WIDTH,height:S.HEIGHT,results_unchanged:true,self_contained_svg:true}));
