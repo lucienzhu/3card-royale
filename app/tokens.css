@@ -50,9 +50,12 @@ html,:root body,[data-sz-theme=dark] body{background:var(--paper);color:var(--in
 :root body .table .wound-bract .bract-core{display:none}
 :root body .table .wound-bract.filled .bract-core{display:block;fill:var(--gold-center)}
 :root body .table #opp-damage .wound-bract.filled .bract-core{fill:var(--red)}
-:root body .card,[data-sz-theme=dark] .card{--rk:var(--handrank);background:var(--card-face);border-color:var(--card-edge);color:var(--card-ink);border-radius:var(--r);box-shadow:var(--flat-shadow);padding:5px}
-:root body .hand-cards .card,:root body .hidden-hand .card,[data-sz-theme=dark] .hand-cards .card,[data-sz-theme=dark] .hidden-hand .card{box-shadow:var(--lift-shadow)}
-:root body .hand-cards .card.selected,[data-sz-theme=dark] .hand-cards .card.selected{box-shadow:var(--lift-shadow-strong)}
+:root body .card,[data-sz-theme=dark] .card{--rk:var(--handrank);background:var(--card-face);border-color:var(--card-edge);color:var(--card-ink);border-radius:var(--r);box-shadow:none;padding:5px}
+/* only the cards in your hand are lifted; everything on the table (plays, wounds, backs, piles, the flower chip) lies flat without a shadow */
+:root body .table .card,:root body .table .combat-cards .card,:root body .table .wound-cards .card,:root body .table .hidden-hand .card,:root body .table .shared-flower .card{box-shadow:none}
+:root body .table .hand-cards .card,[data-sz-theme=dark] .table .hand-cards .card{box-shadow:var(--lift-shadow)}
+:root body .table .hand-cards .card.selected,[data-sz-theme=dark] .table .hand-cards .card.selected{box-shadow:var(--lift-shadow-strong)}
+:root body .table .pile-stack,:root body .table .pile-stack::before,:root body .table .pile-stack::after{box-shadow:none}
 :root body .wound-cards .card{--rk:var(--woundrank);padding:3px;border-radius:6px}
 :root body .combat-cards .card{--rk:var(--combatrank);padding:4px;border-radius:6px}
 :root body .card.red,[data-sz-theme=dark] .card.red{color:var(--card-red)}
