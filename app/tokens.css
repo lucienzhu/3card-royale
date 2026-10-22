@@ -97,9 +97,8 @@ html,:root body,[data-sz-theme=dark] body{background:var(--paper);color:var(--in
 :root body .table .wound-bract.filled,:root body .table .wound-bract.filled path{fill:var(--red);opacity:1}
 :root body .table #opp-damage .wound-bract.filled,:root body .table #opp-damage .wound-bract.filled path{fill:var(--gold)}
 :root body .race-track{--own-race:var(--red);--opp-race:var(--gold)}
-/* the bloom belongs to the game: always the red flower with gold centres */
-:root body #bloom-result .fc-gold-flower path[fill="#D83B74"]{fill:var(--red)}
-:root body #bloom-result .fc-gold-flower path[fill="#DEB04A"]{fill:var(--gold-center)}
+/* Progress, recap and finale keep the table identities: red/gold centres for you, gold/red centres for the rival. */
+:root body .sz-bloom .fc-spine-bloom:not(.fc-gold-flower) path[fill="#DEB04A"]{fill:var(--gold-center)}
 /* swap targets: one mark per zone, the icon on the zone corner; the old per-card arrows are gone */
 :root body .sz-swap-icon,:root body .sz-swap-button{display:none}
 :root body .card.swap-destination,:root body .card.has-swap-icon{outline:0}

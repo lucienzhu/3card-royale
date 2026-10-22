@@ -101,6 +101,8 @@ python tests/conformance.py --rust rust/target/debug/royale-json --cpp /tmp/roya
 
 Python全套检查需先安装可选Gym依赖。一致性验证比较完整状态、合法动作顺序、双方观察、牌型、保存恢复，覆盖八条交换路径及重洗。后续移植保持卡牌编号、洗牌算法、补位顺序和花牌等值选择；玩法变化单独升规则版本。
 
+四语言 A 回归连续运行六局，保留真实开局转换中的打级方和失败计数：一方三次冲自己的 A 失败回到 2，对手随后赢下自己的 A，当局结束整场。覆盖双方身份、奇偶轮次及每局前后的存档恢复；赢下对方的 A 局仍然只算单局胜利。
+
 Rust完整对局示例：`cargo run --manifest-path rust/Cargo.toml --locked --example baseline`。
 
 C++完整对局示例：`/tmp/royale-cpp/royale-baseline-cpp`。SDK 0.2.0新增C++，玩法、状态格式与浏览器游戏保持不变。
