@@ -48,7 +48,7 @@ def main():
         bridges.append(("C++", Bridge([str(Path(args.cpp).resolve())])))
     rnd = random.Random(20261018)
     t = time.time()
-    decisions = complete = restores = 0
+    decisions = complete = restores = ace_reset_sequences = 0
     routes = set()
     max_actions = 0
 
@@ -208,6 +208,75 @@ def main():
             if g.s["phase"]=="game_over":
                 a={"type":"next_game"};g.step(a);compare(g,{"op":"step","action":a})
                 assert g.s["level_owner"]==winner
+        # A continuous six-game sequence: three own-A failures reset one player;
+        # the rival then wins their own A and must finish the match immediately.
+        # Keep levels, challenge ownership, failure counters, results and RNG from
+        # each actual next_game transition. Only arrange the final combat's cards.
+        for reset_player in (0, 1):
+            for final_round in (1, 2, 3, 4):
+                rival = 1 - reset_player
+                g = Game(42, reset_player)
+                s = g.save()
+                for p in s["players"]:
+                    p["level"] = 14
+                s["flower_level"] = 14
+                g = Game.restore(s)
+                for i, winner in enumerate([rival, reset_player, rival, reset_player, rival, rival]):
+                    # Restore both before and after every completed game.
+                    s = json.loads(json.dumps(g.save()))
+                    g = Game.restore(s)
+                    compare(g, {"op": "restore", "state": s})
+                    restores += 1
+                    attack, defense = [0, 13, 26, 39], [1, 4, 8]
+                    pool = [c for c in range(52) if c not in attack + defense]
+                    s["players"][winner].update(hand=attack + pool[:4], wounds=[])
+                    s["players"][1 - winner].update(hand=defense + pool[4:9], wounds=pool[9:13])
+                    first = s["level_owner"] ^ ((final_round - 1) & 1)
+                    s.update(
+                        stock=pool[13:], discard=[], active=[None, None],
+                        last_combat=None, pending=None, phase="attack",
+                        round=final_round, first=first, attacker=winner,
+                        battle_index=int(winner != first),
+                        round_uses=[0, 0], cards_played=[0, 0],
+                    )
+                    g = Game.restore(s)
+                    compare(g, {"op": "restore", "state": s})
+                    for action in [{"type": "play", "cards": attack}, {"type": "play", "cards": defense}]:
+                        g.step(action)
+                        compare(g, {"op": "step", "action": action})
+                    result = g.s["results"][-1]
+                    assert result["winner"] == winner
+                    assert result["from"] == result["to"] == 14
+                    assert result["match_won"] == (i == 5)
+                    assert bool(result["a_reset"]) == (i == 4)
+                    assert g.s["phase"] == ("match_over" if i == 5 else "game_over")
+                    if i >= 4:
+                        assert g.s["players"][reset_player]["level"] == 2
+                        assert g.s["players"][rival]["level"] == 14
+                        assert g.s["a_losses"][reset_player] == 0
+                    s = json.loads(json.dumps(g.save()))
+                    g = Game.restore(s)
+                    compare(g, {"op": "restore", "state": s})
+                    restores += 1
+                    if i < 5:
+                        action = {"type": "next_game"}
+                        g.step(action)
+                        compare(g, {"op": "step", "action": action})
+                        assert g.s["level_owner"] == winner
+                        assert g.s["flower_level"] == 14
+                    else:
+                        assert g.legal_actions() == []
+                        before = g.save()
+                        try:
+                            g.step({"type": "next_game"})
+                            raise AssertionError("Finished match accepted next_game")
+                        except ValueError:
+                            pass
+                        assert g.save() == before
+                        for tag, bridge in bridges:
+                            assert "error" in bridge.ask({"op": "step", "action": {"type": "next_game"}}), tag
+                            assert bridge.ask({"op": "inspect"})["state"] == before, tag
+                ace_reset_sequences += 1
         # Three failed-A boundaries and four+four round budgets, from fresh synthetic states.
         for losses in (0, 1, 2):
             g = Game(17, 0)
@@ -312,6 +381,7 @@ def main():
             "full_matches": complete,
             "compared_decision_states": decisions,
             "restored_states": restores,
+            "ace_reset_sequences": ace_reset_sequences,
             "evaluated_hands": len(cases),
             "maximum_legal_actions_seen": max_actions,
             "swap_routes": sorted(routes),

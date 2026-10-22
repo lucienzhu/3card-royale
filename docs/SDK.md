@@ -103,6 +103,8 @@ python tests/conformance.py --rust rust/target/debug/royale-json --cpp /tmp/roya
 
 Install the optional Gym dependencies before the Python suite. Conformance compares complete states, legal-action order, both observations, evaluations and save/restore against the frozen JS engine; it also exercises every directed swap route and reshuffles. Keep the same card IDs, shuffle algorithm, replacement order and wildcard tie-breaking in future ports. A rule change needs a new identified rules version and matching examples.
 
+The four-language Ace regression carries challenge ownership and failure counters through six consecutive games: three failed own-A challenges reset one player to 2; the rival then wins their own A and ends the match immediately. It covers both players, odd/even rounds and save/restore at each game boundary. Winning the rival's A game is still only a single-game win.
+
 Rust full-match example: `cargo run --manifest-path rust/Cargo.toml --locked --example baseline`.
 
 C++ full-match example: `/tmp/royale-cpp/royale-baseline-cpp`. SDK 0.2.0 adds C++; rules, state schema and the browser game remain unchanged.

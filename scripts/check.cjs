@@ -1,7 +1,7 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),vm=require('node:vm');
 const root=path.resolve(__dirname,'..'),GK=require(path.join(root,'gamecore.js'));
-const walk=dir=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(x=>['.git','node_modules','target','build','__pycache__','.venv'].includes(x.name)||x.name.endsWith('.egg-info')?[]:x.isDirectory()?walk(path.join(dir,x.name)):[path.join(dir,x.name)]);
+const walk=dir=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(x=>['.git','.obsidian','node_modules','target','build','__pycache__','.venv','BoardGame','agent','knowledge','design-lab','tmp'].includes(x.name)||x.name.endsWith('.egg-info')?[]:x.isDirectory()?walk(path.join(dir,x.name)):[path.join(dir,x.name)]);
 let refs=0,scripts=0;
 for(const p of walk(root)){
  if(p.endsWith('.js')||p.endsWith('.cjs')){new vm.Script(fs.readFileSync(p,'utf8'),{filename:p});scripts++;}
@@ -18,6 +18,10 @@ console.log(`OK: ${scripts} JavaScript files, ${refs} local HTML references, car
 
 require('../tests/seeds.cjs');
 
+require('../tests/ace-reset.cjs');
+
 require('../tests/bloom.cjs');
+
+require('../tests/finale.cjs');
 
 require("../tests/share-card.cjs");
