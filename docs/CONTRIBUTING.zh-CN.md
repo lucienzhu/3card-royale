@@ -41,3 +41,13 @@ Bug请给规则版本、设备／浏览器、复现步骤、预期与实际结�
 ## 核心与RL改动
 
 参见[SDK](SDK.zh-CN.md)与[Gym](RL.zh-CN.md)。改动作、洗牌或计分前运行跨语言一致性检查，同步各原生实现；纯网页UI修改无需安装Python／Gym或Rust。
+
+## 模型改动
+
+参照[模型契约](MODEL.zh-CN.md)和[复现配方](../training/README.md)。
+保持 `sdk/features.js` 与 `python/threecard_royale/gym_env.py` 一致；特征含义改变时
+明确新特征版本，重新采样和训练。运行 `node tests/nn-policy.cjs` 核对 JS／Python 特征
+与教师策略，再用 `python training/parity.py --root <run>` 比较 Torch／ONNX logits；
+`training/profile.html` 验证浏览器 worker 和延迟。记录任务、种子、划分、留出评估、
+模型哈希及 TensorBoard 曲线。原始轨迹和检查点留在忽略的 `artifacts/`；只发布选定
+ONNX 与 manifest。契约改变时，同步更新中英模型／RL 文档。

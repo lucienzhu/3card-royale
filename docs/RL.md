@@ -1,6 +1,10 @@
 # RL / Gymnasium
 
-[简体中文](RL.zh-CN.md) · [Portable SDK](SDK.md)
+[简体中文](RL.zh-CN.md) · [Portable SDK](SDK.md) · [NN model](MODEL.md)
+
+The shipped 256/128 NN policy uses this observation/action contract. It learns
+from Code AI labels, not rewards. Start with [the model card and ONNX example](MODEL.md);
+use [the training guide](../training/README.md) to reproduce it.
 
 ```sh
 python -m pip install -e './python[gym]'
@@ -14,15 +18,16 @@ from threecard_royale.gym_env import RoyaleEnv
 env = RoyaleEnv(episode='match', player=0, render_mode='ansi')
 obs, info = env.reset(seed=42)
 rng = np.random.default_rng(42)
-while True:
+done = info["reset_terminal"] or info["reset_truncated"]
+while not done:
     # Replace masked random sampling with a trainable policy.
     action = int(rng.choice(np.flatnonzero(obs['action_mask'])))
     obs, reward, terminated, truncated, info = env.step(action)
-    if terminated or truncated:
-        break
+    done = terminated or truncated
+env.close()
 ```
 
-`gym.make('ThreeCardRoyale-v0')` is registered after importing `threecard_royale.gym_env`. `RoyaleEnv` follows Gymnasium's reset/step API and supports `SyncVectorEnv`. Tested with Gymnasium 1.2.0; the optional dependency range is >=1.2,<2.
+`gym.make('ThreeCardRoyale-v0')` is registered after importing `threecard_royale.gym_env`. `RoyaleEnv` follows Gymnasium's reset/step API and supports `SyncVectorEnv`. The model reproduction was verified with Gymnasium 1.4.0; the optional dependency range is >=1.2,<2.
 
 ## Task and reward
 
@@ -51,11 +56,25 @@ Each swap opportunity can be used or skipped independently. Both `skip_swap` and
 
 `env.action_masks()` returns a boolean mask for mask-aware algorithms. Candidate encodings let a policy associate dynamic indices with actual moves; an index alone has no stable meaning. Algorithms without masking need an explicit masked distribution/wrapper.
 
+## Connecting a trainable policy
+
+Flatten `cards` in row-major order and append `meta` to form the 336-value state.
+Score each 72-value candidate with a shared network; mask padding before the
+loss, sampling or argmax. The [released 256/128 policy](MODEL.md) provides matching
+Torch, ONNX and browser inputs plus a runnable Gym inference example.
+
+A Gym step includes the learner move, opponent decisions and automatic transitions
+until the next learner decision or episode boundary. The task flag in `meta[23]`
+is 0 for `game` and 1 for `match`; the released model was trained for `game`.
+Handle `reset_terminal` / `reset_truncated` before sampling, including in vectorized
+rollouts. [The RL extension plan](MODEL.md#extending-the-baseline-with-rl) covers
+actor initialization, stored action tables, critic separation and evaluation.
+
 ## Opponents and self-play
 
 Pass `opponent=callable(observation, legal_actions)`. The default is the simple visible-information heuristic. The callback gets detached player observations, not the Game object. Observations and info expose no opponent hand identities, deck order, RNG or seed. Full debug saves remain host-only.
 
-For explicit two-agent self-play, use the turn-based `Game` API, query `actor`, and pass that player's observation to their policy; the host executes `advance` / `next_game` transitions. No PettingZoo API or trained model is claimed. Keep the learner's replay buffer restricted to its own observation/action/reward sequence. A full-information critic, if added, should be an explicit separate training choice.
+For explicit two-agent self-play, use the turn-based `Game` API, query `actor`, and pass that player's observation to their policy; the host executes `advance` / `next_game` transitions. The trained BC policy is described in [Model](MODEL.md); a PettingZoo adapter and reward-trained RL trainer are not implemented. Keep the learner's replay buffer restricted to its own observation/action/reward sequence. A full-information critic, if added, should be an explicit separate training choice.
 
 Run `python -m unittest discover -s tests -p 'test_*.py'` for the official Gym checker, hidden-state invariance, vectorization, masks, episode termination and time limits. Standard API design follows [Gymnasium's custom environment guide](https://gymnasium.farama.org/introduction/create_custom_env/).
 

@@ -41,3 +41,15 @@ Contributions are shared under this repository’s MIT license. Keep copyright a
 ## Core & RL changes
 
 See [SDK](SDK.md) and [Gym](RL.md). Keep all native implementations in lockstep with current rules; run the public conformance suite before changing actions, shuffle or scoring. Python/Gym and Rust tools are optional for web-only UI work.
+
+## Model changes
+
+Use [the model contract](MODEL.md) and [reproduction recipe](../training/README.md).
+Keep `sdk/features.js` and `python/threecard_royale/gym_env.py` aligned; changed
+feature meanings need an explicit feature version, new samples and a retrained
+model. Run `node tests/nn-policy.cjs` for JS/Python features and teacher parity,
+then `python training/parity.py --root <run>` for Torch/ONNX logits; use
+`training/profile.html` to verify the browser worker and latency. Record the task,
+seeds, split, held-out evaluation, artifact hash and TensorBoard curves. Keep raw
+rollouts and checkpoints in ignored `artifacts/`; publish only the selected ONNX
+with its manifest. Update the paired model/RL docs when the contract changes.

@@ -19,7 +19,8 @@ first policy baseline, not a claim of improved strength. Epoch 5 minimizes
 validation loss; its held-out test action agreement is 89.36% and it wins 462/1,000
 evaluation games against Code AI.
 
-See [experiment results](../../docs/experiments/nn-policy-v1/README.md) and
+See [model contract and RL integration](../../docs/MODEL.md),
+[中文模型说明](../../docs/MODEL.zh-CN.md), [experiment results](../../docs/experiments/nn-policy-v1/README.md) and
 [reproduction instructions](../../training/README.md).
 
 Only the deployment model is kept here. Other architectures are preserved in

@@ -52,7 +52,7 @@ regenerating samples.
 
 ## Evaluation and profiling
 
-[evaluation.json](evaluation.json) contains 1,000 independent seeded games per
+[evaluation.json](evaluation.json) contains 1,000 seeded games per
 model against Code AI, with equal seat counts and balanced first movers. Paired
 seeds swap the NN's seat. These are held-out game seeds, not training samples.
 The reported Wilson intervals treat individual games as trials; paired-game

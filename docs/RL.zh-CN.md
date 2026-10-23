@@ -1,6 +1,9 @@
 # RL／Gymnasium环境
 
-[English](RL.md) · [移植接口](SDK.zh-CN.md)
+[English](RL.md) · [移植接口](SDK.zh-CN.md) · [NN 模型](MODEL.zh-CN.md)
+
+上线的 256/128 NN 策略共用这里的观察／动作接口，通过 Code AI 标签学习，尚未按奖励训练。
+[模型文档](MODEL.zh-CN.md)提供结构与 ONNX 接入示例；[训练指南](../training/README.md)负责复现。
 
 ```sh
 python -m pip install -e './python[gym]'
@@ -14,14 +17,15 @@ from threecard_royale.gym_env import RoyaleEnv
 env = RoyaleEnv(episode='match', player=0, render_mode='ansi')
 obs, info = env.reset(seed=42)
 rng = np.random.default_rng(42)
-while True:
+done = info["reset_terminal"] or info["reset_truncated"]
+while not done:
     action = int(rng.choice(np.flatnonzero(obs['action_mask'])))
     obs, reward, terminated, truncated, info = env.step(action)
-    if terminated or truncated:
-        break
+    done = terminated or truncated
+env.close()
 ```
 
-导入`threecard_royale.gym_env`后可用`gym.make('ThreeCardRoyale-v0')`。遵循Gymnasium接口，支持SyncVectorEnv；实际验证Gymnasium1.2.0，可选依赖范围>=1.2,<2。
+导入`threecard_royale.gym_env`后可用`gym.make('ThreeCardRoyale-v0')`。遵循Gymnasium接口，支持SyncVectorEnv；模型复现已验证Gymnasium 1.4.0，可选依赖范围>=1.2,<2。
 
 ## 训练目标
 
@@ -46,11 +50,22 @@ while True:
 
 `env.action_masks()`返回bool掩码，可接支持mask的算法。候选特征表让策略理解动态动作编号对应什么；不支持掩码的算法需要显式封装合法分布。
 
+## 接入可训练策略
+
+按行展平 `cards`，再拼接 `meta`，得到 336 维状态；共享网络为每个 72 维候选动作评分。
+先屏蔽补齐行，再计算损失、采样或 argmax。[256/128 模型文档](MODEL.zh-CN.md)包含
+Torch／ONNX／浏览器一致的输入契约，以及可运行的 Gym 推理示例。
+
+一次 Gym step 会推进本方动作、对手决策和自动过渡，直到本方再次决策或结束。
+`meta[23]` 在 `game` 中为 0、`match` 中为 1；上线模型按 `game` 训练。
+采样前先处理 `reset_terminal`／`reset_truncated`，向量化采样也一样。
+[后续 RL 接入方案](MODEL.zh-CN.md#后续接-rl)说明权重初始化、候选表留存、critic 与评估。
+
 ## 策略、自博弈与信息边界
 
 `opponent`接收`callable(observation, legal_actions)`，默认为基础启发式，参数是独立公开观察，拿不到Game对象。观察与info没有对手暗手牌、牌库顺序、RNG或种子。完整save只供宿主调试，不能送进策略。
 
-两智能体自博弈使用Game轮流行动接口：查actor，向对应策略提供它的observation，由宿主推进advance／next_game。不声称实现了PettingZoo或已有训练模型。经验回放只收集本策略观察／动作／奖励；若将来要全信息critic，应作为明确的独立训练配置。
+两智能体自博弈使用Game轮流行动接口：查actor，向对应策略提供它的observation，由宿主推进advance／next_game。已训练的 BC 策略见[模型文档](MODEL.zh-CN.md)；PettingZoo 适配器与奖励驱动的 RL 训练器尚未实现。经验回放只收集本策略观察／动作／奖励；若将来要全信息critic，应作为明确的独立训练配置。
 
 官方checker、隐藏信息扰动不变性、向量环境、合法掩码、胜负和截断检查：`python -m unittest discover -s tests -p 'test_*.py'`。接口依据[Gymnasium自定义环境指南](https://gymnasium.farama.org/introduction/create_custom_env/)。
 

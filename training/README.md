@@ -4,6 +4,8 @@ Production uses **256 → 128 → 1**: two ReLU hidden layers and a shared score
 each legal action. The input is one public observation (336 values) plus one
 candidate action (72). Training imitates Code AI; it has no history or hidden cards.
 
+[Model contract and RL extension](../docs/MODEL.md) · [中文模型说明](../docs/MODEL.zh-CN.md) · [Gym environment](../docs/RL.md)
+
 ## One command after setup
 
 Tested with Python **3.12.14** and Node **24.19.0**, from the repository root:
