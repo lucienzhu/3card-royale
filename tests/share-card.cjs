@@ -6,7 +6,7 @@ const input={results,snapshot:{players:[{level:14},{level:5}],aLosses:[1,0],phas
 assert.deepEqual(d.wins,[3,2]);assert.equal(d.rounds,21);assert.equal(d.firstAce,3);assert.equal(d.setbacks,1);assert.equal(JSON.stringify(input),before);d.results[0].winner=1;assert.equal(input.results[0].winner,0);
 let cases=0;for(const lang of ['zh-CN','en'])for(const theme of ['light','dark'])for(const winner of [0,1])for(const match of [true,false]){
  const data=S.summarize({...input,lang,theme,match,results:[...results.slice(0,-1),{...results.at(-1),winner,match_won:match}]});const svg=S.makeSVG(data,ctx.window.SZBloomAssets,ctx.window.SZShareAssets.cityStyle,B,F);
- assert(svg.includes('width="1080" height="1440"'));assert(!svg.includes('foreignObject'));assert(!svg.includes('var(--'));assert(!svg.includes('transform-origin'));assert(svg.includes('transform="rotate(120 32 36)"'));assert(svg.includes('transform="rotate(-120 32 36)"'));assert(!/@import|<image|<script/.test(svg));assert(svg.includes('data-skyline-revision="layer19"'));assert(svg.includes(match?(lang==='en'?'in bloom.':'开花了。'):(lang==='en'?'won this game.':'赢下这一局。')));assert(svg.includes(theme==='dark'?'#0C2118':'#EDF4EF'));assert.equal(svg.includes('#DCE6E0'),match);assert(svg.includes('id="szf1"'));assert.equal(svg.includes(winner===0?'#C5416B':'#D6A41C'),true);assert(S.filename(data).endsWith('.png'));cases++;
+ assert(svg.includes('width="1080" height="1440"'));assert(!svg.includes('foreignObject'));assert(!svg.includes('var(--'));assert(!svg.includes('transform-origin'));if(match){assert(svg.includes('transform="rotate(120 32 36)"'));assert(svg.includes('transform="rotate(-120 32 36)"'));}assert(!/@import|<image|<script/.test(svg));assert.equal(svg.includes('data-skyline-revision="layer19"'),match);assert(svg.includes(match?(lang==='en'?'in bloom.':'开花了。'):(lang==='en'?'Won this game':'赢下这一局')));assert(svg.includes(theme==='dark'?'#0C2118':'#EDF4EF'));assert.equal(svg.includes('#DCE6E0'),match);assert.equal(svg.includes('id="szf1"'),match);if(match)assert.equal(svg.includes(winner===0?'#C5416B':'#D6A41C'),true);assert(S.filename(data).endsWith('.png'));cases++;
 }
 assert.throws(()=>S.summarize({results:[]}));assert.throws(()=>S.summarize({...input,results:results.slice(0,-1)}));
 for(const version of ['0.3.8','0.3.7']){const data=S.summarize({...input,version,match:false}),svg=S.makeSVG(data,ctx.window.SZBloomAssets,ctx.window.SZShareAssets.cityStyle,B,F);assert(svg.includes('规则 '+version));assert(!svg.includes('闯关成功'));}
@@ -21,4 +21,24 @@ for(const nav of [undefined,{},{canShare:()=>true},{share(){},canShare(){throw n
 const clip={clipboard:{write(){}}},Item=function(){},PngItem=Object.assign(function(){},{supports:t=>t==='image/png'}),NoPng=Object.assign(function(){},{supports:()=>false});
 assert.equal(S.copySupported(clip,Item),true);assert.equal(S.copySupported(clip,PngItem),true);
 for(const [nav,I] of [[clip,NoPng],[clip,undefined],[{},Item],[undefined,Item],[{clipboard:{}},Item],[clip,Object.assign(function(){},{supports(){throw new Error('x');}})]])assert.equal(S.copySupported(nav,I),false);
+// Share the full, publicly played 3/4/5-card finish, without exposing the next draw
+// or the remaining private hands. Keep flower cards physical, with a caption.
+const GK=require('../gamecore.js');let handCases=0;
+for(const attack of [[6,19,32],[5,18,31,44],[5,18,31,44,13]])for(const winner of [0,1]){
+ const g=new GK.Game(42,{version:'1.0.0',first:winner}),defend=[1,4,8],pool=Array.from({length:52},(_,i)=>i).filter(n=>![...attack,...defend].includes(n));
+ g.players[winner].hand=attack.slice(1);g.players[winner].table=[{card:attack[0],up:true}];g.players[1-winner].hand=defend;g.players[1-winner].table=pool.splice(0,4).map(card=>({card,up:true}));g.stock=pool;g.check();g.play(winner,attack);g.play(1-winner,defend);g.check();assert.equal(g.phase,'game_over');
+ const raw={results:g.results,snapshot:g.snapshot(),first:winner,seed:g.seed,version:g.version,match:false},saved=JSON.stringify(raw);
+ for(const lang of ['zh-CN','en'])for(const theme of ['light','dark']){
+  const data=S.summarize({...raw,lang,theme}),svg=S.makeSVG(data,ctx.window.SZBloomAssets,ctx.window.SZShareAssets.cityStyle,B,F);
+  assert.equal((svg.match(/data-card=/g)||[]).length,attack.length+3);assert(svg.includes('data-share-layout="game-hand"'));assert(!svg.includes('data-skyline-revision'));assert(!svg.includes('szf1'));assert(svg.includes('data-play="winner"'));
+  assert.deepEqual(data.combat.moves[winner].cards,attack);assert.equal(data.combat.moves[winner].wounds[0],true);assert(!('replacements' in data.combat));assert(!('stock' in data.snapshot));assert(data.snapshot.players.every(p=>!('hand' in p)));
+  if(attack.length===5){assert.deepEqual(data.combat.moves[winner].wild,{physical:13,as:5});assert(svg.includes('♥2 → ♠7'));}
+  data.combat.moves[winner].cards[0]=51;assert.equal(JSON.stringify(raw),saved);handCases++;
+ }
+}
+// Same-score victory must describe the rank tiebreak, not claim zero causes damage.
+const tie={...input,match:false,results:results.slice(0,1),snapshot:{...input.snapshot,lastCombat:{attacker:0,action:'damage',amount:1,reason:'rank_attack',before:[0,4],after:[0,5],moves:[{...GK.evaluate([10,11,12],2,'1.0.0'),cards:[10,11,12]},{...GK.evaluate([1,2,3],2,'1.0.0'),cards:[1,2,3]}]}}};
+const tieSVG=S.makeSVG(S.summarize(tie),ctx.window.SZBloomAssets,ctx.window.SZShareAssets.cityStyle,B,F);assert(tieSVG.includes('同分比点数 · +1 伤'));assert(!tieSVG.includes('4 − 4'));
+assert.equal(S.summarize({...tie,snapshot:{...tie.snapshot,lastCombat:{...tie.snapshot.lastCombat,moves:[null,null]}}}).combat,null);
+console.log(JSON.stringify({single_game_hands:'passed',cases:handCases,physical_wildcards:true,wound_origins:true,rank_tiebreak:true,no_hidden_cards:true}));
 console.log(JSON.stringify({share_card:'passed',share_payload:'png_alone_or_link_alone',copy_image:'png',render_cases:cases,width:S.WIDTH,height:S.HEIGHT,results_unchanged:true,self_contained_svg:true}));
