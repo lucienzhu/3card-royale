@@ -92,7 +92,7 @@ function gameSVG(d,assets){
  }
  let body='',height=HEIGHT;
  if(layout==='recap'&&d.combats.length){
-  const plays=recap(d),step=480,start=356;
+  const plays=recap(d),step=548,start=356;
   height=Math.max(HEIGHT,start+plays.length*step+220);
   body+=text(80,230,title,en?84:94,p.ink,750)+text(80,288,t('全部 '+plays.length+' 次攻防 · 按发生顺序','All '+plays.length+' plays · In order'),30,p.muted);
   plays.forEach((co,i)=>{
@@ -127,7 +127,7 @@ function gameSVG(d,assets){
   body+=outcomeLabel(c,80,806,27,600)+identity(d.winner,760,809,27)+text(1000,806,rank(r.from)+' → '+rank(r.to),31,playerColor(d.winner),700,'end',190);
   body+=finalSide(0,862);
  }else if(c){
-  body+=text(80,214,title,en?84:94,p.ink,750)+text(80,268,stepName(c),30,p.muted);
+  body+=text(80,214,title,en?84:94,p.ink,750)+text(80,268,stepName(c),30,p.muted)+text(1000,268,d.highlightPick==='hand'?t('最大牌型','BEST HAND'):t('最大伤害','BIGGEST HIT'),24,p.muted,500,'end',300);
   function playSide(q,y){
    const m=c.moves[q],isFeatured=q===w,cw=isFeatured?Math.min(196,(920-(m.cards.length-1)*16)/m.cards.length):148;
    let section=`<g data-player="${q}" data-player-y="${y}" data-featured="${isFeatured}">`+playerTitle(q,y,m,c,isFeatured);
@@ -148,11 +148,13 @@ function gameSVG(d,assets){
  const qrSize=QR_ROWS.length+8,qrPath=QR_ROWS.flatMap((row,y)=>[...row.matchAll(/1+/g)].map(m=>`M${m.index+4} ${y+4}h${m[0].length}v1h-${m[0].length}z`)).join('');
  const mark=assets.flower.replace(/fill="#DEB04A"/g,'fill="#F2CD5D"').replace(/fill="#D83B74"/g,'fill="#C5416B"');
  const footer=height-HEIGHT;
- return `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="${height}" viewBox="0 0 1080 ${height}" role="img" aria-label="${escape(title)}" data-share-layout="${layout}"><style>text{font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Arial,sans-serif}</style><rect width="1080" height="${height}" fill="${p.paper}"/>`+
- identity(d.winner,80,112,28)+text(120,110,gameWho(d.winner)+t('赢下第 '+r.game+' 局',' won game '+r.game),28,p.muted,500,'start',490)+text(1000,110,layout==='highlight'?(d.highlightPick==='hand'?t('本局最大牌型','BEST HAND'):t('本局最大伤害','BIGGEST HIT')):t('深圳花牌','3CARD ROYALE'),24,p.muted,500,'end',370)+body+
+ const brandWidth=en?236:128,brandX=1000-brandWidth-60;
+ const brand=`<g data-share-brand="top-right"><rect x="${brandX}" y="69" width="40" height="52" rx="6" fill="url(#share-logo-gold)" stroke="#A17C35" stroke-width="1.8"/><svg x="${brandX+3}" y="74" width="34" height="42" viewBox="0 0 64 72">${mark}</svg>${text(1000,106,t('深圳花牌','3Card Royale'),30,p.ink,700,'end',brandWidth)}</g>`;
+ return `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="${height}" viewBox="0 0 1080 ${height}" role="img" aria-label="${escape(title)}" data-share-layout="${layout}"><defs><linearGradient id="share-logo-gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F7E8B5"/><stop offset=".45" stop-color="#ECCE80"/><stop offset=".58" stop-color="#F5E5AF"/><stop offset="1" stop-color="#C6A357"/></linearGradient></defs><style>text{font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Arial,sans-serif}</style><rect width="1080" height="${height}" fill="${p.paper}"/>`+
+ identity(d.winner,80,112,28)+text(120,110,gameWho(d.winner)+t('赢下第 '+r.game+' 局',' won game '+r.game),28,p.muted,500,'start',490)+brand+body+
  `<g transform="translate(0 ${footer})">`+text(540,1242,t('等级 '+rank(r.from)+' → '+rank(r.to)+'   ·   '+r.rounds+' 轮攻防','Level '+rank(r.from)+' → '+rank(r.to)+'   ·   '+r.rounds+(r.rounds===1?' round':' rounds')),27,p.muted,500,'middle')+
- `<path d="M80 1270H1000" stroke="${p.line}"/><g transform="translate(80 1300)"><rect width="46" height="58" rx="7" fill="#ECCE80" stroke="#A17C35" stroke-width="2"/><svg x="4" y="6" width="38" height="45" viewBox="0 0 64 72">${mark}</svg></g>`+
- text(146,1330,t('深圳花牌','3Card Royale'),32,p.ink,700)+text(146,1366,t('三张牌，打出花。','Three cards. Make them bloom.'),23,p.muted)+text(80,1418,t('规则 ','Rules ')+d.version+' · lucienzhu.github.io/gk-royale-playtest',19,p.muted)+
+ `<path d="M80 1270H1000" stroke="${p.line}"/>`+
+ text(80,1330,t('三张牌，打出花。','Three cards. Make them bloom.'),28,p.ink,600)+text(80,1418,t('规则 ','Rules ')+d.version+' · lucienzhu.github.io/gk-royale-playtest',19,p.muted)+
  `<svg x="840" y="1276" width="164" height="164" viewBox="0 0 ${qrSize} ${qrSize}" shape-rendering="crispEdges" aria-label="${SHARE_URL}"><rect width="${qrSize}" height="${qrSize}" fill="#fff"/><path d="${qrPath}" fill="#121417"/></svg></g></svg>`;
 }
 // The poster is a still of the finale: the winner's flower over the skyline, the vine below, the game's address last.

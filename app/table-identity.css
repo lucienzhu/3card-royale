@@ -196,3 +196,7 @@
  :root body.table-stage-layout #action-panel:has(.upgrade-jump) #formula{font-size:11px;line-height:16px}
  :root body.table-stage-layout #action-panel:has(.upgrade-jump) .action-copy{gap:0}
 }
+
+/* A decline stays reachable on short screens, where duplicate swap buttons hide. */
+:root body.table-stage-layout #action-panel.is-hand-exchange:has(#skip-refresh) #action-buttons{display:flex;flex-direction:row;gap:6px}
+:root body.table-stage-layout #action-panel #skip-refresh{white-space:nowrap;min-width:44px;min-height:36px}

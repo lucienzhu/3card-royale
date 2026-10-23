@@ -375,7 +375,7 @@ function renderGoal(s,replay){
  for(const [rank,label]of [[2,'2'],[14,'A'],[15,'⚑']]){const mark=document.createElement('span');mark.className=rank===15?'race-finish':rank===14?'race-a':'race-start';mark.textContent=label;mark.style.left=((rank-2)/13*100)+'%';if(rank===15)mark.setAttribute('aria-label','以 A 开局再赢一局');rail.append(mark);}track.append(rail);
 }
 
-function combatSummary(c,whoName){if(!c)return '';if(c.action==='damage')return whoName(1-c.attacker)+' +'+c.amount+' 伤';if(c.action==='refresh')return whoName(c.actor)+(GK.handExchange(variant)?'交换 ':'换牌 ')+c.refreshes.length+'/'+c.amount;if(c.action==='open')return whoName(c.actor)+'翻开 '+c.amount+' 张';if(c.action==='lock')return whoName(c.actor)+'扣回 '+c.amount+' 张';if(c.action==='none')return '无效果';return '结算中';}
+function combatSummary(c,whoName){if(!c)return '';if(c.action==='damage')return whoName(1-c.attacker)+' +'+c.amount+' 伤';if(c.action==='refresh')return whoName(c.actor)+(c.skipped?'换牌 '+c.refreshes.length+' 次 · 跳过 '+c.skipped+' 次':(GK.handExchange(variant)?'交换 ':'换牌 ')+c.refreshes.length+'/'+c.amount);if(c.action==='open')return whoName(c.actor)+'翻开 '+c.amount+' 张';if(c.action==='lock')return whoName(c.actor)+'扣回 '+c.amount+' 张';if(c.action==='none')return '无效果';return '结算中';}
 function drawHand(container,who,s,replay){
  container.replaceChildren();const p=s.players[who];container.style.setProperty('--hand-count',Math.max(1,p.hand.length));container.classList.toggle('hand-cards',who===0||replay);
  if(who===1&&!replay){
@@ -426,11 +426,11 @@ let motionSerial=0;
 function beginTableMotion(){const before=window.SZCardMotion.capture(game);window.SZCardMotion.hold();return {before,serial:++motionSerial};}
 function finishTableMotion(ticket){window.SZCardMotion.play(ticket.before,game).then(()=>{if(ticket.serial===motionSerial&&mode==='play'){render();driveAI();}});}
 function tryAction(fn){if(window.SZCardMotion.busy)return;const ticket=beginTableMotion();error='';try{fn();selected=[];flipIndices=[];flipMode=null;refreshTarget=null;persist();}catch(e){error=e.message;ticket.before=null;}render();finishTableMotion(ticket);}
-function describeEffect(combat){if(!combat)return '';if(combat.action==='refresh')return (GK.handExchange(variant)?'已交换 ':'已换 ')+combat.refreshes.length+' / '+combat.amount+' 次，伤势不变';if(combat.action==='damage')return '新增 '+combat.amount+' 张'+(GK.isRefresh(variant)?'明伤牌':'扣牌')+'，伤势 '+combat.before.join(' / ')+' → '+combat.after.join(' / ');if(combat.action==='open')return '翻开自己 '+combat.amount+' 张，解锁出牌；伤势不变';if(combat.action==='lock')return '扣回对方 '+combat.amount+' 张，封锁机会；伤势不变';if(combat.action==='none')return GK.isRefresh(variant)?'没有可换的牌，机会自动结束':'没有翻面目标，伤势不变';return '等待翻面选择；伤势不变';}
+function describeEffect(combat){if(!combat)return '';if(combat.action==='refresh')return '已换 '+combat.refreshes.length+' 次，跳过 '+(combat.skipped||0)+' 次；伤势不变';if(combat.action==='damage')return '新增 '+combat.amount+' 张'+(GK.isRefresh(variant)?'明伤牌':'扣牌')+'，伤势 '+combat.before.join(' / ')+' → '+combat.after.join(' / ');if(combat.action==='open')return '翻开自己 '+combat.amount+' 张，解锁出牌；伤势不变';if(combat.action==='lock')return '扣回对方 '+combat.amount+' 张，封锁机会；伤势不变';if(combat.action==='none')return GK.isRefresh(variant)?'没有可换的牌，机会自动结束':'没有翻面目标，伤势不变';return '等待翻面选择；伤势不变';}
 function renderActions(s,event){
  $('action-panel').classList.remove('is-hand-exchange');const replay=mode==='replay';$('action-buttons').replaceChildren();$('selection-preview').hidden=true;$('settings').hidden=replay;$('error').textContent=error;
  if(replay){$('action-title').textContent=event.title;$('action-description').textContent=event.note;$('action-note').textContent='双方手牌可见；切回“对局”继续你的存档。';return;}
- $('action-note').textContent=GK.woundExchange(variant)?'先点自己的手牌或伤牌，再点对手牌背、公开伤牌、自己的另一牌区或牌堆。没有自己的牌可交出时，机会结束。':GK.isRefresh(variant)?'换牌时直接点牌选目标，再确认；对手手牌点牌背盲换一张。★ 为你的逢人配。':'点手牌或明牌选三张。翻面时点选目标牌。★ 为你的逢人配。';
+ $('action-note').textContent=GK.woundExchange(variant)?'每次机会可换牌，也可跳过。先点自己的牌，再点交换目标；跳过只消耗当前1次机会。':GK.isRefresh(variant)?'换牌时直接点牌选目标，再确认；对手手牌点牌背盲换一张。★ 为你的逢人配。':'点手牌或明牌选三张。翻面时点选目标牌。★ 为你的逢人配。';
  const p=game.phase;
  if(p==='attack'||p==='defend'){
   if(game.currentActor()===1){$('action-title').textContent='对手'+(p==='attack'?'进攻':'防守')+'中…';$('action-description').textContent='';return;}
@@ -447,9 +447,11 @@ function renderActions(s,event){
    $('action-panel').classList.add('is-hand-exchange');
    if(game.currentActor()===1){$('action-title').textContent='对手交换手牌中…';$('action-description').textContent='';return;}
    const chosen=refreshTarget?.index!==undefined;
-   $('action-title').textContent='防守反击 · 剩余 '+game.pendingRefresh.remaining+' 次';
+   $('action-title').textContent='换牌机会 · 剩余 '+game.pendingRefresh.remaining+' 次';
    $('action-description').textContent=GK.woundExchange(variant)?(chosen?'再选交换目标':'选一张交出'):(chosen?'② 点对手牌背交换，或点牌堆摸新':'① 先选自己一张手牌');
    $('selection-preview').hidden=!chosen;if(chosen)$('selection-preview').textContent='交出 '+GK.label(refreshTarget.zone==='table'?game.players[0].table[refreshTarget.index].card:game.players[0].hand[refreshTarget.index]);
+   if(GK.woundExchange(variant)){addButton('跳过这次',()=>tryAction(()=>game.skipRefresh()),{id:'skip-refresh'});return;}
+   addButton('跳过这次',()=>tryAction(()=>game.skipRefresh()),{id:'skip-refresh'});
    addButton('盲换对手',()=>exchangeHandWith('opponent'),{disabled:!chosen||!game.players[1].hand.length,primary:true,id:'exchange-opponent'});
    addButton('弃旧摸新',()=>exchangeHandWith('deck'),{disabled:!chosen,id:'exchange-deck'});return;
   }
@@ -462,6 +464,7 @@ function renderActions(s,event){
    const t=refreshTarget,p=game.players[t.who];
    $('selection-preview').textContent=t.blind?'盲换对手 1 张手牌':(t.who===0?'自己':'对方')+(t.zone==='hand'?'手牌':'伤牌')+' '+GK.label(t.zone==='hand'?p.hand[t.index]:p.table[t.index].card);
   }
+  addButton('跳过这次',()=>tryAction(()=>game.skipRefresh()),{id:'skip-refresh'});
   addButton('确认换牌',()=>tryAction(()=>game.refresh(refreshTarget)),{disabled:!refreshTarget,primary:true,id:'submit-refresh'});
  }else if(p==='flip'){
   if(game.currentActor()===1){$('action-title').textContent='对手选择翻面';$('action-description').textContent='翻面会改变出牌机会，双方伤势不变。';return;}
@@ -535,12 +538,12 @@ function render(){
   $('quick-defense').textContent='按分差获得交换次数；同牌型点数胜得1次。先点自己的手牌或伤牌，再点目标牌或牌堆。手牌仍保密，伤牌全亮。';
   $('rule-resolution-step').textContent='先完成出牌补位，再执行伤害或交换。双方伤牌都能换；张数不变，不回血。五伤即败。';
   $('quick-wounds').textContent='伤牌全亮，达到5张败北。伤牌可以出牌或参与交换，换入伤区的牌保持公开；伤牌张数不变，不回血。';
-  $('rule-defense-effect').textContent='防守者获得|Δ|次交换机会，每次消耗1次。自己的手牌和伤牌都可交出。';
+  $('rule-defense-effect').textContent='防守者获得|Δ|次交换机会，每次可换牌或跳过。跳过1次后，有剩余机会仍可换牌。';
   $('rule-opportunity-text').textContent='先选自己的手牌或伤牌，再选对手盲手牌、对手公开伤牌、自己的另一牌区，或牌库。同一牌区内再点自己的牌可改选，点已选牌取消。';
   $('refresh-rule-text').textContent='与牌交换时两张直接互换，不经弃牌堆。对手手牌只盲抽，不看牌选；公开伤牌可以指定。与牌库换则弃掉交出的牌，原位摸新。换入手牌保密，换入伤区公开。每次1机会，双方手牌和伤牌张数均不变。';
   $('quick-example').textContent='例如：交出手牌K，拿对手公开伤牌7；K原位成为对手伤牌，7进入你的手牌。也能用自己的伤牌盲换对手手牌、弃旧摸新，或与自己的手牌互换。均不回血。';
   $('rule-refill-text').textContent='交换不改变手牌或伤牌张数。两张牌互换不抽牌；与牌库换额外抽1张，原区域补位。双方各进攻一次后才保留余牌、补手牌到8张；伤牌打出仍原位补明牌。';
-  $('action-note').textContent='先点自己的手牌或伤牌，再点对手牌背、公开伤牌、自己的另一牌区或牌堆。没有自己的牌可交出时，机会结束。';
+  $('action-note').textContent='每次机会可换牌，也可跳过。先点自己的牌，再点交换目标；跳过只消耗当前1次机会。';
  }
  const shared=GK.sharedFlower(variant);
  $('quick-flower-text').textContent=shared?'★ 花牌即逢人配／会子／百搭牌，可代任意牌。首局双方用♥2；之后按小局赢家升级后的等级，确定下一局双方共用的红桃花牌。一局内不变。':'点自己的手牌或明伤牌，可混用。看过牌型，再点“进攻”或“防守”。★ 是你当前级数的红桃牌，可作任意牌。';

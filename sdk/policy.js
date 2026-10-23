@@ -24,7 +24,7 @@ function chooseAction(o, actions = o.legal_actions) {
         const d = outcome(o.active[o.attacker], e).effective_delta;
         return [-Math.max(d, 0), Math.max(-d, 0), uses, -w];
       }
-      if (a.type === "stop_swaps") return [-1000];
+      if (["skip_swap", "stop_swaps"].includes(a.type)) return [-1000];
       const c = o[a.source.zone][a.source.index],
         t = a.target;
       if (["deck", "blind"].includes(t.zone))

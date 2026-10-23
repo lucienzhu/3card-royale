@@ -128,6 +128,36 @@ def main():
                     restores += 1
             else:
                 raise AssertionError("Conformance match exceeded bound")
+        # Each decline consumes one opportunity, including after save/restore.
+        for actor in (0, 1):
+            for pattern in (("skip_swap", "swap"), ("swap", "skip_swap"), ("skip_swap", "skip_swap")):
+                g = Game(31, actor)
+                for _ in range(3000):
+                    if g.s["phase"] == "refresh" and g.actor == actor and g.s["pending"]["remaining"] == 2:
+                        break
+                    actions = g.legal_actions()
+                    assert actions, "No natural two-opportunity fixture"
+                    g.step(choose_action(g.observation(g.actor), actions) if g.actor is not None else actions[0])
+                else:
+                    raise AssertionError("No natural two-opportunity fixture")
+                s = g.save()
+                g = Game.restore(s)
+                compare(g, {"op": "restore", "state": s})
+                for i, kind in enumerate(pattern):
+                    a = next(a for a in g.legal_actions() if a["type"] == kind)
+                    before = g.save()
+                    g.step(a)
+                    if kind == "skip_swap":
+                        after = g.save()
+                        for key in ("players", "stock", "discard", "rng"):
+                            assert before[key] == after[key], key
+                    assert g.s["phase"] == ("resolved" if i else "refresh")
+                    if not i:
+                        assert g.s["pending"]["remaining"] == 1
+                    compare(g, {"op": "step", "action": a})
+                    state = g.save()
+                    g = Game.restore(state)
+                    compare(g, {"op": "restore", "state": state})
         # Eight directed routes plus empty-deck reshuffle from synthetic, trusted states.
         for source in ["hand", "wounds"]:
             for target in ["deck", "blind", "enemy", "own"]:

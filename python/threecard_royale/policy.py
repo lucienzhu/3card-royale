@@ -33,7 +33,7 @@ def choose_action(obs, actions=None):
         return max(actions, key=key)
 
     def key(a):
-        if a["type"] == "stop_swaps":
+        if a["type"] in ("skip_swap", "stop_swaps"):
             return (-1000,)
         src = a["source"]
         c = obs["hand" if src["zone"] == "hand" else "wounds"][src["index"]]

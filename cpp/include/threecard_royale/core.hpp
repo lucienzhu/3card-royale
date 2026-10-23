@@ -178,6 +178,7 @@ public:
                         if (!p.at(other).at(j).is_null()) out.push_back({{"type", "swap"}, {"source", source}, {"target", {{"zone", other}, {"who", who}, {"index", j}}}});
                 }
             }
+            out.push_back({{"type", "skip_swap"}});
             out.push_back({{"type", "stop_swaps"}});
         } else if (phase == "resolved") out.push_back({{"type", "advance"}});
         else if (phase == "game_over") out.push_back({{"type", "next_game"}});
@@ -191,6 +192,11 @@ public:
             const std::string type = action.at("type");
             if (type == "play") play(detail::ints(action.at("cards")));
             else if (type == "swap") swap(action);
+            else if (type == "skip_swap") {
+                const int left = s_["pending"]["remaining"].get<int>() - 1;
+                s_["pending"]["remaining"] = left;
+                if (!left) { s_["pending"] = nullptr; finish_combat(); }
+            }
             else if (type == "stop_swaps") { s_["pending"] = nullptr; finish_combat(); }
             else if (type == "advance") advance();
             else if (type == "next_game") start_game(s_.at("next_first").get<int>());

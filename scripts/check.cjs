@@ -25,3 +25,5 @@ require('../tests/bloom.cjs');
 require('../tests/finale.cjs');
 
 require("../tests/share-card.cjs");
+
+require('../tests/skip-swaps.cjs');

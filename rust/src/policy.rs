@@ -50,7 +50,7 @@ pub fn choose_action(o: &Value) -> Result<Value, String> {
                 key[2] = uses;
                 key[3] = -wc;
             }
-        } else if a["type"] == "stop_swaps" {
+        } else if a["type"] == "stop_swaps" || a["type"] == "skip_swap" {
             key[0] = -1000;
         } else {
             let source = &a["source"];
