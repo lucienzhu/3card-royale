@@ -32,7 +32,7 @@ for(const attack of [[6,19,32],[5,18,31,44],[5,18,31,44,13]])for(const winner of
   const data=S.summarize({...raw,lang,theme}),svg=S.makeSVG(data,ctx.window.SZBloomAssets,ctx.window.SZShareAssets.cityStyle,B,F);
   assert.equal((svg.match(/data-card=/g)||[]).length,attack.length+3);assert(svg.includes('data-share-layout="highlight"'));assert(!svg.includes('data-skyline-revision'));assert(!svg.includes('szf1'));assert(svg.includes('data-play="winner"'));assert.deepEqual([...svg.matchAll(/data-player="(\d)"/g)].map(m=>Number(m[1])),[1,0]);
   assert.deepEqual(data.combat.moves[winner].cards,attack);assert.equal(data.combat.moves[winner].wounds[0],true);assert(!('replacements' in data.combat));assert(!('stock' in data.snapshot));assert(data.snapshot.players.every(p=>!('hand' in p)));
-  if(attack.length===5){assert.deepEqual(data.combat.moves[winner].wild,{physical:13,as:5});assert(svg.includes('♥2 → ♠7'));}
+  if(attack.length===5){assert.deepEqual(data.combat.moves[winner].wild,{physical:13,as:5});assert(svg.includes('♥2 → ♠7'));assert(!svg.includes('★'),'Flower cards use the production flower watermark');assert(!svg.includes('#FFF9E8'),'No legacy cream flower face');assert(svg.includes(ctx.window.SZBloomAssets.cardStyle.back));}
   data.combat.moves[winner].cards[0]=51;assert.equal(JSON.stringify(raw),saved);handCases++;
  }
 }

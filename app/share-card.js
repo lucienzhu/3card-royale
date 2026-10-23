@@ -70,15 +70,17 @@ function gameSVG(d,assets){
  const hand=m=>{const k=Number.isInteger(m.kind)?m.kind:['高牌','对子','顺子','同花','炸弹','同花顺','四炸','五炸'].indexOf(m.name);return (en?english:names)[k]||m.name;};
  const units=s=>[...String(s)].reduce((n,x)=>n+(x.charCodeAt(0)>255?1:.56),0);
  const text=(x,y,s,size,fill=p.ink,weight=400,anchor='start',width=920)=>`<text x="${x}" y="${y}" font-size="${Math.min(size,width/Math.max(1,units(s))).toFixed(1)}" fill="${fill}" font-weight="${weight}" text-anchor="${anchor}">${escape(s)}</text>`;
- const shapes=['M12 2C11.3 2.6 2.6 9.2 2.6 15.1C2.6 20 8 21 11.2 18.1L8.7 22.6H15.3L12.8 18.1C16 21 21.4 20 21.4 15.1C21.4 9.2 12.7 2.6 12 2Z','M12 22C11.2 21.4 2.2 15.4 2.2 8.9C2.2 5.6 4.6 3 7.6 3C9.5 3 11 4.1 12 5.6C13 4.1 14.5 3 16.4 3C19.4 3 21.8 5.6 21.8 8.9C21.8 15.4 12.8 21.4 12 22Z','M6.9 7.3a5.1 5.1 0 1 0 10.2 0a5.1 5.1 0 1 0-10.2 0M1.3 14a5.1 5.1 0 1 0 10.2 0a5.1 5.1 0 1 0-10.2 0M12.5 14a5.1 5.1 0 1 0 10.2 0a5.1 5.1 0 1 0-10.2 0M12 11.2L8.9 22.6H15.1Z','M12 2C13.9 6.2 17.6 10 21 12C17.6 14 13.9 17.8 12 22C10.1 17.8 6.4 14 3 12C6.4 10 10.1 6.2 12 2Z'];
- const suit=(id,x,y,size,ink,opacity=1)=>`<svg x="${x}" y="${y}" width="${size}" height="${size}" viewBox="0 0 24 24" opacity="${opacity}"><path d="${shapes[Math.floor(id/13)]}" fill="${ink}"/></svg>`;
+ const cardStyle=assets.cardStyle;
+ if(!cardStyle||!assets.cardSuits||!assets.cardFlower)throw new Error('Card design assets are unavailable.');
+ const suit=(id,x,y,size,ink,opacity=1,height=size)=>assets.cardSuits[Math.floor(id/13)].replace('<svg ',`<svg x="${x}" y="${y}" width="${size}" height="${height}" opacity="${opacity}" `).replace(/currentColor/g,ink);
+ const cardFlower=(x,y,width,height,watermark=false)=>assets.cardFlower.replace('<svg ',`<svg x="${x}" y="${y}" width="${width}" height="${height}" opacity="${watermark?.2:1}" `).replace('viewBox="0 0 64 64"',watermark?'viewBox="8 12 48 48"':'viewBox="0 0 64 64"').replaceAll(cardStyle.goldCenter,watermark?cardStyle.red:cardStyle.goldCenter);
  function cards(m,y,large,options={}){
   const n=m.cards.length;if(!n)return '';
   const cw=options.width||(large?Math.min(196,(920-(n-1)*16)/n):136),ch=cw*1.4,gap=options.gap??(large?16:14),center=options.center??540,x0=center-(n*cw+(n-1)*gap)/2,rowHeight=options.rowHeight??(large?274.4:ch);
   return `<g data-play="${options.zone||(large?'winner':'response')}">`+m.cards.map((id,i)=>{
-   const x=x0+i*(cw+gap),back=id===null,wild=!back&&m.wild?.physical===id,ink=[1,3].includes(Math.floor(id/13))?'#B2365A':'#173D39',scale=cw/196;
-   const face=back?`<svg x="${cw*.22}" y="${ch*.3}" width="${cw*.56}" height="${ch*.4}" viewBox="0 0 64 72">${assets.flower}</svg>`:text(20*scale,72*scale,rank(id%13+2),66*scale,ink,750)+suit(id,18*scale,89*scale,36*scale,ink)+suit(id,68*scale,131*scale,110*scale,ink,.09)+(wild?text(20*scale,ch-19*scale,'★',28*scale,'#866300',700):'')+(m.wounds?.[i]?text(cw-17*scale,ch-19*scale,t('伤','W'),25*scale,'#866300',650,'end'):'');
-   return `<g data-card="${back?'hidden':id}" transform="translate(${x} ${y+(rowHeight-ch)/2})"><rect y="5" width="${cw}" height="${ch}" rx="${Math.min(16,cw*.08)}" fill="#000" opacity=".05"/><rect width="${cw}" height="${ch}" rx="${Math.min(16,cw*.08)}" fill="${back?'#ECCE80':wild?'#FFF9E8':'#FFFEFA'}" stroke="${back||wild?'#C3A249':'#C3D4C9'}" stroke-width="${wild?3:1.5}"/>${face}</g>`;
+   const x=x0+i*(cw+gap),back=id===null,wild=!back&&m.wild?.physical===id,ink=[1,3].includes(Math.floor(id/13))?cardStyle.red:cardStyle.ink,scale=cw/196,pad=cw*.06,stampW=cw*.45,stampH=ch*.45;
+   const face=back?cardFlower(cw*.18,ch*.18,cw*.64,ch*.64):text(20*scale,72*scale,rank(id%13+2),66*scale,ink,750)+suit(id,18*scale,89*scale,36*scale,ink)+(wild?cardFlower(cw-stampW-pad,ch-stampH-pad,stampW,stampH,true):suit(id,cw-stampW-pad,ch-stampH-pad,stampW,ink,.16,stampH))+(m.wounds?.[i]?text(cw-17*scale,ch-19*scale,t('伤','W'),25*scale,'#866300',650,'end'):'');
+   return `<g data-card="${back?'hidden':id}" transform="translate(${x} ${y+(rowHeight-ch)/2})"><rect width="${cw}" height="${ch}" rx="${Math.min(16,cw*.08)}" fill="${back||wild?cardStyle.back:cardStyle.face}" stroke="${back||wild?cardStyle.backEdge:cardStyle.edge}" stroke-width="${wild?3:1.5}"/>${face}</g>`;
   }).join('')+'</g>';
  }
  const identity=(q,x,y,size=26)=>`<svg x="${x}" y="${y-size}" width="${size}" height="${size}" viewBox="0 0 64 72">${assets.flower.replace(/fill="#D83B74"/g,'fill="'+(q===0?p.red:p.gold)+'"').replace(/fill="#DEB04A"/g,'fill="'+(q===0?p.goldCenter:p.red)+'"')}</svg>`;

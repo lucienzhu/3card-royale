@@ -47,3 +47,5 @@
 - **整场结算**：全屏开花，和单局轻量面板分开；PNG 使用配套终局构图。
 
 `app/tokens.css` 是实际组件层，`app/theme-tokens.js`、`site.css` 与 PNG 色板保持同值。`node scripts/check.cjs` 检查色板、主标副本、VI 版本文案、嵌入规则与内联脚本语法；修改组件时同步更新这些内容。历史方案不作为运行时依赖。
+
+PNG 牌面通过 `app/bloom-assets.js` 使用正式花色路径、花形和牌面令牌的同步副本。修改来源后运行 `node scripts/sync-brand.cjs`；`--check` 会拒绝过期副本。花牌与牌桌一致，使用平涂金底和花形水印，移除旧星标。
