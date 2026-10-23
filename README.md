@@ -95,7 +95,7 @@ single-observation MLP trained with PyTorch from 10,000 Code-AI games, exported
 to ONNX and run locally in a Web Worker. The selected 0.55 MB model has 256/128 hidden layers;
 the separately cached WASM runtime is about 14 MB. Code AI remains the default.
 
-[Training and reproduction](training/README.md) · [Metrics, curves and TensorBoard](docs/experiments/nn-policy-v1/README.md)
+[Model and RL integration](docs/MODEL.md) · [Training and reproduction](training/README.md) · [Metrics, curves and TensorBoard](docs/experiments/nn-policy-v1/README.md)
 
 Run `python training/reproduce.py` after installing the pinned training dependencies
 to regenerate data and train the 256 model. Large rollout files are not tracked.

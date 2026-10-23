@@ -54,13 +54,13 @@ C++的[构建、嵌入与安装说明](../cpp/README.zh-CN.md)；不需要启动
 
 Rust明确传入u32种子，实际游戏由宿主生成新熵。固定种子用于复现／实验，四套运行时实现沿用相同xorshift32与Fisher–Yates序列，保存后继续随机流；该随机数不是对抗性联网安全方案。
 
-浏览器先加载`gamecore.js`再加载`sdk/index.js`，通过`window.ThreeCardRoyale`使用；打包工具也可接CommonJS。JS基础策略是独立CommonJS模块。核心不依赖UI、网络或账号。
+浏览器先加载`gamecore.js`再加载`sdk/index.js`，通过`window.ThreeCardRoyale`使用；打包工具也可接CommonJS。独立的 `sdk/policy.js` 同时支持 CommonJS 和 `window.RoyaleCodePolicy`。核心不依赖UI、网络或账号。
 
 ## 卡牌、阶段与动作
 
 卡牌ID为`花色*13+点数-2`，范围0—51。花色顺序黑桃0、红桃1、梅花2、方块3；点数2—14，A=14，不含大小王。双方共用红桃花牌，可百搭；四炸6分、五炸7分。
 
-先调用`legalActions()`／`legal_actions()`拿合法列表，再将其中一个动作交给`step`。顺序固定：实体ID升序的三张组合，再合法四张；换牌按手牌／伤牌位置枚举。对象键序不影响判断，出牌数组按列表中的规范顺序使用。
+先调用`legalActions()`／`legal_actions()`拿合法列表，再将其中一个动作交给`step`。顺序固定：实体ID升序的三张组合，再合法四张、五张；换牌按手牌／伤牌位置枚举。对象键序不影响判断，出牌数组按列表中的规范顺序使用。
 
 | 阶段 | 动作 |
 | --- | --- |
@@ -86,6 +86,15 @@ Rust明确传入u32种子，实际游戏由宿主生成新熵。固定种子用�
 ## 基础策略
 
 C++／Python／Rust `choose_action`、JS `chooseAction`只接收观察和合法动作。进攻选当前最强组合，防守先少受伤、再争机会，同效优先利用伤牌、保留花牌；换牌按公开点数／花牌或重抽弱牌处理。它是确定性启发式，没有训练，也不代表最优策略。`examples/play.js`可跑有上限的整场，`examples/train_random.py`演示合法掩码采样。
+
+## 可选 NN 策略
+
+网页可切换 Code AI 与已训练的 256/128 MLP。NN 经由
+[`sdk/features.js`](../sdk/features.js)编码同一份公开 SDK 观察，
+[worker](../app/policy-worker.js)用 ONNX 为合法候选评分并返回索引。
+只在该次决策仍有效时，将索引映射到原观察的动作列表。
+[模型文档](MODEL.zh-CN.md)说明张量接口、Gym 推理、复现和后续 RL 接入。
+Python 提供训练及 ONNX 评估；Rust／C++ 目前提供核心与 Code AI，尚无 NN 推理适配。
 
 ## 验证与扩展
 

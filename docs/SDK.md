@@ -56,7 +56,7 @@ C++: [build, embed and install instructions](../cpp/README.md). It runs natively
 
 Rust takes an explicit `u32` seed; the host chooses fresh entropy for real games. Fixed seeds are for debugging and experiments. All runtimes use the same xorshift32/Fisher–Yates sequence and preserve RNG state. This PRNG is for reproducibility, not adversarial online security.
 
-Browser integration: load `gamecore.js`, then `sdk/index.js`; use `window.ThreeCardRoyale`. A browser bundler may instead consume the CommonJS module. The simple JS policy is a separate CommonJS module. No UI, networking, accounts or rendering is required by the core.
+Browser integration: load `gamecore.js`, then `sdk/index.js`; use `window.ThreeCardRoyale`. A browser bundler may instead consume the CommonJS module. The separate `sdk/policy.js` module supports CommonJS or `window.RoyaleCodePolicy`. No UI, networking, accounts or rendering is required by the core.
 
 ## Cards, phases and actions
 
@@ -88,6 +88,16 @@ SDK saves share the fields in `sdk/index.d.ts`: `schema`, `rules`, `rng`, `seed`
 ## Simple strategy opponent
 
 C++ / Python / Rust `choose_action` and JS `chooseAction` receive only observations and legal actions. They attack with the strongest current hand; defend by minimizing incoming wounds, then earning swaps; tie-break toward using wounds and conserving the wildcard. Swaps use visible ranks/wildcards or redraw a weak card. They are deterministic heuristics, not trained agents or optimal play. `examples/play.js` runs an entire bounded match; `examples/train_random.py` demonstrates masked sampling against the baseline.
+
+## Optional NN policy
+
+The web game can use Code AI or a trained 256/128 MLP. The NN consumes the same
+public SDK observation through [`sdk/features.js`](../sdk/features.js); the
+[worker](../app/policy-worker.js) scores legal candidates with ONNX and returns an
+index. Apply it to the original observation's action list only while that decision
+is still current. [The model guide](MODEL.md) documents the tensor contract,
+Gym inference, reproduction and future RL training. Python supplies training and
+ONNX evaluation; Rust and C++ currently supply the core and Code AI, not NN inference.
 
 ## Validate a port
 
