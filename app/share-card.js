@@ -171,7 +171,7 @@ function gameSVG(d,assets){
  identity(d.winner,80,112,28)+text(120,110,gameWho(d.winner)+t('赢下第 '+r.game+' 局',' won game '+r.game),28,p.muted,500,'start',490)+brand+body+
  `<g transform="translate(0 ${footer})">`+text(540,1254,rank(r.from)+' → '+rank(r.to)+' · '+r.rounds+t('轮',r.rounds===1?' round':' rounds'),27,p.muted,500,'middle')+
  `<path d="M80 1270H1000" stroke="${p.line}"/>`+
- text(80,1330,t('三张牌，打出花。','Three cards. Make them bloom.'),28,p.ink,600)+text(80,1418,t('规则 ','Rules ')+d.version,19,p.muted)+
+ text(80,1330,t('一副牌，两个人，三张牌，打出花。','One deck. Two players. Three cards. Make them bloom.'),28,p.ink,600,'start',720)+text(80,1418,t('规则 ','Rules ')+d.version,19,p.muted)+
  `<svg x="840" y="1276" width="164" height="164" viewBox="0 0 ${qrSize} ${qrSize}" shape-rendering="crispEdges" aria-label="${SHARE_URL}"><rect width="${qrSize}" height="${qrSize}" fill="#fff"/><path d="${qrPath}" fill="#121417"/></svg></g></svg>`;
 }
 // The poster is a still of the finale: the winner's flower over the skyline, the vine below, the game's address last.
@@ -232,7 +232,7 @@ function makeSVG(d,assets=root.SZBloomAssets,cityStyle=root.SZShareAssets?.cityS
   (kicker?`<text x="540" y="150" text-anchor="middle" font-size="30">${span(kicker,30,accent,650)}</text>`:'')+
   `<text x="540" y="${d.match?240:318}" text-anchor="middle" letter-spacing="-2">${span(subject,ss,p.ink,600)}${span(' ',ss,p.ink)}${span(headline,hs,accent,800)}</text>`+
   `<text x="540" y="${d.match?318:400}" text-anchor="middle">${factLine}</text>${city}${sky}${axis.join('')}`+
-  `<path d="M80 1262H1000" stroke="${p.line}" stroke-width="1.5"/>${mark}${text(162,1326,t('深圳花牌','3Card Royale'),34,p.ink,700)}${text(162,1362,t('三张牌，打出花。','Three cards. Make them bloom.'),23,p.muted)}${text(80,1404,foot,en?21:22,p.ink,500)}${text(80,1430,'lucienzhu.github.io/gk-royale-playtest',19,p.muted)}${qr}</svg>`;
+  `<path d="M80 1262H1000" stroke="${p.line}" stroke-width="1.5"/>${mark}${text(162,1326,t('深圳花牌','3Card Royale'),34,p.ink,700)}${text(162,1362,t('一副牌，两个人，三张牌，打出花。','One deck. Two players. Three cards. Make them bloom.'),23,p.muted)}${text(80,1404,foot,en?21:22,p.ink,500)}${text(80,1430,'lucienzhu.github.io/gk-royale-playtest',19,p.muted)}${qr}</svg>`;
 }
 function filename(d){return 'shenzhen-flower-'+(d.match?'match':'game-'+layoutOf(d.layout)+(d.layout==='highlight'?'-'+(d.highlightPick||'damage'):''))+'-'+d.seed+'-'+d.result.game+'.png';}
 // Retain every play. Very long records scale proportionally to keep the raster
