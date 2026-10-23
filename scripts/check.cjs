@@ -1,6 +1,7 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),vm=require('node:vm');
 const root=path.resolve(__dirname,'..'),GK=require(path.join(root,'gamecore.js'));
+require('./sync-brand.cjs')(true);
 const walk=dir=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(x=>['.git','.obsidian','node_modules','target','build','__pycache__','.venv','BoardGame','agent','knowledge','design-lab','tmp'].includes(x.name)||x.name.endsWith('.egg-info')?[]:x.isDirectory()?walk(path.join(dir,x.name)):[path.join(dir,x.name)]);
 let refs=0,scripts=0;
 for(const p of walk(root)){

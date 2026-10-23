@@ -316,7 +316,7 @@ function openResult(){
  $('result-kicker').textContent=match?'整场结束':'第 '+r.game+' 局 · 结算';
  $('result-title').textContent=champion?'恭喜，赢下整场！':match?'这场，对手赢了':own?'这一局，你赢了':'这一局，对手赢了';
  $('result-subtitle').textContent=champion?'赢下自己的 A 局，闯关成功。':match?'对手赢下了自己打 A 的闯关局。':who+(r.to===14?(r.from===14?'守住 A，下一局打自己的 A':'升到 A，下一局打自己的 A'):'升了 '+(r.to-r.from)+' 级');
- $('result-a').hidden=!champion;$('result-upgrade').hidden=match;
+ $('result-upgrade').hidden=match;
  $('result-from').textContent=GK.rankLabel(r.from);$('result-to').textContent=GK.rankLabel(r.to);
  $('result-upgrade-note').textContent=r.to===14?'最高级 · A':who+'的级数';
  $('result-own-damage').textContent=r.damage[0];$('result-opp-damage').textContent=r.damage[1];

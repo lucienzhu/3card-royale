@@ -124,7 +124,6 @@ html,:root body,[data-sz-theme=dark] body{background:var(--paper);color:var(--in
 :root body .result-head button{color:var(--muted);font-size:22px}
 :root body .result-content h2{font-size:24px;letter-spacing:-.02em;line-height:1.3;margin:4px 0 2px}
 :root body #result-subtitle{font-size:14px;color:var(--muted)}
-:root body #result-modal .result-emblem{display:none}
 :root body #result-modal .result-upgrade{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600}
 :root body #result-modal #result-to{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-sm);padding:2px 8px;font-family:var(--rank-font);font-weight:800;color:var(--ink)}
 :root body #result-modal #result-from{background:transparent;color:var(--muted);padding:0}
