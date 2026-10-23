@@ -15,20 +15,27 @@ python3 -m venv .venv
 .venv/bin/pip install -r training/requirements-lock.txt
 .venv/bin/python training/collect.py --games 10000 --workers 6 --seed 20261024
 .venv/bin/python training/train.py --widths 64,128,256,512 --epochs 10
+.venv/bin/python training/train.py --hidden 256 512 --epochs 10
 .venv/bin/python training/parity.py
 .venv/bin/python training/evaluate.py --games 1000
-.venv/bin/python training/publish.py --width 256
+.venv/bin/python training/publish.py --model 256x512
 node scripts/check.cjs
 .venv/bin/python -m unittest discover -s tests -p 'test_*.py'
 ```
 
-To add one model without replacing existing results:
+To train explicit hidden layers without replacing the legacy 256/128 or 512/256 results:
 
 ```sh
-.venv/bin/python training/train.py --widths 512 --epochs 10
+.venv/bin/python training/train.py --hidden 256 512 --epochs 10
 .venv/bin/python training/parity.py
-.venv/bin/python training/evaluate.py --widths 512 --games 1000
+.venv/bin/python training/evaluate.py --models 256x512 --games 1000
+.venv/bin/python training/publish.py --model 256x512
 ```
+
+`--hidden FIRST SECOND` selects both layers independently. Its model ID is
+`FIRSTxSECOND` (for example, `256x512`); legacy `--widths W` keeps `W → W/2` and
+its original file names. TensorBoard runs and reports use the complete architecture
+so 256/128 and 256/512 cannot overwrite one another.
 
 Training saves a checkpoint at the lowest validation loss. The held-out test split
 is evaluated only after checkpoint selection. Re-running an existing width appends

@@ -3,6 +3,7 @@ import argparse
 from concurrent.futures import ProcessPoolExecutor
 import json
 from pathlib import Path
+import re
 import sys
 import time
 
@@ -44,13 +45,17 @@ def evaluate(task):
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--root',default='artifacts/nn-policy');p.add_argument('--games',type=int,default=1000)
-    p.add_argument('--widths',help='Comma-separated widths; omit for all trained models')
+    group=p.add_mutually_exclusive_group()
+    group.add_argument('--widths',help='Comma-separated legacy widths')
+    group.add_argument('--models',help='Comma-separated model IDs, e.g. 256,256x512,512; omit for all models')
     args=p.parse_args();root=Path(args.root)
-    paths=[root/'models'/f'mlp-{int(w)}.onnx' for w in args.widths.split(',')] if args.widths else sorted((root/'models').glob('*.onnx'))
+    ids=(args.models or args.widths or '').split(',')
+    if ids!=[''] and any(not re.fullmatch(r'[1-9]\d*(?:x[1-9]\d*)?',i) for i in ids):p.error('Invalid model ID')
+    paths=[root/'models'/f'mlp-{i}.onnx' for i in ids] if ids!=[''] else sorted((root/'models').glob('*.onnx'))
     with ProcessPoolExecutor(max_workers=min(3,len(paths))) as pool:
         results=list(pool.map(evaluate,[(p,args.games) for p in paths]))
     report=root/'evaluation.json'
-    if args.widths and report.exists():
+    if (args.widths or args.models) and report.exists():
         names={r['model'] for r in results}
         results=[r for r in json.loads(report.read_text()) if r['model'] not in names]+results
     report.write_text(json.dumps(results,indent=2));print(json.dumps(results,indent=2))

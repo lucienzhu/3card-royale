@@ -26,7 +26,7 @@ order, seed, RNG and historical events are excluded.
 
 ## Model and training
 
-`observation (336) + legal candidate (72) → MLP W → W/2 → score`
+`observation (336) + legal candidate (72) → MLP H1 → H2 → score`
 
 Two ReLU hidden layers and a scalar output. Shared scoring supports variable
 legal action counts; illegal/padded actions are masked out. Features retain the
@@ -64,14 +64,15 @@ load includes local file access and session initialization, not a mobile-network
 benchmark. No physical iPhone measurement has been made.
 
 The browser harness also compares all model logits and chosen actions on twelve
-real positions with PyTorch/ONNX. Python/JavaScript input and teacher parity
+real positions with PyTorch/ONNX, then checks the deployed Web Worker's model
+version and all twelve actions. Python/JavaScript input and teacher parity
 checks cover 55,584 values. See `tests/nn-policy.cjs` and `training/parity.py`.
 
 ## Playing and reliability
 
 Settings → Preferences offers **Code AI** and **NN AI**. Code AI uses the same
 visible-information SDK policy used to generate samples. NN AI currently uses
-the requested 256 model. Unsupported older rules keep their original policy.
+the 256/512 hidden-layer model. Unsupported older rules keep their original policy.
 
 Models and runtime are hosted as static files from the same origin. Inference
 runs in a Web Worker. On load failure, timeout or invalid logits, the game falls
@@ -93,10 +94,18 @@ See [the measured results table](RESULTS.md). In collected data, attacks have a
 median of 84 candidates and defenses 56; both have a p95 of 220. The observed
 maximum is 227. The 512-candidate benchmark is a synthetic capacity stress test.
 
-The 512/256 model is 1,365,463 bytes and improves held-out action agreement by
-0.21 percentage points over 256/128. It wins 450/1,000 games against Code AI,
-versus 462/1,000 for 256/128. This evaluation does not demonstrate a strength gain.
-Its browser p95 at 220 candidates is 2.2 ms versus 0.8 ms for 256. Both remain
-small and fast on this desktop; the experiment keeps 256 active and retains the
-512 weights for comparison. The smaller 128 baseline is also competitive and
-can be republished from the saved artifacts when download size is the priority.
+The expanded architecture uses **256 → 512** hidden units, independently chosen
+rather than automatically halving the first layer. It has 236,801 parameters,
+compared with 137,729 for 256/128 and 340,993 for 512/256. This changes the amount
+of computation and capacity allocated to each layer without changing inputs,
+legal-action handling or the teacher.
+
+All five models use the same collected data, splits, optimizer, seed and ten-epoch
+schedule. Checkpoints are selected by validation loss. See RESULTS.md for the
+updated action agreement, game outcomes and same-session browser timings. Small
+win-rate differences in 1,000 games do not establish a strength improvement.
+The selected model is 256/512; earlier weights remain available for comparison.
+It won 465/1,000 evaluation games versus 462/1,000 for 256/128 and 450/1,000 for
+512/256. Test action agreement is 89.28%, with a 948,695-byte ONNX file. Both
+browser timing runs are retained in this folder because their timings varied;
+RESULTS.md documents the repeat run and the first run's slower measurements.

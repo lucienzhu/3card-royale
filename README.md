@@ -92,7 +92,7 @@ Swap opportunities may now be skipped one at a time: skipping the first of two s
 
 This branch adds **Code AI / NN AI** in Settings → Preferences. NN AI is a
 single-observation MLP trained with PyTorch from 10,000 Code-AI games, exported
-to ONNX and run locally in a Web Worker. The selected 256/128 model is 552 KB;
+to ONNX and run locally in a Web Worker. The selected model has 256/512 hidden layers;
 the separately cached WASM runtime is about 14 MB. Code AI remains the default.
 
 [Training and reproduction](training/README.md) · [Metrics, curves and TensorBoard](docs/experiments/nn-policy-v1/README.md)

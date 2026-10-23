@@ -91,7 +91,7 @@ SDK 0.2.0／规则1.0.0：JavaScript＋TypeScript类型、Python／Rust／C++17�
 ## NN AI 实验分支
 
 设置 → 偏好可切换 **Code AI / NN AI**。用 10,000 局 Code AI 对战训练单次观察的
-MLP，以 PyTorch 训练并导出 ONNX，在浏览器 Web Worker 中推理。当前选择 256/128
-模型（552 KB）；独立缓存的 WASM 运行时约 14 MB。默认仍为 Code AI。
+MLP，以 PyTorch 训练并导出 ONNX，在浏览器 Web Worker 中推理。当前选择 256/512
+隐藏层模型；独立缓存的 WASM 运行时约 14 MB。默认仍为 Code AI。
 
 [训练与复现](training/README.md) · [实验指标、曲线与 TensorBoard](docs/experiments/nn-policy-v1/README.md)
