@@ -7,7 +7,7 @@
  function apply(){if(on)root.dataset.szChips='1';else delete root.dataset.szChips;window.SZChips?.redraw();}
  function render(){lastLanguage=root.lang;apply();
   for(const e of document.querySelectorAll('[data-sz-egg-label]'))e.textContent=t('电路板','Circuit board');
-  for(const e of document.querySelectorAll('[data-sz-egg-hint]'))e.textContent=t('彩蛋：牌桌变成一块会动的电路板','Easter egg: the table turns into a live circuit board');
+  for(const e of document.querySelectorAll('[data-sz-egg-hint]'))e.textContent=t('动态牌桌彩蛋','Animated table');
   for(const e of document.querySelectorAll('[data-sz-egg-toggle]')){e.checked=on;e.setAttribute('aria-label',t('电路板彩蛋','Circuit board Easter egg'));}}
  function choose(v){on=!!v;try{localStorage.setItem(key,on?'1':'0');}catch{}render();}
  document.addEventListener('change',e=>{if(e.target.matches('[data-sz-egg-toggle]'))choose(e.target.checked);});

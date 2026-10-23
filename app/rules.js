@@ -21,13 +21,13 @@
  function face(label,back=false,extra='',index=0){const el=window.card(back?null:id(label),{back,level:2,backLabel:t('对手手牌，牌面保密','Rival hand card, hidden')});if(!back&&window.GKLocale?.language==='en')el.setAttribute('aria-label',label+(window.GK.wild(id(label),2)?' · Wild':''));for(const name of extra.split(' ').filter(Boolean))el.classList.add(name);el.style.setProperty('--deal-delay',Math.max(0,index)*55+'ms');return el.outerHTML;}
  function woundBar(n){const el=document.createElement('div');el.className='damage fg-damage';window.damageBar(el,n);el.querySelector('small').textContent=t(' / 5 伤',' / 5 wounds');el.setAttribute('aria-label',t(n+'伤，共5格',n+' wounds out of 5'));return el.outerHTML;}
  const zoneInfo=()=>({
-  'own-hand':[t('你的手牌，只有你能看','Your hand is private'),t('从这里选牌进攻或防守。一轮结束，手牌补到8张。','Choose cards here to attack or defend. Refill your hand to 8 at round end.')],
-  'rival-hand':[t('对手手牌，牌面保密','The rival’s hand is hidden'),t('这里只显示牌背和张数。换牌时，盲换其中随机一张。','Only backs and counts are shown. A blind swap takes one random card.')],
-  'own-wounds':[t('你的伤牌区，开局为空','Your wound area starts empty'),t('受1伤，就从牌库摸1张公开放在这里。伤牌也能出，用后原位补，不回血。','Each wound draws one face-up card here. You may play wounds; replace them afterward. Damage stays.')],
-  'rival-wounds':[t('对手伤牌区，双方都能看','The rival’s wounds are public'),t('开局0伤。受伤后牌放这里，达到5伤就输小局。','Start at 0 wounds. Wound cards go here; 5 wounds loses the game.')],
-  attack:[t('进攻区，先出牌的一方','Attack: the player who leads'),t('进攻方先出牌，防守方再出牌比较。进攻赢，造成伤害。','Attack plays first, then defense responds. An attack win deals wounds.')],
-  defense:[t('防守区，后出牌的一方','Defense: the player who responds'),t('看过进攻牌后再出牌。防守赢，得到交换机会。','Respond after seeing the attack. A defense win earns swap opportunities.')],
-  piles:[t('牌库与弃牌堆，共用','Shared deck and discard'),t('摸牌从牌库来，出过或换掉的牌进弃牌堆。弃牌堆不能直接交换。','Draw from the deck. Played or replaced cards go to discard; discard is not a swap target.')],
+  'own-hand':[t('你的手牌，只有你能看','Your hand is private'),t('选牌攻防；轮末补到8张。','Select to play. Refill to 8 at round end.')],
+  'rival-hand':[t('对手手牌，牌面保密','The rival’s hand is hidden'),t('换牌时随机盲抽一张。','Blind swaps take one random card.')],
+  'own-wounds':[t('你的伤牌区，开局为空','Your wound area starts empty'),t('每伤摸1张明牌；可出，用后补回，不回血。','Draw one face-up card per wound. Play and replace it; no healing.')],
+  'rival-wounds':[t('对手伤牌区，双方都能看','The rival’s wounds are public'),t('伤牌公开，5伤败局。','Wounds are public. Lose at 5.')],
+  attack:[t('进攻区，先出牌的一方','Attack: the player who leads'),t('先出牌；赢了打伤害。','Play first. A win deals wounds.')],
+  defense:[t('防守区，后出牌的一方','Defense: the player who responds'),t('看过进攻牌再出；赢了得换牌机会。','Respond to the attack. A win earns swaps.')],
+  piles:[t('牌库与弃牌堆，共用','Shared deck and discard'),t('从牌库摸牌；弃牌堆不能换。','Draw from the deck. Discard is not a swap target.')],
  });
  function resetSwap(){swapGame=window.GK.Game.restore(window.SZSwapCases[version()][swapMode]);swapSource=null;swapResult=null;}
  const value=(who,zone,index)=>zone==='hand'?swapGame.players[who].hand[index]:swapGame.players[who].table[index].card;
@@ -43,7 +43,7 @@
  }
  function skipSwapLesson(){if(!swapGame||swapGame.phase!=='refresh')return;swapGame.skipRefresh();swapSource=null;swapResult={skipped:true};cameraRegion='own';renderFocus('[data-rg-next]');}
  function swapCopy(){
-  if(swapResult.skipped)return [t('这次不换，保留原来的牌','Skipped. Keep your cards.'),t('跳过只消耗1次机会，不摸牌、不弃牌。有两次机会时，每次都可以分别选择换或不换。','Skipping uses one opportunity without drawing or discarding. With two opportunities, choose swap or skip separately for each.')];
+  if(swapResult.skipped)return [t('已跳过这次','Swap skipped.'),t('消耗1次机会，牌不变。每次可换或跳过。','Uses one opportunity; cards stay. Choose separately each time.')];
   const r=swapResult,d=r.option.exchange==='deck'?t('弃牌堆','discard'):r.option.exchange==='opponent'?t('对手手牌（随机一张）','rival hand (one random card)'):zoneName(r.option.who,r.option.zone);
   return [t(r.given+' → '+d+'；你拿回 '+r.received,r.given+' → '+d+'; you receive '+r.received),t(r.received+'补回'+(r.source.zone==='table'?'你的伤牌区，公开。':'你的手牌，保密。')+'张数、伤势不变。',r.received+' replaces your '+(r.source.zone==='table'?'public wound.':'private hand card.')+' Card counts and wounds stay unchanged.')];
  }
@@ -66,14 +66,14 @@
  function coach(){
   if(sceneCopy)return [...sceneCopy,t('演示中…','Showing…'),''];
   if(step===0)return [...zoneInfo()[zone],t('开始一轮','Start round'),'next'];
-  if(step===1)return [t('每人8张手牌，0张伤牌','8 hand cards each, no wounds'),t('你的牌面朝上，对手只有牌背。♥2是共用花牌，可当任意牌。','Your cards are face up, the rival’s hidden. ♥2 is the shared wild card.'),t('试试进攻','Try attacking'),'next'];
-  if(step===2){if(!attackPhase)return [t('已选3张 · 同花顺4分','3 selected · Straight flush 4 pts'),t(attackExample?'另例：手牌7♣8♣加公开伤牌6♣，一起出。':'本例已选好6♣7♣8♣。点「进攻」，看牌进入中央。',attackExample?'Another example: play hand 7♣8♣ with public wound 6♣.':'6♣7♣8♣ are selected for this example. Attack to move them into the center.'),t('进攻','Attack'),'attack'];
-   if(attackPhase===1)return [t('4分 − 1分 = 3伤','4 pts − 1 pt = 3 wounds'),t('你同花顺4分，对手对子1分。进攻赢的差值变成伤害。','Your straight flush scores 4, their pair 1. An attack win deals the difference as wounds.'),t('看伤牌区','See wounds'),'wounds'];
-   return [t('3伤，就是3张公开伤牌','3 wounds means 3 face-up wound cards'),t(attackExample?'6♣伤牌用后补回K♦，仍是1伤；对手再摸3张，1伤变4伤。':'从牌库摸3张放到对手伤牌区，0伤变3伤。手牌不会补在这里。',attackExample?'Replace played wound 6♣ with K♦: still 1 wound. The rival draws 3 more, going from 1 to 4.':'Draw 3 face-up cards into the rival’s wound area: 0 to 3 wounds. These are not hand cards.'),t('交换攻防','Swap roles'),'next'];}
-  if(step===3)return rolesSwapped?[t('现在对手进攻，你防守','Now the rival attacks; you defend'),t('手牌没有互换，也没有补牌。双方各进攻一次，才算一轮。','Hands stay with their owners. No refill yet: each player attacks once per round.'),t('继续防守','Defend next'),'next']:[t('你已经进攻过一次','You have attacked once'),t('点和牌桌一样的「交换攻防」，看中央角色变化。','Use the same “Swap roles” action as the real table. Watch the center labels.'),t('交换攻防','Swap roles'),'roles'];
-  if(step===4&&!defenseReady)return [t('对手先出牌，轮到你防守','The rival attacks. You defend next.'),t('对手用J♠Q♠K♠进攻：同花顺4分。看清对手的牌，再从你的手牌出牌防守。','The rival plays J♠ Q♠ K♠: a straight flush worth 4 points. Check their attack, then choose your defense.'),t('看我的牌','See my hand'),'prepare-defense'];
-  if(step===4)return defended?[t('5分 − 4分 = 1次换牌','5 pts − 4 pts = 1 swap'),t('你用♥2当第三张4，组成三炸5分。防守赢的是机会，伤势不变。','♥2 acts as the third 4, making three of a kind for 5 points. Defense earns swaps; damage stays.'),t('用这次机会','Use your swap'),'next']:[t('轮到你防守：出这3张','Your turn: defend with these 3 cards'),t('本例已选4♠4♥和♥2，花牌当第三张4，三炸5分。点「防守」，与对手的4分比较。','4♠ 4♥ and ♥2 are selected. The wild makes three 4s, worth 5 points. Press Defend to compare with the rival’s 4.'),t('防守','Defend'),'defend'];
-  if(step===5){if(swapResult)return [...swapCopy(),t('再试一种','Try another'),'swap-reset'];if(swapSource)return [t('交出 '+window.GK.label(value(0,swapSource.zone,swapSource.index))+'，再点 ⇄ 目标','Give '+window.GK.label(value(0,swapSource.zone,swapSource.index))+'. Select a ⇄ target.'),t('对手手牌盲换，伤牌可指定；自己的另一牌区也能换。牌库是弃旧摸新。','Blind-swap a rival hand card, choose a public wound, swap your other zone, or discard and draw from the deck.'),t('重选','Choose again'),'swap-reset'];return [t('先点你的一张手牌或伤牌','Choose one of your hand cards or wounds'),t('再点亮起的⇄，也可跳过这次。两次机会逐次选择换或不换；张数、伤势不变。','Select a highlighted ⇄, or skip this one. Each opportunity is a separate choice; counts and wounds stay the same.'),'',''];}
+  if(step===1)return [t('每人8张手牌，0张伤牌','8 hand cards each, no wounds'),t('♥2是共用花牌，可代任意牌。','♥2 is the shared wild card.'),t('试试进攻','Try attacking'),'next'];
+  if(step===2){if(!attackPhase)return [t('已选3张 · 同花顺4分','3 selected · Straight flush 4 pts'),t(attackExample?'手牌7♣8♣ + 伤牌6♣。':'已选6♣7♣8♣，点「进攻」。',attackExample?'Hand 7♣8♣ + wound 6♣.':'6♣7♣8♣ selected. Press Attack.'),t('进攻','Attack'),'attack'];
+   if(attackPhase===1)return [t('4分 − 1分 = 3伤','4 pts − 1 pt = 3 wounds'),t('进攻赢，分差变伤害。','An attack win deals the score gap as wounds.'),t('看伤牌区','See wounds'),'wounds'];
+   return [t('3伤，就是3张公开伤牌','3 wounds means 3 face-up wound cards'),t(attackExample?'6♣伤牌用后补回K♦，仍是1伤；对手再摸3张，1伤变4伤。':'对手摸3张公开伤牌：0 → 3伤。',attackExample?'Replace played wound 6♣ with K♦: still 1 wound. The rival draws 3 more, going from 1 to 4.':'Rival draws 3 face-up wounds: 0 → 3.'),t('交换攻防','Swap roles'),'next'];}
+  if(step===3)return rolesSwapped?[t('现在对手进攻，你防守','Now the rival attacks; you defend'),t('暂不补牌；双方各攻一次才算一轮。','No refill yet. Both players attack once per round.'),t('继续防守','Defend next'),'next']:[t('你已经进攻过一次','You have attacked once'),t('点「交换攻防」，轮到对手进攻。','Press Swap roles. The rival attacks next.'),t('交换攻防','Swap roles'),'roles'];
+  if(step===4&&!defenseReady)return [t('对手先出牌，轮到你防守','The rival attacks. You defend next.'),t('对手J♠Q♠K♠，同花顺4分。选牌应对。','Rival: J♠Q♠K♠, straight flush, 4 points. Choose your defense.'),t('看我的牌','See my hand'),'prepare-defense'];
+  if(step===4)return defended?[t('5分 − 4分 = 1次换牌','5 pts − 4 pts = 1 swap'),t('♥2当4；防守赢得机会，伤势不变。','♥2 acts as a 4. Defense earns swaps, not wounds.'),t('用这次机会','Use your swap'),'next']:[t('轮到你防守：出这3张','Your turn: defend with these 3 cards'),t('已选4♠4♥♥2，三炸5分。点「防守」。','4♠4♥♥2 selected: three of a kind, 5 points. Press Defend.'),t('防守','Defend'),'defend'];
+  if(step===5){if(swapResult)return [...swapCopy(),t('再试一种','Try another'),'swap-reset'];if(swapSource)return [t('交出 '+window.GK.label(value(0,swapSource.zone,swapSource.index))+'，再点 ⇄ 目标','Give '+window.GK.label(value(0,swapSource.zone,swapSource.index))+'. Select a ⇄ target.'),t('盲换对手手牌、指定伤牌、换自己的另一牌区，或弃旧摸新。','Swap a random rival hand card, a wound or your other zone; or discard and draw.'),t('重选','Choose again'),'swap-reset'];return [t('先点你的一张手牌或伤牌','Choose one of your hand cards or wounds'),t('选牌后点⇄；每次也可跳过。张数、伤势不变。','Select a card, then ⇄; or skip. Counts and wounds stay.'),'',''];}
   const kept=(refillCase?.start||cases().exchange).hand.map(h=>h.length),detail=t('你保留'+kept[0]+'张、补'+(8-kept[0])+'张；对手保留'+kept[1]+'张、补'+(8-kept[1])+'张。伤牌不计入8张。','You keep '+kept[0]+' and draw '+(8-kept[0])+'. The rival keeps '+kept[1]+' and draws '+(8-kept[1])+'. Wounds are separate.');
   return refilled?[t('双方手牌都到8张了','Both hands are back to 8'),detail+t('下一轮对手先攻。',' The rival attacks first next round.'),t('再看一次','Replay refill'),'refill-replay']:[t('轮末，各把手牌补到8张','Round over: refill each hand to 8'),detail,t('补到8张','Refill to 8'),'refill'];
  }
@@ -128,15 +128,15 @@
  }
  function coachHTML(){const c=coach();return `<aside class="fg-coach"><span class="fg-coach-copy"><strong>${c[0]}</strong><span>${c[1]}</span></span>${step===5&&!swapResult?'<button type="button" data-fg-action="swap-skip">'+t('跳过这次','Skip this one')+'</button>':''}${c[3]==='swap-reset'||c[3]==='refill-replay'?'<button type="button" data-fg-action="'+c[3]+'">'+c[2]+'</button>':''}</aside>`;}
  function titles(){return [
-  [t('先认牌桌，点哪里就讲哪里','Explore the table, one area at a time'),t('点牌区，周围淡下去；位置与实际牌桌一致。','Select an area to focus it. The table keeps the same layout throughout.')],
+  [t('认识牌桌','Explore the table'),t('点选牌区。','Select an area.')],
   [t('开局：8张手牌，0张伤牌','Start with 8 hand cards, no wounds'),t('看下方你的手牌，和上方对手的牌背。','Your hand is below; the rival’s card backs are above.')],
   [t('你进攻：出牌、弃牌，再摸伤牌','Your attack: play, discard, then draw wounds'),t('出过的牌进弃牌堆；伤牌从牌库另摸。','Played cards go to discard. Wounds are new cards drawn from the deck.')],
   [t('交换攻防，牌区不换位置','Swap roles, keep the table in place'),t('只换谁先进攻。余牌保留，现在还不补牌。','Only the attacker changes. Keep unused cards; no refill yet.')],
   [t('对手先进攻，你再出牌防守','The rival attacks, then you defend'),t('♥2当第三张4；比较5分与4分。','♥2 stands for a third 4. Compare 5 points against 4.')],
-  [t('换牌：先选自己的牌，再点目标','Swap: choose your card, then a target'),t('直接在原牌区操作，换回的牌补在交出的位置。','Swap in the actual zones. The received card replaces the one you give.')],
-  [t('轮末：手牌补到8张','Round end: refill your hand to 8'),t('保留余牌，只补缺的数量。伤牌不计入8张。','Keep unused cards and draw only what is missing. Wounds are separate.')],
+  [t('换牌：先选自己的牌，再点目标','Swap: choose your card, then a target'),t('新牌回到原位置。','The new card takes the same slot.')],
+  [t('轮末：手牌补到8张','Round end: refill your hand to 8'),t('保留余牌；伤牌不计入8张。','Keep unused cards. Wounds are separate.')],
  ];}
- function toolbar(){return `<div class="fg-toolbar"><span>${step===2&&attackExample||step===5&&swapMode==='wounded'?t('另例','Example'):t('教学牌桌','Practice table')}</span><div>${step===1||step===2&&attackPhase>0||step===3&&rolesSwapped||step===4&&(defenseReady||defended)?'<button type="button" data-fg-replay>'+t('再看一次','Replay')+'</button>':''}${step===2?'<button type="button" data-fg-example aria-pressed="'+attackExample+'">'+t(attackExample?'回本轮':'另例：伤牌也能出',attackExample?'This round':'Example: play a wound')+'</button>':''}${step===5?'<button type="button" data-fg-swap-mode aria-pressed="'+(swapMode==='wounded')+'">'+t(swapMode==='wounded'?'回本轮':'另例：你有伤牌时',swapMode==='wounded'?'This round':'Example: your wounds')+'</button>':''}<button type="button" data-fg-whole aria-pressed="${whole}">${t(whole?'聚焦讲解':'看全桌',whole?'Focus':'Full table')}</button></div><small class="fg-focus-caption">${coach()[0]}</small></div>`;}
+ function toolbar(){return `<div class="fg-toolbar"><span>${step===2&&attackExample||step===5&&swapMode==='wounded'?t('另例','Example'):t('教学牌桌','Practice table')}</span><div>${step===1||step===2&&attackPhase>0||step===3&&rolesSwapped||step===4&&(defenseReady||defended)?'<button type="button" data-fg-replay>'+t('再看一次','Replay')+'</button>':''}${step===2?'<button type="button" data-fg-example aria-pressed="'+attackExample+'">'+t(attackExample?'回本轮':'试出伤牌',attackExample?'This round':'Play a wound')+'</button>':''}${step===5?'<button type="button" data-fg-swap-mode aria-pressed="'+(swapMode==='wounded')+'">'+t(swapMode==='wounded'?'回本轮':'试换伤牌',swapMode==='wounded'?'This round':'Swap a wound')+'</button>':''}<button type="button" data-fg-whole aria-pressed="${whole}">${t(whole?'聚焦':'看全桌',whole?'Focus':'Full table')}</button></div><small class="fg-focus-caption">${coach()[0]}</small></div>`;}
  function hasAction(){return step===2&&attackPhase<2||step===3&&!rolesSwapped||step===4&&!defended||step===6&&!refilled;}
  function reset(){whole=false;cameraRegion=null;attackPhase=0;attackExample=false;rolesSwapped=false;defenseReady=false;defended=false;refilled=false;ranksOpen=false;swapMode='round';swapGame=null;swapSource=null;swapResult=null;refillCase=null;}
  function paint(){

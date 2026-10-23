@@ -35,6 +35,8 @@ Original assets use MIT. Custom emoji PNGs are images for platforms that support
 
 Single-game results remain a compact panel. Only the match result fills the visible viewport, with no drawer corners or bottom slide. The legacy embedded-browser dialog fallback also fills the screen; short screens scroll within the result.
 
+UI copy leads with one current action or result. Remove repeated explanations and interface narration. Tutorials retain cause, valid targets and essential rules. Keep full rules in the rulebook and a three-line overview on the home page. Update both languages; retain complete accessible labels.
+
 ## Current components · 2026-10-23
 
 The [live component page](../design-system.html?lang=en) loads the production card styles, current flower and canonical mark, and renders all three share layouts with the production PNG renderer from a seeded real game. It replaces dated design-lab pages as the current reference.
