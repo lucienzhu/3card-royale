@@ -123,8 +123,11 @@ function gameSVG(d,assets){
    return section+'</g>';
   }
   body+=finalSide(1,340);
-  body+=`<path d="M80 708H1000M80 828H1000" stroke="${p.line}"/>`+text(540,759,t('伤牌差 '+gap+' 张','Gap '+gap+' wounds'),52,p.ink,750,'middle');
-  body+=outcomeLabel(c,80,806,27,600)+identity(d.winner,760,809,27)+text(1000,806,rank(r.from)+' → '+rank(r.to),31,playerColor(d.winner),700,'end',190);
+  const subject=gameWho(d.winner),verb=d.winner===0&&!d.playerName?'win':'wins',woundCount=n=>n+(n===1?' wound':' wounds');
+  const resultLine=c.action==='damage'
+   ?t(subject+'打出最后'+c.amount+'伤，以'+gap+'张伤牌之差获胜。',subject+(verb==='win'?' deal ':' deals ')+woundCount(c.amount)+' and '+verb+' by '+woundCount(gap)+'.')
+   :t(subject+'以'+gap+'张伤牌之差获胜。',subject+' '+verb+' by '+woundCount(gap)+'.');
+  body+=`<g data-finish-result="sentence">`+text(540,786,resultLine,en?34:38,p.ink,600,'middle',880)+'</g>';
   body+=finalSide(0,862);
  }else if(c){
   body+=text(80,214,title,en?84:94,p.ink,750)+text(80,268,stepName(c),30,p.muted)+text(1000,268,d.highlightPick==='hand'?t('最大牌型','BEST HAND'):t('最大伤害','BIGGEST HIT'),24,p.muted,500,'end',300);

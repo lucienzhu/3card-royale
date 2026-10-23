@@ -72,7 +72,7 @@ for(const layout of ['recap','finish','highlight'])for(const lang of ['en','zh-C
   assert.equal(columns.length,story.combats.length*2);
   for(let i=0;i<columns.length;i+=2){assert.equal(columns[i][2],'attack');assert.equal(columns[i+1][2],'defense');assert(Number(columns[i][1])<Number(columns[i+1][1]));}
  }
- if(layout==='finish'){assert(svg.includes('data-play="own-wounds"'));assert(svg.includes('data-play="rival-wounds"'));assert(svg.includes(lang==='en'?'Gap '+story.result.gain:'伤牌差 '+story.result.gain+' 张'));}
+ if(layout==='finish'){assert(svg.includes('data-play="own-wounds"'));assert(svg.includes('data-play="rival-wounds"'));assert(svg.includes(lang==='en'?'You deal 1 wound and win by 1 wound.':'你打出最后1伤，以1张伤牌之差获胜。'));}
  if(layout==='highlight')assert(!svg.includes('data-play="own-wounds"'));
  filenames.add(S.filename(data));storyCases++;
 }
