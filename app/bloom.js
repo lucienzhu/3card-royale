@@ -34,7 +34,8 @@ function axis(model,item=model.current){
  const name=q=>model.replay?['A','B'][q]:who(q);
  const entries=model.entries.filter(e=>e.game<=item.game),groups=new Map(),marks=[];
  for(const e of entries.slice(1)){const q=e.winner;if(e.won||e.epochs[q]!==item.epochs[q])continue;groups.set(q+':'+e.levels[q],e);}
- const slot=(q,level)=>level===14?pos(14)+(pos(15)-pos(14))*Math.min(2,item.losses[q])/3:pos(level);
+ const aceSlot=i=>`calc(${pos(14)}% + var(--fc-ace-step,${(pos(15)-pos(14))/3}%) * ${i})`;
+ const slot=(q,level)=>level===14?aceSlot(Math.min(2,item.losses[q])):pos(level)+'%';
  const visible=(q,level)=>!(item.won&&item.winner===q&&level===14)&&(level!==14||item.losses[q]===0||item.playing===q);
  for(let q=0;q<2;q++){
   if(visible(q,item.levels[q])&&!groups.has(q+':'+item.levels[q]))groups.set(q+':'+item.levels[q],{game:0,winner:q,levels:item.levels});
@@ -42,9 +43,9 @@ function axis(model,item=model.current){
  for(const e of groups.values()){
   const q=e.winner,level=e.levels[q];if(!visible(q,level))continue;
   const current=level===item.levels[q],active=current&&item.playing===q;
-  marks.push(`<span class="fc-win-stamp ${q===1?'fc-win-top':'fc-win-bottom'} ${current?'is-current':''} ${active?'is-playing':''}" data-win-owner="${owner(q)}" style="left:${slot(q,level)}%" ${active?'aria-current="step"':''} role="img" aria-label="${name(q)} ${rank(level)}${active?tr('，正在打','; playing'):''}">${flower(q)}</span>`);
+  marks.push(`<span class="fc-win-stamp ${q===1?'fc-win-top':'fc-win-bottom'} ${current?'is-current':''} ${active?'is-playing':''}" data-win-owner="${owner(q)}" style="left:${slot(q,level)}" ${active?'aria-current="step"':''} role="img" aria-label="${name(q)} ${rank(level)}${active?tr('，正在打','; playing'):''}">${flower(q)}</span>`);
  }
- for(let q=0;q<2;q++)item.failures[q].slice(-2).forEach((f,i)=>marks.push(`<span class="fc-ace-attempt fc-attempt-${owner(q)}" style="left:${pos(14)+(pos(15)-pos(14))*i/3}%" role="img" aria-label="${name(q)} ${f.game===null?tr('旧存档中的闯A失手','Ace setback from an older save'):tr('闯A失手，第'+f.game+'局','Ace setback, game '+f.game)}">${flower(q,true)}</span>`));
+ for(let q=0;q<2;q++)item.failures[q].slice(-2).forEach((f,i)=>marks.push(`<span class="fc-ace-attempt fc-attempt-${owner(q)}" style="left:${aceSlot(i)}" role="img" aria-label="${name(q)} ${f.game===null?tr('旧存档中的闯A失手','Ace setback from an older save'):tr('闯A失手，第'+f.game+'局','Ace setback, game '+f.game)}">${flower(q,true)}</span>`));
  const reached=[...new Set([2,...entries.slice(1).filter(e=>e.epochs[e.winner]===item.epochs[e.winner]).map(e=>e.levels[e.winner])])].filter(n=>n!==14).sort((a,b)=>a-b);
  return `<div class="fc-shared-vine" data-playing-owner="${item.playing===null?'none':owner(item.playing)}" role="group" aria-label="${tr('对手金花在上，你的红花在下','Gold rival flowers above; your red flowers below')}"><svg class="fc-vine-drawing" viewBox="0 0 640 148" preserveAspectRatio="none" aria-hidden="true"><path class="fc-vine-stem" d="M32 70C153 66 337 75 474 70C524 68 567 73 598.4 70"/></svg>${marks.join('')}<span class="fc-ace-knot" style="left:${pos(14)}%" aria-hidden="true">${item.won?pass:'<b>A</b>'}</span>${item.won?`<span class="fc-final-flower" style="left:93.5%" data-win-owner="${owner(item.winner)}"><svg class="fc-spine-bloom ${item.winner===1?'fc-gold-flower':''}" viewBox="0 0 64 72" aria-label="${name(item.winner)} ${tr('闯关成功','passed Ace')}">${assets().spine}</svg></span>`:''}<div class="fc-vine-axis" aria-hidden="true">${reached.map(n=>`<span style="left:${pos(n)}%">${rank(n)}</span>`).join('')}</div></div>`;
 }
