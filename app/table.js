@@ -334,7 +334,7 @@ function openResult(){
  if(match&&GK.sharedFlower(variant)){window.SZBloom.renderResult(bloomHost,game.results,game.snapshot(),game.events.find(e=>e.kind==='deal')?.state?.levelOwner??0,false);modal.setAttribute('aria-labelledby','bloom-heading');modal.removeAttribute('aria-describedby');}
  else{window.SZBloom.hideResult(bloomHost);modal.setAttribute('aria-labelledby','result-title');modal.setAttribute('aria-describedby','result-subtitle result-hint');}
  const playerName=window.SZPlayer.get();$('result-title').toggleAttribute('data-no-i18n',!!playerName&&own);if(playerName&&own)$('result-title').textContent=GKLocale.language==='en'?playerName+(match?', you won the match!':', you won this game.'):(playerName+(match?'，你赢下了整场！':'，这一局你赢了。'));
- $('result-share').textContent=GKLocale.language==='en'?'Share PNG':'分享卡片';
+ $('result-share').textContent=match?(GKLocale.language==='en'?'Share PNG':'分享卡片'):(GKLocale.language==='en'?'Review & share':'回顾与分享');
  $('result-primary').textContent=match?'再玩一场':'开始下一局';$('result-primary').disabled=false;
  presentedResultKey=key;
  if(!modal.open)modal.showModal();
@@ -639,7 +639,7 @@ $('close-settings').addEventListener('click',()=>{$('settings-modal').close();dr
 $('settings-modal').addEventListener('close',()=>{syncResult();driveAI();});
 $('close-result').addEventListener('click',closeResult);
 $('result-review').addEventListener('click',closeResult);
-$('result-share').addEventListener('click',()=>{if(mode!=='play'||!currentResult())return;window.SZShareCard.open({results:game.results,snapshot:game.snapshot(),first:game.events.find(e=>e.kind==='deal')?.state?.levelOwner??0,seed:game.seed,version:variant,match:game.phase==='match_over',lang:GKLocale.language,theme:document.documentElement.dataset.szTheme,playerName:window.SZPlayer.get()});});
+$('result-share').addEventListener('click',()=>{if(mode!=='play'||!currentResult())return;window.SZShareCard.open({results:game.results,events:game.events,snapshot:game.snapshot(),first:game.events.find(e=>e.kind==='deal')?.state?.levelOwner??0,seed:game.seed,version:variant,match:game.phase==='match_over',lang:GKLocale.language,theme:document.documentElement.dataset.szTheme,playerName:window.SZPlayer.get()});});
 $('result-primary').addEventListener('click',continueResult);
 $('result-modal').addEventListener('close',()=>{window.SZShareCard.close();stopCelebration();window.SZBloom.hideResult($('bloom-result'));const r=currentResult();if(mode==='play'&&r&&resultKey(r)===$('result-modal').dataset.resultKey)$('show-result')?.focus({preventScroll:true});});
 $('new-match').addEventListener('click',newMatch);

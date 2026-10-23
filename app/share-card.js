@@ -5,11 +5,47 @@ const SHARE_URL='https://lucienzhu.github.io/gk-royale-playtest/',QR_ROWS=["1111
 const WIDTH=1080,HEIGHT=1440,escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
 const palettes={light:{paper:'#EDF4EF',ink:'#10231B',muted:'#4F665A',line:'#C3D4C9',table:'#E2ECE5',red:'#C5416B',gold:'#D6A41C',goldCenter:'#F2CD5D',redText:'#B2365A',goldText:'#866300',gray:'#9DB5A8'},dark:{paper:'#0C2118',ink:'#EAF3EE',muted:'#9DB5A8',line:'#2C4B3C',table:'#112A1F',red:'#C5416B',gold:'#E4C46A',goldCenter:'#F2CD5D',redText:'#E38BA6',goldText:'#E4C46A',gray:'#4F665A'}};
 // Only the two already-revealed plays belong in a share. Never copy private hands,
-// stock, replacement cards, or the rest of a saved combat object into the poster.
+// stock, replacement metadata, or the rest of a saved combat object into the poster.
 function publicCombat(c){
  const valid=n=>Number.isInteger(n)&&n>=0&&n<52;
  if(!c||![0,1].includes(c.attacker)||!Array.isArray(c.moves)||c.moves.length!==2||c.moves.some(m=>!m||!Array.isArray(m.cards)||m.cards.length<3||m.cards.length>5||!m.cards.every(valid)||new Set(m.cards).size!==m.cards.length||!Number.isFinite(m.score)))return null;
- return {attacker:c.attacker,reason:String(c.reason||''),action:String(c.action||''),amount:Number(c.amount)||0,before:Array.isArray(c.before)?c.before.slice(0,2).map(Number):null,after:Array.isArray(c.after)?c.after.slice(0,2).map(Number):null,moves:c.moves.map(m=>({cards:[...m.cards],score:m.score,kind:m.kind,name:String(m.name||''),wounds:m.cards.map((_,i)=>['table','wounds'].includes(m.origins?.[i]?.zone)),wild:m.wild&&m.cards.includes(m.wild.physical)&&valid(m.wild.as)?{physical:m.wild.physical,as:m.wild.as}:null}))};
+ return {attacker:c.attacker,actor:[0,1].includes(c.actor)?c.actor:null,reason:String(c.reason||''),action:String(c.action||''),amount:Number(c.amount)||0,before:Array.isArray(c.before)?c.before.slice(0,2).map(Number):null,after:Array.isArray(c.after)?c.after.slice(0,2).map(Number):null,moves:c.moves.map(m=>({cards:[...m.cards],score:m.score,kind:m.kind,name:String(m.name||''),wounds:m.cards.map((_,i)=>['table','wounds'].includes(m.origins?.[i]?.zone)),wild:m.wild&&m.cards.includes(m.wild.physical)&&valid(m.wild.as)?{physical:m.wild.physical,as:m.wild.as}:null}))};
+}
+const GAME_LAYOUTS=['recap','finish','highlight'];
+const layoutOf=value=>GAME_LAYOUTS.includes(value)?value:'finish';
+const combatKey=c=>c.attacker+':'+c.moves.map(m=>m.cards.join(',')).join('/');
+// Snapshots repeat the previous combat during swaps and refills. Collapse those
+// copies, keep their public outcome, and restrict the collection to this game.
+function collectCombats(events,game,last,round){
+ const records=[],seen=new Map();
+ for(const e of Array.isArray(events)?events:[]){
+  if(e.game!==game)continue;
+  const combat=publicCombat(e.state?.lastCombat);
+  if(!combat||!combat.action)continue;
+  const turn=Math.max(1,Number(e.round)||1),key=turn+':'+combatKey(combat);
+  if(seen.has(key))records[seen.get(key)]={...combat,round:turn,order:seen.get(key)+1};
+  else{seen.set(key,records.length);records.push({...combat,round:turn,order:records.length+1});}
+ }
+ if(last){
+  const final=records.at(-1);
+  if(!final||combatKey(final)!==combatKey(last))records.push({...last,round:Number(round)||1,order:records.length+1});
+ }
+ return records;
+}
+const damageOf=c=>c.action==='damage'?c.amount:0;
+const topScore=c=>Math.max(...c.moves.map(m=>m.score));
+function featured(d,pick=d.highlightPick){
+ const records=d.combats||[],sorted=[...records].sort((a,b)=>pick==='hand'?topScore(b)-topScore(a)||damageOf(b)-damageOf(a)||b.order-a.order:damageOf(b)-damageOf(a)||topScore(b)-topScore(a)||b.order-a.order);
+ const combat=sorted[0]||d.combat;
+ if(!combat)return {combat:null,who:d.winner};
+ const who=pick==='hand'?(combat.moves[0].score===combat.moves[1].score?(combat.action==='damage'?combat.attacker:combat.actor??d.winner):combat.moves[0].score>combat.moves[1].score?0:1):combat.action==='damage'?combat.attacker:combat.actor??(combat.moves[0].score>combat.moves[1].score?0:1);
+ return {combat,who};
+}
+function recap(d){
+ const list=d.combats||[];if(list.length<=3)return [...list];
+ const selected=new Set([featured(d,'hand').combat,featured(d,'damage').combat,list.at(-1)]);
+ for(const c of [list.find(c=>damageOf(c)>0),...list])if(selected.size<3&&c)selected.add(c);
+ return [...selected].sort((a,b)=>a.order-b.order);
 }
 function summarize(input){
  if(!input?.results?.length)throw new Error('A settled game is required.');
@@ -18,13 +54,16 @@ function summarize(input){
  const match=!!input.match;if(match&&!r.match_won)throw new Error('An unfinished match cannot bloom.');
  const wins=[0,0];results.forEach(x=>wins[x.winner]++);
  const ownAce=results.filter(x=>x.ace_challenger===winner),setbacks=ownAce.filter(x=>x.winner!==winner).length,firstAce=results.find(x=>x.winner===winner&&x.from<14&&x.to===14)?.game??null;
- const s=input.snapshot,snapshot={players:s.players.map(p=>({level:p.level})),aLosses:[...(s.aLosses||[0,0])],phase:s.phase,levelOwner:s.levelOwner};
- return {results,result:r,winner,match,combat:publicCombat(s.lastCombat),playerName:String(input.playerName||''),lang:input.lang==='en'?'en':'zh-CN',theme:input.theme==='dark'?'dark':'light',version:String(input.version||'1.0.0'),seed:Number(input.seed)>>>0,first:input.first===1?1:0,snapshot,wins,games:results.length,rounds:results.reduce((n,x)=>n+(Number(x.rounds)||0),0),setbacks,firstAce};
+ const s=input.snapshot,combat=publicCombat(s.lastCombat),combats=collectCombats(input.events,r.game,combat,r.rounds),finalWounds=s.players.map(p=>Array.isArray(p.table)?p.table.map(x=>({card:x.up&&Number.isInteger(x.card)&&x.card>=0&&x.card<52?x.card:null})):null),snapshot={players:s.players.map(p=>({level:p.level})),aLosses:[...(s.aLosses||[0,0])],phase:s.phase,levelOwner:s.levelOwner};
+ return {results,result:r,winner,match,combat:combat||combats.at(-1)||null,combats,finalWounds,layout:layoutOf(input.layout),highlightPick:input.highlightPick==='hand'?'hand':'damage',playerName:String(input.playerName||''),lang:input.lang==='en'?'en':'zh-CN',theme:input.theme==='dark'?'dark':'light',version:String(input.version||'1.0.0'),seed:Number(input.seed)>>>0,first:input.first===1?1:0,snapshot,wins,games:results.length,rounds:results.reduce((n,x)=>n+(Number(x.rounds)||0),0),setbacks,firstAce};
 }
 // A single-game keepsake is about the decisive play. Physical cards stay physical:
 // a flower's scored substitution is a caption, never a replacement of its face.
 function gameSVG(d,assets){
- const en=d.lang==='en',t=(a,b)=>en?b:a,p=palettes[d.theme],c=d.combat,r=d.result,w=d.winner,loser=1-w,accent=w===0?p.redText:p.goldText;
+ const en=d.lang==='en',t=(a,b)=>en?b:a,p=palettes[d.theme],layout=layoutOf(d.layout),feature=featured(d),c=layout==='highlight'?feature.combat:d.combat,r=d.result,w=layout==='highlight'?feature.who:d.winner,loser=1-w,accent=w===0?p.redText:p.goldText;
+ const gameWho=q=>q===0?(d.playerName||t('你','You')):t('对手','Rival'),gap=Number(r.damage[1-d.winner])-Number(r.damage[d.winner]);
+ const title=layout==='recap'?t('本局回顾','Game story'):layout==='finish'?t('决胜现场','The final table'):t('高光一手','The highlight');
+ const points=n=>t(n+'分',n+(n===1?' pt':' pts'));
  const rank=n=>({11:'J',12:'Q',13:'K',14:'A'}[n]||String(n)),label=id=>'♠♥♣♦'[Math.floor(id/13)]+rank(id%13+2);
  const who=q=>q===0?(d.playerName||t('你','You')):t('对手','Rival'),role=q=>c?.attacker===q?t('进攻','Attack'):t('防守','Defense');
  const names=['高牌','对子','顺子','同花','三炸','同花顺','四炸','五炸'],english=['High card','Pair','Straight','Flush','Three of a kind','Straight flush','Four of a kind','Five of a kind'];
@@ -33,31 +72,64 @@ function gameSVG(d,assets){
  const text=(x,y,s,size,fill=p.ink,weight=400,anchor='start',width=920)=>`<text x="${x}" y="${y}" font-size="${Math.min(size,width/Math.max(1,units(s))).toFixed(1)}" fill="${fill}" font-weight="${weight}" text-anchor="${anchor}">${escape(s)}</text>`;
  const shapes=['M12 2C11.3 2.6 2.6 9.2 2.6 15.1C2.6 20 8 21 11.2 18.1L8.7 22.6H15.3L12.8 18.1C16 21 21.4 20 21.4 15.1C21.4 9.2 12.7 2.6 12 2Z','M12 22C11.2 21.4 2.2 15.4 2.2 8.9C2.2 5.6 4.6 3 7.6 3C9.5 3 11 4.1 12 5.6C13 4.1 14.5 3 16.4 3C19.4 3 21.8 5.6 21.8 8.9C21.8 15.4 12.8 21.4 12 22Z','M6.9 7.3a5.1 5.1 0 1 0 10.2 0a5.1 5.1 0 1 0-10.2 0M1.3 14a5.1 5.1 0 1 0 10.2 0a5.1 5.1 0 1 0-10.2 0M12.5 14a5.1 5.1 0 1 0 10.2 0a5.1 5.1 0 1 0-10.2 0M12 11.2L8.9 22.6H15.1Z','M12 2C13.9 6.2 17.6 10 21 12C17.6 14 13.9 17.8 12 22C10.1 17.8 6.4 14 3 12C6.4 10 10.1 6.2 12 2Z'];
  const suit=(id,x,y,size,ink,opacity=1)=>`<svg x="${x}" y="${y}" width="${size}" height="${size}" viewBox="0 0 24 24" opacity="${opacity}"><path d="${shapes[Math.floor(id/13)]}" fill="${ink}"/></svg>`;
- function cards(m,y,large){
-  const n=m.cards.length,cw=large?Math.min(196,(920-(n-1)*16)/n):136,ch=cw*1.4,gap=large?16:14,x0=(1080-n*cw-(n-1)*gap)/2;
-  return `<g data-play="${large?'winner':'response'}">`+m.cards.map((id,i)=>{const x=x0+i*(cw+gap),wild=m.wild?.physical===id,ink=[1,3].includes(Math.floor(id/13))?'#B2365A':'#173D39',scale=cw/196;
-   return `<g data-card="${id}" transform="translate(${x} ${y+(large?(274.4-ch)/2:0)})"><rect y="7" width="${cw}" height="${ch}" rx="16" fill="#000" opacity=".07"/><rect width="${cw}" height="${ch}" rx="16" fill="${wild?'#FFF9E8':'#FFFEFA'}" stroke="${wild?'#C3A249':'#C3D4C9'}" stroke-width="${wild?3:1.5}"/>${text(20*scale,72*scale,rank(id%13+2),66*scale,ink,750)}${suit(id,18*scale,89*scale,36*scale,ink)}${suit(id,68*scale,131*scale,110*scale,ink,.09)}${wild?text(20*scale,ch-19*scale,'★',28*scale,'#866300',700):''}${m.wounds[i]?text(cw-17*scale,ch-19*scale,t('伤','W'),25*scale,'#866300',650,'end'):''}</g>`;
+ function cards(m,y,large,options={}){
+  const n=m.cards.length;if(!n)return '';
+  const cw=options.width||(large?Math.min(196,(920-(n-1)*16)/n):136),ch=cw*1.4,gap=options.gap??(large?16:14),center=options.center??540,x0=center-(n*cw+(n-1)*gap)/2,rowHeight=options.rowHeight??(large?274.4:ch);
+  return `<g data-play="${options.zone||(large?'winner':'response')}">`+m.cards.map((id,i)=>{
+   const x=x0+i*(cw+gap),back=id===null,wild=!back&&m.wild?.physical===id,ink=[1,3].includes(Math.floor(id/13))?'#B2365A':'#173D39',scale=cw/196;
+   const face=back?`<svg x="${cw*.22}" y="${ch*.3}" width="${cw*.56}" height="${ch*.4}" viewBox="0 0 64 72">${assets.flower}</svg>`:text(20*scale,72*scale,rank(id%13+2),66*scale,ink,750)+suit(id,18*scale,89*scale,36*scale,ink)+suit(id,68*scale,131*scale,110*scale,ink,.09)+(wild?text(20*scale,ch-19*scale,'★',28*scale,'#866300',700):'')+(m.wounds?.[i]?text(cw-17*scale,ch-19*scale,t('伤','W'),25*scale,'#866300',650,'end'):'');
+   return `<g data-card="${back?'hidden':id}" transform="translate(${x} ${y+(rowHeight-ch)/2})"><rect y="5" width="${cw}" height="${ch}" rx="${Math.min(16,cw*.08)}" fill="#000" opacity=".05"/><rect width="${cw}" height="${ch}" rx="${Math.min(16,cw*.08)}" fill="${back?'#ECCE80':wild?'#FFF9E8':'#FFFEFA'}" stroke="${back||wild?'#C3A249':'#C3D4C9'}" stroke-width="${wild?3:1.5}"/>${face}</g>`;
   }).join('')+'</g>';
  }
+ const identity=(q,x,y,size=26)=>`<svg x="${x}" y="${y-size}" width="${size}" height="${size}" viewBox="0 0 64 72">${assets.flower.replace(/fill="#D83B74"/g,'fill="'+(q===0?p.red:p.gold)+'"').replace(/fill="#DEB04A"/g,'fill="'+(q===0?p.goldCenter:p.red)+'"')}</svg>`;
+ const outcome=co=>co.action==='damage'?gameWho(1-co.attacker)+t(' +'+co.amount+'伤',' +'+co.amount+(co.amount===1?' wound':' wounds')):co.action==='refresh'?gameWho(co.actor??1-co.attacker)+t(' · 换牌机会 ×'+co.amount,' · '+co.amount+(co.amount===1?' swap chance':' swap chances')):t('伤势不变','No added wounds');
+ const woundLine=co=>co.before?.length===2&&co.after?.length===2?co.before.join(' : ')+' → '+co.after.join(' : '):'';
+ const stepName=co=>t('第 '+co.round+' 轮 · 第 '+co.order+' 次攻防','Round '+co.round+' · Play '+co.order);
  const wildNote=m=>m.wild?t('花牌 '+label(m.wild.physical)+' → '+label(m.wild.as),'Wild '+label(m.wild.physical)+' → '+label(m.wild.as)):'';
  let body='';
- if(c){
+ if(layout==='recap'&&d.combats.length){
+  const picks=recap(d),start=picks.length===1?490:330,step=picks.length===2?430:296;
+  body+=text(80,234,title,en?84:94,p.ink,750)+text(80,288,t('精选 '+picks.length+' 次攻防 · 终局伤牌 '+r.damage.join(' : '),picks.length+' key '+(picks.length===1?'play':'plays')+' · Final wounds '+r.damage.join(' : ')),30,p.muted);
+  picks.forEach((co,i)=>{
+   const y=start+i*step,a=co.attacker,b=1-a,ma=co.moves[a],mb=co.moves[b],width=m=>Math.min(102,(402-(m.cards.length-1)*12)/m.cards.length);
+   body+=`<g data-story-order="${co.order}">`+text(80,y,stepName(co),25,p.muted,500)+text(1000,y,t('伤牌 ','Wounds ')+woundLine(co),25,p.muted,500,'end',480)+`<path d="M80 ${y+18}H1000" stroke="${p.line}"/>`;
+   body+=identity(a,80,y+61)+text(116,y+60,gameWho(a)+' · '+hand(ma)+' '+points(ma.score),29,a===0?p.redText:p.goldText,600,'start',370)+identity(b,600,y+61)+text(636,y+60,gameWho(b)+' · '+hand(mb)+' '+points(mb.score),29,b===0?p.redText:p.goldText,600,'start',364);
+   body+=cards(ma,y+80,false,{center:280,width:width(ma),gap:12,rowHeight:143,zone:'story-attack'})+text(540,y+157,'→',42,p.muted,500,'middle')+cards(mb,y+80,false,{center:800,width:width(mb),gap:12,rowHeight:143,zone:'story-defense'});
+   const notes=[wildNote(ma),wildNote(mb)].filter(Boolean).join(' · ');
+   body+=text(80,y+258,outcome(co),28,p.ink,650,'start',450)+text(1000,y+258,notes,23,p.muted,400,'end',460)+'</g>';
+  });
+ }else if(layout==='finish'&&c){
+  body+=text(80,214,title,en?84:94,p.ink,750)+text(80,266,t('终局伤牌 · 伤牌差决定升级','Final wounds · The gap sets your level gain'),29,p.muted);
+  body+=identity(0,240,324)+text(280,322,gameWho(0),30,p.muted,600,'start',220)+identity(1,708,324)+text(748,322,gameWho(1),30,p.muted,600,'start',220);
+  body+=text(310,428,String(r.damage[0]),116,p.redText,750,'middle')+text(540,417,':',76,p.muted,500,'middle')+text(770,428,String(r.damage[1]),116,p.goldText,750,'middle');
+  body+=text(540,492,t('伤牌差 '+gap+' 张 · '+rank(r.from)+' → '+rank(r.to),'Gap '+gap+' · Level '+rank(r.from)+' → '+rank(r.to)),40,d.winner===0?p.redText:p.goldText,700,'middle');
+  body+=`<rect x="80" y="532" width="920" height="666" rx="28" fill="${p.table}"/>`;
+  function woundRack(q,y){
+   const list=d.finalWounds[q]||Array.from({length:Number(r.damage[q])||0},()=>({card:null})),cw=Math.min(74,(824-Math.max(0,list.length-1)*8)/Math.max(1,list.length));
+   return identity(q,112,y)+text(150,y-2,gameWho(q)+t(' · '+r.damage[q]+' 张伤牌',' · '+r.damage[q]+' wounds'),28,p.muted,600)+ (list.length?cards({cards:list.map(x=>x.card)},y+16,false,{width:cw,gap:8,zone:q===0?'own-wounds':'rival-wounds'}):text(540,y+82,t('无伤牌','No wounds'),30,p.muted,400,'middle'));
+  }
+  body+=woundRack(1,579);
+  const a=c.attacker,b=1-a,ma=c.moves[a],mb=c.moves[b],cw=m=>Math.min(102,(402-(m.cards.length-1)*12)/m.cards.length);
+  body+=`<path d="M112 724H968M112 999H968" stroke="${p.line}"/>`+text(112,765,gameWho(a)+' · '+t('进攻','Attack')+' · '+hand(ma)+' '+points(ma.score),29,p.ink,600,'start',400)+text(968,765,gameWho(b)+' · '+t('防守','Defense')+' · '+hand(mb)+' '+points(mb.score),29,p.ink,600,'end',400);
+  body+=cards(ma,787,false,{center:305,width:cw(ma),gap:12,rowHeight:143})+text(540,864,'→',42,p.muted,500,'middle')+cards(mb,787,false,{center:775,width:cw(mb),gap:12,rowHeight:143});
+  body+=text(540,973,outcome(c)+(wildNote(ma)||wildNote(mb)?' · '+[wildNote(ma),wildNote(mb)].filter(Boolean).join(' · '):''),28,p.ink,600,'middle',824)+woundRack(0,1041);
+ }else if(c){
   const win=c.moves[w],response=c.moves[loser];
-  body+=text(80,192,who(w)+' · '+role(w),32,p.muted,600)+text(80,282,hand(win),en?82:110,accent,750,'start',720)+text(1000,278,t(win.score+' 分',win.score+' pts'),54,accent,700,'end',210);
-  body+=cards(win,342,true)+text(540,666,wildNote(win),28,p.muted,500,'middle');
+  body+=text(80,192,who(w)+' · '+role(w),32,p.muted,600)+text(80,282,hand(win),en?82:110,accent,750,'start',720)+text(1000,278,t(win.score+' 分',win.score+(win.score===1?' pt':' pts')),54,accent,700,'end',210);
+  body+=cards(win,342,true)+text(540,666,wildNote(win)||stepName(c),28,p.muted,500,'middle');
   const damage=c.action==='damage'&&c.amount>0;
-  const effect=damage?(win.score===response.score?t('同分比点数 · +'+c.amount+' 伤','Rank breaks the tie · +'+c.amount+(c.amount===1?' wound':' wounds')):t(win.score+' − '+response.score+' = '+c.amount+' 伤',win.score+' − '+response.score+' = '+c.amount+' wounds')):t('赢下这一局','Won this game');
-  const after=damage&&c.before?.length===2&&c.after?.length===2?who(loser)+' '+c.before[loser]+' → '+c.after[loser]+t(' 伤',' wounds'):'';
+  const effect=damage?(win.score===response.score?t('同分比点数 · +'+c.amount+' 伤','Rank breaks the tie · +'+c.amount+(c.amount===1?' wound':' wounds')):t(win.score+' − '+response.score+' = '+c.amount+' 伤',win.score+' − '+response.score+' = '+c.amount+' wounds')):outcome(c);
+  const after=damage&&c.before?.length===2&&c.after?.length===2?gameWho(1-c.attacker)+' '+c.before[1-c.attacker]+' → '+c.after[1-c.attacker]+t(' 伤',' wounds'):'';
   body+=`<path d="M80 708H1000M80 836H1000" stroke="${p.line}"/>`+text(540,762,effect,40,accent,650,'middle')+text(540,805,after,26,p.muted,400,'middle');
-  body+=text(80,898,who(loser)+' · '+role(loser),30,p.muted,600,'start',340)+text(1000,898,hand(response)+' '+t(response.score+' 分',response.score+' pts'),32,p.ink,600,'end',560)+cards(response,932,false)+text(540,1164,wildNote(response),26,p.muted,500,'middle');
+  body+=text(80,898,who(loser)+' · '+role(loser),30,p.muted,600,'start',340)+text(1000,898,hand(response)+' '+t(response.score+' 分',response.score+(response.score===1?' pt':' pts')),32,p.ink,600,'end',560)+cards(response,932,false)+text(540,1164,wildNote(response),26,p.muted,500,'middle');
  }else{
   // Old saves without the final combat remain shareable; don't invent a hand.
   body+=text(540,400,t('赢下这一局','Won this game'),88,accent,750,'middle')+text(540,620,rank(r.from)+' → '+rank(r.to),150,p.ink,700,'middle')+text(540,760,t('终局伤势','Final wounds'),30,p.muted,500,'middle')+text(540,836,t('你 '+r.damage[0]+' : '+r.damage[1]+' 对手','You '+r.damage[0]+' : '+r.damage[1]+' Rival'),48,p.ink,600,'middle');
  }
  const qrSize=QR_ROWS.length+8,qrPath=QR_ROWS.flatMap((row,y)=>[...row.matchAll(/1+/g)].map(m=>`M${m.index+4} ${y+4}h${m[0].length}v1h-${m[0].length}z`)).join('');
  const mark=assets.flower.replace(/fill="#DEB04A"/g,'fill="#F2CD5D"').replace(/fill="#D83B74"/g,'fill="#C5416B"');
- return `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1440" viewBox="0 0 1080 1440" role="img" aria-label="${escape(t('决胜一手','The winning play'))}" data-share-layout="game-hand"><style>text{font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Arial,sans-serif}</style><rect width="1080" height="1440" fill="${p.paper}"/>`+
- text(80,110,who(w)+t('赢下第 '+r.game+' 局',' won game '+r.game),30,p.muted,500,'start',500)+text(1000,110,t('决胜一手','THE WINNING PLAY'),24,p.muted,500,'end',380)+body+
+ return `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1440" viewBox="0 0 1080 1440" role="img" aria-label="${escape(title)}" data-share-layout="${layout}"><style>text{font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Arial,sans-serif}</style><rect width="1080" height="1440" fill="${p.paper}"/>`+
+ text(80,110,gameWho(d.winner)+t('赢下第 '+r.game+' 局',' won game '+r.game),30,p.muted,500,'start',500)+text(1000,110,layout==='highlight'?(d.highlightPick==='hand'?t('本局最大牌型','BEST HAND'):t('本局最大伤害','BIGGEST HIT')):t('深圳花牌','3CARD ROYALE'),24,p.muted,500,'end',380)+body+
  text(540,1228,t('等级 '+rank(r.from)+' → '+rank(r.to)+'   ·   '+r.rounds+' 轮攻防','Level '+rank(r.from)+' → '+rank(r.to)+'   ·   '+r.rounds+(r.rounds===1?' round':' rounds')),28,p.muted,500,'middle')+
  `<path d="M80 1270H1000" stroke="${p.line}"/><g transform="translate(80 1300)"><rect width="46" height="58" rx="7" fill="#ECCE80" stroke="#A17C35" stroke-width="2"/><svg x="4" y="6" width="38" height="45" viewBox="0 0 64 72">${mark}</svg></g>`+
  text(146,1330,t('深圳花牌','3Card Royale'),32,p.ink,700)+text(146,1366,t('三张牌，打出花。','Three cards. Make them bloom.'),23,p.muted)+text(80,1418,t('规则 ','Rules ')+d.version+' · lucienzhu.github.io/gk-royale-playtest',19,p.muted)+
@@ -65,8 +137,9 @@ function gameSVG(d,assets){
 }
 // The poster is a still of the finale: the winner's flower over the skyline, the vine below, the game's address last.
 function makeSVG(d,assets=root.SZBloomAssets,cityStyle=root.SZShareAssets?.cityStyle,bloom=root.SZBloom,finale=root.SZFinale){
- if(!assets||!cityStyle||!bloom||!finale)throw new Error('Share card assets are unavailable.');
+ if(!assets)throw new Error('Share card assets are unavailable.');
  if(!d.match)return gameSVG(d,assets);
+ if(!cityStyle||!bloom||!finale)throw new Error('Share card assets are unavailable.');
  const en=d.lang==='en',t=(a,b)=>en?b:a,p=palettes[d.theme],own=d.winner===0,accent=own?p.redText:p.goldText,F=finale.FLOWERS[own?'own':'rival'],rank=bloom.rank,r=d.result,font='-apple-system,BlinkMacSystemFont,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Arial,sans-serif';
  const text=(x,y,s,size,fill=p.ink,weight=400,extra='')=>`<text x="${x}" y="${y}" font-size="${size}" fill="${fill}" font-weight="${weight}" ${extra}>${escape(s)}</text>`;
  const span=(s,size,fill,weight=400)=>`<tspan font-size="${size}" fill="${fill}" font-weight="${weight}">${escape(s)}</tspan>`;
@@ -122,7 +195,7 @@ function makeSVG(d,assets=root.SZBloomAssets,cityStyle=root.SZShareAssets?.cityS
   `<text x="540" y="${d.match?318:400}" text-anchor="middle">${factLine}</text>${city}${sky}${axis.join('')}`+
   `<path d="M80 1262H1000" stroke="${p.line}" stroke-width="1.5"/>${mark}${text(162,1326,t('深圳花牌','3Card Royale'),34,p.ink,700)}${text(162,1362,t('三张牌，打出花。','Three cards. Make them bloom.'),23,p.muted)}${text(80,1404,foot,en?21:22,p.ink,500)}${text(80,1430,'lucienzhu.github.io/gk-royale-playtest',19,p.muted)}${qr}</svg>`;
 }
-function filename(d){return 'shenzhen-flower-'+(d.match?'match':'game')+'-'+d.seed+'-'+d.result.game+'.png';}
+function filename(d){return 'shenzhen-flower-'+(d.match?'match':'game-'+layoutOf(d.layout)+(d.layout==='highlight'?'-'+(d.highlightPick||'damage'):''))+'-'+d.seed+'-'+d.result.game+'.png';}
 async function png(svg){
  const source=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml;charset=utf-8'}));
  try{const img=new Image();await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=()=>reject(new Error('PNG artwork could not load.'));img.src=source;});const canvas=document.createElement('canvas');canvas.width=WIDTH;canvas.height=HEIGHT;const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Canvas unavailable.');ctx.drawImage(img,0,0,WIDTH,HEIGHT);return await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('PNG export failed.')),'image/png'));}finally{URL.revokeObjectURL(source);}
@@ -140,13 +213,52 @@ function copySupported(nav,Item){try{return typeof nav?.clipboard?.write==='func
 let dialog,run=0,previewURL=null;
 function clear(){run++;if(previewURL){const old=previewURL;previewURL=null;setTimeout(()=>URL.revokeObjectURL(old),2000);}}
 function close(){if(dialog?.open)dialog.close();}
+let lastLayout='recap',lastHighlight='damage';
 async function open(input){
- const d=summarize(input),en=d.lang==='en',t=(a,b)=>en?b:a;clear();const generation=run;
+ const base=summarize(input),en=base.lang==='en',t=(a,b)=>en?b:a;
+ clear();
  if(!dialog){dialog=document.createElement('dialog');dialog.id='share-card-dialog';dialog.className='modal sz-share-dialog';dialog.dataset.noI18n='';dialog.addEventListener('close',()=>{clear();dialog.replaceChildren();});document.body.append(dialog);}
- dialog.lang=d.lang;dialog.innerHTML=`<div class="modal-head"><h2 id="share-card-title">${t('分享卡片','Share card')}</h2><button type="button" data-share-close>${t('返回结算','Back to result')}</button></div><div class="sz-share-body"><div class="sz-share-preview" aria-busy="true"><p role="status">${t('正在生成 PNG…','Creating your PNG…')}</p><img hidden alt="${t('本次结算分享卡','Share card for this result')}"></div><p class="sz-share-note">1080 × 1440 · PNG</p><div class="sz-share-actions"><a class="primary" data-share-download hidden>${t('保存 PNG','Save PNG')}</a><button type="button" data-share-system hidden>${t('分享…','Share…')}</button><button type="button" data-share-copy hidden>${t('复制图片','Copy image')}</button><button type="button" data-share-retry hidden>${t('重试','Try again')}</button></div><p class="sz-share-status" role="status"></p></div>`;
- dialog.setAttribute('aria-labelledby','share-card-title');dialog.querySelector('[data-share-close]').onclick=close;dialog.querySelector('[data-share-retry]').onclick=()=>open(input);if(!dialog.open)dialog.showModal();else dialog.querySelector('[data-share-close]').focus({preventScroll:true});
- try{if(document.fonts?.ready)await document.fonts.ready;const blob=await png(makeSVG(d));if(generation!==run)return;previewURL=URL.createObjectURL(blob);const img=dialog.querySelector('img'),preview=dialog.querySelector('.sz-share-preview'),download=dialog.querySelector('[data-share-download]'),system=dialog.querySelector('[data-share-system]'),status=dialog.querySelector('.sz-share-status');img.src=previewURL;img.hidden=false;preview.querySelector('p').hidden=true;preview.setAttribute('aria-busy','false');download.href=previewURL;download.download=filename(d);download.hidden=false;download.onclick=()=>{status.textContent=t('已准备下载；也可长按图片保存。','Download ready. You can also save the preview image.');};const payload=sharePayload(new File([blob],filename(d),{type:'image/png'}),navigator,d),copy=dialog.querySelector('[data-share-copy]'),canCopy=copySupported(navigator,root.ClipboardItem);copy.hidden=!canCopy;copy.onclick=async()=>{copy.disabled=true;try{await navigator.clipboard.write([new root.ClipboardItem({'image/png':blob})]);status.textContent=t('已复制。打开微信对话，长按输入框选“粘贴”，即可发送。','Copied. Paste it into a chat to send it.');}catch(_){status.textContent=t('没能复制。请长按图片存到相册，再从微信发送。','Could not copy. Save the preview image, then send it from your photos.');}finally{copy.disabled=false;}};system.hidden=!payload;if(payload&&!payload.files)system.textContent=t('分享链接…','Share link…');system.onclick=async()=>{system.disabled=true;try{await navigator.share(payload);status.textContent=t('已分享。','Shared.');}catch(e){status.textContent=e.name==='AbortError'?(canCopy?t('图片还在。发微信可以点“复制图片”。','Your card is still here. You can also copy it into a chat.'):t('图片还在，随时可以保存。','Your card is still ready to save.')):t('请保存 PNG 后分享。','Save the PNG to share it.');}finally{system.disabled=false;}};status.textContent=canCopy?t('发给微信好友：点“复制图片”后粘贴。','You can also copy the image and paste it into a chat.'):t('长按图片也可保存。','You can also save the preview image.');}
- catch(_){if(generation!==run)return;dialog.querySelector('.sz-share-preview p').textContent=t('图片暂未生成，请重试。','Could not create the image. Please try again.');dialog.querySelector('.sz-share-preview').setAttribute('aria-busy','false');dialog.querySelector('[data-share-retry]').hidden=false;}
+ const tabs=base.match?'':`<div class="sz-share-tabs" role="tablist" aria-label="${t('分享方式','Share style')}">${[['recap','本局回顾','Game story'],['finish','决胜现场','Final table'],['highlight','高光一手','Best play']].map(([id,zh,eng])=>`<button type="button" role="tab" id="share-tab-${id}" aria-controls="share-poster-panel" data-share-layout="${id}">${t(zh,eng)}</button>`).join('')}</div>`;
+ dialog.lang=base.lang;dialog.dataset.match=String(base.match);
+ dialog.innerHTML=`<div class="modal-head"><h2 id="share-card-title">${base.match?t('分享卡片','Share card'):t('回顾与分享','Review & share')}</h2><button type="button" data-share-close>${t('返回结算','Back to result')}</button></div>${tabs}<div class="sz-share-body"><div class="sz-share-context"><p data-share-caption></p><div class="sz-share-picks" role="group" aria-label="${t('选择高光','Pick a highlight')}" hidden><button type="button" data-share-pick="damage">${t('最大伤害','Biggest hit')}</button><button type="button" data-share-pick="hand">${t('最大牌型','Best hand')}</button></div></div><div class="sz-share-preview" id="share-poster-panel" role="tabpanel" aria-busy="true"><p role="status">${t('正在生成 PNG…','Creating your PNG…')}</p><img hidden alt="${t('本次结算分享卡','Share card for this result')}"></div><p class="sz-share-note">1080 × 1440 · ${t('点图放大','Tap image to enlarge')}</p><div class="sz-share-actions"><a class="primary" data-share-download hidden>${t('保存 PNG','Save PNG')}</a><button type="button" data-share-system hidden>${t('分享…','Share…')}</button><button type="button" data-share-copy hidden>${t('复制图片','Copy image')}</button><button type="button" data-share-retry hidden>${t('重试','Try again')}</button></div><p class="sz-share-status" role="status" aria-live="polite"></p></div>`;
+ dialog.setAttribute('aria-labelledby','share-card-title');dialog.querySelector('[data-share-close]').onclick=close;
+ let layout=layoutOf(input.layout||lastLayout),pick=input.highlightPick||lastHighlight;
+ const $=s=>dialog.querySelector(s),img=$('img'),preview=$('.sz-share-preview'),message=preview.querySelector('p'),download=$('[data-share-download]'),system=$('[data-share-system]'),copy=$('[data-share-copy]'),retry=$('[data-share-retry]'),status=$('.sz-share-status');
+ img.tabIndex=0;img.setAttribute('role','button');img.setAttribute('aria-label',t('放大或缩小分享图片','Enlarge or fit share image'));img.setAttribute('aria-expanded','false');
+ const zoom=()=>{const expanded=preview.dataset.zoomed!=='true';preview.dataset.zoomed=String(expanded);img.setAttribute('aria-expanded',String(expanded));};img.onclick=zoom;img.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();zoom();}};
+ async function render(){
+  preview.dataset.zoomed='false';img.setAttribute('aria-expanded','false');
+  clear();const generation=run,d={...base,layout,highlightPick:pick};
+  for(const tab of dialog.querySelectorAll('[data-share-layout]')){const active=tab.dataset.shareLayout===layout;tab.setAttribute('aria-selected',String(active));tab.tabIndex=active?0:-1;}
+  for(const button of dialog.querySelectorAll('[data-share-pick]'))button.setAttribute('aria-pressed',String(button.dataset.sharePick===pick));
+  if(!base.match)preview.setAttribute('aria-labelledby','share-tab-'+layout);else preview.removeAttribute('role');
+  $('.sz-share-picks').hidden=base.match||layout!=='highlight';
+  $('[data-share-caption]').textContent=base.match?'':!base.combat?t('旧记录未保存攻防牌面，仅展示结果。','This old record has no played cards; showing the result.'):layout==='recap'?(base.combats.length>1?t('顺着关键攻防，回看这一局。','Key plays, in the order they happened.'):t('这份记录只保留了最后一次攻防。','This record contains only the final play.')):layout==='finish'?t('最后双方出牌、伤牌，以及升级的差值。','The last plays, final wounds and level gain.'):t('从本局真实攻防中选出。','Picked from this game’s recorded plays.');
+  preview.setAttribute('aria-busy','true');img.hidden=true;img.removeAttribute('src');message.hidden=false;message.textContent=t('正在生成 PNG…','Creating your PNG…');status.textContent='';
+  for(const control of [download,system,copy,retry])control.hidden=true;
+  download.removeAttribute('href');download.onclick=null;system.onclick=null;copy.onclick=null;copy.disabled=false;system.disabled=false;
+  try{
+   if(document.fonts?.ready)await document.fonts.ready;
+   if(generation!==run)return;
+   const blob=await png(makeSVG(d));if(generation!==run)return;
+   previewURL=URL.createObjectURL(blob);img.src=previewURL;img.hidden=false;message.hidden=true;preview.setAttribute('aria-busy','false');download.href=previewURL;download.download=filename(d);download.hidden=false;
+   download.onclick=()=>{status.textContent=t('已准备下载；也可长按图片保存。','Download ready. You can also save the preview image.');};
+   const payload=sharePayload(new File([blob],filename(d),{type:'image/png'}),navigator,d),canCopy=copySupported(navigator,root.ClipboardItem);
+   copy.hidden=!canCopy;
+   copy.onclick=async()=>{copy.disabled=true;try{await navigator.clipboard.write([new root.ClipboardItem({'image/png':blob})]);if(generation===run)status.textContent=t('已复制。打开微信对话，长按输入框选“粘贴”，即可发送。','Copied. Paste it into a chat to send it.');}catch(_){if(generation===run)status.textContent=t('没能复制。请长按图片存到相册，再从微信发送。','Could not copy. Save the preview image, then send it from your photos.');}finally{if(generation===run)copy.disabled=false;}};
+   system.hidden=!payload;system.textContent=payload&&!payload.files?t('分享链接…','Share link…'):t('分享…','Share…');
+   system.onclick=async()=>{system.disabled=true;try{await navigator.share(payload);if(generation===run)status.textContent=t('已分享。','Shared.');}catch(e){if(generation===run)status.textContent=e.name==='AbortError'?t('图片还在，随时可以保存。','Your card is still ready to save.'):t('请保存 PNG 后分享。','Save the PNG to share it.');}finally{if(generation===run)system.disabled=false;}};
+   status.textContent=canCopy?t('发给微信好友：点“复制图片”后粘贴。','You can also copy the image and paste it into a chat.'):t('长按图片也可保存。','You can also save the preview image.');
+  }catch(_){if(generation!==run)return;message.textContent=t('图片暂未生成，请重试。','Could not create the image. Please try again.');preview.setAttribute('aria-busy','false');retry.hidden=false;}
+ }
+ for(const tab of dialog.querySelectorAll('[data-share-layout]')){
+  tab.onclick=()=>{layout=tab.dataset.shareLayout;lastLayout=layout;render();};
+  tab.onkeydown=e=>{const ids=GAME_LAYOUTS,i=ids.indexOf(layout),next=e.key==='ArrowRight'?(i+1)%3:e.key==='ArrowLeft'?(i+2)%3:e.key==='Home'?0:e.key==='End'?2:null;if(next===null)return;e.preventDefault();const button=$('[data-share-layout="'+ids[next]+'"]');button.click();button.focus();};
+ }
+ for(const button of dialog.querySelectorAll('[data-share-pick]'))button.onclick=()=>{pick=button.dataset.sharePick;lastHighlight=pick;render();};
+ retry.onclick=render;
+ if(!dialog.open)dialog.showModal();else $('[data-share-close]').focus({preventScroll:true});
+ await render();
 }
-return {SHARE_URL,WIDTH,HEIGHT,palettes,summarize,makeSVG,filename,png,sharePayload,copySupported,open,close};
+return {SHARE_URL,WIDTH,HEIGHT,palettes,summarize,featured,recap,makeSVG,filename,png,sharePayload,copySupported,open,close};
 });

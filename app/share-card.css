@@ -1,1 +1,47 @@
-.result-actions{grid-template-columns:repeat(3,minmax(0,1fr))}.result-actions button{padding-inline:10px;min-width:0}.sz-share-dialog{width:min(620px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto}.sz-share-dialog .modal-head{gap:12px;padding:12px 18px}.sz-share-dialog .modal-head h2{font-size:19px}.sz-share-dialog .modal-head button{font-size:13px;min-height:36px}.sz-share-body{padding:16px 18px}.sz-share-preview{min-height:180px;display:grid;place-items:center;background:var(--panel,#E5EFE9);border:1px solid var(--line);border-radius:12px;overflow:hidden}.sz-share-preview p{font-size:14px;line-height:1.6;padding:30px;color:var(--muted)}.sz-share-preview img{display:block;width:auto;max-width:100%;max-height:58dvh;height:auto;object-fit:contain;user-select:auto;-webkit-touch-callout:default}.sz-share-note,.sz-share-status{font-size:12px;line-height:1.6;color:var(--muted);margin-top:10px}.sz-share-note{text-align:center}.sz-share-actions{display:flex;gap:10px;margin-top:14px}.sz-share-actions>*{flex:1;min-width:0;min-height:44px;padding:10px 14px;border:1px solid var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:inherit;font-size:14px;font-weight:600;line-height:1.4;text-decoration:none;color:var(--ink);background:transparent}.sz-share-actions .primary{color:var(--sz-logo-paper);background:var(--sz-flower-deep);border-color:var(--sz-flower-deep)}[data-sz-theme=dark] .sz-share-actions .primary{color:#172B38}.sz-share-actions a:focus-visible{outline:3px solid var(--sz-gold);outline-offset:3px}.sz-share-status{min-height:20px}@media(max-width:359px){.result-actions{gap:6px}.result-actions button{font-size:12px;padding-inline:7px}.sz-share-dialog .modal-head,.sz-share-body{padding-inline:14px}.sz-share-dialog .modal-head h2{font-size:18px}}@media(max-height:480px) and (min-width:480px){.sz-share-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(160px,.6fr);column-gap:16px}.sz-share-preview{grid-column:1;grid-row:1/5;min-height:0}.sz-share-preview img{max-height:66dvh}.sz-share-note,.sz-share-actions,.sz-share-status{grid-column:2}.sz-share-actions{align-self:start;flex-direction:column}.sz-share-note{text-align:left}}@media(max-width:440px){.sz-share-actions{flex-wrap:wrap}.sz-share-actions .primary{flex-basis:100%}:root body .sz-share-dialog .sz-share-preview img{max-height:min(calc(var(--app-height,100dvh) * .58),calc(var(--app-height,100dvh) - 330px))}}
+.result-actions{grid-template-columns:repeat(3,minmax(0,1fr))}.result-actions button{padding-inline:10px;min-width:0}
+:root body #share-card-dialog{box-sizing:border-box;width:min(760px,calc(100vw - 32px));height:min(940px,calc(var(--app-height,100dvh) - 32px));max-width:none;max-height:calc(var(--app-height,100dvh) - 32px);padding:0;overflow:hidden;border:0;border-radius:18px;background:var(--paper);color:var(--ink)}
+:root body #share-card-dialog[open]{display:flex;flex-direction:column}
+#share-card-dialog::backdrop{background:#111a1673;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+#share-card-dialog .modal-head{background:var(--paper);flex:none;gap:12px;min-height:54px;padding:10px 20px}
+#share-card-dialog .modal-head h2{font-size:19px;margin:0}
+#share-card-dialog .modal-head button{font-size:13px;min-height:36px;white-space:nowrap}
+.sz-share-tabs{display:flex;flex:none;gap:8px;padding:0 20px;border-bottom:1px solid var(--line)}
+:root body .sz-share-tabs button{position:relative;flex:1;min-width:0;min-height:46px;padding:8px 4px;border:0;background:transparent;color:var(--muted);font-family:inherit;font-weight:600;font-size:14px;line-height:1.3;border-radius:0}
+:root body .sz-share-tabs button[aria-selected=true]{color:var(--ink)}
+.sz-share-tabs button[aria-selected=true]::after{content:'';position:absolute;bottom:-1px;left:35%;right:35%;height:3px;border-radius:3px;background:var(--accent)}
+:root body #share-card-dialog .sz-share-body{flex:1;min-height:0;display:grid;grid-template-rows:62px minmax(0,1fr) 16px auto 36px;gap:8px;padding:12px 20px 16px;overflow:hidden}
+.sz-share-context{display:flex;flex-direction:column;justify-content:center;gap:6px;min-width:0}
+.sz-share-context p{margin:0;font-size:12px;line-height:1.5;color:var(--muted)}
+.sz-share-picks{display:flex;gap:8px}
+:root body .sz-share-picks button{min-height:30px;padding:4px 10px;border:0;border-radius:5px;background:transparent;color:var(--muted);font-size:12px}
+:root body .sz-share-picks button[aria-pressed=true]{background:var(--soft);color:var(--ink)}
+:root body #share-card-dialog .sz-share-preview{min-height:0;display:grid;place-items:center;position:relative;overflow:hidden;background:var(--panel,#E5EFE9);border:0;border-radius:8px}
+.sz-share-preview p{font-size:14px;line-height:1.6;padding:20px;color:var(--muted)}
+:root body #share-card-dialog .sz-share-preview img{display:block;width:100%;height:100%;max-height:100%;max-width:100%;min-height:0;object-fit:contain;user-select:auto;-webkit-touch-callout:default;cursor:zoom-in}
+:root body #share-card-dialog .sz-share-preview[data-zoomed=true]{display:block;overflow:auto;overscroll-behavior:contain}
+:root body #share-card-dialog .sz-share-preview[data-zoomed=true] img{height:auto;max-height:none;cursor:zoom-out}
+.sz-share-note,.sz-share-status{font-size:12px;line-height:1.5;color:var(--muted);margin:0}
+.sz-share-note{text-align:center;font-size:11px}
+.sz-share-actions{display:flex;gap:8px;align-items:center}
+.sz-share-actions>*{box-sizing:border-box;flex:1;min-width:0;min-height:44px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:inherit;font-size:13px;font-weight:600;line-height:1.4;text-decoration:none;color:var(--ink);background:transparent}
+.sz-share-actions .primary{color:var(--sz-logo-paper);background:var(--sz-flower-deep);border-color:var(--sz-flower-deep)}
+#share-card-dialog [hidden]{display:none!important}
+#share-card-dialog :is(button,a,img):focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+:root body #share-card-dialog[data-match=true] .sz-share-body{grid-template-rows:0 minmax(0,1fr) 16px auto 36px}
+@media(max-width:700px){
+ :root body #share-card-dialog{inset:var(--app-top,0px) 0 auto;margin:0;width:100%;height:var(--app-height,100dvh);max-height:var(--app-height,100dvh);border-radius:0;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+ #share-card-dialog .modal-head{min-height:48px;padding:6px 14px}#share-card-dialog .modal-head h2{font-size:17px}
+ .sz-share-tabs{gap:4px;padding-inline:14px}:root body .sz-share-tabs button{font-size:13px;min-height:44px}
+ :root body #share-card-dialog .sz-share-body{padding:8px 14px 12px;grid-template-rows:62px minmax(0,1fr) 16px auto 36px;gap:6px}
+ .sz-share-actions>*{padding-inline:6px;font-size:12px}
+}
+@media(max-height:500px) and (min-width:540px){
+ :root body #share-card-dialog{width:100%;height:var(--app-height,100dvh);max-height:var(--app-height,100dvh);margin:0;inset:var(--app-top,0px) 0 auto;border-radius:0}
+ #share-card-dialog .modal-head{min-height:42px;padding-block:3px}:root body .sz-share-tabs button{min-height:38px}
+ :root body #share-card-dialog .sz-share-body,:root body #share-card-dialog[data-match=true] .sz-share-body{grid-template-columns:minmax(0,1fr) 230px;grid-template-rows:62px 16px auto minmax(30px,1fr);gap:8px 16px}
+ #share-card-dialog .sz-share-preview{grid-column:1;grid-row:1/5}.sz-share-context,.sz-share-note,.sz-share-actions,.sz-share-status{grid-column:2}.sz-share-actions{align-self:start;flex-wrap:wrap}.sz-share-actions .primary{flex-basis:100%}.sz-share-note{text-align:left}
+}
+@media(min-width:800px) and (min-height:501px){
+ :root body #share-card-dialog .sz-share-body,:root body #share-card-dialog[data-match=true] .sz-share-body{grid-template-columns:minmax(0,1fr) 220px;grid-template-rows:90px 20px auto minmax(36px,1fr);gap:12px 20px}
+ #share-card-dialog .sz-share-preview{grid-column:1;grid-row:1/5}.sz-share-context,.sz-share-note,.sz-share-actions,.sz-share-status{grid-column:2}.sz-share-actions{align-self:start;flex-direction:column}.sz-share-actions>*{width:100%;flex:none}.sz-share-note{text-align:left}
+}
