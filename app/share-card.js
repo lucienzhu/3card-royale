@@ -41,12 +41,8 @@ function featured(d,pick=d.highlightPick){
  const who=pick==='hand'?(combat.moves[0].score===combat.moves[1].score?(combat.action==='damage'?combat.attacker:combat.actor??d.winner):combat.moves[0].score>combat.moves[1].score?0:1):combat.action==='damage'?combat.attacker:combat.actor??(combat.moves[0].score>combat.moves[1].score?0:1);
  return {combat,who};
 }
-function recap(d){
- const list=d.combats||[];if(list.length<=3)return [...list];
- const selected=new Set([featured(d,'hand').combat,featured(d,'damage').combat,list.at(-1)]);
- for(const c of [list.find(c=>damageOf(c)>0),...list])if(selected.size<3&&c)selected.add(c);
- return [...selected].sort((a,b)=>a.order-b.order);
-}
+// A recap is a complete chronological record, including scoreless defenses.
+function recap(d){return [...(d.combats||[])];}
 function summarize(input){
  if(!input?.results?.length)throw new Error('A settled game is required.');
  const results=JSON.parse(JSON.stringify(input.results)),r=results.at(-1),winner=r.winner;
@@ -60,12 +56,12 @@ function summarize(input){
 // A single-game keepsake is about the decisive play. Physical cards stay physical:
 // a flower's scored substitution is a caption, never a replacement of its face.
 function gameSVG(d,assets){
- const en=d.lang==='en',t=(a,b)=>en?b:a,p=palettes[d.theme],layout=layoutOf(d.layout),feature=featured(d),c=layout==='highlight'?feature.combat:d.combat,r=d.result,w=layout==='highlight'?feature.who:d.winner,loser=1-w,accent=w===0?p.redText:p.goldText;
+ const en=d.lang==='en',t=(a,b)=>en?b:a,p=palettes[d.theme],layout=layoutOf(d.layout),feature=featured(d),c=layout==='highlight'?feature.combat:d.combat,r=d.result,w=layout==='highlight'?feature.who:d.winner,accent=w===0?p.redText:p.goldText;
  const gameWho=q=>q===0?(d.playerName||t('你','You')):t('对手','Rival'),gap=Number(r.damage[1-d.winner])-Number(r.damage[d.winner]);
  const title=layout==='recap'?t('本局回顾','Game story'):layout==='finish'?t('决胜现场','The final table'):t('高光一手','The highlight');
  const points=n=>t(n+'分',n+(n===1?' pt':' pts'));
  const rank=n=>({11:'J',12:'Q',13:'K',14:'A'}[n]||String(n)),label=id=>'♠♥♣♦'[Math.floor(id/13)]+rank(id%13+2);
- const who=q=>q===0?(d.playerName||t('你','You')):t('对手','Rival'),role=q=>c?.attacker===q?t('进攻','Attack'):t('防守','Defense');
+ const role=(q,co=c)=>co?.attacker===q?t('进攻','Attack'):t('防守','Defense');
  const names=['高牌','对子','顺子','同花','三炸','同花顺','四炸','五炸'],english=['High card','Pair','Straight','Flush','Three of a kind','Straight flush','Four of a kind','Five of a kind'];
  const hand=m=>{const k=Number.isInteger(m.kind)?m.kind:['高牌','对子','顺子','同花','炸弹','同花顺','四炸','五炸'].indexOf(m.name);return (en?english:names)[k]||m.name;};
  const units=s=>[...String(s)].reduce((n,x)=>n+(x.charCodeAt(0)>255?1:.56),0);
@@ -83,57 +79,80 @@ function gameSVG(d,assets){
  }
  const identity=(q,x,y,size=26)=>`<svg x="${x}" y="${y-size}" width="${size}" height="${size}" viewBox="0 0 64 72">${assets.flower.replace(/fill="#D83B74"/g,'fill="'+(q===0?p.red:p.gold)+'"').replace(/fill="#DEB04A"/g,'fill="'+(q===0?p.goldCenter:p.red)+'"')}</svg>`;
  const outcome=co=>co.action==='damage'?gameWho(1-co.attacker)+t(' +'+co.amount+'伤',' +'+co.amount+(co.amount===1?' wound':' wounds')):co.action==='refresh'?gameWho(co.actor??1-co.attacker)+t(' · 换牌机会 ×'+co.amount,' · '+co.amount+(co.amount===1?' swap chance':' swap chances')):t('伤势不变','No added wounds');
- const woundLine=co=>co.before?.length===2&&co.after?.length===2?co.before.join(' : ')+' → '+co.after.join(' : '):'';
  const stepName=co=>t('第 '+co.round+' 轮 · 第 '+co.order+' 次攻防','Round '+co.round+' · Play '+co.order);
  const wildNote=m=>m.wild?t('花牌 '+label(m.wild.physical)+' → '+label(m.wild.as),'Wild '+label(m.wild.physical)+' → '+label(m.wild.as)):'';
- let body='';
+ const playerColor=q=>q===0?p.redText:p.goldText;
+ const effectWho=co=>co.action==='damage'?1-co.attacker:co.action==='refresh'?(co.actor??1-co.attacker):null;
+ function outcomeLabel(co,x,y,size=30,width=850){
+  const q=effectWho(co);
+  return (q===null?'':identity(q,x,y+2,size))+text(x+(q===null?0:size+12),y,outcome(co),size,q===null?p.muted:playerColor(q),650,'start',width-size);
+ }
+ function playerTitle(q,y,m,co,emphasis=false){
+  return identity(q,80,y+3,38)+text(134,y,gameWho(q)+' · '+role(q,co),38,playerColor(q),700,'start',340)+text(1000,y,hand(m)+' '+points(m.score),emphasis?37:32,emphasis?playerColor(q):p.muted,emphasis?700:500,'end',490);
+ }
+ let body='',height=HEIGHT;
  if(layout==='recap'&&d.combats.length){
-  const picks=recap(d),start=picks.length===1?490:330,step=picks.length===2?430:296;
-  body+=text(80,234,title,en?84:94,p.ink,750)+text(80,288,t('精选 '+picks.length+' 次攻防 · 终局伤牌 '+r.damage.join(' : '),picks.length+' key '+(picks.length===1?'play':'plays')+' · Final wounds '+r.damage.join(' : ')),30,p.muted);
-  picks.forEach((co,i)=>{
-   const y=start+i*step,a=co.attacker,b=1-a,ma=co.moves[a],mb=co.moves[b],width=m=>Math.min(102,(402-(m.cards.length-1)*12)/m.cards.length);
-   body+=`<g data-story-order="${co.order}">`+text(80,y,stepName(co),25,p.muted,500)+text(1000,y,t('伤牌 ','Wounds ')+woundLine(co),25,p.muted,500,'end',480)+`<path d="M80 ${y+18}H1000" stroke="${p.line}"/>`;
-   body+=identity(a,80,y+61)+text(116,y+60,gameWho(a)+' · '+hand(ma)+' '+points(ma.score),29,a===0?p.redText:p.goldText,600,'start',370)+identity(b,600,y+61)+text(636,y+60,gameWho(b)+' · '+hand(mb)+' '+points(mb.score),29,b===0?p.redText:p.goldText,600,'start',364);
-   body+=cards(ma,y+80,false,{center:280,width:width(ma),gap:12,rowHeight:143,zone:'story-attack'})+text(540,y+157,'→',42,p.muted,500,'middle')+cards(mb,y+80,false,{center:800,width:width(mb),gap:12,rowHeight:143,zone:'story-defense'});
-   const notes=[wildNote(ma),wildNote(mb)].filter(Boolean).join(' · ');
-   body+=text(80,y+258,outcome(co),28,p.ink,650,'start',450)+text(1000,y+258,notes,23,p.muted,400,'end',460)+'</g>';
+  const plays=recap(d),step=800,start=356;
+  height=Math.max(HEIGHT,start+plays.length*step+220);
+  body+=text(80,230,title,en?84:94,p.ink,750)+text(80,288,t('全部 '+plays.length+' 次攻防 · 按发生顺序','All '+plays.length+' plays · In order'),30,p.muted);
+  plays.forEach((co,i)=>{
+   const y=start+i*step;
+   body+=`<g data-story-order="${co.order}">`+text(80,y,stepName(co),26,p.muted,500)+`<path d="M80 ${y+20}H1000" stroke="${p.line}"/>`;
+   // The page uses the same physical orientation as the table, independent of
+   // who attacked, dealt damage, won the game, or held the best hand.
+   [1,0].forEach((q,j)=>{
+    const top=y+62+j*350,m=co.moves[q];
+    body+=`<g data-player="${q}" data-player-y="${top}">`+playerTitle(q,top,m,co,true);
+    body+=cards(m,top+24,false,{center:540,width:168,gap:16,rowHeight:236,zone:q===1?'story-rival':'story-own'});
+    if(co.before?.length===2&&co.after?.length===2)body+=text(80,top+294,t('伤牌 ','Wounds ')+co.before[q]+' → '+co.after[q],30,p.muted,400,'start',310);
+    const note=wildNote(m);if(note)body+=text(1000,top+294,note,28,p.muted,400,'end',560);
+    body+='</g>';
+   });
+   body+=outcomeLabel(co,80,y+760,32)+'</g>';
   });
  }else if(layout==='finish'&&c){
-  body+=text(80,214,title,en?84:94,p.ink,750)+text(80,266,t('终局伤牌 · 伤牌差决定升级','Final wounds · The gap sets your level gain'),29,p.muted);
-  body+=identity(0,240,324)+text(280,322,gameWho(0),30,p.muted,600,'start',220)+identity(1,708,324)+text(748,322,gameWho(1),30,p.muted,600,'start',220);
-  body+=text(310,428,String(r.damage[0]),116,p.redText,750,'middle')+text(540,417,':',76,p.muted,500,'middle')+text(770,428,String(r.damage[1]),116,p.goldText,750,'middle');
-  body+=text(540,492,t('伤牌差 '+gap+' 张 · '+rank(r.from)+' → '+rank(r.to),'Gap '+gap+' · Level '+rank(r.from)+' → '+rank(r.to)),40,d.winner===0?p.redText:p.goldText,700,'middle');
-  body+=`<rect x="80" y="532" width="920" height="666" rx="28" fill="${p.table}"/>`;
-  function woundRack(q,y){
-   const list=d.finalWounds[q]||Array.from({length:Number(r.damage[q])||0},()=>({card:null})),cw=Math.min(74,(824-Math.max(0,list.length-1)*8)/Math.max(1,list.length));
-   return identity(q,112,y)+text(150,y-2,gameWho(q)+t(' · '+r.damage[q]+' 张伤牌',' · '+r.damage[q]+' wounds'),28,p.muted,600)+ (list.length?cards({cards:list.map(x=>x.card)},y+16,false,{width:cw,gap:8,zone:q===0?'own-wounds':'rival-wounds'}):text(540,y+82,t('无伤牌','No wounds'),30,p.muted,400,'middle'));
+  body+=text(80,214,title,en?84:94,p.ink,750)+text(80,266,t('最后一手 · 公开伤牌','Last plays · Public wounds'),30,p.muted);
+  function finalSide(q,y){
+   const m=c.moves[q],list=d.finalWounds[q]||Array.from({length:Number(r.damage[q])||0},()=>({card:null})),cw=Math.min(72,(600-Math.max(0,list.length-1)*8)/Math.max(1,list.length));
+   let section=`<g data-player="${q}" data-player-y="${y}">`+playerTitle(q,y,m,c);
+   section+=cards(m,y+28,true,{width:144,gap:16,rowHeight:202,zone:q===1?'rival-play':'own-play'});
+   section+=text(80,y+286,t('伤牌 '+r.damage[q]+' 张',r.damage[q]+(r.damage[q]===1?' wound':' wounds')),31,playerColor(q),650,'start',260);
+   section+=list.length?cards({cards:list.map(x=>x.card)},y+250,false,{width:cw,gap:8,center:700,rowHeight:101,zone:q===0?'own-wounds':'rival-wounds'}):text(700,y+295,'—',32,p.muted,400,'middle');
+   if(wildNote(m))section+=text(540,y+237,wildNote(m),23,p.muted,400,'middle');
+   return section+'</g>';
   }
-  body+=woundRack(1,579);
-  const a=c.attacker,b=1-a,ma=c.moves[a],mb=c.moves[b],cw=m=>Math.min(102,(402-(m.cards.length-1)*12)/m.cards.length);
-  body+=`<path d="M112 724H968M112 999H968" stroke="${p.line}"/>`+text(112,765,gameWho(a)+' · '+t('进攻','Attack')+' · '+hand(ma)+' '+points(ma.score),29,p.ink,600,'start',400)+text(968,765,gameWho(b)+' · '+t('防守','Defense')+' · '+hand(mb)+' '+points(mb.score),29,p.ink,600,'end',400);
-  body+=cards(ma,787,false,{center:305,width:cw(ma),gap:12,rowHeight:143})+text(540,864,'→',42,p.muted,500,'middle')+cards(mb,787,false,{center:775,width:cw(mb),gap:12,rowHeight:143});
-  body+=text(540,973,outcome(c)+(wildNote(ma)||wildNote(mb)?' · '+[wildNote(ma),wildNote(mb)].filter(Boolean).join(' · '):''),28,p.ink,600,'middle',824)+woundRack(0,1041);
+  body+=finalSide(1,340);
+  body+=`<path d="M80 708H1000M80 828H1000" stroke="${p.line}"/>`+text(540,759,t('伤牌差 '+gap+' 张','Gap '+gap+' wounds'),52,p.ink,750,'middle');
+  body+=outcomeLabel(c,80,806,27,600)+identity(d.winner,760,809,27)+text(1000,806,rank(r.from)+' → '+rank(r.to),31,playerColor(d.winner),700,'end',190);
+  body+=finalSide(0,862);
  }else if(c){
-  const win=c.moves[w],response=c.moves[loser];
-  body+=text(80,192,who(w)+' · '+role(w),32,p.muted,600)+text(80,282,hand(win),en?82:110,accent,750,'start',720)+text(1000,278,t(win.score+' 分',win.score+(win.score===1?' pt':' pts')),54,accent,700,'end',210);
-  body+=cards(win,342,true)+text(540,666,wildNote(win)||stepName(c),28,p.muted,500,'middle');
-  const damage=c.action==='damage'&&c.amount>0;
-  const effect=damage?(win.score===response.score?t('同分比点数 · +'+c.amount+' 伤','Rank breaks the tie · +'+c.amount+(c.amount===1?' wound':' wounds')):t(win.score+' − '+response.score+' = '+c.amount+' 伤',win.score+' − '+response.score+' = '+c.amount+' wounds')):outcome(c);
-  const after=damage&&c.before?.length===2&&c.after?.length===2?gameWho(1-c.attacker)+' '+c.before[1-c.attacker]+' → '+c.after[1-c.attacker]+t(' 伤',' wounds'):'';
-  body+=`<path d="M80 708H1000M80 836H1000" stroke="${p.line}"/>`+text(540,762,effect,40,accent,650,'middle')+text(540,805,after,26,p.muted,400,'middle');
-  body+=text(80,898,who(loser)+' · '+role(loser),30,p.muted,600,'start',340)+text(1000,898,hand(response)+' '+t(response.score+' 分',response.score+(response.score===1?' pt':' pts')),32,p.ink,600,'end',560)+cards(response,932,false)+text(540,1164,wildNote(response),26,p.muted,500,'middle');
+  body+=text(80,214,title,en?84:94,p.ink,750)+text(80,268,stepName(c),30,p.muted);
+  function playSide(q,y){
+   const m=c.moves[q],isFeatured=q===w,cw=isFeatured?Math.min(196,(920-(m.cards.length-1)*16)/m.cards.length):148;
+   let section=`<g data-player="${q}" data-player-y="${y}" data-featured="${isFeatured}">`+playerTitle(q,y,m,c,isFeatured);
+   section+=cards(m,y+34,isFeatured,{width:cw,gap:16,rowHeight:275,zone:isFeatured?'winner':'response'});
+   section+=text(540,y+346,wildNote(m),25,p.muted,400,'middle');
+   return section+'</g>';
+  }
+  body+=playSide(1,340);
+  const attack=c.moves[c.attacker],defense=c.moves[1-c.attacker],damage=c.action==='damage'&&c.amount>0;
+  const effect=damage?(attack.score===defense.score?t('同分比点数 · +'+c.amount+' 伤','Rank breaks the tie · +'+c.amount+(c.amount===1?' wound':' wounds')):t(attack.score+' − '+defense.score+' = '+c.amount+' 伤',attack.score+' − '+defense.score+' = '+c.amount+' wounds')):t('防守成功','Defense holds');
+  body+=`<path d="M80 708H1000M80 824H1000" stroke="${p.line}"/>`+text(540,756,effect,42,p.ink,700,'middle')+outcomeLabel(c,80,802,27);
+  body+=playSide(0,862);
  }else{
   // Old saves without the final combat remain shareable; don't invent a hand.
-  body+=text(540,400,t('赢下这一局','Won this game'),88,accent,750,'middle')+text(540,620,rank(r.from)+' → '+rank(r.to),150,p.ink,700,'middle')+text(540,760,t('终局伤势','Final wounds'),30,p.muted,500,'middle')+text(540,836,t('你 '+r.damage[0]+' : '+r.damage[1]+' 对手','You '+r.damage[0]+' : '+r.damage[1]+' Rival'),48,p.ink,600,'middle');
+  body+=text(540,350,t('赢下这一局','Won this game'),88,accent,750,'middle')+text(540,540,rank(r.from)+' → '+rank(r.to),130,p.ink,700,'middle');
+  [1,0].forEach((q,i)=>{const y=740+i*210;body+=`<g data-player="${q}" data-player-y="${y}">`+identity(q,300,y,44)+text(362,y-4,gameWho(q),42,playerColor(q),700,'start',300)+text(780,y-4,t(r.damage[q]+' 伤',r.damage[q]+' wounds'),42,p.ink,600,'end',300)+'</g>';});
  }
  const qrSize=QR_ROWS.length+8,qrPath=QR_ROWS.flatMap((row,y)=>[...row.matchAll(/1+/g)].map(m=>`M${m.index+4} ${y+4}h${m[0].length}v1h-${m[0].length}z`)).join('');
  const mark=assets.flower.replace(/fill="#DEB04A"/g,'fill="#F2CD5D"').replace(/fill="#D83B74"/g,'fill="#C5416B"');
- return `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1440" viewBox="0 0 1080 1440" role="img" aria-label="${escape(title)}" data-share-layout="${layout}"><style>text{font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Arial,sans-serif}</style><rect width="1080" height="1440" fill="${p.paper}"/>`+
- text(80,110,gameWho(d.winner)+t('赢下第 '+r.game+' 局',' won game '+r.game),30,p.muted,500,'start',500)+text(1000,110,layout==='highlight'?(d.highlightPick==='hand'?t('本局最大牌型','BEST HAND'):t('本局最大伤害','BIGGEST HIT')):t('深圳花牌','3CARD ROYALE'),24,p.muted,500,'end',380)+body+
- text(540,1228,t('等级 '+rank(r.from)+' → '+rank(r.to)+'   ·   '+r.rounds+' 轮攻防','Level '+rank(r.from)+' → '+rank(r.to)+'   ·   '+r.rounds+(r.rounds===1?' round':' rounds')),28,p.muted,500,'middle')+
+ const footer=height-HEIGHT;
+ return `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="${height}" viewBox="0 0 1080 ${height}" role="img" aria-label="${escape(title)}" data-share-layout="${layout}"><style>text{font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Arial,sans-serif}</style><rect width="1080" height="${height}" fill="${p.paper}"/>`+
+ identity(d.winner,80,112,28)+text(120,110,gameWho(d.winner)+t('赢下第 '+r.game+' 局',' won game '+r.game),28,p.muted,500,'start',490)+text(1000,110,layout==='highlight'?(d.highlightPick==='hand'?t('本局最大牌型','BEST HAND'):t('本局最大伤害','BIGGEST HIT')):t('深圳花牌','3CARD ROYALE'),24,p.muted,500,'end',370)+body+
+ `<g transform="translate(0 ${footer})">`+text(540,1242,t('等级 '+rank(r.from)+' → '+rank(r.to)+'   ·   '+r.rounds+' 轮攻防','Level '+rank(r.from)+' → '+rank(r.to)+'   ·   '+r.rounds+(r.rounds===1?' round':' rounds')),27,p.muted,500,'middle')+
  `<path d="M80 1270H1000" stroke="${p.line}"/><g transform="translate(80 1300)"><rect width="46" height="58" rx="7" fill="#ECCE80" stroke="#A17C35" stroke-width="2"/><svg x="4" y="6" width="38" height="45" viewBox="0 0 64 72">${mark}</svg></g>`+
  text(146,1330,t('深圳花牌','3Card Royale'),32,p.ink,700)+text(146,1366,t('三张牌，打出花。','Three cards. Make them bloom.'),23,p.muted)+text(80,1418,t('规则 ','Rules ')+d.version+' · lucienzhu.github.io/gk-royale-playtest',19,p.muted)+
- `<svg x="840" y="1276" width="164" height="164" viewBox="0 0 ${qrSize} ${qrSize}" shape-rendering="crispEdges" aria-label="${SHARE_URL}"><rect width="${qrSize}" height="${qrSize}" fill="#fff"/><path d="${qrPath}" fill="#121417"/></svg></svg>`;
+ `<svg x="840" y="1276" width="164" height="164" viewBox="0 0 ${qrSize} ${qrSize}" shape-rendering="crispEdges" aria-label="${SHARE_URL}"><rect width="${qrSize}" height="${qrSize}" fill="#fff"/><path d="${qrPath}" fill="#121417"/></svg></g></svg>`;
 }
 // The poster is a still of the finale: the winner's flower over the skyline, the vine below, the game's address last.
 function makeSVG(d,assets=root.SZBloomAssets,cityStyle=root.SZShareAssets?.cityStyle,bloom=root.SZBloom,finale=root.SZFinale){
@@ -196,9 +215,17 @@ function makeSVG(d,assets=root.SZBloomAssets,cityStyle=root.SZShareAssets?.cityS
   `<path d="M80 1262H1000" stroke="${p.line}" stroke-width="1.5"/>${mark}${text(162,1326,t('深圳花牌','3Card Royale'),34,p.ink,700)}${text(162,1362,t('三张牌，打出花。','Three cards. Make them bloom.'),23,p.muted)}${text(80,1404,foot,en?21:22,p.ink,500)}${text(80,1430,'lucienzhu.github.io/gk-royale-playtest',19,p.muted)}${qr}</svg>`;
 }
 function filename(d){return 'shenzhen-flower-'+(d.match?'match':'game-'+layoutOf(d.layout)+(d.layout==='highlight'?'-'+(d.highlightPick||'damage'):''))+'-'+d.seed+'-'+d.result.game+'.png';}
+// Retain every play. Very long records scale proportionally to keep the raster
+// allocation bounded; neither the record nor the bottom of the PNG is cropped.
+function exportSize(svg){
+ const rootTag=svg.match(/^<svg\b[^>]*>/)?.[0]||'',width=Number(rootTag.match(/\bwidth="([\d.]+)"/)?.[1]),height=Number(rootTag.match(/\bheight="([\d.]+)"/)?.[1]);
+ if(!(width>0&&height>0&&Number.isFinite(width*height)))throw new Error('Invalid poster dimensions.');
+ const scale=Math.min(1,Math.sqrt(12000000/(width*height)),16384/Math.max(width,height));
+ return {width:Math.max(1,Math.floor(width*scale)),height:Math.max(1,Math.floor(height*scale))};
+}
 async function png(svg){
- const source=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml;charset=utf-8'}));
- try{const img=new Image();await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=()=>reject(new Error('PNG artwork could not load.'));img.src=source;});const canvas=document.createElement('canvas');canvas.width=WIDTH;canvas.height=HEIGHT;const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Canvas unavailable.');ctx.drawImage(img,0,0,WIDTH,HEIGHT);return await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('PNG export failed.')),'image/png'));}finally{URL.revokeObjectURL(source);}
+ const size=exportSize(svg),raster=svg.replace(/^<svg\b[^>]*>/,tag=>tag.replace(/\bwidth="[\d.]+"/,'width="'+size.width+'"').replace(/\bheight="[\d.]+"/,'height="'+size.height+'"')),source=URL.createObjectURL(new Blob([raster],{type:'image/svg+xml;charset=utf-8'}));
+ try{const img=new Image();await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=()=>reject(new Error('PNG artwork could not load.'));img.src=source;});const canvas=document.createElement('canvas');canvas.width=size.width;canvas.height=size.height;const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Canvas unavailable.');ctx.drawImage(img,0,0,size.width,size.height);return await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('PNG export failed.')),'image/png'));}finally{URL.revokeObjectURL(source);}
 }
 // One kind of item per share. With files but no text or url, iOS Safari adds the title as its own text item beside the PNG,
 // and WeChat's 发送给朋友 then never opens the friend list. So: the PNG alone, or the game link alone where files cannot be shared.
@@ -220,27 +247,28 @@ async function open(input){
  if(!dialog){dialog=document.createElement('dialog');dialog.id='share-card-dialog';dialog.className='modal sz-share-dialog';dialog.dataset.noI18n='';dialog.addEventListener('close',()=>{clear();dialog.replaceChildren();});document.body.append(dialog);}
  const tabs=base.match?'':`<div class="sz-share-tabs" role="tablist" aria-label="${t('分享方式','Share style')}">${[['recap','本局回顾','Game story'],['finish','决胜现场','Final table'],['highlight','高光一手','Best play']].map(([id,zh,eng])=>`<button type="button" role="tab" id="share-tab-${id}" aria-controls="share-poster-panel" data-share-layout="${id}">${t(zh,eng)}</button>`).join('')}</div>`;
  dialog.lang=base.lang;dialog.dataset.match=String(base.match);
- dialog.innerHTML=`<div class="modal-head"><h2 id="share-card-title">${base.match?t('分享卡片','Share card'):t('回顾与分享','Review & share')}</h2><button type="button" data-share-close>${t('返回结算','Back to result')}</button></div>${tabs}<div class="sz-share-body"><div class="sz-share-context"><p data-share-caption></p><div class="sz-share-picks" role="group" aria-label="${t('选择高光','Pick a highlight')}" hidden><button type="button" data-share-pick="damage">${t('最大伤害','Biggest hit')}</button><button type="button" data-share-pick="hand">${t('最大牌型','Best hand')}</button></div></div><div class="sz-share-preview" id="share-poster-panel" role="tabpanel" aria-busy="true"><p role="status">${t('正在生成 PNG…','Creating your PNG…')}</p><img hidden alt="${t('本次结算分享卡','Share card for this result')}"></div><p class="sz-share-note">1080 × 1440 · ${t('点图放大','Tap image to enlarge')}</p><div class="sz-share-actions"><a class="primary" data-share-download hidden>${t('保存 PNG','Save PNG')}</a><button type="button" data-share-system hidden>${t('分享…','Share…')}</button><button type="button" data-share-copy hidden>${t('复制图片','Copy image')}</button><button type="button" data-share-retry hidden>${t('重试','Try again')}</button></div><p class="sz-share-status" role="status" aria-live="polite"></p></div>`;
+ dialog.innerHTML=`<div class="modal-head"><h2 id="share-card-title">${base.match?t('分享卡片','Share card'):t('回顾与分享','Review & share')}</h2><button type="button" data-share-close>${t('返回结算','Back to result')}</button></div>${tabs}<div class="sz-share-body"><div class="sz-share-context"><p data-share-caption></p><div class="sz-share-picks" role="group" aria-label="${t('选择高光','Pick a highlight')}" hidden><button type="button" data-share-pick="damage">${t('最大伤害','Biggest hit')}</button><button type="button" data-share-pick="hand">${t('最大牌型','Best hand')}</button></div></div><div class="sz-share-preview" id="share-poster-panel" role="tabpanel" aria-busy="true"><p role="status">${t('正在生成 PNG…','Creating your PNG…')}</p><img hidden alt="${t('本次结算分享卡','Share card for this result')}"></div><p class="sz-share-note"></p><div class="sz-share-actions"><a class="primary" data-share-download hidden>${t('保存 PNG','Save PNG')}</a><button type="button" data-share-system hidden>${t('分享…','Share…')}</button><button type="button" data-share-copy hidden>${t('复制图片','Copy image')}</button><button type="button" data-share-retry hidden>${t('重试','Try again')}</button></div><p class="sz-share-status" role="status" aria-live="polite"></p></div>`;
  dialog.setAttribute('aria-labelledby','share-card-title');dialog.querySelector('[data-share-close]').onclick=close;
  let layout=layoutOf(input.layout||lastLayout),pick=input.highlightPick||lastHighlight;
  const $=s=>dialog.querySelector(s),img=$('img'),preview=$('.sz-share-preview'),message=preview.querySelector('p'),download=$('[data-share-download]'),system=$('[data-share-system]'),copy=$('[data-share-copy]'),retry=$('[data-share-retry]'),status=$('.sz-share-status');
  img.tabIndex=0;img.setAttribute('role','button');img.setAttribute('aria-label',t('放大或缩小分享图片','Enlarge or fit share image'));img.setAttribute('aria-expanded','false');
- const zoom=()=>{const expanded=preview.dataset.zoomed!=='true';preview.dataset.zoomed=String(expanded);img.setAttribute('aria-expanded',String(expanded));};img.onclick=zoom;img.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();zoom();}};
+ const zoom=()=>{if(preview.dataset.long==='true')return;const expanded=preview.dataset.zoomed!=='true';preview.dataset.zoomed=String(expanded);img.setAttribute('aria-expanded',String(expanded));};img.onclick=zoom;img.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();zoom();}};
  async function render(){
-  preview.dataset.zoomed='false';img.setAttribute('aria-expanded','false');
+  preview.dataset.zoomed='false';preview.dataset.long=String(!base.match&&layout==='recap'&&base.combats.length>1);preview.scrollTop=0;img.setAttribute('aria-expanded','false');img.setAttribute('role',preview.dataset.long==='true'?'img':'button');img.setAttribute('aria-label',preview.dataset.long==='true'?t('本局所有攻防，向下滚动查看','All plays in this game. Scroll down to review.'):t('放大或缩小分享图片','Enlarge or fit share image'));$('.sz-share-note').textContent='';preview.tabIndex=preview.dataset.long==='true'?0:-1;img.tabIndex=preview.dataset.long==='true'?-1:0;if(preview.dataset.long==='true')img.removeAttribute('aria-expanded');
   clear();const generation=run,d={...base,layout,highlightPick:pick};
   for(const tab of dialog.querySelectorAll('[data-share-layout]')){const active=tab.dataset.shareLayout===layout;tab.setAttribute('aria-selected',String(active));tab.tabIndex=active?0:-1;}
   for(const button of dialog.querySelectorAll('[data-share-pick]'))button.setAttribute('aria-pressed',String(button.dataset.sharePick===pick));
   if(!base.match)preview.setAttribute('aria-labelledby','share-tab-'+layout);else preview.removeAttribute('role');
   $('.sz-share-picks').hidden=base.match||layout!=='highlight';
-  $('[data-share-caption]').textContent=base.match?'':!base.combat?t('旧记录未保存攻防牌面，仅展示结果。','This old record has no played cards; showing the result.'):layout==='recap'?(base.combats.length>1?t('顺着关键攻防，回看这一局。','Key plays, in the order they happened.'):t('这份记录只保留了最后一次攻防。','This record contains only the final play.')):layout==='finish'?t('最后双方出牌、伤牌，以及升级的差值。','The last plays, final wounds and level gain.'):t('从本局真实攻防中选出。','Picked from this game’s recorded plays.');
+  $('[data-share-caption]').textContent=base.match?'':!base.combat?t('旧记录未保存攻防牌面，仅展示结果。','This old record has no played cards; showing the result.'):layout==='recap'?(base.combats.length>1?t('全部 '+base.combats.length+' 次攻防，向下滑动回顾。','All '+base.combats.length+' plays. Scroll to review.'):t('这份记录只保留了最后一次攻防。','This record contains only the final play.')):layout==='finish'?t('最后双方出牌、伤牌，以及升级的差值。','The last plays, final wounds and level gain.'):t('从本局真实攻防中选出。','Picked from this game’s recorded plays.');
   preview.setAttribute('aria-busy','true');img.hidden=true;img.removeAttribute('src');message.hidden=false;message.textContent=t('正在生成 PNG…','Creating your PNG…');status.textContent='';
   for(const control of [download,system,copy,retry])control.hidden=true;
   download.removeAttribute('href');download.onclick=null;system.onclick=null;copy.onclick=null;copy.disabled=false;system.disabled=false;
   try{
    if(document.fonts?.ready)await document.fonts.ready;
    if(generation!==run)return;
-   const blob=await png(makeSVG(d));if(generation!==run)return;
+   const artwork=makeSVG(d),size=exportSize(artwork),blob=await png(artwork);if(generation!==run)return;
+   $('.sz-share-note').textContent=size.width+' × '+size.height+' · '+(preview.dataset.long==='true'?t('完整长图','Full game PNG'):t('点图放大','Tap image to enlarge'));
    previewURL=URL.createObjectURL(blob);img.src=previewURL;img.hidden=false;message.hidden=true;preview.setAttribute('aria-busy','false');download.href=previewURL;download.download=filename(d);download.hidden=false;
    download.onclick=()=>{status.textContent=t('已准备下载；也可长按图片保存。','Download ready. You can also save the preview image.');};
    const payload=sharePayload(new File([blob],filename(d),{type:'image/png'}),navigator,d),canCopy=copySupported(navigator,root.ClipboardItem);
@@ -260,5 +288,5 @@ async function open(input){
  if(!dialog.open)dialog.showModal();else $('[data-share-close]').focus({preventScroll:true});
  await render();
 }
-return {SHARE_URL,WIDTH,HEIGHT,palettes,summarize,featured,recap,makeSVG,filename,png,sharePayload,copySupported,open,close};
+return {SHARE_URL,WIDTH,HEIGHT,palettes,summarize,featured,recap,makeSVG,filename,exportSize,png,sharePayload,copySupported,open,close};
 });

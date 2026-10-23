@@ -30,7 +30,7 @@ for(const attack of [[6,19,32],[5,18,31,44],[5,18,31,44,13]])for(const winner of
  const raw={layout:'highlight',events:g.events,results:g.results,snapshot:g.snapshot(),first:winner,seed:g.seed,version:g.version,match:false},saved=JSON.stringify(raw);
  for(const lang of ['zh-CN','en'])for(const theme of ['light','dark']){
   const data=S.summarize({...raw,lang,theme}),svg=S.makeSVG(data,ctx.window.SZBloomAssets,ctx.window.SZShareAssets.cityStyle,B,F);
-  assert.equal((svg.match(/data-card=/g)||[]).length,attack.length+3);assert(svg.includes('data-share-layout="highlight"'));assert(!svg.includes('data-skyline-revision'));assert(!svg.includes('szf1'));assert(svg.includes('data-play="winner"'));
+  assert.equal((svg.match(/data-card=/g)||[]).length,attack.length+3);assert(svg.includes('data-share-layout="highlight"'));assert(!svg.includes('data-skyline-revision'));assert(!svg.includes('szf1'));assert(svg.includes('data-play="winner"'));assert.deepEqual([...svg.matchAll(/data-player="(\d)"/g)].map(m=>Number(m[1])),[1,0]);
   assert.deepEqual(data.combat.moves[winner].cards,attack);assert.equal(data.combat.moves[winner].wounds[0],true);assert(!('replacements' in data.combat));assert(!('stock' in data.snapshot));assert(data.snapshot.players.every(p=>!('hand' in p)));
   if(attack.length===5){assert.deepEqual(data.combat.moves[winner].wild,{physical:13,as:5});assert(svg.includes('♥2 → ♠7'));}
   data.combat.moves[winner].cards[0]=51;assert.equal(JSON.stringify(raw),saved);handCases++;
@@ -50,12 +50,19 @@ assert.equal(story.winner,0);assert.equal(story.combats.length,storyGame.stats.b
 assert.equal(S.featured(story,'damage').combat.order,12);assert.equal(S.featured(story,'hand').combat.order,11);assert.equal(story.combats.at(-1).order,13);
 assert.equal(S.featured(story,'damage').combat.amount,Math.max(...story.combats.filter(c=>c.action==='damage').map(c=>c.amount)));
 assert.equal(Math.max(...S.featured(story,'hand').combat.moves.map(m=>m.score)),Math.max(...story.combats.flatMap(c=>c.moves.map(m=>m.score))));
-assert(S.recap(story).length<=3);assert.equal(S.recap(story).at(-1).order,13);assert(S.recap(story).some(c=>c.order===12));assert(S.recap(story).every((c,i,a)=>i===0||c.order>a[i-1].order));
+assert.deepEqual(S.recap(story),story.combats);assert.equal(S.recap(story).length,13);assert(S.recap(story).every((c,i,a)=>i===0||c.order>a[i-1].order));
 let storyCases=0;const filenames=new Set();
 for(const layout of ['recap','finish','highlight'])for(const lang of ['en','zh-CN'])for(const theme of ['light','dark']){
  const data={...story,layout,lang,theme},svg=S.makeSVG(data,ctx.window.SZBloomAssets);
  assert(svg.includes('data-share-layout="'+layout+'"'));assert(!svg.includes('undefined'));assert(!svg.includes('NaN'));assert(!svg.includes('var(--'));assert(!/@import|<script|<image/.test(svg));assert(svg.includes(S.SHARE_URL));
- if(layout==='recap')assert.equal((svg.match(/data-story-order=/g)||[]).length,S.recap(story).length);
+ if(layout==='recap'){
+  assert.deepEqual([...svg.matchAll(/data-story-order="(\d+)"/g)].map(m=>Number(m[1])),story.combats.map(c=>c.order));
+  assert.equal((svg.match(/data-card=/g)||[]).length,story.combats.reduce((n,c)=>n+c.moves.flatMap(m=>m.cards).length,0));
+  assert.equal(S.exportSize(svg).height,10976);assert.equal(S.exportSize(svg).width,1080);
+ }
+ const seats=[...svg.matchAll(/data-player="(\d)" data-player-y="([\d.]+)"/g)];
+ assert.equal(seats.length,layout==='recap'?story.combats.length*2:2);
+ for(let i=0;i<seats.length;i+=2){assert.equal(seats[i][1],'1');assert.equal(seats[i+1][1],'0');assert(Number(seats[i][2])<Number(seats[i+1][2]));}
  if(layout==='finish'){assert(svg.includes('data-play="own-wounds"'));assert(svg.includes('data-play="rival-wounds"'));assert(svg.includes(lang==='en'?'Gap '+story.result.gain:'伤牌差 '+story.result.gain+' 张'));}
  if(layout==='highlight')assert(!svg.includes('data-play="own-wounds"'));
  filenames.add(S.filename(data));storyCases++;
@@ -72,4 +79,9 @@ const hidden=S.summarize({...storyInput,events:[],snapshot:{...storyInput.snapsh
 assert.deepEqual(hidden.finalWounds[0],[{card:null}]);assert.equal(hidden.combats.length,1);
 const hiddenSVG=S.makeSVG({...hidden,layout:'finish'},ctx.window.SZBloomAssets);assert(hiddenSVG.includes('data-card="hidden"'));assert(!JSON.stringify(hidden.combats).includes('refreshes'));assert(!('hand' in hidden.snapshot.players[0]));
 const partial=S.summarize({...storyInput,events:undefined});assert.equal(partial.combats.length,1);assert.equal(S.recap(partial).length,1);
+// Long histories grow, never truncate. Raster allocation stays bounded and proportional.
+const long={...story,layout:'recap',combats:Array.from({length:80},(_,i)=>({...story.combats[i%13],order:i+1}))},longSVG=S.makeSVG(long,ctx.window.SZBloomAssets),longSize=S.exportSize(longSVG);
+assert.equal((longSVG.match(/data-story-order=/g)||[]).length,80);assert(longSVG.includes('data-story-order="80"'));
+assert(longSize.width*longSize.height<=12000000);assert(longSize.height<=16384);assert(Math.abs(longSize.width/longSize.height-1080/64576)<.001);
+assert.deepEqual(S.exportSize('<svg width="1080" height="1440"></svg>'),{width:1080,height:1440});assert.throws(()=>S.exportSize('<svg width="0" height="0">'));
 console.log(JSON.stringify({share_stories:'passed',variants:storyCases,real_game_combats:story.combats.length,distinct_highlights:true,chronological_recap:true,game_scoped:true,hidden_wounds_redacted:true}));
