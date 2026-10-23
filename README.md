@@ -72,7 +72,7 @@ SDK 0.2.0 / rules 1.0.0: JavaScript + TypeScript types, native Python, Rust and 
 
 ## Why the name?
 
-**Three cards at the core. Bougainvillea at the heart.** Shenzhen gives the game its home and flower; Hanafuda, Zha Jin Hua and Balatro inspire the fusion of combinations, visible-card choices, swapping and progression. The goal is simple: make one ordinary deck as fun as it can be for two people. The standard 52-card deck still has no jokers.
+**Three cards at the core. Bougainvillea at the heart.** Shenzhen gives the game its home and flower; Hanafuda, Zha Jin Hua, Guandan and Balatro inspire the fusion of combinations, visible-card choices, swapping and progression. The goal is simple: make one ordinary deck as fun as it can be for two people. The standard 52-card deck still has no jokers.
 
 Standard 1.0 adds five of a kind (7 points): four natural equal-rank cards plus the shared flower. See [complete standard rules](docs/RULES.md). Five-card plays are included in legal actions. `wild.as` is a virtual face; in five of a kind it may name an already-present representative face without reusing a physical card. Gym score/kind features use /7 and played-card count uses /5.
 
