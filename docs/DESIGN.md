@@ -52,4 +52,4 @@ Gallery language and theme selectors share a 44px control, token-based surfaces,
 
 The PNG card renderer consumes a generated copy of the production suit paths, flower mark and card tokens through `app/bloom-assets.js`. Run `node scripts/sync-brand.cjs` after changing these sources; `--check` rejects stale copies. Flower cards use the same flat gold face and flower watermark as the table, with no legacy star badge.
 
-The home introduction reuses the approved layer19 skyline and shared city styles as a quiet background. Preserve the drawing, scale it proportionally, fade its edges into the theme ground, and keep text and controls above it. On phones the city stays beneath the introduction; decorative art never receives focus or intercepts input.
+The home introduction reuses the approved layer19 skyline as a softly cropped background. Scale the original drawing proportionally behind the copy, fading it near the text and lower edge. It adds no height or separate illustration row. Desktop and phone crops differ; controls stay above it with clear focus rings, and the art never intercepts input.
