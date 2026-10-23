@@ -429,17 +429,17 @@ function tryAction(fn){if(window.SZCardMotion.busy)return;const ticket=beginTabl
 function describeEffect(combat){if(!combat)return '';if(combat.action==='refresh')return '已换 '+combat.refreshes.length+' 次，跳过 '+(combat.skipped||0)+' 次；伤势不变';if(combat.action==='damage')return '新增 '+combat.amount+' 张'+(GK.isRefresh(variant)?'明伤牌':'扣牌')+'，伤势 '+combat.before.join(' / ')+' → '+combat.after.join(' / ');if(combat.action==='open')return '翻开自己 '+combat.amount+' 张，解锁出牌；伤势不变';if(combat.action==='lock')return '扣回对方 '+combat.amount+' 张，封锁机会；伤势不变';if(combat.action==='none')return GK.isRefresh(variant)?'没有可换的牌，机会自动结束':'没有翻面目标，伤势不变';return '等待翻面选择；伤势不变';}
 function renderActions(s,event){
  $('action-panel').classList.remove('is-hand-exchange');const replay=mode==='replay';$('action-buttons').replaceChildren();$('selection-preview').hidden=true;$('settings').hidden=replay;$('error').textContent=error;
- if(replay){$('action-title').textContent=event.title;$('action-description').textContent=event.note;$('action-note').textContent='双方手牌可见；切回“对局”继续你的存档。';return;}
- $('action-note').textContent=GK.woundExchange(variant)?'每次机会可换牌，也可跳过。先点自己的牌，再点交换目标；跳过只消耗当前1次机会。':GK.isRefresh(variant)?'换牌时直接点牌选目标，再确认；对手手牌点牌背盲换一张。★ 为你的逢人配。':'点手牌或明牌选三张。翻面时点选目标牌。★ 为你的逢人配。';
+ if(replay){$('action-title').textContent=event.title;$('action-description').textContent=event.note;$('action-note').textContent='手牌公开 · 返回对局可续玩';return;}
+ $('action-note').textContent=GK.woundExchange(variant)?'每次可换或跳过。换牌：选自己的牌，再选目标。':GK.isRefresh(variant)?'换牌时直接点牌选目标，再确认；对手手牌点牌背盲换一张。★ 为你的逢人配。':'点手牌或明牌选三张。翻面时点选目标牌。★ 为你的逢人配。';
  const p=game.phase;
  if(p==='attack'||p==='defend'){
   if(game.currentActor()===1){$('action-title').textContent='对手'+(p==='attack'?'进攻':'防守')+'中…';$('action-description').textContent='';return;}
   $('action-title').textContent=p==='attack'?'你进攻':'你防守';
-  $('action-description').textContent=GK.allowsFive(variant)?'三张／四炸／五炸，手牌与伤牌可混用':GK.allowsFour(variant)?'三张或同点四炸，手牌与明伤牌可混用':p==='attack'?'手牌、明伤牌均可选':'选三张，应对进攻';
+  $('action-description').textContent=GK.allowsFive(variant)?'3张／四炸／五炸 · 可用伤牌':GK.allowsFour(variant)?'3张／四炸 · 可用明伤牌':p==='attack'?'手牌、明伤牌均可选':'选三张，应对进攻';
   $('selection-preview').hidden=false;
   let evaluation=null;try{if(selected.length===3||GK.allowsFour(variant)&&selected.length===4||GK.allowsFive(variant)&&selected.length===5)evaluation=GK.evaluate(selected,GK.flowerLevel(game,0),variant);}catch(_){}
   if(evaluation){const e=evaluation;$('selection-preview').innerHTML=e.name+' · <span class="score-number">'+e.score+'</span>分'+(GK.comparesRanks(variant)?' <small>('+GK.strengthLabel(e)+')</small>':'')+(e.wild?'<br><small>'+GK.label(e.wild.physical)+' → '+GK.label(e.wild.as)+'</small>':'');}
-  else $('selection-preview').textContent=selected.length===5?'五炸须四张自然同点牌加花牌':selected.length===4?'四张须组成同点四炸':GK.allowsFive(variant)?'已选 '+selected.length+' · 3 / 4 / 5':GK.allowsFour(variant)?'已选 '+selected.length+' · 三张 / 四炸四张':'选牌 '+selected.length+' / 3';
+  else $('selection-preview').textContent=selected.length===5?'五炸：同点四张 + 花牌':selected.length===4?'4张须同点':GK.allowsFive(variant)?'已选 '+selected.length+' · 3 / 4 / 5':GK.allowsFour(variant)?'已选 '+selected.length+' · 三张 / 四炸四张':'选牌 '+selected.length+' / 3';
   addButton(p==='attack'?'进攻':'防守',()=>tryAction(()=>game.play(0,selected)),{disabled:!evaluation,primary:true,id:'submit-play'});
   addButton('清空',()=>{selected=[];error='';render();},{disabled:!selected.length,id:'clear-selection'});
  }else if(p==='refresh'){
@@ -543,7 +543,7 @@ function render(){
   $('refresh-rule-text').textContent='与牌交换时两张直接互换，不经弃牌堆。对手手牌只盲抽，不看牌选；公开伤牌可以指定。与牌库换则弃掉交出的牌，原位摸新。换入手牌保密，换入伤区公开。每次1机会，双方手牌和伤牌张数均不变。';
   $('quick-example').textContent='例如：交出手牌K，拿对手公开伤牌7；K原位成为对手伤牌，7进入你的手牌。也能用自己的伤牌盲换对手手牌、弃旧摸新，或与自己的手牌互换。均不回血。';
   $('rule-refill-text').textContent='交换不改变手牌或伤牌张数。两张牌互换不抽牌；与牌库换额外抽1张，原区域补位。双方各进攻一次后才保留余牌、补手牌到8张；伤牌打出仍原位补明牌。';
-  $('action-note').textContent='每次机会可换牌，也可跳过。先点自己的牌，再点交换目标；跳过只消耗当前1次机会。';
+  $('action-note').textContent='每次可换或跳过。换牌：选自己的牌，再选目标。';
  }
  const shared=GK.sharedFlower(variant);
  $('quick-flower-text').textContent=shared?'★ 花牌即逢人配／会子／百搭牌，可代任意牌。首局双方用♥2；之后按小局赢家升级后的等级，确定下一局双方共用的红桃花牌。一局内不变。':'点自己的手牌或明伤牌，可混用。看过牌型，再点“进攻”或“防守”。★ 是你当前级数的红桃牌，可作任意牌。';
