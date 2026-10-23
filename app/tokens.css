@@ -191,7 +191,22 @@ html,:root body,[data-sz-theme=dark] body{background:var(--paper);color:var(--in
 :root body .table .shared-flower .card{display:inline-flex;flex-direction:row;align-items:center;justify-content:center;gap:2px;--rk:16px;width:auto;min-width:0;height:24px;padding:0 7px 0 6px;border-radius:5px}
 :root body .table .shared-flower .card .rank{line-height:1}
 :root body .table .shared-flower .card .suit{margin:0}
-/* Phone portrait: room for your hand. The menu gets shorter, the level track gets thinner, the rival's backs get smaller, and the space goes to the cards you play with. */
+/* Keep separate flower lanes above and below the 12px rank labels on narrow screens. */
+@media (max-width:600px){
+ :root body[data-bloom=true] #level-track{--fc-ace-step:13px}
+ :root body[data-bloom=true] #level-track,:root body[data-bloom=true] #level-track .fc-progress-summary,:root body[data-bloom=true] #level-track .fc-shared-vine,:root body[data-bloom=true] #level-track .fc-vine-drawing{height:48px}
+ :root body[data-bloom=true] #level-track :is(.fc-player-flower,.fc-ace-attempt){width:14px;height:15.75px}
+ :root body[data-bloom=true] #level-track .fc-win-stamp{width:14px}
+ :root body[data-bloom=true] #level-track :is(.fc-win-top,.fc-attempt-rival){top:-1px}
+ :root body[data-bloom=true] #level-track :is(.fc-win-bottom,.fc-start-stamp.fc-win-bottom,.fc-attempt-own){top:31px}
+ :root body[data-bloom=true] #level-track .fc-vine-axis{inset:16.7px 0 auto}
+ :root body[data-bloom=true] #level-track :is(.fc-ace-knot,.fc-final-flower){top:22.7px}
+ /* Smaller faded flowers keep consecutive Ace setbacks distinct. */
+ :root body[data-bloom=true] #level-track .fc-ace-attempt{width:10px;height:11.25px}
+ :root body[data-bloom=true] #level-track .fc-attempt-rival{top:1.25px}
+ :root body[data-bloom=true] #level-track .fc-attempt-own{top:33.25px}
+}
+/* Phone portrait: compact navigation and rival backs leave room for your hand. */
 @media (max-width:600px) and (min-height:540px){
  :root body[data-bloom=true] .app-header{height:calc(44px + env(safe-area-inset-top));padding-top:calc(3px + env(safe-area-inset-top));padding-bottom:3px}
  :root body .app-header .brand{gap:8px}
@@ -200,14 +215,6 @@ html,:root body,[data-sz-theme=dark] body{background:var(--paper);color:var(--in
  :root body .app-header .app-navigation{min-height:38px;height:38px}
  :root body .app-header .app-navigation :is(a,button){font-size:15px;min-height:38px;padding-block:0}
  :root body .table{position:relative}
- /* the level track: 32px instead of 48, flowers a little smaller and closer to the line; the line sits at 70/148 of the drawing, as before */
- :root body[data-bloom=true] #level-track,:root body[data-bloom=true] #level-track .fc-progress-summary,:root body[data-bloom=true] #level-track .fc-shared-vine,:root body[data-bloom=true] #level-track .fc-vine-drawing{height:32px}
- :root body[data-bloom=true] #level-track .fc-player-flower{width:14px;height:15.75px}
- :root body[data-bloom=true] #level-track .fc-win-stamp{width:14px}
- :root body[data-bloom=true] #level-track :is(.fc-win-top,.fc-attempt-rival){top:-2px}
- :root body[data-bloom=true] #level-track :is(.fc-win-bottom,.fc-start-stamp.fc-win-bottom,.fc-attempt-own){top:16.5px}
- :root body[data-bloom=true] #level-track .fc-vine-axis{inset:9.1px 0 auto}
- :root body[data-bloom=true] #level-track :is(.fc-ace-knot,.fc-final-flower){top:15.1px}
  :root body .hand-tools{min-height:26px}
  /* the rival's hand is backs only: smaller */
  :root body .app-main .opponent-hand-group{--handw:40px;--handh:56px;--handstep:26px;--handrank:18px}
