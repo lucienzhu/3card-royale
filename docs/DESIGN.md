@@ -51,3 +51,5 @@ Gallery language and theme selectors share a 44px control, token-based surfaces,
 `app/tokens.css` is the live component layer; `app/theme-tokens.js`, `site.css` and the PNG palettes carry the matching values. `node scripts/check.cjs` checks palette parity, canonical logo copies, current VI labels, embedded rule text and inline-script syntax. Update these together when a component changes. Archived studies are references, never runtime dependencies.
 
 The PNG card renderer consumes a generated copy of the production suit paths, flower mark and card tokens through `app/bloom-assets.js`. Run `node scripts/sync-brand.cjs` after changing these sources; `--check` rejects stale copies. Flower cards use the same flat gold face and flower watermark as the table, with no legacy star badge.
+
+The home introduction reuses the approved layer19 skyline and shared city styles as a quiet background. Preserve the drawing, scale it proportionally, fade its edges into the theme ground, and keep text and controls above it. On phones the city stays beneath the introduction; decorative art never receives focus or intercepts input.
