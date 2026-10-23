@@ -58,7 +58,7 @@ for(const layout of ['recap','finish','highlight'])for(const lang of ['en','zh-C
  if(layout==='recap'){
   assert.deepEqual([...svg.matchAll(/data-story-order="(\d+)"/g)].map(m=>Number(m[1])),story.combats.map(c=>c.order));
   assert.equal((svg.match(/data-card=/g)||[]).length,story.combats.reduce((n,c)=>n+c.moves.flatMap(m=>m.cards).length,0));
-  assert.equal(S.exportSize(svg).height,7700);assert.equal(S.exportSize(svg).width,1080);
+  assert.equal(S.exportSize(svg).height,7154);assert.equal(S.exportSize(svg).width,1080);
  }
  const seats=[...svg.matchAll(/data-player="(\d)" data-player-y="([\d.]+)"/g)];
  assert.equal(seats.length,layout==='recap'?story.combats.length*2:2);
@@ -72,7 +72,7 @@ for(const layout of ['recap','finish','highlight'])for(const lang of ['en','zh-C
   assert.equal(columns.length,story.combats.length*2);
   for(let i=0;i<columns.length;i+=2){assert.equal(columns[i][2],'attack');assert.equal(columns[i+1][2],'defense');assert(Number(columns[i][1])<Number(columns[i+1][1]));}
  }
- if(layout==='finish'){assert(svg.includes('data-play="own-wounds"'));assert(svg.includes('data-play="rival-wounds"'));assert(svg.includes(lang==='en'?'You deal 1 wound and win by 1 wound.':'你打出最后1伤，以1张伤牌之差获胜。'));}
+ if(layout==='finish'){assert(svg.includes('data-play="own-wounds"'));assert(svg.includes('data-play="rival-wounds"'));assert(svg.includes(lang==='en'?'You deal 1 wound and win by 1 wound.':'你打出1伤，以1伤之差获胜。'));}
  if(layout==='highlight')assert(!svg.includes('data-play="own-wounds"'));
  filenames.add(S.filename(data));storyCases++;
 }
@@ -91,6 +91,6 @@ const partial=S.summarize({...storyInput,events:undefined});assert.equal(partial
 // Long histories grow, never truncate. Raster allocation stays bounded and proportional.
 const long={...story,layout:'recap',combats:Array.from({length:80},(_,i)=>({...story.combats[i%13],order:i+1}))},longSVG=S.makeSVG(long,ctx.window.SZBloomAssets),longSize=S.exportSize(longSVG);
 assert.equal((longSVG.match(/data-story-order=/g)||[]).length,80);assert(longSVG.includes('data-story-order="80"'));
-assert(longSize.width*longSize.height<=12000000);assert(longSize.height<=16384);assert(Math.abs(longSize.width/longSize.height-1080/44416)<.001);
+assert(longSize.width*longSize.height<=12000000);assert(longSize.height<=16384);assert(Math.abs(longSize.width/longSize.height-1080/41056)<.001);
 assert.deepEqual(S.exportSize('<svg width="1080" height="1440"></svg>'),{width:1080,height:1440});assert.throws(()=>S.exportSize('<svg width="0" height="0">'));
 console.log(JSON.stringify({share_stories:'passed',variants:storyCases,real_game_combats:story.combats.length,distinct_highlights:true,chronological_recap:true,game_scoped:true,hidden_wounds_redacted:true}));
