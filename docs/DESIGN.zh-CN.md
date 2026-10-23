@@ -1,6 +1,6 @@
 # 设计语言
 
-[English](DESIGN.md) · [当前组件](../design-system.html?lang=zh-CN) · [视觉识别](https://lucienzhu.github.io/gk-royale-playtest/brand.html?lang=zh-CN)
+[English](DESIGN.md) · [当前组件](../design-system.html?lang=zh-CN) · [视觉识别](https://lucienzhu.github.io/3card-royale/brand.html?lang=zh-CN)
 
 一张牌、一朵花、两个人；底是深圳的绿，花是深圳的红。三角梅牌花把深圳意象和一副普通扑克连在一起：三片同形、各转 120 度的苞片，每片一枚小金蕊。标志是一张平涂的金牌——没有金属光、没有纹理——牌背就是这张牌，花牌也是这张牌加一个角标。
 

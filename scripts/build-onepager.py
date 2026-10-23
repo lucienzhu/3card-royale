@@ -252,15 +252,15 @@ class Sheet:
 
         self.rule(777)
         self.text(M,798,t['footer'],10.3,True)
-        self.text(M,815,'lucienzhu.github.io/gk-royale-playtest',8,color=MUTED,font='EN')
+        self.text(M,815,'lucienzhu.github.io/3card-royale',8,color=MUTED,font='EN')
         self.text(W-M-61,800,t['qr'],8.4,True,color=MUTED,align='right')
         self.text(W-M-61,815,'A4 · 1 / 1',8,color=MUTED,align='right',font='EN')
-        url='https://lucienzhu.github.io/gk-royale-playtest/rules.html?lang='+self.lang
+        url='https://lucienzhu.github.io/3card-royale/rules.html?lang='+self.lang
         qr=QrCodeWidget(url,barLevel='M'); bounds=qr.getBounds(); size=49
         art=Drawing(size,size,transform=[size/(bounds[2]-bounds[0]),0,0,size/(bounds[3]-bounds[1]),0,0]); art.add(qr)
         renderPDF.draw(art,c,W-M-size,H-824)
         c.linkURL(url,(W-M-size,H-824,W-M,H-775),relative=0)
-        c.linkURL('https://lucienzhu.github.io/gk-royale-playtest/?lang='+self.lang,(M,H-818,M+240,H-806),relative=0)
+        c.linkURL('https://lucienzhu.github.io/3card-royale/?lang='+self.lang,(M,H-818,M+240,H-806),relative=0)
         c.showPage(); c.save()
 
 

@@ -8,7 +8,7 @@
 
 An open card game from Shenzhen: build three-card hands, turn wounds into playable options, and earn swaps by defending well. Four of a kind scores 6; the rare four naturals plus flower form five of a kind for 7.
 
-[**Play in English ↗**](https://lucienzhu.github.io/gk-royale-playtest/?lang=en) · [Learn the game](https://lucienzhu.github.io/gk-royale-playtest/about.html?lang=en) · [Read the rules](docs/RULES.md) · [Visual identity](https://lucienzhu.github.io/gk-royale-playtest/brand.html?lang=en)
+[**Play in English ↗**](https://lucienzhu.github.io/3card-royale/?lang=en) · [Learn the game](https://lucienzhu.github.io/3card-royale/about.html?lang=en) · [Read the rules](docs/RULES.md) · [Visual identity](https://lucienzhu.github.io/3card-royale/brand.html?lang=en)
 
 The browser demo plays against the computer. For two people at a table, all you need is a standard 52-card deck. No sign-in, betting, or cash conversion.
 
@@ -50,9 +50,9 @@ node scripts/check.cjs
 | --- | --- |
 | Rules | [Full 1.0.0 rulebook](docs/RULES.md) |
 | Contributing | [Local development, structure, feedback and translations](docs/CONTRIBUTING.md) |
-| Design | [Specification](docs/DESIGN.md) · [Live components](https://lucienzhu.github.io/gk-royale-playtest/design-system.html?lang=en) |
-| Feedback | [Playtest notes and bug reports](https://github.com/lucienzhu/gk-royale-playtest/issues/new/choose) |
-| Research | [Historical three-card probability lab](https://lucienzhu.github.io/gk-royale-playtest/probability.html?lang=en) |
+| Design | [Specification](docs/DESIGN.md) · [Live components](https://lucienzhu.github.io/3card-royale/design-system.html?lang=en) |
+| Feedback | [Playtest notes and bug reports](https://github.com/lucienzhu/3card-royale/issues/new/choose) |
+| Research | [Historical three-card probability lab](https://lucienzhu.github.io/3card-royale/probability.html?lang=en) |
 
 **Status:** playtest rules 1.0.0. Rules are still being tested with people; simulation results are not a claim of balance or popularity. Older rule variants remain selectable in the game menu, and release tags are immutable.
 

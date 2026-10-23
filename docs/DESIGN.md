@@ -1,6 +1,6 @@
 # Design language
 
-[简体中文](DESIGN.zh-CN.md) · [Live components](../design-system.html?lang=en) · [Visual identity](https://lucienzhu.github.io/gk-royale-playtest/brand.html?lang=en)
+[简体中文](DESIGN.zh-CN.md) · [Live components](../design-system.html?lang=en) · [Visual identity](https://lucienzhu.github.io/3card-royale/brand.html?lang=en)
 
 One card, one flower, two players; the ground is Shenzhen's green, the flower its red. The bougainvillea mark ties a game made in Shenzhen to an ordinary deck: three identical bracts rotated by 120°, each with a small golden centre. The mark is a flat gold card, with no metallic light and no texture. The card back is that same card, and the flower card is that card with an index.
 
