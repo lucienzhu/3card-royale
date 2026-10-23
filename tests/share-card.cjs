@@ -38,7 +38,7 @@ for(const attack of [[6,19,32],[5,18,31,44],[5,18,31,44,13]])for(const winner of
 }
 // Same-score victory must describe the rank tiebreak, not claim zero causes damage.
 const tie={...input,layout:'highlight',match:false,results:results.slice(0,1),snapshot:{...input.snapshot,lastCombat:{attacker:0,action:'damage',amount:1,reason:'rank_attack',before:[0,4],after:[0,5],moves:[{...GK.evaluate([10,11,12],2,'1.0.0'),cards:[10,11,12]},{...GK.evaluate([1,2,3],2,'1.0.0'),cards:[1,2,3]}]}}};
-const tieSVG=S.makeSVG(S.summarize(tie),ctx.window.SZBloomAssets,ctx.window.SZShareAssets.cityStyle,B,F);assert(tieSVG.includes('同分比点数 · +1 伤'));assert(!tieSVG.includes('4 − 4'));
+const tieSVG=S.makeSVG(S.summarize(tie),ctx.window.SZBloomAssets,ctx.window.SZShareAssets.cityStyle,B,F);assert(tieSVG.includes('你以点数胜出，打出1伤。'));assert(!tieSVG.includes('4 − 4'));
 assert.equal(S.summarize({...tie,snapshot:{...tie.snapshot,lastCombat:{...tie.snapshot.lastCombat,moves:[null,null]}}}).combat,null);
 console.log(JSON.stringify({single_game_hands:'passed',cases:handCases,physical_wildcards:true,wound_origins:true,rank_tiebreak:true,no_hidden_cards:true}));
 console.log(JSON.stringify({share_card:'passed',share_payload:'png_alone_or_link_alone',copy_image:'png',render_cases:cases,width:S.WIDTH,height:S.HEIGHT,results_unchanged:true,self_contained_svg:true}));
