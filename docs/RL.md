@@ -45,7 +45,9 @@ Reset options are `first:0|1` and `levels:[2..14,2..14]`; nonstandard levels are
 | `candidates` | 512×72 / float32 | Current action features, detailed below |
 | `action_mask` | 512 / int8 | 1 exactly where an action is legal |
 
-Candidate columns 0..51 mark cards used/given. Columns 52..56 one-hot play/swap/stop/advance/next-game; 57..58 source hand/wounds; 59 source index/11; 60..63 deck/blind/own-zone/rival-zone; 64..66 known incoming rank/14, suit/3 and ID/51; 67 score/7, 68 type/7, 69 top comparison rank/14, 70 card count/5; 71 is 1 when this player owns the current Ace challenge, otherwise 0. Unknown target identities are never encoded. Type IDs are high 0, pair 1, straight 2, flush 3, trips 4, straight flush 5, four of a kind 6, five of a kind 7. Their scores differ for trips/straight-flush; use score as the ranking.
+Candidate columns 0..51 mark cards used/given. Columns 52..56 one-hot play/swap/decline/advance/next-game; 57..58 source hand/wounds; 59 source index/11 for swaps; 60..63 deck/blind/own-zone/rival-zone; 64..66 known incoming rank/14, suit/3 and ID/51; 67 score/7, 68 type/7, 69 top comparison rank/14, 70 card count/5; 71 is 1 for a play when this player owns the current Ace challenge, otherwise 0. Unknown target identities are never encoded. Type IDs are high 0, pair 1, straight 2, flush 3, trips 4, straight flush 5, four of a kind 6, five of a kind 7. Their scores differ for trips/straight-flush; use score as the ranking.
+
+Each swap opportunity can be used or skipped independently. Both `skip_swap` and `stop_swaps` set the decline-kind bit at column 54. For these actions, column 59 is a flag: 1 skips only the current opportunity; 0 ends all remaining opportunities. Skipping changes no cards or RNG. The candidate shape remains 512×72.
 
 `env.action_masks()` returns a boolean mask for mask-aware algorithms. Candidate encodings let a policy associate dynamic indices with actual moves; an index alone has no stable meaning. Algorithms without masking need an explicit masked distribution/wrapper.
 

@@ -1,5 +1,5 @@
 'use strict';
-// brand-mark.svg is the source for the header, dark-mode download and embedded PNG artwork.
+// brand-mark.svg is the source for every public lockup and embedded PNG artwork.
 const fs=require('node:fs'),path=require('node:path'),root=path.resolve(__dirname,'..');
 function sync(check=false){
  const read=p=>fs.readFileSync(path.join(root,p),'utf8'),mark=read('brand-mark.svg').trim();
@@ -12,6 +12,11 @@ function sync(check=false){
  const html=read('index.html'),header=/<svg class="brand-symbol"[\s\S]*?<\/svg>/;
  if(!header.test(html))throw new Error('Missing header brand');
  update('index.html',html.replace(header,mark.replace('<svg ','<svg class="brand-symbol" aria-hidden="true" ')));
+ for(const page of ['brand.html','about.html','probability.html']){
+  const html=read(page),pattern=/<svg\b[^>]*aria-label="深圳花牌标志"[^>]*>[\s\S]*?<\/svg>/g;
+  if(!pattern.test(html))throw new Error('Missing brand lockup: '+page);
+  update(page,html.replace(pattern,old=>{const cls=old.match(/ class="[^"]*"/);return mark.replace('<svg ','<svg'+(cls?cls[0]:'')+' ');}));
+ }
  update('assets/brand-mark-dark.svg',read('brand-mark.svg'));
  if(stale.length)throw new Error('Brand copies are stale: '+stale.join(', ')+'. Run node scripts/sync-brand.cjs.');
 }

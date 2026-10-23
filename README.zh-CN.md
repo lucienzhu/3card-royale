@@ -50,7 +50,7 @@ node scripts/check.cjs
 | --- | --- |
 | 规则 | [1.0.0完整规则](docs/RULES.zh-CN.md) |
 | 贡献 | [本地开发、目录、反馈与翻译](docs/CONTRIBUTING.zh-CN.md) |
-| 设计 | [颜色、标志、UI与语言原则](docs/DESIGN.zh-CN.md) |
+| 设计 | [设计规范](docs/DESIGN.zh-CN.md) · [当前组件](https://lucienzhu.github.io/gk-royale-playtest/design-system.html?lang=zh-CN) |
 | 反馈 | [提交试玩记录或Bug](https://github.com/lucienzhu/gk-royale-playtest/issues/new/choose) |
 | 研究 | [历史三张牌概率研究](https://lucienzhu.github.io/gk-royale-playtest/probability.html?lang=zh-CN) |
 
