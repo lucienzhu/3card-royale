@@ -263,7 +263,7 @@ let variant=new URLSearchParams(location.search).get('version')||'1.0.0';
 if(!ROLLOUTS[variant])variant='1.0.0';
 let ROLLOUT=ROLLOUTS[variant];
 const storageKey=()=> 'gk033_compact_play_'+variant;
-let mode='play',lastBoardMode='play',selected=[],flipMode=null,flipIndices=[],refreshTarget=null,cursor=0,autoTimer=null,aiTimer=null,busy=false,error='';
+let mode='play',lastBoardMode='play',selected=[],flipMode=null,flipIndices=[],refreshTarget=null,cursor=0,autoTimer=null,aiTimer=null,aiSerial=0,busy=false,error='';
 let presentedResultKey='',celebratedResultKey='',celebrationTimer=null;
 function randomSeed(){const value=new Uint32Array(1);if(globalThis.crypto&&typeof globalThis.crypto.getRandomValues==='function')globalThis.crypto.getRandomValues(value);else value[0]=Math.floor(Math.random()*4294967296);return value[0];}
 function loadGame(){try{const saved=localStorage.getItem(storageKey());if(saved){const g=GK.Game.restore(JSON.parse(saved));if(g.version===variant)return g;}}catch(_){}return new GK.Game(randomSeed(),{version:variant});}
@@ -596,9 +596,17 @@ function render(){
 }
 function driveAI(){
  if(window.SZDrawer?.active||window.SZCardMotion.busy||mode!=='play'||$('settings-modal').open||$('result-modal').open||$('player-name-dialog')?.open||busy||game.currentActor()!==1||!['attack','defend','flip','refresh'].includes(game.phase))return;
- busy=true;render();aiTimer=setTimeout(()=>{aiTimer=null;busy=false;tryAction(()=>game.aiStep());},400);
+ busy=true;render();const token=++aiSerial, current=game;
+ aiTimer=setTimeout(async()=>{
+  aiTimer=null;
+  try{
+   const decision=await window.SZPolicy.decide(current);
+   if(token!==aiSerial||current!==game||mode!=='play'||game.currentActor()!==1)return;
+   busy=false;tryAction(()=>window.SZPolicy.apply(game,decision));
+  }catch(e){if(token===aiSerial){busy=false;error=e.message;render();}}
+ },400);
 }
-function stopAI(){motionSerial++;window.SZCardMotion.cancel();if(aiTimer){clearTimeout(aiTimer);aiTimer=null;}busy=false;}
+function stopAI(){aiSerial++;motionSerial++;window.SZCardMotion.cancel();if(aiTimer){clearTimeout(aiTimer);aiTimer=null;}busy=false;}
 function renderReplayControls(){
  const en=GKLocale.language==='en',events=ROLLOUT.events,total=events.length,event=events[cursor];
  const name=en?['Previous step','Next step',autoTimer?'Pause':cursor===total-1?'Play again':'Play']:['上一步','下一步',autoTimer?'暂停':cursor===total-1?'重新播放':'播放'];
@@ -646,7 +654,7 @@ $('result-share').addEventListener('click',()=>{if(mode!=='play'||!currentResult
 $('result-primary').addEventListener('click',continueResult);
 $('result-modal').addEventListener('close',()=>{window.SZShareCard.close();stopCelebration();window.SZBloom.hideResult($('bloom-result'));const r=currentResult();if(mode==='play'&&r&&resultKey(r)===$('result-modal').dataset.resultKey)$('show-result')?.focus({preventScroll:true});});
 $('new-match').addEventListener('click',newMatch);
-$('export-match').addEventListener('click',()=>{const data={version:game.version,ui_revision:UI_REVISION,locale:GKLocale.language,game_name:GKLocale.language==='en'?'3Card Royale':'深圳花牌',seed:game.seed,game_seed:game.gameSeed??null,game_seeds:game.events.filter(e=>e.kind==='deal').map(e=>({game:e.game,seed:e.state?.gameSeed??null})),seed_policy:'continuous-xorshift32-v1',policy:GK.woundExchange(game.version)?GK.WOUND_POLICY:GK.handExchange(game.version)?GK.EXCHANGE_POLICY:GK.winnerStarts(game.version)?GK.WINNER_POLICY:GK.allowsFour(game.version)?GK.FOUR_POLICY:GK.isRefresh(game.version)?GK.REFRESH_POLICY:GK.POLICY,results:game.results,stats:game.stats,events:game.events,save:game.save(),source_sha256:ROLLOUT.source_sha256,...(ROLLOUT.baseline_sha256?{baseline_sha256:ROLLOUT.baseline_sha256}:{})};const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=(GKLocale.language==='en'?'3Card-Royale-':'深圳花牌-')+variant+'-'+game.seed+'-playtest.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+$('export-match').addEventListener('click',()=>{const data={version:game.version,ui_revision:UI_REVISION,locale:GKLocale.language,game_name:GKLocale.language==='en'?'3Card Royale':'深圳花牌',seed:game.seed,game_seed:game.gameSeed??null,game_seeds:game.events.filter(e=>e.kind==='deal').map(e=>({game:e.game,seed:e.state?.gameSeed??null})),seed_policy:'continuous-xorshift32-v1',opponent_ai:window.SZPolicy?.selected,nn_policy_version:window.SZPolicy?.diagnostics.version,policy:GK.woundExchange(game.version)?GK.WOUND_POLICY:GK.handExchange(game.version)?GK.EXCHANGE_POLICY:GK.winnerStarts(game.version)?GK.WINNER_POLICY:GK.allowsFour(game.version)?GK.FOUR_POLICY:GK.isRefresh(game.version)?GK.REFRESH_POLICY:GK.POLICY,results:game.results,stats:game.stats,events:game.events,save:game.save(),source_sha256:ROLLOUT.source_sha256,...(ROLLOUT.baseline_sha256?{baseline_sha256:ROLLOUT.baseline_sha256}:{})};const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=(GKLocale.language==='en'?'3Card-Royale-':'深圳花牌-')+variant+'-'+game.seed+'-playtest.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
 $('prev-step').addEventListener('click',()=>{stopReplay();replayGo(cursor-1);});$('next-step').addEventListener('click',()=>{stopReplay();replayGo(cursor+1);});
 $('replay-range').max=ROLLOUT.events.length-1;$('replay-range').addEventListener('input',e=>{const index=e.target.value;stopReplay();replayGo(index);});
 $('auto-replay').addEventListener('click',()=>{if(autoTimer){stopReplay();return;}if(cursor===ROLLOUT.events.length-1)replayGo(0);autoTimer=setInterval(()=>{replayGo(cursor+1);if(cursor>=ROLLOUT.events.length-1)stopReplay();},1300);renderReplayControls();});
@@ -665,6 +673,7 @@ document.addEventListener('touchstart',preventPinchZoom,{passive:false,capture:t
 document.addEventListener('touchmove',preventPinchZoom,{passive:false,capture:true});
 for(const type of ['gesturestart','gesturechange','gestureend'])document.addEventListener(type,e=>{if(e.cancelable)e.preventDefault();},{passive:false,capture:true});
 applySeedPreference();persist();render();driveAI();
+window.addEventListener('sz-policy-change',()=>{stopAI();render();driveAI();});
 window.addEventListener('sz-profile-open',stopAI);
 window.addEventListener('sz-profile-close',()=>{render();driveAI();});
 window.addEventListener('sz-profile-locale',()=>render());

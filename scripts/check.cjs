@@ -29,3 +29,5 @@ require('../tests/finale.cjs');
 require("../tests/share-card.cjs");
 
 require('../tests/skip-swaps.cjs');
+
+require('../tests/nn-policy.cjs');

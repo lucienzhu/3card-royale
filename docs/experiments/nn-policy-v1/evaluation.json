@@ -1,0 +1,82 @@
+[
+  {
+    "model": "mlp-128.onnx",
+    "games": 1000,
+    "completed": 1000,
+    "wins": 460,
+    "win_rate": 0.46,
+    "wilson95": [
+      0.4293208680902404,
+      0.49098528379667095
+    ],
+    "seat_wins": [
+      237,
+      223
+    ],
+    "truncated": 0,
+    "nn_decisions": 12108,
+    "onnx_cpu_p50_ms": 0.10520906653255224,
+    "onnx_cpu_p95_ms": 0.3419983084313571,
+    "seconds": 50.02001270803157
+  },
+  {
+    "model": "mlp-256.onnx",
+    "games": 1000,
+    "completed": 1000,
+    "wins": 462,
+    "win_rate": 0.462,
+    "wilson95": [
+      0.4313035714780835,
+      0.4929872728144823
+    ],
+    "seat_wins": [
+      239,
+      223
+    ],
+    "truncated": 0,
+    "nn_decisions": 12224,
+    "onnx_cpu_p50_ms": 0.19320810679346323,
+    "onnx_cpu_p95_ms": 0.61491071828641,
+    "seconds": 51.295707707991824
+  },
+  {
+    "model": "mlp-64.onnx",
+    "games": 1000,
+    "completed": 1000,
+    "wins": 452,
+    "win_rate": 0.452,
+    "wilson95": [
+      0.4213950371393751,
+      0.4829723451249185
+    ],
+    "seat_wins": [
+      244,
+      208
+    ],
+    "truncated": 0,
+    "nn_decisions": 12290,
+    "onnx_cpu_p50_ms": 0.07379194721579552,
+    "onnx_cpu_p95_ms": 0.23925831774249662,
+    "seconds": 49.928402332938276
+  },
+  {
+    "model": "mlp-512.onnx",
+    "games": 1000,
+    "completed": 1000,
+    "wins": 450,
+    "win_rate": 0.45,
+    "wilson95": [
+      0.4194148276959868,
+      0.4809678621626524
+    ],
+    "seat_wins": [
+      241,
+      209
+    ],
+    "truncated": 0,
+    "nn_decisions": 12137,
+    "onnx_cpu_p50_ms": 0.3451249795034528,
+    "onnx_cpu_p95_ms": 0.9813835844397539,
+    "seconds": 36.7405453750398
+  }
+]

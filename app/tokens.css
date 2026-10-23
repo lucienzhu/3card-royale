@@ -235,3 +235,8 @@ html,:root body,[data-sz-theme=dark] body{background:var(--paper);color:var(--in
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 /* on the narrowest phones the English wordmark cannot share a line with the menu: the mark stays, the name is kept for screen readers */
 @media (max-width:380px){html[lang=en] body .app-header .brand h1{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}}
+
+/* Policy selection follows the shared settings controls. */
+.policy-field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.policy-field select{width:100%}
+#policy-status{font-size:12px;line-height:1.5;color:var(--muted);overflow-wrap:anywhere}

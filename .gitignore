@@ -6,3 +6,8 @@ rust/target/
 
 # C++ build output
 cpp/build/
+
+# NN experiments: checkpoints, rollouts, local dependencies
+node_modules/
+artifacts/
+training/__pycache__/

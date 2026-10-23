@@ -9,8 +9,13 @@
     "test:core": "python3 -m unittest discover -s tests -p 'test_core.py'",
     "test:gym": "python3 -m unittest discover -s tests -p 'test_*.py'",
     "test:conformance": "python3 tests/conformance.py --rust rust/target/debug/royale-json",
-    "test:cpp": "cmake -S cpp -B cpp/build -DCMAKE_BUILD_TYPE=Release && cmake --build cpp/build --parallel && ctest --test-dir cpp/build --output-on-failure"
+    "test:cpp": "cmake -S cpp -B cpp/build -DCMAKE_BUILD_TYPE=Release && cmake --build cpp/build --parallel && ctest --test-dir cpp/build --output-on-failure",
+    "test:nn": "node tests/nn-policy.cjs",
+    "vendor:nn": "node scripts/vendor-policy-runtime.cjs"
   },
   "main": "sdk/index.js",
-  "types": "sdk/index.d.ts"
+  "types": "sdk/index.d.ts",
+  "dependencies": {
+    "onnxruntime-web": "1.30.0"
+  }
 }

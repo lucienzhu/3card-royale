@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NN Policy · Browser profiling</title>
+<style>body{font:16px/1.6 system-ui;margin:32px;max-width:1000px;background:#edf4ef;color:#102c22}button{font:inherit;padding:12px 20px;border-radius:8px;border:1px solid #bccfc3;cursor:pointer}pre{white-space:pre-wrap;overflow-wrap:anywhere}table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:10px;border-bottom:1px solid #c7d7cc}</style>
+<h1>NN Policy · Browser profiling</h1><p>WASM · 1 thread · FP32 · 3 warm runs, 100 measured runs per candidate count.</p>
+<button id="run">Run profile</button><p id="status" role="status">Ready</p><table id="results"><thead><tr><th>Width</th><th>Actions</th><th>p50 ms</th><th>p95 ms</th><th>Max error</th></tr></thead><tbody></tbody></table><pre id="report"></pre>
+<script type="module">
+import * as ort from '../vendor/onnxruntime/ort.wasm.min.mjs';
+ort.env.wasm.numThreads=1;ort.env.wasm.wasmPaths=new URL('../vendor/onnxruntime/',location.href).href;
+document.getElementById('run').onclick=async()=>{
+ const button=document.getElementById('run'),status=document.getElementById('status');button.disabled=true;document.querySelector('tbody').replaceChildren();
+ const output={userAgent:navigator.userAgent,hardwareConcurrency:navigator.hardwareConcurrency,backend:'wasm',threads:1,results:[]};
+ try{
+  const fixtures=await(await fetch('../artifacts/nn-policy/parity.json')).json();
+  const report=await(await fetch('../artifacts/nn-policy/training.json')).json();
+  for(const model of report.models){
+   status.textContent='Loading MLP '+model.width;
+   const t0=performance.now();const session=await ort.InferenceSession.create('../artifacts/nn-policy/models/mlp-'+model.width+'.onnx',{executionProviders:['wasm']});
+   const loadMs=performance.now()-t0;
+   let error=0,matches=0;
+   for(const f of fixtures){
+    const cs=new Float32Array(f.candidates.flat()),state=new Float32Array(f.state);
+    const result=await session.run({state:new ort.Tensor('float32',state,[1,336]),candidates:new ort.Tensor('float32',cs,[1,f.candidates.length,72])});
+    const logits=Array.from(result.logits.data),expected=f.logits[String(model.width)];
+    error=Math.max(error,...logits.map((x,i)=>Math.abs(x-expected[i])));
+    if(logits.indexOf(Math.max(...logits))===expected.indexOf(Math.max(...expected)))matches++;
+   }
+   for(const n of [56,220,512]){
+    status.textContent='Profiling MLP '+model.width+' · '+n+' candidates';
+    const f=fixtures[0],cs=new Float32Array(n*72);for(let i=0;i<n;i++)cs.set(f.candidates[i%f.candidates.length],i*72);
+    const feeds={state:new ort.Tensor('float32',new Float32Array(f.state),[1,336]),candidates:new ort.Tensor('float32',cs,[1,n,72])};
+    for(let i=0;i<3;i++)await session.run(feeds);
+    const times=[];for(let i=0;i<100;i++){const t=performance.now();await session.run(feeds);times.push(performance.now()-t);}
+    times.sort((a,b)=>a-b);
+    const row={width:model.width,bytes:model.bytes,candidates:n,p50_ms:times[49],p95_ms:times[94],mean_ms:times.reduce((a,b)=>a+b,0)/times.length,load_ms:loadMs,max_error:error,argmax_matches:matches,parity_cases:fixtures.length};output.results.push(row);
+    const tr=document.createElement('tr');[model.width,n,row.p50_ms.toFixed(3),row.p95_ms.toFixed(3),error.toExponential(2)].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.append(td);});document.querySelector('tbody').append(tr);
+   }
+   await session.release();
+  }
+  status.textContent='Complete';document.getElementById('report').textContent=JSON.stringify(output,null,2);
+ }catch(e){status.textContent='Error: '+e.message;document.getElementById('report').textContent=e.stack;}
+ button.disabled=false;
+};
+</script></html>
