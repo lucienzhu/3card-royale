@@ -92,23 +92,24 @@ function gameSVG(d,assets){
  }
  let body='',height=HEIGHT;
  if(layout==='recap'&&d.combats.length){
-  const plays=recap(d),step=800,start=356;
+  const plays=recap(d),step=480,start=356;
   height=Math.max(HEIGHT,start+plays.length*step+220);
   body+=text(80,230,title,en?84:94,p.ink,750)+text(80,288,t('全部 '+plays.length+' 次攻防 · 按发生顺序','All '+plays.length+' plays · In order'),30,p.muted);
   plays.forEach((co,i)=>{
    const y=start+i*step;
    body+=`<g data-story-order="${co.order}">`+text(80,y,stepName(co),26,p.muted,500)+`<path d="M80 ${y+20}H1000" stroke="${p.line}"/>`;
-   // The page uses the same physical orientation as the table, independent of
-   // who attacked, dealt damage, won the game, or held the best hand.
-   [1,0].forEach((q,j)=>{
-    const top=y+62+j*350,m=co.moves[q];
-    body+=`<g data-player="${q}" data-player-y="${top}">`+playerTitle(q,top,m,co,true);
-    body+=cards(m,top+24,false,{center:540,width:168,gap:16,rowHeight:236,zone:q===1?'story-rival':'story-own'});
-    if(co.before?.length===2&&co.after?.length===2)body+=text(80,top+294,t('伤牌 ','Wounds ')+co.before[q]+' → '+co.after[q],30,p.muted,400,'start',310);
-    const note=wildNote(m);if(note)body+=text(1000,top+294,note,28,p.muted,400,'end',560);
+   // Each combat is one row: attack on the left, defense on the right.
+   // Flower identities follow the players as their roles alternate.
+   [co.attacker,1-co.attacker].forEach((q,j)=>{
+    const x=80+j*488,top=y+64,m=co.moves[q],cw=Math.min(136,(432-(m.cards.length-1)*12)/m.cards.length);
+    body+=`<g data-player="${q}" data-player-y="${top}" data-player-x="${x}" data-role="${j===0?'attack':'defense'}">`+identity(q,x,top+2,32)+text(x+44,top,role(q,co)+' · '+gameWho(q),32,playerColor(q),700,'start',388);
+    body+=text(x,top+46,hand(m)+' '+points(m.score),34,p.ink,650,'start',432);
+    body+=cards(m,y+132,false,{center:x+216,width:cw,gap:12,rowHeight:192,zone:j===0?'story-attack':'story-defense'});
+    const note=wildNote(m);if(note)body+=text(x,y+354,note,25,p.muted,400,'start',432);
+    if(co.before?.length===2&&co.after?.length===2)body+=text(x,y+391,t('伤牌 ','Wounds ')+co.before[q]+' → '+co.after[q],27,p.muted,400,'start',432);
     body+='</g>';
    });
-   body+=outcomeLabel(co,80,y+760,32)+'</g>';
+   body+=text(540,y+239,'→',32,p.muted,400,'middle')+outcomeLabel(co,80,y+442,30)+'</g>';
   });
  }else if(layout==='finish'&&c){
   body+=text(80,214,title,en?84:94,p.ink,750)+text(80,266,t('最后一手 · 公开伤牌','Last plays · Public wounds'),30,p.muted);
