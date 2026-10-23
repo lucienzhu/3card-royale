@@ -139,9 +139,14 @@ function gameSVG(d,assets){
    return section+'</g>';
   }
   body+=playSide(1,340);
-  const attack=c.moves[c.attacker],defense=c.moves[1-c.attacker],damage=c.action==='damage'&&c.amount>0;
-  const effect=damage?(attack.score===defense.score?t('同分比点数 · +'+c.amount+' 伤','Rank breaks the tie · +'+c.amount+(c.amount===1?' wound':' wounds')):t(attack.score+' − '+defense.score+' = '+c.amount+' 伤',attack.score+' − '+defense.score+' = '+c.amount+' wounds')):t('防守成功','Defense holds');
-  body+=`<path d="M80 708H1000M80 824H1000" stroke="${p.line}"/>`+text(540,756,effect,42,p.ink,700,'middle')+outcomeLabel(c,80,802,27);
+  const attack=c.moves[c.attacker],damage=c.action==='damage'&&c.amount>0,q=damage?c.attacker:c.actor??1-c.attacker,subject=gameWho(q),you=q===0&&!d.playerName,wounds=c.amount+(c.amount===1?' wound':' wounds');
+  let effect=t('本次攻防未造成伤害。','No wounds dealt in this exchange.');
+  if(damage)effect=c.reason==='rank_attack'
+   ?t(subject+'以点数胜出，打出'+c.amount+'伤。',subject+(you?' win':' wins')+' on rank and '+(you?'deal ':'deals ')+wounds+'.')
+   :t(subject+'用'+hand(attack)+'打出'+c.amount+'伤。',subject+(you?' deal ':' deals ')+wounds+' with '+hand(attack).toLowerCase()+'.');
+  else if(c.action==='refresh')effect=t(subject+'获得'+c.amount+'次换牌机会。',subject+(you?' earn ':' earns ')+c.amount+(c.amount===1?' swap opportunity.':' swap opportunities.'));
+  else if(c.reason==='exact_tie'||c.reason==='tie')effect=t('双方平手，伤势不变。','An exact tie; no wounds dealt.');
+  body+=`<g data-highlight-result="sentence">`+text(540,786,effect,en?34:38,p.ink,600,'middle',880)+'</g>';
   body+=playSide(0,862);
  }else{
   // Old saves without the final combat remain shareable; don't invent a hand.
