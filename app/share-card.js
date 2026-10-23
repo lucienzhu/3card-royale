@@ -113,10 +113,10 @@ function gameSVG(d,assets){
     body+=`<g data-player="${q}" data-player-y="${top}" data-player-x="${x}" data-role="${j===0?'attack':'defense'}">`+identity(q,x,top+2,32)+text(x+44,top,role(q,co)+' · '+gameWho(q),32,playerColor(q),700,'start',388);
     body+=text(x,top+46,hand(m)+' '+points(m.score),34,p.ink,650,'start',432);
     body+=cards(m,y+132,false,{center:x+216,width:cw,gap:12,rowHeight:192,zone:j===0?'story-attack':'story-defense'});
-    const note=wildNote(m);if(note)body+=text(x,y+354,note,25,p.muted,400,'start',432);
+    const note=wildNote(m);if(note)body+=text(x,y+366,note,25,p.muted,400,'start',432);
     body+='</g>';
    });
-   body+=text(540,y+239,'→',32,p.muted,400,'middle')+outcomeLabel(co,80,y+400,30)+'</g>';
+   body+=text(540,y+239,'→',32,p.muted,400,'middle')+outcomeLabel(co,80,y+424,30)+'</g>';
   });
  }else if(layout==='finish'&&c){
   body+=text(80,214,title,en?84:94,p.ink,750)+text(80,266,t('最后一手','Last play'),30,p.muted);
@@ -124,18 +124,19 @@ function gameSVG(d,assets){
    const m=c.moves[q],list=d.finalWounds[q]||Array.from({length:Number(r.damage[q])||0},()=>({card:null})),cw=Math.min(72,(600-Math.max(0,list.length-1)*8)/Math.max(1,list.length));
    let section=`<g data-player="${q}" data-player-y="${y}">`+playerTitle(q,y,m,c);
    section+=cards(m,y+28,true,{width:144,gap:16,rowHeight:202,zone:q===1?'rival-play':'own-play'});
-   section+=text(80,y+286,t(r.damage[q]+'伤',r.damage[q]+(r.damage[q]===1?' wound':' wounds')),31,playerColor(q),650,'start',260);
-   section+=list.length?cards({cards:list.map(x=>x.card)},y+250,false,{width:cw,gap:8,center:700,rowHeight:101,zone:q===0?'own-wounds':'rival-wounds'}):text(700,y+295,'—',32,p.muted,400,'middle');
-   if(wildNote(m))section+=text(540,y+237,wildNote(m),23,p.muted,400,'middle');
+   section+=text(80,y+322,t(r.damage[q]+'伤',r.damage[q]+(r.damage[q]===1?' wound':' wounds')),31,playerColor(q),650,'start',260);
+   section+=list.length?cards({cards:list.map(x=>x.card)},y+286,false,{width:cw,gap:8,center:700,rowHeight:101,zone:q===0?'own-wounds':'rival-wounds'}):text(700,y+331,'—',32,p.muted,400,'middle');
+   // The caption has its own row below the full card height and above wounds.
+   if(wildNote(m))section+='<g data-wild-caption="true">'+text(540,y+266,wildNote(m),23,p.muted,400,'middle')+'</g>';
    return section+'</g>';
   }
-  body+=finalSide(1,340);
+  body+=finalSide(1,324);
   const subject=gameWho(d.winner),verb=d.winner===0&&!d.playerName?'win':'wins',woundCount=n=>n+(n===1?' wound':' wounds');
   const resultLine=c.action==='damage'
    ?t(subject+'打出'+c.amount+'伤，以'+gap+'伤之差获胜。',subject+(verb==='win'?' deal ':' deals ')+woundCount(c.amount)+' and '+verb+' by '+woundCount(gap)+'.')
    :t(subject+'以'+gap+'伤之差获胜。',subject+' '+verb+' by '+woundCount(gap)+'.');
-  body+=`<g data-finish-result="sentence">`+text(540,786,resultLine,en?34:38,p.ink,600,'middle',880)+'</g>';
-  body+=finalSide(0,862);
+  body+=`<g data-finish-result="sentence">`+text(540,760,resultLine,en?34:38,p.ink,600,'middle',880)+'</g>';
+  body+=finalSide(0,814);
  }else if(c){
   body+=text(80,214,title,en?84:94,p.ink,750)+text(80,268,t('第'+c.order+'次攻防','Play '+c.order)+' · '+(d.highlightPick==='hand'?t('最大牌型','Best hand'):t('最大伤害','Biggest hit')),30,p.muted);
   function playSide(q,y){
@@ -166,7 +167,7 @@ function gameSVG(d,assets){
  const brand=`<g data-share-brand="top-right">${brandMark(assets,brandX-8,66,56)}${text(1000,106,t('深圳花牌','3Card Royale'),30,p.ink,700,'end')}</g>`;
  return `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="${height}" viewBox="0 0 1080 ${height}" role="img" aria-label="${escape(title)}" data-share-layout="${layout}"><style>text{font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Arial,sans-serif}</style><rect width="1080" height="${height}" fill="${p.paper}"/>`+
  identity(d.winner,80,112,28)+text(120,110,gameWho(d.winner)+t('赢下第 '+r.game+' 局',' won game '+r.game),28,p.muted,500,'start',490)+brand+body+
- `<g transform="translate(0 ${footer})">`+text(540,1242,rank(r.from)+' → '+rank(r.to)+' · '+r.rounds+t('轮',r.rounds===1?' round':' rounds'),27,p.muted,500,'middle')+
+ `<g transform="translate(0 ${footer})">`+text(540,1254,rank(r.from)+' → '+rank(r.to)+' · '+r.rounds+t('轮',r.rounds===1?' round':' rounds'),27,p.muted,500,'middle')+
  `<path d="M80 1270H1000" stroke="${p.line}"/>`+
  text(80,1330,t('三张牌，打出花。','Three cards. Make them bloom.'),28,p.ink,600)+text(80,1418,t('规则 ','Rules ')+d.version,19,p.muted)+
  `<svg x="840" y="1276" width="164" height="164" viewBox="0 0 ${qrSize} ${qrSize}" shape-rendering="crispEdges" aria-label="${SHARE_URL}"><rect width="${qrSize}" height="${qrSize}" fill="#fff"/><path d="${qrPath}" fill="#121417"/></svg></g></svg>`;
