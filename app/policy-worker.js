@@ -8,7 +8,7 @@ async function load() {
     ort.env.wasm.numThreads = 1;
     ort.env.wasm.wasmPaths = new URL('../vendor/onnxruntime/', self.location.href).href;
     const manifestURL = new URL('../models/nn-policy/manifest.json', self.location.href);
-    const response = await fetch(manifestURL);
+    const response = await fetch(manifestURL, {cache:'no-cache'});
     if (!response.ok) throw Error('Model manifest unavailable');
     const manifest = await response.json();
     if (manifest.rules !== '1.0.0' || manifest.features !== RoyaleFeatures.version) throw Error('Model version mismatch');

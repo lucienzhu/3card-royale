@@ -1,86 +1,94 @@
-# NN Policy experiment
+# Reproduce NN AI · 256
 
-Single-observation behavioral cloning of the SDK Code AI. No history, recurrence,
-search or reward optimization. Rules remain 1.0.0.
+Production uses **256 → 128 → 1**: two ReLU hidden layers and a shared score for
+each legal action. The input is one public observation (336 values) plus one
+candidate action (72). Training imitates Code AI; it has no history or hidden cards.
 
-## Reproduce
+## One command after setup
 
-Tested with Python 3.12.14 and Node 24.19.0. Run from the repository root:
-
-Use a fresh checkout or dataset output directory for collection; existing shards
-are deliberately not overwritten or combined with another run.
+Tested with Python **3.12.14** and Node **24.19.0**, from the repository root:
 
 ```sh
-python3 -m venv .venv
+python3.12 -m venv .venv
 .venv/bin/pip install -r training/requirements-lock.txt
-.venv/bin/python training/collect.py --games 10000 --workers 6 --seed 20261024
-.venv/bin/python training/train.py --widths 64,128,256,512 --epochs 10
-.venv/bin/python training/train.py --hidden 256 512 --epochs 10
-.venv/bin/python training/parity.py
-.venv/bin/python training/evaluate.py --games 1000
-.venv/bin/python training/publish.py --model 256x512
+.venv/bin/python training/reproduce.py
+```
+
+The recipe is [recipe-256.json](recipe-256.json). The command:
+
+1. Runs two Code AIs through the Gym env for 10,000 complete games, seed 20261024.
+2. Checks all 100 compressed shards against the committed dataset checksums.
+3. Trains only 256/128 for ten epochs, saves the lowest-validation-loss checkpoint,
+   then exports FP32 ONNX and measures the held-out test split.
+4. Checks Torch/ONNX parity and plays 1,000 held-out games against Code AI.
+5. Writes `artifacts/nn-policy-256/reproduction.json`, including environment,
+   metrics, model SHA-256 and whether it matches the committed reference exactly.
+
+Split by whole game: 8,000 train / 1,000 validation / 1,000 test. Both seats stay
+in the same split. Optimizer: AdamW, lr 0.001, weight decay 0.0001; gradient clip 5;
+batch 128; four CPU threads; training seed 20261024. Dependencies are pinned.
+Cross-platform floating-point behavior can change trained weights slightly;
+the checked-in ONNX is the exact web artifact. Compare the generated report.
+
+The full 2026-10-24 rerun regenerated all 100 shards byte-for-byte and produced
+an identical ONNX SHA-256, the same epoch-5 checkpoint, 89.36% test agreement and
+462/1,000 evaluation wins. Evidence: [reproduction-256.json](../docs/experiments/nn-policy-v1/reproduction-256.json).
+
+Use a fresh output directory for a rerun:
+
+```sh
+.venv/bin/python training/reproduce.py --root artifacts/nn-policy-256-rerun
+```
+
+`--reuse-data` resumes after collection, verifies every shard, then trains into a
+directory without existing model outputs. `--workers 2` reduces collection CPU use
+without changing the seeds. Allow about 4 GB for the temporary prepared arrays.
+
+## Data and saved model
+
+The 252,859 decision samples occupy **118,155,571 bytes** as compressed NPZ shards.
+An actual `tar.gz` is **112,497,347 bytes** (112.5 MB), above the 10 MB budget.
+Data, prepared arrays and `.pt` checkpoints stay outside Git. They regenerate from
+the versioned Code AI, env, recipe, seed and dependency lock; no download is needed.
+
+Git contains the generator, training/export code, reference checksums, results,
+TensorBoard events, and **one deployment ONNX**:
+
+- `models/nn-policy/policy-mlp-256-v1.onnx`: **552,407 bytes**, 137,729 parameters.
+- Best checkpoint: epoch **5**, selected by validation cross-entropy.
+- Test action agreement: **89.36%**. Against Code AI: **462/1,000** wins.
+- SHA-256: `5b98061d4188c116080eb6784c6378536a89e0b3c1db333df88217379e4dde13`.
+
+Reproduction does not overwrite the committed web model. Publish a deliberately
+selected rerun with:
+
+```sh
+.venv/bin/python training/publish.py --root artifacts/nn-policy-256 --model 256
 node scripts/check.cjs
 .venv/bin/python -m unittest discover -s tests -p 'test_*.py'
 ```
 
-To train explicit hidden layers without replacing the legacy 256/128 or 512/256 results:
+The five-size experiment remains in Git tag `nn-policy-experiments-20261024`.
+Its metrics and curves remain in `docs/experiments/nn-policy-v1/`; non-selected
+ONNX files are removed from the current deployment directory.
+
+## TensorBoard and browser
 
 ```sh
-.venv/bin/python training/train.py --hidden 256 512 --epochs 10
-.venv/bin/python training/parity.py
-.venv/bin/python training/evaluate.py --models 256x512 --games 1000
-.venv/bin/python training/publish.py --model 256x512
-```
-
-`--hidden FIRST SECOND` selects both layers independently. Its model ID is
-`FIRSTxSECOND` (for example, `256x512`); legacy `--widths W` keeps `W → W/2` and
-its original file names. TensorBoard runs and reports use the complete architecture
-so 256/128 and 256/512 cannot overwrite one another.
-
-Training saves a checkpoint at the lowest validation loss. The held-out test split
-is evaluated only after checkpoint selection. Re-running an existing width appends
-events to that width's TensorBoard folder; use a fresh `--root` for a clean rerun.
-
-## Browser and TensorBoard
-
-```sh
+.venv/bin/tensorboard --logdir artifacts/nn-policy-256/tensorboard --port 6006 --host 127.0.0.1
 .venv/bin/python -m http.server 59140 --bind 127.0.0.1
-.venv/bin/tensorboard --logdir artifacts/nn-policy/tensorboard --port 6006 --host 127.0.0.1
 ```
 
 Open `http://localhost:59140/`, then **Settings → Preferences → Opponent → NN AI**.
-The default remains Code AI. The choice is saved locally. NN inference runs in a
-Web Worker; changing games or closing a panel discards stale decisions.
+Code AI remains the default. Inference runs in a Web Worker, with a Code AI fallback.
+The model is 0.55 MB; the separately cached, vendored WASM runtime is about 14 MB.
 
-Open `http://localhost:59140/training/profile.html` and click **Run profile** after
-training has stopped. Save the JSON shown at the bottom as
-`artifacts/nn-policy/browser-profile.json`, then run:
+After training stops, open `http://localhost:59140/training/profile.html` and click
+**Run profile**. For a different artifact folder, append `?run=nn-policy-256-rerun`.
+The harness checks parity and measures 56, 220 and 512 candidates. The last is a
+synthetic stress test; the dataset maximum was 227. Timings exclude downloads,
+feature extraction and the game's 400 ms thinking delay. Physical phone latency
+has not been measured.
 
-```sh
-.venv/bin/python training/report.py
-```
-
-The browser harness checks Torch/ONNX action parity and measures 56, 220 and 512
-legal candidates with WASM, one thread, three warm-up runs and 100 timed runs.
-Those timings measure inference, not the game's deliberate 400 ms thinking pause
-or the cold network download. Test real phones before claiming mobile latency.
-
-The runtime is vendored, so gameplay needs no CDN. To refresh the pinned runtime:
-
-```sh
-pnpm install --frozen-lockfile
-pnpm run vendor:nn
-```
-
-## Files
-
-- `artifacts/nn-policy/data/`: 100 compressed shards, both AI seats, 10,000 games.
-- `artifacts/nn-policy/prepared/`: disposable memory-mapped training cache.
-- `artifacts/nn-policy/models/`: PyTorch checkpoints, ONNX models, epoch histories.
-- `artifacts/nn-policy/tensorboard/`: train/val/test event files.
-- `models/nn-policy/`: deployed model and checksum/version manifest.
-- `docs/experiments/nn-policy-v1/`: checked-in metrics, curves and TensorBoard events.
-
-Raw rollouts, prepared arrays and checkpoints stay outside Git. They can be
-regenerated from the seed; the independently saved experiment folder also retains
-the actual collected shards and checkpoints.
+Earlier runs can be viewed with `?run=nn-policy`. Raw TensorBoard events are also
+versioned under `docs/experiments/nn-policy-v1/tensorboard/`.

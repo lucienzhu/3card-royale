@@ -1,6 +1,10 @@
 # NN Policy v1 · 2026-10-24
 
-Experimental branch: `codex/nn-policy-ai`. Game rules remain 1.0.0.
+Experiment snapshot: Git tag `nn-policy-experiments-20261024`. Game rules remain 1.0.0.
+The selected web model is **256/128**. Reproduce it with `training/reproduce.py`;
+the comparisons below preserve all five historical experiments.
+Full rerun evidence: [reproduction-256.json](reproduction-256.json). All 100 data
+shards and the exported 256/128 ONNX match the references byte-for-byte.
 Source base: `947d5f2e61ffa5d74b10d6ac87b5bc7567088fbc`.
 
 ## Dataset
@@ -72,7 +76,7 @@ checks cover 55,584 values. See `tests/nn-policy.cjs` and `training/parity.py`.
 
 Settings → Preferences offers **Code AI** and **NN AI**. Code AI uses the same
 visible-information SDK policy used to generate samples. NN AI currently uses
-the 256/512 hidden-layer model. Unsupported older rules keep their original policy.
+the 256/128 hidden-layer model. Unsupported older rules keep their original policy.
 
 Models and runtime are hosted as static files from the same origin. Inference
 runs in a Web Worker. On load failure, timeout or invalid logits, the game falls
@@ -85,8 +89,8 @@ NN selection therefore downloads more than the model size alone.
 
 See [reproduction instructions](../../../training/README.md). The independent
 local experiment folder retains raw data and checkpoints; Git contains the
-pipeline, deployed weights, metrics, curves and TensorBoard events. Main is not
-merged by this experiment.
+pipeline, the selected deployment weights, metrics, curves and TensorBoard events.
+Raw data is 118.2 MB; tar.gz is 112.5 MB, so data is regenerated from fixed seeds.
 
 ## Comparison
 
@@ -104,8 +108,9 @@ All five models use the same collected data, splits, optimizer, seed and ten-epo
 schedule. Checkpoints are selected by validation loss. See RESULTS.md for the
 updated action agreement, game outcomes and same-session browser timings. Small
 win-rate differences in 1,000 games do not establish a strength improvement.
-The selected model is 256/512; earlier weights remain available for comparison.
-It won 465/1,000 evaluation games versus 462/1,000 for 256/128 and 450/1,000 for
+The 256/512 experiment won 465/1,000 evaluation games versus 462/1,000 for 256/128 and 450/1,000 for
 512/256. Test action agreement is 89.28%, with a 948,695-byte ONNX file. Both
 browser timing runs are retained in this folder because their timings varied;
 RESULTS.md documents the repeat run and the first run's slower measurements.
+Production selects the smaller 256/128 model (552,407 bytes). The alternative
+weights remain in the experiment tag rather than the deployment directory.

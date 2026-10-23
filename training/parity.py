@@ -1,4 +1,5 @@
 """Export independently checked Torch/ONNX logits for browser verification."""
+import argparse
 import json
 from pathlib import Path
 import numpy as np
@@ -6,8 +7,10 @@ import onnxruntime as ort
 import torch
 from train import PolicyMLP
 
-root=Path('artifacts/nn-policy'); fixtures=json.loads(Path('tests/fixtures/nn-observations.json').read_text())
+p=argparse.ArgumentParser();p.add_argument('--root',default='artifacts/nn-policy')
+root=Path(p.parse_args().root); fixtures=json.loads(Path('tests/fixtures/nn-observations.json').read_text())
 models=sorted((root/'models').glob('*.pt'));torch.set_num_threads(1)
+if not models:raise SystemExit('No trained checkpoints found')
 for fixture in fixtures:
     fixture['logits']={}
 for path in models:

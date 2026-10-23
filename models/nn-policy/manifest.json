@@ -1,15 +1,15 @@
 {
-  "version": "bc-10000-mlp256x512-v1",
+  "version": "bc-10000-mlp256-v1",
   "rules": "1.0.0",
   "features": "gym-v1",
   "episode": "game",
-  "file": "policy-mlp-256x512-v1.onnx",
-  "sha256": "8e08cd9bea3c2f43cd72094e62504c7f6799649fa6eb31e1a60bbc964c6ce135",
-  "bytes": 948695,
-  "architecture": "obs336 + candidate72 -> MLP 256/512 -> logit",
+  "file": "policy-mlp-256-v1.onnx",
+  "sha256": "5b98061d4188c116080eb6784c6378536a89e0b3c1db333df88217379e4dde13",
+  "bytes": 552407,
+  "architecture": "obs336 + candidate72 -> MLP 256/128 -> logit",
   "hidden": [
     256,
-    512
+    128
   ],
   "teacher": "sdk-code-policy-v0.2.0",
   "training_games": 10000,

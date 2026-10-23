@@ -10,12 +10,15 @@ document.getElementById('run').onclick=async()=>{
  const button=document.getElementById('run'),status=document.getElementById('status');button.disabled=true;status.textContent='Preparing';document.querySelector('tbody').replaceChildren();document.getElementById('deployed').textContent='';document.getElementById('report').textContent='';
  const output={userAgent:navigator.userAgent,hardwareConcurrency:navigator.hardwareConcurrency,backend:'wasm',threads:1,results:[]};
  try{
-  const fixtures=await(await fetch('../artifacts/nn-policy/parity.json')).json();
-  const report=await(await fetch('../artifacts/nn-policy/training.json')).json();
+  const run=new URLSearchParams(location.search).get('run')||'nn-policy-256';
+  if(!/^[a-zA-Z0-9_-]+$/.test(run))throw Error('Invalid run folder');
+  const root='../artifacts/'+run+'/';
+  const fixtures=await(await fetch(root+'parity.json')).json();
+  const report=await(await fetch(root+'training.json')).json();
   for(const model of report.models){
    const id=String(model.id??model.width),hidden=model.hidden??[model.width,model.width/2],label=hidden.join(' → ');
    status.textContent='Loading MLP '+label;
-   const t0=performance.now();const session=await ort.InferenceSession.create('../artifacts/nn-policy/models/mlp-'+id+'.onnx',{executionProviders:['wasm']});
+   const t0=performance.now();const session=await ort.InferenceSession.create(root+'models/mlp-'+id+'.onnx',{executionProviders:['wasm']});
    const loadMs=performance.now()-t0;
    let error=0,matches=0;
    for(const f of fixtures){

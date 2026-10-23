@@ -1,0 +1,69 @@
+{
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+  "hardwareConcurrency": 8,
+  "backend": "wasm",
+  "threads": 1,
+  "results": [
+    {
+      "id": "256",
+      "hidden": [
+        256,
+        128
+      ],
+      "width": 256,
+      "bytes": 552407,
+      "candidates": 56,
+      "p50_ms": 0.20000004768371582,
+      "p95_ms": 0.30000007152557373,
+      "mean_ms": 0.2,
+      "load_ms": 314.7000000476837,
+      "max_error": 0.0001220703125,
+      "argmax_matches": 12,
+      "parity_cases": 12
+    },
+    {
+      "id": "256",
+      "hidden": [
+        256,
+        128
+      ],
+      "width": 256,
+      "bytes": 552407,
+      "candidates": 220,
+      "p50_ms": 0.6000000238418579,
+      "p95_ms": 0.7000000476837158,
+      "mean_ms": 0.6389999997615814,
+      "load_ms": 314.7000000476837,
+      "max_error": 0.0001220703125,
+      "argmax_matches": 12,
+      "parity_cases": 12
+    },
+    {
+      "id": "256",
+      "hidden": [
+        256,
+        128
+      ],
+      "width": 256,
+      "bytes": 552407,
+      "candidates": 512,
+      "p50_ms": 1.399999976158142,
+      "p95_ms": 1.5,
+      "mean_ms": 1.4310000002384187,
+      "load_ms": 314.7000000476837,
+      "max_error": 0.0001220703125,
+      "argmax_matches": 12,
+      "parity_cases": 12
+    }
+  ],
+  "deployed": {
+    "version": "bc-10000-mlp256-v1",
+    "hidden": [
+      256,
+      128
+    ],
+    "model": "256",
+    "matches": 12,
+    "cases": 12
+  }
+}

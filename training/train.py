@@ -103,10 +103,11 @@ def export(model, path):
 def main():
     p = argparse.ArgumentParser(); p.add_argument("--root", default="artifacts/nn-policy")
     sizes = p.add_mutually_exclusive_group()
-    sizes.add_argument("--widths", default="64,128,256", help="Legacy W, W/2 models")
+    sizes.add_argument("--widths", default="256", help="Legacy W, W/2 models")
     sizes.add_argument("--hidden", type=int, nargs=2, metavar=("FIRST", "SECOND"), help="Explicit hidden layer sizes")
     p.add_argument("--epochs", type=int, default=10)
     p.add_argument("--batch-size", type=int, default=128); p.add_argument("--threads", type=int, default=4)
+    p.add_argument("--seed", type=int, default=20261024)
     args = p.parse_args(); torch.set_num_threads(args.threads); root = Path(args.root)
     architectures = [tuple(args.hidden)] if args.hidden else [(w, w//2) for w in map(int, args.widths.split(','))]
     if any(min(h) < 1 for h in architectures):
@@ -120,7 +121,7 @@ def main():
     summary["split_samples"] = {"train": len(train), "val": len(val), "test": len(test)}
     for width, second in architectures:
         model_id = str(width) if second == width//2 else f'{width}x{second}'
-        torch.manual_seed(20261024); rng = np.random.default_rng(20261024)
+        torch.manual_seed(args.seed); rng = np.random.default_rng(args.seed)
         model = PolicyMLP(width, second); optimizer = torch.optim.AdamW(model.parameters(), lr=0.001, weight_decay=0.0001)
         writer = SummaryWriter(str(root / "tensorboard" / f"mlp-{model_id}"))
         writer.add_text("architecture", f"Single observation + candidate → MLP {width}/{second} → action logit")

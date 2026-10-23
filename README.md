@@ -88,11 +88,14 @@ Choose Share PNG after a game or match to preview and save a PNG. On supported d
 
 Swap opportunities may now be skipped one at a time: skipping the first of two still leaves the second available, without drawing, discarding or changing wounds. The live table, guide and all four language cores agree. Game-story entries have clear spacing, and single-game PNGs place the logo and name in the top-right corner.
 
-## Experimental NN opponent
+## NN opponent
 
-This branch adds **Code AI / NN AI** in Settings → Preferences. NN AI is a
+Choose **Code AI / NN AI** in Settings → Preferences. NN AI is a
 single-observation MLP trained with PyTorch from 10,000 Code-AI games, exported
-to ONNX and run locally in a Web Worker. The selected model has 256/512 hidden layers;
+to ONNX and run locally in a Web Worker. The selected 0.55 MB model has 256/128 hidden layers;
 the separately cached WASM runtime is about 14 MB. Code AI remains the default.
 
 [Training and reproduction](training/README.md) · [Metrics, curves and TensorBoard](docs/experiments/nn-policy-v1/README.md)
+
+Run `python training/reproduce.py` after installing the pinned training dependencies
+to regenerate data and train the 256 model. Large rollout files are not tracked.

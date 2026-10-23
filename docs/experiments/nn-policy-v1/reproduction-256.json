@@ -1,0 +1,100 @@
+{
+  "recipe": {
+    "version": "nn-policy-256-v1",
+    "python": "3.12.14",
+    "rules": "1.0.0",
+    "features": "gym-v1",
+    "teacher": "sdk-code-policy-v0.2.0",
+    "collection": {
+      "games": 10000,
+      "seed": 20261024,
+      "shard_games": 100,
+      "workers": 6
+    },
+    "training": {
+      "hidden": [
+        256,
+        128
+      ],
+      "seed": 20261024,
+      "epochs": 10,
+      "batch_size": 128,
+      "threads": 4
+    },
+    "selection": "lowest validation cross-entropy; test split used only after selection",
+    "evaluation_games": 1000,
+    "reference_dataset": "docs/experiments/nn-policy-v1/dataset.json",
+    "reference_model": "models/nn-policy/policy-mlp-256-v1.onnx",
+    "reference_sha256": "5b98061d4188c116080eb6784c6378536a89e0b3c1db333df88217379e4dde13"
+  },
+  "dataset": {
+    "games": 10000,
+    "samples": 252859,
+    "verified_shards": 100,
+    "reference_sha256": "479a48f544c9e609924fff41f9b9d344306b63bc44c2f6a57274e988600fcdf1"
+  },
+  "environment": {
+    "python": "3.12.14",
+    "system": "Darwin",
+    "machine": "arm64",
+    "numpy": "2.5.4",
+    "torch": "2.14.1",
+    "onnx": "1.23.2",
+    "onnxruntime": "1.31.0"
+  },
+  "model": {
+    "bytes": 552407,
+    "sha256": "5b98061d4188c116080eb6784c6378536a89e0b3c1db333df88217379e4dde13",
+    "matches_reference": true
+  },
+  "training": {
+    "models": [
+      {
+        "id": "256",
+        "width": 256,
+        "hidden": [
+          256,
+          128
+        ],
+        "params": 137729,
+        "bytes": 552407,
+        "best_epoch": 5,
+        "val_loss": 0.34124531416711446,
+        "test": {
+          "loss": 0.3211147716505368,
+          "accuracy": 0.8936444652908068,
+          "accuracy_attack": 0.9748293080607358,
+          "accuracy_defend": 0.7802914501171915,
+          "accuracy_swap": 0.94662638469285
+        }
+      }
+    ],
+    "split_samples": {
+      "train": 202325,
+      "val": 24950,
+      "test": 25584
+    }
+  },
+  "evaluation": [
+    {
+      "model": "mlp-256.onnx",
+      "games": 1000,
+      "completed": 1000,
+      "wins": 462,
+      "win_rate": 0.462,
+      "wilson95": [
+        0.4313035714780835,
+        0.4929872728144823
+      ],
+      "seat_wins": [
+        239,
+        223
+      ],
+      "truncated": 0,
+      "nn_decisions": 12224,
+      "onnx_cpu_p50_ms": 0.09970803512260318,
+      "onnx_cpu_p95_ms": 0.2904516877606511,
+      "seconds": 29.854131915955804
+    }
+  ]
+}
