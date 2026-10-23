@@ -20,13 +20,15 @@
 :root body #share-card-dialog .sz-share-preview img{display:block;width:100%;height:100%;max-height:100%;max-width:100%;min-height:0;object-fit:contain;user-select:auto;-webkit-touch-callout:default;cursor:zoom-in}
 :root body #share-card-dialog .sz-share-preview[data-zoomed=true]{display:block;overflow:auto;overscroll-behavior:contain}
 :root body #share-card-dialog .sz-share-preview[data-zoomed=true] img{height:auto;max-height:none;cursor:zoom-out}
+:root body #share-card-dialog .sz-share-preview[data-long=true]{display:block;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin}
+:root body #share-card-dialog .sz-share-preview[data-long=true] img{height:auto;max-height:none;cursor:default}
 .sz-share-note,.sz-share-status{font-size:12px;line-height:1.5;color:var(--muted);margin:0}
 .sz-share-note{text-align:center;font-size:11px}
 .sz-share-actions{display:flex;gap:8px;align-items:center}
 .sz-share-actions>*{box-sizing:border-box;flex:1;min-width:0;min-height:44px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:inherit;font-size:13px;font-weight:600;line-height:1.4;text-decoration:none;color:var(--ink);background:transparent}
 .sz-share-actions .primary{color:var(--sz-logo-paper);background:var(--sz-flower-deep);border-color:var(--sz-flower-deep)}
 #share-card-dialog [hidden]{display:none!important}
-#share-card-dialog :is(button,a,img):focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+#share-card-dialog :is(button,a,img,.sz-share-preview):focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 :root body #share-card-dialog[data-match=true] .sz-share-body{grid-template-rows:0 minmax(0,1fr) 16px auto 36px}
 @media(max-width:700px){
  :root body #share-card-dialog{inset:var(--app-top,0px) 0 auto;margin:0;width:100%;height:var(--app-height,100dvh);max-height:var(--app-height,100dvh);border-radius:0;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
