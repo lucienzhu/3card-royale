@@ -1,0 +1,273 @@
+{
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+  "hardwareConcurrency": 8,
+  "backend": "wasm",
+  "threads": 1,
+  "results": [
+    {
+      "id": "64",
+      "hidden": [
+        64,
+        32
+      ],
+      "width": 64,
+      "bytes": 114638,
+      "candidates": 56,
+      "p50_ms": 0.09999990463256836,
+      "p95_ms": 0.10000002384185791,
+      "mean_ms": 0.06800000071525573,
+      "load_ms": 267.89999997615814,
+      "max_error": 0.0001220703125,
+      "argmax_matches": 12,
+      "parity_cases": 12
+    },
+    {
+      "id": "64",
+      "hidden": [
+        64,
+        32
+      ],
+      "width": 64,
+      "bytes": 114638,
+      "candidates": 220,
+      "p50_ms": 0.10000002384185791,
+      "p95_ms": 0.20000004768371582,
+      "mean_ms": 0.13699999928474427,
+      "load_ms": 267.89999997615814,
+      "max_error": 0.0001220703125,
+      "argmax_matches": 12,
+      "parity_cases": 12
+    },
+    {
+      "id": "64",
+      "hidden": [
+        64,
+        32
+      ],
+      "width": 64,
+      "bytes": 114638,
+      "candidates": 512,
+      "p50_ms": 0.2999999523162842,
+      "p95_ms": 0.3999999761581421,
+      "mean_ms": 0.26300000071525576,
+      "load_ms": 267.89999997615814,
+      "max_error": 0.0001220703125,
+      "argmax_matches": 12,
+      "parity_cases": 12
+    },
+    {
+      "id": "128",
+      "hidden": [
+        128,
+        64
+      ],
+      "width": 128,
+      "bytes": 244180,
+      "candidates": 56,
+      "p50_ms": 0.30000007152557373,
+      "p95_ms": 0.6999999284744263,
+      "mean_ms": 0.4039999997615814,
+      "load_ms": 13.399999976158142,
+      "max_error": 0.000152587890625,
+      "argmax_matches": 12,
+      "parity_cases": 12
+    },
+    {
+      "id": "128",
+      "hidden": [
+        128,
+        64
+      ],
+      "width": 128,
+      "bytes": 244180,
+      "candidates": 220,
+      "p50_ms": 1.0999999046325684,
+      "p95_ms": 6.599999904632568,
+      "mean_ms": 3.027999999523163,
+      "load_ms": 13.399999976158142,
+      "max_error": 0.000152587890625,
+      "argmax_matches": 12,
+      "parity_cases": 12
+    },
+    {
+      "id": "128",
+      "hidden": [
+        128,
+        64
+      ],
+      "width": 128,
+      "bytes": 244180,
+      "candidates": 512,
+      "p50_ms": 3.5,
+      "p95_ms": 4.399999976158142,
+      "mean_ms": 3.412000000476837,
+      "load_ms": 13.399999976158142,
+      "max_error": 0.000152587890625,
+      "argmax_matches": 12,
+      "parity_cases": 12
+    },
+    {
+      "id": "256",
+      "hidden": [
+        256,
+        128
+      ],
+      "width": 256,
+      "bytes": 552407,
+      "candidates": 56,
+      "p50_ms": 0.8000000715255737,
+      "p95_ms": 1.5,
+      "mean_ms": 0.9939999997615814,
+      "load_ms": 24,
+      "max_error": 0.0001220703125,
+      "argmax_matches": 12,
+      "parity_cases": 12
+    },
+    {
+      "id": "256",
+      "hidden": [
+        256,
+        128
+      ],
+      "width": 256,
+      "bytes": 552407,
+      "candidates": 220,
+      "p50_ms": 3.200000047683716,
+      "p95_ms": 5.299999952316284,
+      "mean_ms": 3.5060000002384184,
+      "load_ms": 24,
+      "max_error": 0.0001220703125,
+      "argmax_matches": 12,
+      "parity_cases": 12
+    },
+    {
+      "id": "256",
+      "hidden": [
+        256,
+        128
+      ],
+      "width": 256,
+      "bytes": 552407,
+      "candidates": 512,
+      "p50_ms": 7.199999928474426,
+      "p95_ms": 11.600000023841858,
+      "mean_ms": 7.935,
+      "load_ms": 24,
+      "max_error": 0.0001220703125,
+      "argmax_matches": 12,
+      "parity_cases": 12
+    },
+    {
+      "id": "256x512",
+      "hidden": [
+        256,
+        512
+      ],
+      "width": 256,
+      "bytes": 948695,
+      "candidates": 56,
+      "p50_ms": 2.100000023841858,
+      "p95_ms": 3.700000047683716,
+      "mean_ms": 2.4239999997615813,
+      "load_ms": 22.5,
+      "max_error": 0.0001220703125,
+      "argmax_matches": 12,
+      "parity_cases": 12
+    },
+    {
+      "id": "256x512",
+      "hidden": [
+        256,
+        512
+      ],
+      "width": 256,
+      "bytes": 948695,
+      "candidates": 220,
+      "p50_ms": 7.700000047683716,
+      "p95_ms": 12.399999976158142,
+      "mean_ms": 8.312000000476838,
+      "load_ms": 22.5,
+      "max_error": 0.0001220703125,
+      "argmax_matches": 12,
+      "parity_cases": 12
+    },
+    {
+      "id": "256x512",
+      "hidden": [
+        256,
+        512
+      ],
+      "width": 256,
+      "bytes": 948695,
+      "candidates": 512,
+      "p50_ms": 16.899999976158142,
+      "p95_ms": 29.100000023841858,
+      "mean_ms": 14.444999998807907,
+      "load_ms": 22.5,
+      "max_error": 0.0001220703125,
+      "argmax_matches": 12,
+      "parity_cases": 12
+    },
+    {
+      "id": "512",
+      "hidden": [
+        512,
+        256
+      ],
+      "width": 512,
+      "bytes": 1365463,
+      "candidates": 56,
+      "p50_ms": 2.600000023841858,
+      "p95_ms": 4.100000023841858,
+      "mean_ms": 2.827000000476837,
+      "load_ms": 13.200000047683716,
+      "max_error": 0.000152587890625,
+      "argmax_matches": 12,
+      "parity_cases": 12
+    },
+    {
+      "id": "512",
+      "hidden": [
+        512,
+        256
+      ],
+      "width": 512,
+      "bytes": 1365463,
+      "candidates": 220,
+      "p50_ms": 10.5,
+      "p95_ms": 15.700000047683716,
+      "mean_ms": 11.052999999523163,
+      "load_ms": 13.200000047683716,
+      "max_error": 0.000152587890625,
+      "argmax_matches": 12,
+      "parity_cases": 12
+    },
+    {
+      "id": "512",
+      "hidden": [
+        512,
+        256
+      ],
+      "width": 512,
+      "bytes": 1365463,
+      "candidates": 512,
+      "p50_ms": 19.799999952316284,
+      "p95_ms": 28.299999952316284,
+      "mean_ms": 21.45100000023842,
+      "load_ms": 13.200000047683716,
+      "max_error": 0.000152587890625,
+      "argmax_matches": 12,
+      "parity_cases": 12
+    }
+  ],
+  "deployed": {
+    "version": "bc-10000-mlp256x512-v1",
+    "hidden": [
+      256,
+      512
+    ],
+    "model": "256x512",
+    "matches": 12,
+    "cases": 12
+  }
+}

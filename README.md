@@ -31,7 +31,7 @@ At five wounds you lose the game. The winner levels up by the complete final dam
 
 ## Run locally
 
-No build step or runtime dependencies. Serve the repository with any static HTTP server. For example:
+No build step is needed. The optional NN AI runtime is already vendored. Serve the repository with any static HTTP server. For example:
 
 ```sh
 python3 -m http.server 8000 --bind 127.0.0.1
@@ -87,3 +87,15 @@ A single-game win stays in a compact result panel. The final match result fills 
 Choose Share PNG after a game or match to preview and save a PNG. On supported devices, the preview can open the system share sheet with the PNG alone and no caption; devices that cannot share images share the game link instead. To send it to a WeChat friend, choose Copy image and paste it into the chat: on iPhone the share sheet hands WeChat a file, and WeChat’s Send to Friend never opens the friend list for it. After a game, Review & share offers three PNGs: Game recap includes every recorded combat in chronological order as a scrolling long PNG; Final hand shows the last plays and public wound racks with the final wound gap; Best play can select the biggest hit or highest-scoring hand. Each recap combat is one row with attack on the left and defense on the right; flower marks identify the players. Final hand and Best play keep the gold-flower rival above the red-flower player, with larger cards emphasizing the highlight. Final hand, Best play and match posters are 1080×1440; the full recap grows with the record. Switch previews before saving, copying or sharing. All three, four or five physical played cards are shown, with wound origins and flower substitutions marked. A match card celebrates the full bloom. The image is made locally from the public result; creating or saving it never changes play or uploads a file.
 
 Swap opportunities may now be skipped one at a time: skipping the first of two still leaves the second available, without drawing, discarding or changing wounds. The live table, guide and all four language cores agree. Game-story entries have clear spacing, and single-game PNGs place the logo and name in the top-right corner.
+
+## NN opponent
+
+Choose **Code AI / NN AI** in Settings → Preferences. NN AI is a
+single-observation MLP trained with PyTorch from 10,000 Code-AI games, exported
+to ONNX and run locally in a Web Worker. The selected 0.55 MB model has 256/128 hidden layers;
+the separately cached WASM runtime is about 14 MB. Code AI remains the default.
+
+[Training and reproduction](training/README.md) · [Metrics, curves and TensorBoard](docs/experiments/nn-policy-v1/README.md)
+
+Run `python training/reproduce.py` after installing the pinned training dependencies
+to regenerate data and train the 256 model. Large rollout files are not tracked.

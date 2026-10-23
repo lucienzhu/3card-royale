@@ -1,5 +1,9 @@
+(function(root, factory) {
+  if (typeof module === "object" && module.exports) module.exports = factory(require("./index.js"));
+  else root.RoyaleCodePolicy = factory(root.ThreeCardRoyale);
+})(typeof globalThis !== "undefined" ? globalThis : this, function(SDK) {
 "use strict";
-const { evaluate, outcome } = require("./index.js");
+const { evaluate, outcome } = SDK;
 const rank = (c) => (c % 13) + 2,
   wild = (c, l) => Math.floor(c / 13) === 1 && rank(c) === l;
 function compare(a, b) {
@@ -51,4 +55,5 @@ function chooseAction(o, actions = o.legal_actions) {
   }
   return best;
 }
-module.exports = { chooseAction };
+return { chooseAction };
+});

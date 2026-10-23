@@ -1,0 +1,14 @@
+{
+  "version": "nn-policy-256-v1",
+  "python": "3.12.14",
+  "rules": "1.0.0",
+  "features": "gym-v1",
+  "teacher": "sdk-code-policy-v0.2.0",
+  "collection": {"games": 10000, "seed": 20261024, "shard_games": 100, "workers": 6},
+  "training": {"hidden": [256, 128], "seed": 20261024, "epochs": 10, "batch_size": 128, "threads": 4},
+  "selection": "lowest validation cross-entropy; test split used only after selection",
+  "evaluation_games": 1000,
+  "reference_dataset": "docs/experiments/nn-policy-v1/dataset.json",
+  "reference_model": "models/nn-policy/policy-mlp-256-v1.onnx",
+  "reference_sha256": "5b98061d4188c116080eb6784c6378536a89e0b3c1db333df88217379e4dde13"
+}

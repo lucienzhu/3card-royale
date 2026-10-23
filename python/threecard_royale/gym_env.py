@@ -13,6 +13,109 @@ from .policy import choose_action
 MAX_ACTIONS, ACTION_DIM = 512, 72
 
 
+def encode_observation(o, episode="game"):
+    """Public-only, single-decision tensor encoding shared by training/inference."""
+    player = o["player"]
+    cards = np.zeros((6, 52), np.int8)
+    groups = [
+        o["hand"],
+        o["wounds"],
+        o["enemy_wounds"],
+        o["discard"],
+        o["active"][player]["cards"] if o["active"][player] else [],
+        (
+            o["active"][1 - player]["cards"]
+            if o["active"][1 - player]
+            else []
+        ),
+    ]
+    for i, cs in enumerate(groups):
+        for c in cs:
+            if c is not None:
+                cards[i, c] = 1
+    meta = np.zeros(24, np.float32)
+    meta[PHASES.index(o["phase"])] = 1
+    meta[6:] = [
+        o["levels"][0] / 14,
+        o["levels"][1] / 14,
+        o["flower_level"] / 14,
+        min(len(o["wounds"]), 10) / 10,
+        min(len(o["enemy_wounds"]), 10) / 10,
+        o["enemy_hand_count"] / 8,
+        o["deck_count"] / 52,
+        len(o["discard"]) / 52,
+        o["a_losses"][0] / 3,
+        o["a_losses"][1] / 3,
+        int(o["first"] == player),
+        int(o["attacker"] == player),
+        o["battle_index"],
+        (o["pending"]["remaining"] if o["pending"] else 0) / 7,
+        int(o["actor"] == player),
+        min(o["round"], 1024) / 1024,
+        min(o["game"], 1024) / 1024,
+        int(episode == "match"),
+    ]
+    actions = o["legal_actions"]
+    assert len(actions) <= MAX_ACTIONS
+    candidates = np.zeros((MAX_ACTIONS, ACTION_DIM), np.float32)
+    mask = np.zeros(MAX_ACTIONS, np.int8)
+    for i, a in enumerate(actions):
+        mask[i] = 1
+        f = candidates[i]
+        f[
+            52
+            + ["play", "swap", "stop_swaps", "advance", "next_game"].index(
+                "stop_swaps" if a["type"] == "skip_swap" else a["type"]
+            )
+        ] = 1
+        if a["type"] == "skip_swap":
+            # Decline-kind bit plus one-opportunity flag; stop_swaps leaves it 0.
+            f[59] = 1
+        if a["type"] == "play":
+            for c in a["cards"]:
+                f[c] = 1
+            from .core import evaluate
+
+            e = evaluate(a["cards"], o["flower_level"])
+            f[67] = e["score"] / 7
+            f[68] = e["kind"] / 7
+            f[69] = e["rank_key"][0] / 14
+            f[70] = len(a["cards"]) / 5
+            f[71] = float(o["flower_level"] == 14 and o["level_owner"] == player)
+        if a["type"] == "swap":
+            src = a["source"]
+            c = o[src["zone"]][src["index"]]
+            f[c] = 1
+            f[57 + int(src["zone"] == "wounds")] = 1
+            f[59] = src["index"] / 11
+            t = a["target"]
+            f[
+                (
+                    60
+                    if t["zone"] == "deck"
+                    else (
+                        61
+                        if t["zone"] == "blind"
+                        else 62 if t["who"] == player else 63
+                    )
+                )
+            ] = 1
+            if t["zone"] not in ("deck", "blind"):
+                take = (
+                    o[t["zone"]][t["index"]]
+                    if t["who"] == player
+                    else o["enemy_wounds"][t["index"]]
+                )
+                f[64] = (take % 13 + 2) / 14
+                f[65] = (take // 13) / 3
+                f[66] = take / 51
+    return {
+        "cards": cards,
+        "meta": meta,
+        "candidates": candidates,
+        "action_mask": mask,
+    }
+
 class RoyaleEnv(gym.Env):
     metadata = {"render_modes": ["ansi"], "render_fps": 1}
 
@@ -72,105 +175,8 @@ class RoyaleEnv(gym.Env):
 
     def _obs(self):
         o = self.game.observation(self.player)
-        cards = np.zeros((6, 52), np.int8)
-        groups = [
-            o["hand"],
-            o["wounds"],
-            o["enemy_wounds"],
-            o["discard"],
-            o["active"][self.player]["cards"] if o["active"][self.player] else [],
-            (
-                o["active"][1 - self.player]["cards"]
-                if o["active"][1 - self.player]
-                else []
-            ),
-        ]
-        for i, cs in enumerate(groups):
-            for c in cs:
-                if c is not None:
-                    cards[i, c] = 1
-        meta = np.zeros(24, np.float32)
-        meta[PHASES.index(o["phase"])] = 1
-        meta[6:] = [
-            o["levels"][0] / 14,
-            o["levels"][1] / 14,
-            o["flower_level"] / 14,
-            min(len(o["wounds"]), 10) / 10,
-            min(len(o["enemy_wounds"]), 10) / 10,
-            o["enemy_hand_count"] / 8,
-            o["deck_count"] / 52,
-            len(o["discard"]) / 52,
-            o["a_losses"][0] / 3,
-            o["a_losses"][1] / 3,
-            int(o["first"] == self.player),
-            int(o["attacker"] == self.player),
-            o["battle_index"],
-            (o["pending"]["remaining"] if o["pending"] else 0) / 7,
-            int(o["actor"] == self.player),
-            min(o["round"], 1024) / 1024,
-            min(o["game"], 1024) / 1024,
-            int(self.episode == "match"),
-        ]
         self._actions = o["legal_actions"]
-        assert len(self._actions) <= MAX_ACTIONS
-        candidates = np.zeros((MAX_ACTIONS, ACTION_DIM), np.float32)
-        mask = np.zeros(MAX_ACTIONS, np.int8)
-        for i, a in enumerate(self._actions):
-            mask[i] = 1
-            f = candidates[i]
-            f[
-                52
-                + ["play", "swap", "stop_swaps", "advance", "next_game"].index(
-                    "stop_swaps" if a["type"] == "skip_swap" else a["type"]
-                )
-            ] = 1
-            if a["type"] == "skip_swap":
-                # Decline-kind bit plus one-opportunity flag; stop_swaps leaves it 0.
-                f[59] = 1
-            if a["type"] == "play":
-                for c in a["cards"]:
-                    f[c] = 1
-                from .core import evaluate
-
-                e = evaluate(a["cards"], o["flower_level"])
-                f[67] = e["score"] / 7
-                f[68] = e["kind"] / 7
-                f[69] = e["rank_key"][0] / 14
-                f[70] = len(a["cards"]) / 5
-                f[71] = float(o["flower_level"] == 14 and o["level_owner"] == self.player)
-            if a["type"] == "swap":
-                src = a["source"]
-                c = o[src["zone"]][src["index"]]
-                f[c] = 1
-                f[57 + int(src["zone"] == "wounds")] = 1
-                f[59] = src["index"] / 11
-                t = a["target"]
-                f[
-                    (
-                        60
-                        if t["zone"] == "deck"
-                        else (
-                            61
-                            if t["zone"] == "blind"
-                            else 62 if t["who"] == self.player else 63
-                        )
-                    )
-                ] = 1
-                if t["zone"] not in ("deck", "blind"):
-                    take = (
-                        o[t["zone"]][t["index"]]
-                        if t["who"] == self.player
-                        else o["enemy_wounds"][t["index"]]
-                    )
-                    f[64] = (take % 13 + 2) / 14
-                    f[65] = (take // 13) / 3
-                    f[66] = take / 51
-        return {
-            "cards": cards,
-            "meta": meta,
-            "candidates": candidates,
-            "action_mask": mask,
-        }
+        return encode_observation(o, self.episode)
 
     def _info(self, **extra):
         # All fields are public. No seed, RNG, stock order or hidden hand IDs.

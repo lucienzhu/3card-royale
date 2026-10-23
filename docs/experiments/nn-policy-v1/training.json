@@ -1,0 +1,84 @@
+{
+  "split_samples": {
+    "train": 202325,
+    "val": 24950,
+    "test": 25584
+  },
+  "models": [
+    {
+      "width": 64,
+      "params": 28289,
+      "bytes": 114638,
+      "best_epoch": 10,
+      "val_loss": 0.3709219088153036,
+      "test": {
+        "loss": 0.3461874281897852,
+        "accuracy": 0.8887976860537836,
+        "accuracy_attack": 0.9765617038622236,
+        "accuracy_defend": 0.7678589626006318,
+        "accuracy_swap": 0.9434373950990265
+      }
+    },
+    {
+      "width": 128,
+      "params": 60673,
+      "bytes": 244180,
+      "best_epoch": 10,
+      "val_loss": 0.34343371135199474,
+      "test": {
+        "loss": 0.32860031022251657,
+        "accuracy": 0.8934881175734835,
+        "accuracy_attack": 0.9822684194435952,
+        "accuracy_defend": 0.775094262712728,
+        "accuracy_swap": 0.942262504196039
+      }
+    },
+    {
+      "width": 256,
+      "params": 137729,
+      "bytes": 552407,
+      "best_epoch": 5,
+      "val_loss": 0.34124531416711446,
+      "test": {
+        "loss": 0.3211147716505368,
+        "accuracy": 0.8936444652908068,
+        "accuracy_attack": 0.9748293080607358,
+        "accuracy_defend": 0.7802914501171915,
+        "accuracy_swap": 0.94662638469285
+      }
+    },
+    {
+      "id": "256x512",
+      "width": 256,
+      "hidden": [
+        256,
+        512
+      ],
+      "params": 236801,
+      "bytes": 948695,
+      "best_epoch": 5,
+      "val_loss": 0.3375112453682389,
+      "test": {
+        "loss": 0.322728819832942,
+        "accuracy": 0.8927845528455285,
+        "accuracy_attack": 0.9730969122592479,
+        "accuracy_defend": 0.7815143177417712,
+        "accuracy_swap": 0.9437730782141658
+      }
+    },
+    {
+      "width": 512,
+      "params": 340993,
+      "bytes": 1365463,
+      "best_epoch": 5,
+      "val_loss": 0.33400590269742364,
+      "test": {
+        "loss": 0.3183421293148926,
+        "accuracy": 0.8957160725453408,
+        "accuracy_attack": 0.974217874248446,
+        "accuracy_defend": 0.7852848262508917,
+        "accuracy_swap": 0.9483048002685465
+      }
+    }
+  ]
+}

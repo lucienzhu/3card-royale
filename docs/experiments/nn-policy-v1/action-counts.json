@@ -1,0 +1,20 @@
+{
+  "attack": {
+    "decisions": 97593,
+    "candidate_p50": 84.0,
+    "candidate_p95": 220.0,
+    "candidate_max": 226
+  },
+  "defend": {
+    "decisions": 97593,
+    "candidate_p50": 56.0,
+    "candidate_p95": 220.0,
+    "candidate_max": 227
+  },
+  "swap": {
+    "decisions": 57673,
+    "candidate_p50": 44.0,
+    "candidate_p95": 110.0,
+    "candidate_max": 138
+  }
+}
