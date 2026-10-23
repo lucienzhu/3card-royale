@@ -41,6 +41,8 @@ UI copy leads with one current action or result. Remove repeated explanations an
 
 The [live component page](../design-system.html?lang=en) loads the production card styles, current flower and canonical mark, and renders all three share layouts with the production PNG renderer from a seeded real game. It replaces dated design-lab pages as the current reference.
 
+Gallery language and theme selectors share a 44px control, token-based surfaces, leading icons and a visible focus ring. Native selection keeps keyboard and mobile pickers available. Chapter 04 groups result conventions and share previews.
+
 - **Navigation and help:** Play, Hands, Rules, Settings share one spacing system; Replay is inside Settings. Rules, hand ranks, settings and replay use the same fixed-height shell: a right-side drawer on phones, a centered modal on desktop. Language switching belongs in the header.
 - **Swap choice:** each opportunity offers Swap or Skip this one. The selected source lifts; only valid destination zones carry one circle-⇄ marker. The source zone has no target marker.
 - **Single-game share:** Game recap, Final hand, Best play. All three use the canonical logo with its name at the upper right. Keep the logo and name together in both languages. Recap includes every combat, one row / two columns, with space after each result. Final hand and Best play reduce the middle outcome to one sentence; no extra equation, result badge or repeated level arrow.
