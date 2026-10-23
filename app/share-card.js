@@ -159,8 +159,8 @@ function gameSVG(d,assets){
  const qrSize=QR_ROWS.length+8,qrPath=QR_ROWS.flatMap((row,y)=>[...row.matchAll(/1+/g)].map(m=>`M${m.index+4} ${y+4}h${m[0].length}v1h-${m[0].length}z`)).join('');
  const mark=assets.flower.replace(/fill="#DEB04A"/g,'fill="#F2CD5D"').replace(/fill="#D83B74"/g,'fill="#C5416B"');
  const footer=height-HEIGHT;
- const brandWidth=en?236:128,brandX=1000-brandWidth-60;
- const brand=`<g data-share-brand="top-right"><rect x="${brandX}" y="69" width="40" height="52" rx="6" fill="url(#share-logo-gold)" stroke="#A17C35" stroke-width="1.8"/><svg x="${brandX+3}" y="74" width="34" height="42" viewBox="0 0 64 72">${mark}</svg>${text(1000,106,t('深圳花牌','3Card Royale'),30,p.ink,700,'end',brandWidth)}</g>`;
+ const brandWidth=en?190:128,brandX=1000-brandWidth-60;
+ const brand=`<g data-share-brand="top-right"><rect x="${brandX}" y="69" width="40" height="52" rx="6" fill="url(#share-logo-gold)" stroke="#A17C35" stroke-width="1.8"/><svg x="${brandX+3}" y="74" width="34" height="42" viewBox="0 0 64 72">${mark}</svg>${text(1000,106,t('深圳花牌','3Card Royale'),30,p.ink,700,'end')}</g>`;
  return `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="${height}" viewBox="0 0 1080 ${height}" role="img" aria-label="${escape(title)}" data-share-layout="${layout}"><defs><linearGradient id="share-logo-gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F7E8B5"/><stop offset=".45" stop-color="#ECCE80"/><stop offset=".58" stop-color="#F5E5AF"/><stop offset="1" stop-color="#C6A357"/></linearGradient></defs><style>text{font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Arial,sans-serif}</style><rect width="1080" height="${height}" fill="${p.paper}"/>`+
  identity(d.winner,80,112,28)+text(120,110,gameWho(d.winner)+t('赢下第 '+r.game+' 局',' won game '+r.game),28,p.muted,500,'start',490)+brand+body+
  `<g transform="translate(0 ${footer})">`+text(540,1242,rank(r.from)+' → '+rank(r.to)+' · '+r.rounds+t('轮',r.rounds===1?' round':' rounds'),27,p.muted,500,'middle')+
