@@ -1,6 +1,6 @@
 'use strict';
 // brand-mark.svg is the source for every public lockup and embedded PNG artwork.
-const fs=require('node:fs'),path=require('node:path'),root=path.resolve(__dirname,'..');
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),root=path.resolve(__dirname,'..');
 function sync(check=false){
  const read=p=>fs.readFileSync(path.join(root,p),'utf8'),mark=read('brand-mark.svg').trim();
  const stale=[];
@@ -8,6 +8,10 @@ function sync(check=false){
  const raw=read('app/bloom-assets.js'),match=raw.match(/window\.SZBloomAssets=(\{[\s\S]*\});/);
  if(!match)throw new Error('Missing bloom asset bundle');
  const assets=JSON.parse(match[1]);assets.brand=mark;
+ const ctx={window:{}};for(const file of ['theme-tokens.js','card-face.js','mark.js'])vm.runInNewContext(read('app/'+file),ctx);
+ const tokens=ctx.window.SZThemeTokens;assets.cardStyle={...tokens.card,goldCenter:tokens.brand.gold};
+ assets.cardSuits=[0,1,2,3].map(i=>ctx.window.SZSuit.svg(i));
+ assets.cardFlower=ctx.window.SZFlowerMark.replace(/var\(--sz-logo-petal,[^)]+\)/g,tokens.brand.red).replace(/var\(--sz-logo-center,[^)]+\)/g,tokens.brand.gold);
  update('app/bloom-assets.js',raw.replace(match[0],'window.SZBloomAssets='+JSON.stringify(assets)+';'));
  const html=read('index.html'),header=/<svg class="brand-symbol"[\s\S]*?<\/svg>/;
  if(!header.test(html))throw new Error('Missing header brand');

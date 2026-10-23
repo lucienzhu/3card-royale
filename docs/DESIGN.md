@@ -45,3 +45,5 @@ The [live component page](../design-system.html?lang=en) loads the production ca
 - **Match result:** full-screen bloom, distinct from the compact single-game panel. PNG uses the matching finale composition.
 
 `app/tokens.css` is the live component layer; `app/theme-tokens.js`, `site.css` and the PNG palettes carry the matching values. `node scripts/check.cjs` checks palette parity, canonical logo copies, current VI labels, embedded rule text and inline-script syntax. Update these together when a component changes. Archived studies are references, never runtime dependencies.
+
+The PNG card renderer consumes a generated copy of the production suit paths, flower mark and card tokens through `app/bloom-assets.js`. Run `node scripts/sync-brand.cjs` after changing these sources; `--check` rejects stale copies. Flower cards use the same flat gold face and flower watermark as the table, with no legacy star badge.

@@ -16,6 +16,7 @@ module.exports=function(){
  }
  for(const [key,variable]of Object.entries({face:'card-face',ink:'card-ink',red:'card-red',edge:'card-edge',selected:'selected'}))assert.equal(light[variable],t.card[key],key);
  for(const [key,variable]of Object.entries({red:'red',gold:'gold-center',goldBase:'gold-base',goldEdge:'gold-edge'}))assert.equal(light[variable],t.brand[key],key);
+ const art={window:{}};vm.runInNewContext(read('app/bloom-assets.js'),art);assert.deepEqual({...art.window.SZBloomAssets.cardStyle},{...t.card,goldCenter:t.brand.gold},'PNG card colors must match table tokens');
  const brand=read('brand-mark.svg');for(const color of Object.values(t.brand))assert(brand.includes(color),'Brand missing '+color);
  assert(!/linearGradient|radialGradient|metal/i.test(brand),'Primary mark must be the current flat card');
  const copy=JSON.parse(read('brand.html').match(/window.SC_COPY=(\{.*?\});/s)[1]);assert(copy.downloadSubcss.every(x=>x.includes('v3')),'VI label is stale');
