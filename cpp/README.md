@@ -40,7 +40,7 @@ c++ -std=c++17 -O2 -Icpp/include cpp/examples/baseline.cpp -o /tmp/royale-baseli
 ## Embed or install
 
 ```cmake
-add_subdirectory(path/to/gk-royale-playtest/cpp royale-core)
+add_subdirectory(path/to/3card-royale/cpp royale-core)
 target_link_libraries(my_game PRIVATE threecard_royale::core)
 ```
 

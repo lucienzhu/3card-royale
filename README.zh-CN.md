@@ -8,7 +8,7 @@
 
 来自深圳的开放扑克玩法：八张手牌选三张，伤牌也能出，防守成功换机会。四炸6分，四张自然同点牌加花牌组成罕见的五炸7分。
 
-[**开始试玩 ↗**](https://lucienzhu.github.io/gk-royale-playtest/?lang=zh-CN) · [学会怎么玩](https://lucienzhu.github.io/gk-royale-playtest/about.html?lang=zh-CN) · [完整规则](docs/RULES.zh-CN.md) · [视觉识别](https://lucienzhu.github.io/gk-royale-playtest/brand.html?lang=zh-CN)
+[**开始试玩 ↗**](https://lucienzhu.github.io/3card-royale/?lang=zh-CN) · [学会怎么玩](https://lucienzhu.github.io/3card-royale/about.html?lang=zh-CN) · [完整规则](docs/RULES.zh-CN.md) · [视觉识别](https://lucienzhu.github.io/3card-royale/brand.html?lang=zh-CN)
 
 在线是与电脑对战的试玩版；线下双人只需一副52张普通扑克。无需注册，无下注、无现金兑换。
 
@@ -50,9 +50,9 @@ node scripts/check.cjs
 | --- | --- |
 | 规则 | [1.0.0完整规则](docs/RULES.zh-CN.md) |
 | 贡献 | [本地开发、目录、反馈与翻译](docs/CONTRIBUTING.zh-CN.md) |
-| 设计 | [设计规范](docs/DESIGN.zh-CN.md) · [当前组件](https://lucienzhu.github.io/gk-royale-playtest/design-system.html?lang=zh-CN) |
-| 反馈 | [提交试玩记录或Bug](https://github.com/lucienzhu/gk-royale-playtest/issues/new/choose) |
-| 研究 | [历史三张牌概率研究](https://lucienzhu.github.io/gk-royale-playtest/probability.html?lang=zh-CN) |
+| 设计 | [设计规范](docs/DESIGN.zh-CN.md) · [当前组件](https://lucienzhu.github.io/3card-royale/design-system.html?lang=zh-CN) |
+| 反馈 | [提交试玩记录或Bug](https://github.com/lucienzhu/3card-royale/issues/new/choose) |
+| 研究 | [历史三张牌概率研究](https://lucienzhu.github.io/3card-royale/probability.html?lang=zh-CN) |
 
 **当前状态：**试玩规则1.0.0，继续收集真人反馈。模拟不等于平衡性证明，也不等于流行度。旧规则仍能从游戏菜单选择，已有版本标签不移动。
 
