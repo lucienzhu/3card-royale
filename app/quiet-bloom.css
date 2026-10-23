@@ -191,8 +191,6 @@ dialog:not([open]){display:none}
 
 :root body .table #hr-toggle i{font-size:14px}
 :root body .sz-share-preview img{max-height:calc(var(--app-height,100dvh) * .58)}
-
-:root body #result-modal .result-emblem{background:var(--soft);box-shadow:none}
 :root body #result-modal .result-damage>div{background:var(--table);color:var(--muted)}
 :root body #result-modal .result-damage .result-winner{background:var(--soft);color:var(--ink)}
 :root body #result-modal .result-actions{background:var(--paper);border-color:var(--line)}
