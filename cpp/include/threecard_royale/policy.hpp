@@ -30,7 +30,7 @@ inline Json choose_action(const Json& o) {
                 const int d = outcome(o.at("active").at(o.at("attacker").get<int>()), e).at("effective_delta");
                 key[0] = -std::max(d, 0); key[1] = std::max(-d, 0); key[2] = uses; key[3] = -wc;
             }
-        } else if (a.at("type") == "stop_swaps") key[0] = -1000;
+        } else if (a.at("type") == "stop_swaps" || a.at("type") == "skip_swap") key[0] = -1000;
         else {
             const auto& source = a.at("source"); const auto& target = a.at("target");
             const int c = o.at(source.at("zone").get<std::string>()).at(source.at("index").get<std::size_t>());

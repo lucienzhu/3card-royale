@@ -9,7 +9,7 @@ export type Action =
         | { zone: "deck" | "blind" }
         | { zone: Zone; who: PlayerId; index: number };
     }
-  | { type: "stop_swaps" | "advance" | "next_game" };
+  | { type: "skip_swap" | "stop_swaps" | "advance" | "next_game" };
 export interface Evaluation {
   score: number;
   kind: number;

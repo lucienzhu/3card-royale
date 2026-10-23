@@ -251,6 +251,7 @@
                 });
             });
           });
+        out.push({ type: "skip_swap" });
         out.push({ type: "stop_swaps" });
         return out;
       }
@@ -292,6 +293,8 @@
                     index: t.index,
                   },
           );
+        } else if (a.type === "skip_swap") {
+          this.g.skipRefresh();
         } else if (a.type === "stop_swaps") {
           this.g.pendingRefresh = null;
           this.g.finishCombat();

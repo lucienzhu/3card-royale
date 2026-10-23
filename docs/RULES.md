@@ -57,7 +57,7 @@ Discard both plays first. Refill each used wound position face up, attacker firs
 
 ## 5. Defensive swaps
 
-Spend 1 opportunity per swap. Give one of your cards and receive the destination card. You may repeat routes or stop early.
+Choose to swap or skip each opportunity. A swap gives one of your cards for a target card; skipping uses only the current opportunity without drawing, discarding, or changing any cards. With two opportunities, choose independently for each: skipping the first still leaves the second available.
 
 | Your source | Available destinations |
 | --- | --- |

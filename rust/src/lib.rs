@@ -378,6 +378,7 @@ impl Game {
                         }
                     }
                 }
+                out.push(json!({"type":"skip_swap"}));
                 out.push(json!({"type":"stop_swaps"}));
             }
             "resolved" => out.push(json!({"type":"advance"})),
@@ -404,6 +405,14 @@ impl Game {
                 self.play(cards)?;
             }
             "swap" => self.swap(a),
+            "skip_swap" => {
+                let pending = self.s.pending.as_mut().unwrap();
+                pending.remaining -= 1;
+                if pending.remaining == 0 {
+                    self.s.pending = None;
+                    self.finish_combat();
+                }
+            }
             "stop_swaps" => {
                 self.s.pending = None;
                 self.finish_combat();

@@ -121,9 +121,12 @@ class RoyaleEnv(gym.Env):
             f[
                 52
                 + ["play", "swap", "stop_swaps", "advance", "next_game"].index(
-                    a["type"]
+                    "stop_swaps" if a["type"] == "skip_swap" else a["type"]
                 )
             ] = 1
+            if a["type"] == "skip_swap":
+                # Decline-kind bit plus one-opportunity flag; stop_swaps leaves it 0.
+                f[59] = 1
             if a["type"] == "play":
                 for c in a["cards"]:
                     f[c] = 1

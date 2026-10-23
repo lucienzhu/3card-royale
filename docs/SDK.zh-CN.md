@@ -66,7 +66,7 @@ Rust明确传入u32种子，实际游戏由宿主生成新熵。固定种子用�
 | --- | --- |
 | attack／defend | `{"type":"play","cards":[0,13,26]}` |
 | refresh | `{"type":"swap","source":{"zone":"hand","index":0},"target":{"zone":"blind"}}` |
-| refresh | `{"type":"stop_swaps"}`放弃剩余机会 |
+| refresh | `{"type":"skip_swap"}`仅跳过当前1次机会；`{"type":"stop_swaps"}`结束全部剩余机会 |
 | resolved | `{"type":"advance"}`交换攻防或轮末补牌 |
 | game_over | `{"type":"next_game"}`胜者下局先攻 |
 | match_over | 无动作 |
@@ -112,3 +112,5 @@ C++完整对局示例：`/tmp/royale-cpp/royale-baseline-cpp`。SDK 0.2.0新增C
 SDK 0.2仅接收规则1.0.0的状态。旧0.3.8状态继续用SDK 0.1.1，或另开标准版；旧schema 1与新schema 2也不能混用。
 
 `level_owner`是小局开局时固定的打级方，不能用逐轮轮换的`first`代替。只有该玩家打自己的A（共用花牌等级14）时，胜负才是闯关成功／失败。结果增加`level_owner`与可空`ace_challenger`，schema 2在保存恢复时保留这一身份。
+
+`skip_swap`不改变任何牌或随机数状态，只消耗当前1次机会；最后1次跳过后结算攻防。这是原有可放弃换牌规则的逐次入口，规则1.0.0与状态schema 2不变。Gym仍使用72列编码：两种放弃操作均使用第54列动作位，第59列为1表示仅跳过一次，为0表示结束全部。

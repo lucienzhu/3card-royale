@@ -271,6 +271,7 @@ class Game:
                                     "target": {"zone": other, "who": who, "index": j},
                                 }
                             )
+            out.append({"type": "skip_swap"})
             out.append({"type": "stop_swaps"})
             return out
         if phase == "resolved":
@@ -292,6 +293,11 @@ class Game:
                 self._play(action["cards"])
             elif kind == "swap":
                 self._swap(action)
+            elif kind == "skip_swap":
+                self.s["pending"]["remaining"] -= 1
+                if self.s["pending"]["remaining"] == 0:
+                    self.s["pending"] = None
+                    self.finish_combat()
             elif kind == "stop_swaps":
                 self.s["pending"] = None
                 self.finish_combat()

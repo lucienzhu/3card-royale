@@ -68,7 +68,7 @@ Get a legal action from `legalActions()` / `legal_actions()` and pass it to `ste
 | --- | --- |
 | `attack`, `defend` | `{"type":"play","cards":[0,13,26]}` |
 | `refresh` | `{"type":"swap","source":{"zone":"hand","index":0},"target":{"zone":"blind"}}` |
-| `refresh` | `{"type":"stop_swaps"}` ends remaining opportunities |
+| `refresh` | `{"type":"skip_swap"}` skips only the current opportunity; `{"type":"stop_swaps"}` ends all remaining opportunities |
 | `resolved` | `{"type":"advance"}` swaps roles or refills a round |
 | `game_over` | `{"type":"next_game"}` starts with the winner |
 | `match_over` | No actions |
@@ -114,3 +114,5 @@ Standard 1.0 adds five of a kind (7 points): four natural equal-rank cards plus 
 SDK 0.2 accepts rules-1.0.0 states only. Keep SDK 0.1.1 for existing 0.3.8 states or start a new standard game; schema 2 alone does not make rule versions interchangeable.
 
 `level_owner` is fixed at each game start and is independent of the rotating `first` attacker. Only this player can pass or fail an Ace challenge when the shared flower level is 14. Results include `level_owner` and nullable `ace_challenger`. Schema 2 preserves this identity across save/restore.
+
+`skip_swap` leaves all cards and RNG unchanged. Remaining opportunities stay available, and skipping the last one resolves the combat. This exposes the existing optional-exchange rule without changing rules 1.0.0 or state schema 2. The Gym 72-column encoding uses the decline-kind bit (54) for both decline actions; column 59 is 1 only for a single-opportunity skip, and 0 for stopping all swaps.

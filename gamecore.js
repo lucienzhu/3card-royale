@@ -362,6 +362,16 @@
       }
       return out;
     }
+    skipRefresh() {
+      assert(isRefresh(this.version)&&this.phase==='refresh'&&this.pendingRefresh?.remaining>0,'当前没有换牌机会。');
+      const actor=this.pendingRefresh.actor,left=--this.pendingRefresh.remaining;
+      if(this.lastCombat)this.lastCombat.skipped=(this.lastCombat.skipped||0)+1;
+      this.bump('refresh_skipped');
+      if(!left){this.pendingRefresh=null;this.phase='resolved';}
+      this.emit('refresh_skip',this.players[actor].name+'跳过这次换牌',`牌和伤势不变，剩余 ${left} 次机会。`,{actor,remaining:left});
+      if(!left)this.finishCombat();
+      this.check();
+    }
     refresh(target) {
       if(woundExchange(this.version))return this.exchangeWound(target);
       if(handExchange(this.version))return this.exchangeHand(target);

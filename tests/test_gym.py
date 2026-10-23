@@ -39,6 +39,25 @@ class GymTests(unittest.TestCase):
             self.assertTrue(info["reset_truncated"])
             self.assertTrue(c.observation_space.contains(obs))
 
+    def test_skip_opportunity_encoding(self):
+        env = RoyaleEnv(player=0)
+        env.reset(seed=8, options={"first": 0})
+        state = env.game.save()
+        state["phase"] = "refresh"
+        state["pending"] = {"actor": 0, "remaining": 2, "total": 2}
+        env.game = Game.restore(state)
+        obs = env._obs()
+        actions = env.game.legal_actions()
+        skip = next(i for i, a in enumerate(actions) if a["type"] == "skip_swap")
+        stop = next(i for i, a in enumerate(actions) if a["type"] == "stop_swaps")
+        self.assertEqual(obs["candidates"][skip, 54], 1)
+        self.assertEqual(obs["candidates"][skip, 59], 1)
+        self.assertEqual(obs["candidates"][stop, 59], 0)
+        self.assertTrue(env.observation_space.contains(obs))
+        _, _, terminated, truncated, _ = env.step(skip)
+        self.assertFalse(terminated or truncated)
+        self.assertEqual(env.game.s["pending"]["remaining"], 1)
+
     def test_hidden_state_invariance(self):
         for who in (0, 1):
             g = Game(8, who)
