@@ -92,6 +92,7 @@ def main():
               "protocol": {"seed_start": args.seed_start, "seed_count": args.games//2, "levels": [2, 2],
                            "seats": "index % 2", "first": "(index // 2) % 2",
                            "easy_sampling": "Deterministic FNV-1a / xorshift32 from public observation; independent of deal RNG",
+                           "easy_swaps": "Use every legal deck redraw; no rival-card swaps",
                            "calibration": "Separate 60 paired seeds starting at 82000000; held-out evaluation starts at 81000000",
                            "max_steps": 4096, "max_internal_steps": 10000},
               "source_sha256": {p: hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in sources},

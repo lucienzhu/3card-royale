@@ -28,6 +28,9 @@ class EasyPolicyTest(unittest.TestCase):
                 self.assertIn(a, o["legal_actions"])
                 self.assertEqual(a, choose_action(o))
                 self.assertEqual(o, before)
+                if o["phase"] == "refresh":
+                    self.assertEqual(a["type"], "swap")
+                    self.assertEqual(a["target"]["zone"], "deck")
                 observations.append(o)
                 game.step(a if game.actor == 1 else code_action(o))
             else:

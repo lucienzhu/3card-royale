@@ -36,14 +36,16 @@ def choose_action(o, actions=None, budget=BUDGET):
         raise ValueError("Invalid attention budget")
     if o["phase"] not in ("attack", "defend", "refresh"):
         return actions[0]
-    rng = random_for(o)
     if o["phase"] == "refresh":
         skip = next((a for a in actions if a["type"] == "skip_swap"), None)
         skip = skip or next((a for a in actions if a["type"] == "stop_swaps"), None)
         redraws = [a for a in actions if a["type"] == "swap" and a["target"]["zone"] == "deck"]
-        if skip and (rng() < .5 or not redraws):
+        if redraws:
+            return code_action(o, redraws)
+        if skip:
             return skip
-        return code_action(o, redraws or actions)
+        raise ValueError("No legal deck redraw or skip")
+    rng = random_for(o)
     pool = actions
     if o["phase"] == "defend":
         safe = [a for a in actions if max(0, outcome(o["active"][o["attacker"]], evaluate(a["cards"], o["flower_level"]))["effective_delta"]) + len(o["wounds"]) < 5]

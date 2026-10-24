@@ -8,7 +8,7 @@ for(const f of fixtures){
  assert(o.legal_actions.includes(a));assert.deepEqual(easy.chooseAction(o),a);
  assert.equal(JSON.stringify(o),before);
  assert.deepEqual(easy.chooseAction({...o,stock:[1,2,3],enemy_hand:[4,5,6],results:[{secret:42}]}),a,'No hidden information used');
- if(o.phase==='refresh')assert(a.type==='skip_swap'||a.target.zone==='deck');
+ if(o.phase==='refresh'){assert.equal(a.type,'swap');assert.equal(a.target.zone,'deck');}
 }
 const danger={...fixtures[0].observation,phase:'defend',player:1,attacker:0,wounds:[8,21,34,47],
  active:[{...evaluate([2,6,9],2),cards:[2,6,9]},null],
@@ -25,6 +25,7 @@ for(let seed=0;seed<20;seed++){
   const o=g.observation(g.actor??0),a=g.actor===1?easy.chooseAction(o):code.chooseAction(o);
   if(g.actor===1){
    choices++;
+   if(o.phase==='refresh'){assert.equal(a.type,'swap');assert.equal(a.target.zone,'deck');}
    if(o.phase==='defend'){
     const damage=a=>Math.max(0,outcome(o.active[o.attacker],evaluate(a.cards,o.flower_level)).effective_delta);
     if(o.legal_actions.some(a=>damage(a)+o.wounds.length<5))assert(damage(a)+o.wounds.length<5);

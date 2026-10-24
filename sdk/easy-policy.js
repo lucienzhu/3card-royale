@@ -19,14 +19,15 @@ function chooseAction(o, actions=o.legal_actions, budget=BUDGET) {
   if(!actions.length)throw Error('No legal decision');
   if(!Number.isInteger(budget)||budget<1)throw Error('Invalid attention budget');
   if(!['attack','defend','refresh'].includes(o.phase))return actions[0];
-  const rng=randomFor(o);
   if(o.phase==='refresh') {
     const skip=actions.find(a=>a.type==='skip_swap')||actions.find(a=>a.type==='stop_swaps');
-    // Use each opportunity independently. Redraw low cards; no targeted stealing.
+    // Use every available deck redraw; do not swap with the rival's cards.
     const redraws=actions.filter(a=>a.type==='swap'&&a.target.zone==='deck');
-    if(skip&&(rng()<0.5||!redraws.length))return skip;
-    return Code.chooseAction(o,redraws.length?redraws:actions);
+    if(redraws.length)return Code.chooseAction(o,redraws);
+    if(skip)return skip;
+    throw Error('No legal deck redraw or skip');
   }
+  const rng=randomFor(o);
   let pool=actions;
   if(o.phase==='defend') {
     // Recognize immediate danger, but do not plan ahead or inspect hidden cards.
