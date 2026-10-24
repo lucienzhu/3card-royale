@@ -74,13 +74,16 @@ checks cover 55,584 values. See `tests/nn-policy.cjs` and `training/parity.py`.
 
 ## Playing and reliability
 
-Settings → Preferences offers **Code AI** and **NN AI**. Code AI uses the same
-visible-information SDK policy used to generate samples. NN AI currently uses
+The current browser offers **Easy / Medium / Hard** in Settings → Preferences →
+Difficulty, using Easy AI / NN AI / Code AI. New visitors start on Easy (64
+candidates, deck-only redraws); it wins 36.1% vs Code and 44.1% vs NN over 1,000
+games each. [Difficulty records](../difficulty-v1/evaluation.json). Code AI uses
+the same visible-information SDK policy used to generate samples. NN AI uses
 the 256/128 hidden-layer model. Unsupported older rules keep their original policy.
 
 Models and runtime are hosted as static files from the same origin. Inference
 runs in a Web Worker. On load failure, timeout or invalid logits, the game falls
-back to Code AI and shows a short status message. Failed loads back off for a
+back to Easy AI and shows a short status message. Failed loads back off for a
 minute; selecting NN AI again retries immediately. Switching modes or replacing
 a game invalidates in-flight results, preventing stale actions.
 

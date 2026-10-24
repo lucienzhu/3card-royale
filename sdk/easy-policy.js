@@ -4,7 +4,7 @@
   else root.RoyaleEasyPolicy = factory(root.ThreeCardRoyale, root.RoyaleCodePolicy);
 })(typeof globalThis !== 'undefined' ? globalThis : this, function(SDK, Code) {
 'use strict';
-const VERSION='easy-v1', BUDGET=48;
+const VERSION='easy-v2', BUDGET=64;
 // Reproducible from public information alone; never touches the deal RNG.
 function randomFor(o) {
   const key=JSON.stringify([o.player,o.phase,o.game,o.round,o.battle_index,o.flower_level,

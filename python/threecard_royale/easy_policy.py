@@ -3,7 +3,7 @@ import json
 from .core import evaluate, outcome
 from .policy import choose_action as code_action
 
-VERSION, BUDGET = "easy-v1", 48
+VERSION, BUDGET = "easy-v2", 64
 
 
 def random_for(o):
