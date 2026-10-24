@@ -114,3 +114,22 @@ browser timing runs are retained in this folder because their timings varied;
 RESULTS.md documents the repeat run and the first run's slower measurements.
 Production selects the smaller 256/128 model (552,407 bytes). The alternative
 weights remain in the experiment tag rather than the deployment directory.
+
+## Uniform random baseline · 2026-10-24
+
+The additional **uniform legal-action** policy won **1/1,000 games (0.1%)**
+against the same Code AI: 1 win from seat 0, 0 from seat 1, no truncations and no
+illegal actions. The individual-game Wilson 95% interval is approximately
+0.018–0.564%; as above, it does not account for paired-game correlation.
+
+It samples every masked legal candidate with equal probability, including swaps
+and declines. It has no training data, weights, card evaluation or look-ahead.
+The deal seeds, seats, first attackers, level-2 starts and episode limits match
+the five NN evaluations. A separate PCG64 stream per game controls policy choices.
+
+[Raw episodes and protocol](random-baseline.json) ·
+[Evaluator](../../../training/evaluate_random.py) ·
+[Reproduce](../../../training/README.md#uniform-random-baseline)
+
+Two full runs produced byte-identical reports. ONNX size and neural inference
+latency are not applicable; random sampling was not browser-profiled.

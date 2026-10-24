@@ -94,3 +94,31 @@ has not been measured.
 
 Earlier runs can be viewed with `?run=nn-policy`. Raw TensorBoard events are also
 versioned under `docs/experiments/nn-policy-v1/tensorboard/`.
+
+## Uniform random baseline
+
+With the same environment setup, no model or training is needed:
+
+```sh
+.venv/bin/python training/evaluate_random.py --output artifacts/random-baseline.json
+```
+
+This uniformly samples the current legal candidate indices, including swaps and
+both decline actions. A forced action is taken directly. It does not read card
+features or hidden state. NumPy PCG64 uses `SeedSequence([20261024, game_index])`
+for a separate policy RNG per game, independent from the environment RNG.
+
+The protocol matches `training/evaluate.py`: 1,000 single-game episodes; seeds
+81,000,000–81,000,499, each with both seats; first attacker alternates by seed;
+normal level-2 starts; the same Code AI opponent. `--games` must be a multiple of
+four to preserve balance. Limits remain 4,096 player decisions / 10,000 internal
+steps. Truncations are reported separately and excluded from completed-game rates.
+
+Result: **1/1,000 wins (0.1%)**, no truncations or illegal actions. The deployed
+256/128 model won 462/1,000 (46.2%) in the matching NN experiment. This is a
+uniform-action baseline, not a random choice among only strong hands.
+
+[Reference report](../docs/experiments/nn-policy-v1/random-baseline.json) contains
+all 1,000 episode results, action-trace hashes, RNG protocol, source checksums and
+runtime versions. Two complete runs produced byte-identical reports. Reproduce
+with the pinned dependencies above; no Torch inference or ONNX file is involved.
