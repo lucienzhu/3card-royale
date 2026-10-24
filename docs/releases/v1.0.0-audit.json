@@ -5,7 +5,7 @@
   "sdk": "0.2.0",
   "game_audited_commit": "273ea7cef1c71584afe81cc4ee8e72ab0e7e8614",
   "published_game_tree_equivalent": "2a1a6132770fa1d740ed8a86cb8d0f31a88fb3c4",
-  "site_base_commit": "c44f6225696d56117c997d34547ce55fbab3b3e9",
+  "site_base_commit": "88cd995928b88cb9d8ad2991e8915acf6efdc289",
   "site_release_tag": "3card-royale-v1.0.0",
   "model": {
     "version": "bc-10000-mlp256-v1",
@@ -96,10 +96,26 @@
     "retrained_this_audit": false,
     "reran_full_evaluation_tournaments": false,
     "prior_reproduction_verified": true,
-    "website_redesign_published": false,
-    "physical_iphone_tested": false
+    "physical_iphone_tested": false,
+    "website_redesign_published_by_this_release": false,
+    "concurrent_redesign_already_published": true
   },
   "published_site_link_audit": {
+    "pages": 500,
+    "references": 13756,
+    "missing": [],
+    "badanchors": []
+  },
+  "local_redesign_link_audit": {
+    "pages": 500,
+    "references": 13756,
+    "missing": [],
+    "badanchors": []
+  },
+  "site_initial_base_commit": "c44f6225696d56117c997d34547ce55fbab3b3e9",
+  "site_base_tree": "9aca047036a428e6b94a55bab2a92d1123dcd856",
+  "site_local_equivalent_commit": "78f6c153fcbfddbd83d5e15b9bc986b0ac8b8ae2",
+  "superseded_legacy_site_link_audit": {
     "pages": 220,
     "references": 4747,
     "missing": [
@@ -156,11 +172,5 @@
         "url": "#dataset"
       }
     ]
-  },
-  "local_redesign_link_audit": {
-    "pages": 500,
-    "references": 13756,
-    "missing": [],
-    "badanchors": []
   }
 }
