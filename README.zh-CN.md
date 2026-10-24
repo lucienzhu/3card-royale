@@ -94,7 +94,7 @@ SDK 0.2.0／规则1.0.0：JavaScript＋TypeScript类型、Python／Rust／C++17�
 MLP，以 PyTorch 训练并导出 ONNX，在浏览器 Web Worker 中推理。上线使用 256/128
 隐藏层模型，ONNX 为 0.55 MB；独立缓存的 WASM 运行时约 14 MB。默认仍为 Code AI。
 
-[模型与 RL 接入](docs/MODEL.zh-CN.md) · [训练与复现](training/README.md) · [实验指标、曲线与 TensorBoard](docs/experiments/nn-policy-v1/README.md)
+[RL 介绍页](rl.html) · [模型与 RL 接入](docs/MODEL.zh-CN.md) · [训练与复现](training/README.md) · [实验指标、曲线与 TensorBoard](docs/experiments/nn-policy-v1/README.md)
 
 安装锁定的训练依赖后，运行 `python training/reproduce.py` 即可生成数据并复现 256 模型。
 数据压缩后仍为 112.5 MB，不进 Git；固定种子、校验值与最佳 ONNX 已纳入版本控制。
