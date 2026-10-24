@@ -31,3 +31,5 @@ require("../tests/share-card.cjs");
 require('../tests/skip-swaps.cjs');
 
 require('../tests/nn-policy.cjs');
+
+require('../tests/rl-page.cjs');

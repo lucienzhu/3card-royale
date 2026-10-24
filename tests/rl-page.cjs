@@ -1,0 +1,33 @@
+'use strict';
+// Public experimental claims must agree with the saved reports and deployment artifact.
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const root=path.resolve(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const html=read('rl.html'),training=JSON.parse(read('docs/experiments/nn-policy-v1/training.json'));
+const evaluations=JSON.parse(read('docs/experiments/nn-policy-v1/evaluation.json'));
+const manifest=JSON.parse(read('models/nn-policy/manifest.json'));
+const copy=JSON.parse(html.match(/window.SC_COPY=(\{[\s\S]*?\});<\/script>/)[1]);
+const rows=[...html.matchAll(/<tr data-model="([^"]+)"([^>]*)>([\s\S]*?)<\/tr>/g)];
+assert.equal(rows.length,training.models.length);
+for(const [_,id,attrs,row] of rows){
+ const model=training.models.find(m=>String(m.id||m.width)===id);
+ assert(model,'Unknown model '+id);
+ const ev=evaluations.find(e=>e.model===`mlp-${id}.onnx`);
+ assert(ev,'Missing evaluation '+id);
+ assert(row.includes((ev.win_rate*100).toFixed(1)+'%'),id+' win rate');
+ assert(row.includes(`${ev.wins} / ${ev.games.toLocaleString('en-US')}`),id+' wins/games');
+ assert(row.includes((model.bytes/1e6).toFixed(2)+' <small>MB</small>'),id+' size');
+ const hidden=model.hidden||[model.width,model.width/2];
+ assert(row.includes(`${hidden[0]} <span aria-hidden="true">→</span> ${hidden[1]}`),id+' architecture');
+ assert.equal(attrs.includes('rl-selected'),manifest.file===`policy-mlp-${id}-v1.onnx`,id+' deployed flag');
+}
+assert(html.includes('models/nn-policy/'+manifest.file));
+assert(html.includes(manifest.version));
+assert(html.includes(manifest.hidden.join(' <span>→</span> ')));
+assert(html.includes((manifest.bytes/1e6).toFixed(2)+' MB'));
+for(const m of html.matchAll(/data-sc="([^"]+)"/g)){
+ if(['skip','name','tag','learn','identity','play','menu'].includes(m[1]))continue;
+ assert(copy[m[1]]?.length===2,'Missing translation: '+m[1]);
+}
+assert(copy.tryPath[0].includes('设置')&&copy.tryPath[1].includes('Settings'));
+assert(copy.method[0].includes('模仿学习')&&copy.method[1].includes('imitation learning'));
+console.log('RL page: five model comparisons match saved results, deployed artifact and bilingual setup instructions.');
