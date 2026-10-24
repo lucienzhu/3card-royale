@@ -16,8 +16,8 @@
 
 ## 简单 AI 怎样变弱
 
-- 进攻：不重复抽取最多 **48** 个合法组合，再按 Code AI 的标准选出其中最好的一手。
-- 防守：如果有不会立即输局的应对，先排除立即输局的组合，再从中抽取最多 48 手比较。
+- 进攻：不重复抽取最多 **64** 个合法组合，再按 Code AI 的标准选出其中最好的一手。
+- 防守：如果有不会立即输局的应对，先排除立即输局的组合，再从中抽取最多 64 手比较。
 - 换牌：每次机会都换掉优先级最低的牌，从牌堆抽入一张，不与对手的牌交换。
 
 它认识牌型、知道眼前危险，但会漏掉组合。不会根据玩家胜率调整强度，
@@ -31,28 +31,30 @@ Rust / C++ 保留原有 Code AI；Easy 提供 JS 与 Python 实现。
 
 ## 实测
 
-每组 **1,000 小局**，使用从 81,000,000 开始的相同 500 个留出 Gym 种子，
+每组 **1,000 小局**，使用从 81,000,000 开始的相同 500 个 Gym 评估种子，
 交换席位、平衡先攻，从正常 2 级开始。无非法动作、无截断。
 
 | 策略 | 对手 | 获胜 |
 | --- | --- | --- |
-| Easy AI | Code AI | **304 / 1,000 · 30.4%** |
-| Easy AI | NN AI | **390 / 1,000 · 39.0%** |
+| Easy AI | Code AI | **361 / 1,000 · 36.1%** |
+| Easy AI | NN AI | **441 / 1,000 · 44.1%** |
 | NN AI | Code AI | **462 / 1,000 · 46.2%** |
 
 Easy 明显更弱；中等与困难仍比较接近。难度标签不等于 Elo，也不代表真人胜率。
-48 手上限是在从 82,000,000 开始的另一组种子上选定的，未使用留出集调参。
-改为每次从牌堆换牌后，同一组 120 局校准结果为：
+当前上线 **easy-v2**，上限为 **64 手**。此前 48 手版本在同一组种子上对 Code 胜率为
+30.4%，对 NN 为 39.0%（[历史记录](experiments/difficulty-v1/evaluation-48.json)）。
+64 是比较这两种上限后选定的，因此这组数据用于可复现对照，不再是未参与选型的独立测试集。
+另一组从 82,000,000 开始的 120 局校准使用相同的牌堆换牌策略：
 
 | 候选上限 | 对 Code AI 获胜 |
 | --- | --- |
 | 24 | 16 / 120 · 13.3% |
 | 32 | 24 / 120 · 20.0% |
-| **48** | **34 / 120 · 28.3%** |
-| 64 | 44 / 120 · 36.7% |
+| 48 | 34 / 120 · 28.3% |
+| **64** | **44 / 120 · 36.7%** |
 
-48 是实测后选定的难度参数，没有特殊的数学意义，也不是已证明的最优值。
-开局 8 张手牌就有 56 个三张组合；公开伤牌会进一步扩大候选池。
+64 是比较后选定的难度参数，没有特殊的数学意义，也不是已证明的最优值。
+开局 8 张手牌的 56 个三张组合可以全部看完；加入公开伤牌及合法四张、五张组合后，候选可能超过 64。
 限制比较范围，让它会漏掉好牌，但保留正常的选牌逻辑和眼前的防守意识。
 [当前校准](experiments/difficulty-v1/calibration.json)与
 [最初约一半概率跳过换牌的实验](experiments/difficulty-v1/calibration-initial.json)分别保存。
@@ -61,7 +63,8 @@ Easy 明显更弱；中等与困难仍比较接近。难度标签不等于 Elo�
 安装[训练依赖](../training/README.md)后复现：
 
 ```sh
-python training/evaluate_difficulties.py --output artifacts/difficulties.json
+python training/evaluate_difficulties.py --output artifacts/difficulties-64.json
+python training/evaluate_difficulties.py --easy-budget 48 --output artifacts/difficulties-48.json
 python training/calibrate_easy.py --output artifacts/easy-calibration.json
 node tests/easy-policy.cjs
 PYTHONPATH=python python -m unittest discover -s tests -p test_easy_policy.py

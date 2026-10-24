@@ -84,6 +84,18 @@ ONNX files are removed from the current deployment directory.
 Open `http://localhost:59140/`, then **Settings → Preferences → Difficulty → Medium · NN AI**.
 New visitors start on Easy. NN inference runs in a Web Worker, with a visible Easy AI fallback.
 See [three difficulty levels](../docs/DIFFICULTY.md) and `evaluate_difficulties.py` for the paired Easy / NN / Code evaluation.
+
+Easy uses 64 candidates (`easy-v2`). The same 500 paired evaluation seeds yield
+361/1,000 wins against Code AI and 441/1,000 against the deployed NN. NN vs Code
+remains 462/1,000. These seeds were also used to compare 48 and 64; they are not
+an untouched test of the budget selection. The archived 48-candidate results
+remain in `docs/experiments/difficulty-v1/evaluation-48.json`.
+
+```sh
+python training/evaluate_difficulties.py --output artifacts/difficulties-64.json
+python training/evaluate_difficulties.py --easy-budget 48 --output artifacts/difficulties-48.json
+python training/calibrate_easy.py --output artifacts/easy-calibration.json
+```
 The model is 0.55 MB; the separately cached, vendored WASM runtime is about 14 MB.
 
 After training stops, open `http://localhost:59140/training/profile.html` and click

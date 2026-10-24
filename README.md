@@ -92,6 +92,8 @@ Swap opportunities may now be skipped one at a time: skipping the first of two s
 
 Choose **Easy / Medium / Hard** in Settings → Preferences → Difficulty. These use
 Easy AI / NN AI / Code AI respectively. [Behavior and measured strength](docs/DIFFICULTY.md).
+Easy compares up to **64** candidate plays and redraws from the deck. In 1,000
+games per matchup it won **36.1%** against Code AI and **44.1%** against NN AI.
 NN AI is a
 single-observation MLP trained with PyTorch from 10,000 Code-AI games, exported
 to ONNX and run locally in a Web Worker. The selected 0.55 MB model has 256/128 hidden layers;

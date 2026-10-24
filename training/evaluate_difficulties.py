@@ -16,7 +16,7 @@ from threecard_royale.policy import choose_action as code_action
 
 
 def evaluate_pair(task):
-    left, right, games, seed_start = task
+    left, right, games, seed_start, easy_budget = task
     session = None
     if "nn" in (left, right):
         options = ort.SessionOptions()
@@ -36,7 +36,8 @@ def evaluate_pair(task):
             raise RuntimeError("Non-finite NN scores")
         return actions[int(logits.argmax())]
 
-    policies = {"easy": easy_action, "code": code_action, "nn": nn_action}
+    policies = {"easy": lambda o, actions: easy_action(o, actions, budget=easy_budget),
+                "code": code_action, "nn": nn_action}
     records = []
     for index in range(games):
         seat, seed, first = index % 2, seed_start + index // 2, (index // 2) % 2
@@ -78,22 +79,23 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--games", type=int, default=1000)
     parser.add_argument("--seed-start", type=int, default=81000000)
+    parser.add_argument("--easy-budget", type=int, default=BUDGET)
     parser.add_argument("--output", type=Path, default=Path("artifacts/difficulties.json"))
     args = parser.parse_args()
-    if args.games < 4 or args.games % 4 or args.seed_start < 0:
-        parser.error("Use a positive multiple of four games and a nonnegative seed start")
-    pairs = [(a, b, args.games, args.seed_start) for a, b in [("easy", "code"), ("easy", "nn"), ("nn", "code")]]
+    if args.games < 4 or args.games % 4 or args.seed_start < 0 or args.easy_budget < 1:
+        parser.error("Use a positive multiple of four games, a nonnegative seed start and a positive Easy budget")
+    pairs = [(a, b, args.games, args.seed_start, args.easy_budget) for a, b in [("easy", "code"), ("easy", "nn"), ("nn", "code")]]
     with ProcessPoolExecutor(max_workers=3) as pool:
         results = list(pool.map(evaluate_pair, pairs))
     sources = ["sdk/easy-policy.js", "python/threecard_royale/easy_policy.py", "python/threecard_royale/policy.py",
                "python/threecard_royale/core.py", "python/threecard_royale/gym_env.py", "training/evaluate_difficulties.py"]
-    report = {"rules": "1.0.0", "episode": "game", "easy_version": VERSION, "attention_budget": BUDGET,
+    report = {"rules": "1.0.0", "episode": "game", "easy_version": VERSION, "attention_budget": args.easy_budget,
               "nn_sha256": json.loads((ROOT / "models/nn-policy/manifest.json").read_text())["sha256"],
               "protocol": {"seed_start": args.seed_start, "seed_count": args.games//2, "levels": [2, 2],
                            "seats": "index % 2", "first": "(index // 2) % 2",
                            "easy_sampling": "Deterministic FNV-1a / xorshift32 from public observation; independent of deal RNG",
                            "easy_swaps": "Use every legal deck redraw; no rival-card swaps",
-                           "calibration": "Separate 60 paired seeds starting at 82000000; held-out evaluation starts at 81000000",
+                           "calibration": "60 paired calibration seeds at 82000000; 48 and 64 compared on the same evaluation seeds at 81000000",
                            "max_steps": 4096, "max_internal_steps": 10000},
               "source_sha256": {p: hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in sources},
               "results": results}

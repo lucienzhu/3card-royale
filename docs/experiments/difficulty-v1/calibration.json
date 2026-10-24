@@ -3,7 +3,7 @@
   "seed_count": 60,
   "games_per_budget": 120,
   "opponent": "code",
-  "selected_budget": 48,
+  "selected_budget": 64,
   "swap_strategy": "Use every legal deck redraw; no rival-card swaps",
   "seats": "index % 2",
   "first": "(index // 2) % 2",
@@ -12,8 +12,8 @@
     2
   ],
   "source_sha256": {
-    "sdk/easy-policy.js": "ce9468b52bf6db2479818a9d4a3461cd4b2ff8ac0693821f381acc35a3a057b1",
-    "python/threecard_royale/easy_policy.py": "a7969b243b65c906b39a5ebf4573f4642cef5f329f1fd21e70e1fee79ad2f47f",
+    "sdk/easy-policy.js": "1af6b4fb4aa6003f513419821bc16bf45a09169433037eee55cce0dd44af7ae2",
+    "python/threecard_royale/easy_policy.py": "b56985f90f45b39f3828e8d48a3142aca81ef7a98604d7f6726be94dbf0653e0",
     "python/threecard_royale/policy.py": "b45ce894d8e74490a53ee79eefdf1aa72b7213da001a1118863f0a729458a81d",
     "python/threecard_royale/core.py": "ebb3930ec1ccacb3dcec07034fb1a3207fbb540c1a262fa70135675ca0fe8697",
     "python/threecard_royale/gym_env.py": "bd0fbc1f02f6f5e75c127ce13690c5ea606c3d4b85b0a3a82295fd87294812ec",

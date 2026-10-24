@@ -57,7 +57,7 @@ async function testPolicyFailureAndLocale(){
  function Game(){}
  Game.prototype.observation=()=>o;Game.prototype.step=()=>{};
  const ctx={URL,Event,Error,Date,Promise,setTimeout,clearTimeout,queueMicrotask,document,
-  localStorage:{getItem:()=>null,setItem(){}},ThreeCardRoyale:{Game},RoyaleCodePolicy:{chooseAction:()=>action},RoyaleEasyPolicy:{chooseAction:()=>action,version:'easy-v1'},
+  localStorage:{getItem:()=>null,setItem(){}},ThreeCardRoyale:{Game},RoyaleCodePolicy:{chooseAction:()=>action},RoyaleEasyPolicy:{chooseAction:()=>action,version:'easy-v2'},
   window:{GKLocale:{language:'zh-CN'},gkGame:game,dispatchEvent(){}},
   MutationObserver:class{constructor(fn){mutated=fn;}observe(){}},
   Worker:class{postMessage(data){requests++;queueMicrotask(()=>this.onmessage({data:fail?{id:data.id,error:'offline'}:{id:data.id,index:0,version:'test'}}));}terminate(){}}};
