@@ -37,3 +37,5 @@ require('../tests/rl-page.cjs');
 require('../tests/easy-policy.cjs');
 
 require('../tests/code-policy-regression.cjs');
+
+require('../tests/replay-motion.cjs');
