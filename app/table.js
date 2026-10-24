@@ -624,8 +624,21 @@ function renderReplayControls(){
 }
 function stopReplay(){if(autoTimer){clearInterval(autoTimer);autoTimer=null;}renderReplayControls();}
 function switchMode(next){stopAI();stopReplay();if(next!=='play')closeResult();if(next==='rules')lastBoardMode=mode;if(next!=='rules'&&mode!=='rules'){selected=[];flipMode=null;flipIndices=[];refreshTarget=null;error='';}mode=next;render();if(next==='play')driveAI();}
-function replayStandIn(){const e=ROLLOUT.events[cursor],st=e.state;return {seed:'replay',game:st.gameSeed??0,round:0,phase:st.phase,currentActor(){return st.active??0;},lastEvent:null};}
-function replayGo(index){const next=Math.max(0,Math.min(ROLLOUT.events.length-1,Number(index)));const animate=mode==='replay'&&next!==cursor&&!!window.SZCardMotion;const before=animate?window.SZCardMotion.capture(replayStandIn()):null;if(animate)window.SZCardMotion.hold();cursor=next;error='';render();if(animate)window.SZCardMotion.play(before,replayStandIn());}
+function replayStandIn(){
+ const e=ROLLOUT.events[cursor],st=e.state;
+ return {seed:ROLLOUT.seed,game:e.game,round:e.round,phase:st.phase,lastEvent:e,
+  currentActor(){return st.phase==='attack'?st.attacker:st.phase==='defend'?1-st.attacker:st.phase==='refresh'?st.pendingRefresh?.actor:st.phase==='flip'?st.pendingFlip?.actor:null;}};
+}
+function replayGo(index){
+ const next=Math.max(0,Math.min(ROLLOUT.events.length-1,Number(index)));
+ // Settle an interrupted flight before reading card positions. Only an
+ // adjacent forward step represents an actual play; seeking restores a frame.
+ window.SZCardMotion?.cancel();
+ const animate=mode==='replay'&&next===cursor+1&&!!window.SZCardMotion;
+ const before=animate?window.SZCardMotion.capture(replayStandIn()):null;
+ if(animate)window.SZCardMotion.hold();cursor=next;error='';render();
+ if(animate)window.SZCardMotion.play(before,replayStandIn());
+}
 window.gkReplayGo=index=>{stopAI();stopReplay();mode='replay';replayGo(index);};
 window.gkUseGame=g=>{stopAI();stopReplay();variant=g.version;ROLLOUT=ROLLOUTS[variant];resetReplay();game=g;window.gkGame=game;selected=[];flipMode=null;flipIndices=[];refreshTarget=null;error='';mode='play';render();};
 const SEED_PREF_KEY='sz-seed-preference-v1';
