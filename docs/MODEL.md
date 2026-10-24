@@ -143,6 +143,6 @@ This is an integration plan, not an existing training command:
    changing the deployed manifest.
 
 The browser [worker](../app/policy-worker.js) verifies rules, feature version,
-SHA-256 and the 5 MB model limit. [Integration](../app/policy-ai.js) provides Code AI
-fallback on load/inference failure. Code AI stays the default. The separately
+SHA-256 and the 5 MB model limit. [Integration](../app/policy-ai.js) falls back to Easy AI with a visible notice on
+load/inference failure. New visitors start on Easy. [Three difficulties](DIFFICULTY.md). The separately
 cached WASM runtime is about 14 MB; it is not included in the model-size figure.

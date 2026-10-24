@@ -91,7 +91,8 @@ C++ / Python / Rust `choose_action` and JS `chooseAction` receive only observati
 
 ## Optional NN policy
 
-The web game can use Code AI or a trained 256/128 MLP. The NN consumes the same
+The web game offers Easy AI, NN AI (the trained 256/128 MLP), and Code AI.
+[Difficulty policies](DIFFICULTY.md) include the JS/Python Easy API and evaluation. The NN consumes the same
 public SDK observation through [`sdk/features.js`](../sdk/features.js); the
 [worker](../app/policy-worker.js) scores legal candidates with ONNX and returns an
 index. Apply it to the original observation's action list only while that decision

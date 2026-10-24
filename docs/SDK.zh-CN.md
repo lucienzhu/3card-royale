@@ -89,7 +89,8 @@ C++／Python／Rust `choose_action`、JS `chooseAction`只接收观察和合法�
 
 ## 可选 NN 策略
 
-网页可切换 Code AI 与已训练的 256/128 MLP。NN 经由
+网页提供简单 Easy AI、中等 NN AI（已训练的 256/128 MLP）与困难 Code AI。
+[难度说明](DIFFICULTY.zh-CN.md)包含 JS／Python Easy 接口与实测结果。NN 经由
 [`sdk/features.js`](../sdk/features.js)编码同一份公开 SDK 观察，
 [worker](../app/policy-worker.js)用 ONNX 为合法候选评分并返回索引。
 只在该次决策仍有效时，将索引映射到原观察的动作列表。

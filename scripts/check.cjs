@@ -33,3 +33,5 @@ require('../tests/skip-swaps.cjs');
 require('../tests/nn-policy.cjs');
 
 require('../tests/rl-page.cjs');
+
+require('../tests/easy-policy.cjs');

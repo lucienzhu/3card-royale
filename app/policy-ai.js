@@ -2,17 +2,18 @@
   'use strict';
   const key='sz_policy_ai_v1', select=document.getElementById('policy-select'), status=document.getElementById('policy-status');
   const workerURL=new URL('policy-worker.js',document.currentScript.src);
-  let selected='code', worker=null, sequence=0, state='idle', version=null, last=null, retryAfter=0;
+  let selected='easy', worker=null, sequence=0, state='idle', version=null, last=null, retryAfter=0;
   const pending=new Map();
-  try { if(localStorage.getItem(key)==='nn')selected='nn'; }catch{}
+  try { const saved=localStorage.getItem(key);if(['easy','code','nn'].includes(saved))selected=saved; }catch{}
   select.value=selected;
   const en=()=>window.GKLocale?.language==='en';
   function paint() {
-    document.getElementById('policy-label').textContent=en()?'Opponent':'对手 AI';
+    document.getElementById('policy-label').textContent=en()?'Difficulty':'难度';
+    for(const option of select.options)option.textContent=({easy:en()?'Easy · Easy AI':'简单 · Easy AI',nn:en()?'Medium · NN AI':'中等 · NN AI',code:en()?'Hard · Code AI':'困难 · Code AI'})[option.value];
     const unsupported=window.gkGame && window.gkGame.version!=='1.0.0';
-    status.textContent=selected==='code'?'':unsupported?(en()?'NN AI supports rules 1.0; using Code AI.':'NN AI 仅支持规则 1.0，当前使用 Code AI。'):
+    status.textContent=unsupported?(en()?'Historical rules use their original Code AI.':'历史规则使用原版 Code AI。'):selected!=='nn'?'':
       state==='loading'?(en()?'Loading NN AI…':'正在加载 NN AI…'):
-      state==='failed'?(en()?'NN AI unavailable · using Code AI':'NN AI 暂不可用 · 使用 Code AI'):
+      state==='failed'?(en()?'NN AI unavailable · using Easy AI':'NN AI 暂不可用 · 使用 Easy AI'):
       state==='ready'?(en()?'NN AI ready':'NN AI 已就绪'):'';
     status.hidden=!status.textContent;
   }
@@ -40,7 +41,7 @@
     });
   }
   async function preload(){
-    if(selected!=='nn')return;
+    if(selected!=='nn'||(window.gkGame&&window.gkGame.version!=='1.0.0'))return;
     state='loading';paint();
     try{await request();}catch{state='failed';retryAfter=Date.now()+60000;paint();}
   }
@@ -55,14 +56,15 @@
         return {kind:'nn',action:o.legal_actions[result.index],version:result.version};
       }catch{state='failed';retryAfter=Date.now()+60000;paint();}
     }
-    return {kind:'code',action:RoyaleCodePolicy.chooseAction(o)};
+    if(selected==='code')return {kind:'code',action:RoyaleCodePolicy.chooseAction(o)};
+    return {kind:'easy',action:RoyaleEasyPolicy.chooseAction(o),version:RoyaleEasyPolicy.version,fallback:selected==='nn'};
   }
   function apply(game, decision){
     if(decision.kind==='legacy')game.aiStep();
     else adapter(game).step(decision.action);
   }
   select.addEventListener('change',()=>{
-    selected=select.value==='nn'?'nn':'code';
+    selected=['easy','nn','code'].includes(select.value)?select.value:'easy';
     retryAfter=0;
     try{localStorage.setItem(key,selected);}catch{}
     window.dispatchEvent(new Event('sz-policy-change'));paint();preload();
