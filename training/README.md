@@ -81,8 +81,9 @@ ONNX files are removed from the current deployment directory.
 .venv/bin/python -m http.server 59140 --bind 127.0.0.1
 ```
 
-Open `http://localhost:59140/`, then **Settings → Preferences → Opponent → NN AI**.
-Code AI remains the default. Inference runs in a Web Worker, with a Code AI fallback.
+Open `http://localhost:59140/`, then **Settings → Preferences → Difficulty → Medium · NN AI**.
+New visitors start on Easy. NN inference runs in a Web Worker, with a visible Easy AI fallback.
+See [three difficulty levels](../docs/DIFFICULTY.md) and `evaluate_difficulties.py` for the paired Easy / NN / Code evaluation.
 The model is 0.55 MB; the separately cached, vendored WASM runtime is about 14 MB.
 
 After training stops, open `http://localhost:59140/training/profile.html` and click

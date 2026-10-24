@@ -46,7 +46,7 @@ async function testPolicyFailureAndLocale(){
  let requests=0,fail=true,mutated,paints=0;
  const elements=new Map();
  function element(id){
-  if(!elements.has(id))elements.set(id,{value:'code',hidden:false,listeners:{},
+  if(!elements.has(id))elements.set(id,{value:'easy',hidden:false,listeners:{},options:[{value:'easy'},{value:'nn'},{value:'code'}],
    addEventListener(name,fn){this.listeners[name]=fn;},
    set textContent(value){this.text=value;paints++;}, get textContent(){return this.text;}});
   return elements.get(id);
@@ -57,19 +57,29 @@ async function testPolicyFailureAndLocale(){
  function Game(){}
  Game.prototype.observation=()=>o;Game.prototype.step=()=>{};
  const ctx={URL,Event,Error,Date,Promise,setTimeout,clearTimeout,queueMicrotask,document,
-  localStorage:{getItem:()=>null,setItem(){}},ThreeCardRoyale:{Game},RoyaleCodePolicy:{chooseAction:()=>action},
+  localStorage:{getItem:()=>null,setItem(){}},ThreeCardRoyale:{Game},RoyaleCodePolicy:{chooseAction:()=>action},RoyaleEasyPolicy:{chooseAction:()=>action,version:'easy-v1'},
   window:{GKLocale:{language:'zh-CN'},gkGame:game,dispatchEvent(){}},
   MutationObserver:class{constructor(fn){mutated=fn;}observe(){}},
   Worker:class{postMessage(data){requests++;queueMicrotask(()=>this.onmessage({data:fail?{id:data.id,error:'offline'}:{id:data.id,index:0,version:'test'}}));}terminate(){}}};
  vm.createContext(ctx);vm.runInContext(fs.readFileSync(path.join(root,'app/policy-ai.js'),'utf8'),ctx);
+ assert.equal(ctx.window.SZPolicy.selected,'easy');assert.equal((await ctx.window.SZPolicy.decide(game)).kind,'easy');assert.equal(requests,0);
  const initial=paints;mutated();assert.equal(paints,initial,'Repeated lang attribute must not repaint recursively');
- document.documentElement.lang='en';ctx.window.GKLocale.language='en';mutated();assert.equal(element('policy-label').text,'Opponent');
+ document.documentElement.lang='en';ctx.window.GKLocale.language='en';mutated();assert.equal(element('policy-label').text,'Difficulty');
+ assert.deepEqual(element('policy-select').options.map(o=>o.textContent),['Easy · Easy AI','Medium · NN AI','Hard · Code AI']);
  element('policy-select').value='nn';element('policy-select').listeners.change();await new Promise(setImmediate);
- assert.equal(requests,1);assert.equal((await ctx.window.SZPolicy.decide(game)).kind,'code');assert.equal(requests,1,'Offline requests should back off');
+ assert.equal(requests,1);assert.equal((await ctx.window.SZPolicy.decide(game)).kind,'easy');assert.equal(requests,1,'Offline requests should back off');
+ assert.match(element('policy-status').text,/using Easy AI/);
  assert.equal(ctx.window.SZPolicy.diagnostics.state,'failed');
  fail=false;element('policy-select').listeners.change();await new Promise(setImmediate);
  assert.equal((await ctx.window.SZPolicy.decide(game)).kind,'nn');assert.equal(ctx.window.SZPolicy.diagnostics.state,'ready');
  assert.equal((await ctx.window.SZPolicy.decide({...game,version:'0.3.3'})).kind,'legacy');
+ element('policy-select').value='code';element('policy-select').listeners.change();
+ const beforeHard=requests;assert.equal((await ctx.window.SZPolicy.decide(game)).kind,'code');assert.equal(requests,beforeHard);assert.equal(element('policy-status').hidden,true);
+ for(const stored of ['code','nn','easy','invalid',null]){
+  const restored={...ctx,localStorage:{getItem:()=>stored,setItem(){}},window:{...ctx.window},setTimeout:()=>0};
+  vm.createContext(restored);vm.runInContext(fs.readFileSync(path.join(root,'app/policy-ai.js'),'utf8'),restored);
+  assert.equal(restored.window.SZPolicy.selected,['code','nn','easy'].includes(stored)?stored:'easy');
+ }
  console.log('NN: failed load falls back with backoff, manual retry recovers, legacy rules retained, locale repaint loop prevented.');
 }
 testPolicyFailureAndLocale().catch(e=>{console.error(e);process.exitCode=1;});

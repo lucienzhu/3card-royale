@@ -88,11 +88,12 @@ SDK 0.2.0／规则1.0.0：JavaScript＋TypeScript类型、Python／Rust／C++17�
 
 换牌机会现在可以逐次跳过：有两次机会时，跳过第一次后仍能使用第二次；跳过不摸牌、不弃牌，也不改变伤势。实际牌桌、教学和四种语言内核保持一致。本局回顾每次攻防留出独立间距，品牌 logo 与名称统一在分享 PNG 右上角。
 
-## NN AI
+## AI 难度
 
-设置 → 偏好可切换 **Code AI / NN AI**。用 10,000 局 Code AI 对战训练单次观察的
+设置 → 偏好 → 难度可选 **简单 / 中等 / 困难**，分别对应 Easy AI / NN AI / Code AI。
+[策略与实测胜率](docs/DIFFICULTY.zh-CN.md)。用 10,000 局 Code AI 对战训练单次观察的
 MLP，以 PyTorch 训练并导出 ONNX，在浏览器 Web Worker 中推理。上线使用 256/128
-隐藏层模型，ONNX 为 0.55 MB；独立缓存的 WASM 运行时约 14 MB。默认仍为 Code AI。
+隐藏层模型，ONNX 为 0.55 MB；独立缓存的 WASM 运行时约 14 MB。新玩家默认简单，已有偏好保留。
 
 [RL 介绍页](rl.html) · [模型与 RL 接入](docs/MODEL.zh-CN.md) · [训练与复现](training/README.md) · [实验指标、曲线与 TensorBoard](docs/experiments/nn-policy-v1/README.md)
 

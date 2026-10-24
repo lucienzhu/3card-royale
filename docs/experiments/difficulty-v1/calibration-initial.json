@@ -1,0 +1,53 @@
+{
+  "seed_start": 82000000,
+  "seed_count": 60,
+  "games_per_budget": 120,
+  "opponent": "code",
+  "selected_budget": 48,
+  "results": [
+    {
+      "budget": 4,
+      "wins": 2,
+      "games": 120,
+      "truncated": 0
+    },
+    {
+      "budget": 8,
+      "wins": 2,
+      "games": 120,
+      "truncated": 0
+    },
+    {
+      "budget": 12,
+      "wins": 8,
+      "games": 120,
+      "truncated": 0
+    },
+    {
+      "budget": 24,
+      "wins": 15,
+      "games": 120,
+      "truncated": 0
+    },
+    {
+      "budget": 32,
+      "wins": 18,
+      "games": 120,
+      "truncated": 0
+    },
+    {
+      "budget": 48,
+      "wins": 26,
+      "games": 120,
+      "truncated": 0
+    },
+    {
+      "budget": 64,
+      "wins": 38,
+      "games": 120,
+      "truncated": 0
+    }
+  ],
+  "swap_strategy": "Initial proposal: skip about half of opportunities, otherwise redraw from deck",
+  "source_commit": "04a800f15a1028483582e5cb78b0d21b29229450"
+}

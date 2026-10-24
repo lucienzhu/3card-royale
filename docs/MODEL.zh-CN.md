@@ -130,5 +130,6 @@ finally:
    契约，并同步编码器与 worker；重新训练、验证一致性、测延迟后再更新上线 manifest。
 
 浏览器 [worker](../app/policy-worker.js)检查规则、特征版本、SHA-256 和 5 MB 模型上限。
-[接入层](../app/policy-ai.js)在加载／推理失败时回退 Code AI；默认仍为 Code AI。
+[接入层](../app/policy-ai.js)在加载／推理失败时回退 Easy AI 并显示提示；新玩家默认简单。
+[三档难度](DIFFICULTY.zh-CN.md)。
 独立缓存的 WASM 运行时约 14 MB，不计入模型大小。

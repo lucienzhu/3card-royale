@@ -44,3 +44,11 @@ for(const m of html.matchAll(/data-sc="([^"]+)"/g)){
 assert(copy.tryPath[0].includes('设置')&&copy.tryPath[1].includes('Settings'));
 assert(copy.method[0].includes('模仿学习')&&copy.method[1].includes('imitation learning'));
 console.log('RL page: five models and random baseline match saved results, deployed artifact and bilingual setup instructions.');
+
+const difficulty=JSON.parse(read('docs/experiments/difficulty-v1/evaluation.json'));
+for(const r of difficulty.results){
+ assert.equal(r.completed,r.games);assert.equal(r.truncated,0);assert.equal(r.invalid_actions,0);
+ assert.equal(r.episodes.filter(e=>e.reward>0).length,r.wins);
+ if(r.policy==='easy')for(const lang of copy.difficultyNote)assert(lang.includes((r.win_rate*100).toFixed(1)+'%'));
+}
+console.log('Difficulty page: Easy head-to-head figures match the saved paired evaluation.');
