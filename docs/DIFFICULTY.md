@@ -8,7 +8,7 @@ Settings → Preferences → Difficulty:
 | --- | --- | --- |
 | Easy | Easy AI | Limited attention; deck-only redraws |
 | Medium | NN AI | Existing 256/128 behavioral-cloning checkpoint |
-| Hard | Code AI | Existing heuristic over every legal action |
+| Hard | Table Code AI | Original table policy; preserves combinations and evaluates swaps |
 
 New visitors start on Easy. Saved `code` / `nn` preferences remain Hard / Medium.
 Changing difficulty takes effect on the next AI decision, without redealing.
@@ -19,7 +19,7 @@ original Code AI and show a notice. Three-level play applies to Standard 1.0.
 ## How Easy is weaker
 
 - Attack: sample at most **64** legal plays without replacement, then choose the
-  best among them with the existing Code AI comparison.
+  best among them with the frozen SDK baseline comparison.
 - Defense: first exclude immediately losing plays **if a nonlethal defense exists**;
   sample at most 64 of the remaining plays and compare them in the same way.
 - Swaps: use every opportunity to replace the lowest-priority card with a draw
@@ -34,10 +34,37 @@ not a trained model or lookahead search.
 
 [JavaScript](../sdk/easy-policy.js) and [Python](../python/threecard_royale/easy_policy.py)
 share the policy and are checked against the same observations. No core rules,
-feature schema, Code AI, or deployed ONNX weights changed. Rust/C++ retain their
-existing Code AI; Easy is provided in JS and Python.
+feature schema, SDK baseline, or deployed ONNX weights changed. Hard restores the original table policy. Rust/C++ retain their
+existing SDK Code AI; Easy is provided in JS and Python.
 
-## Evaluation
+## Browser Hard: original table policy
+
+The NN integration accidentally routed Hard to the simpler SDK training policy.
+Hard now calls the original `Game.aiStep()` again. It preserves useful remaining
+combinations and compares swap gains; blind rival-hand swaps are restored.
+Easy remains at 64 candidates and the NN checkpoint is unchanged.
+
+Actual browser-engine evaluation, 1,000 games per matchup, using the same Gym
+seed mapping, paired seats and balanced first attackers:
+
+| Policy | Opponent | Wins |
+| --- | --- | --- |
+| Easy 64 | Table Code AI (Hard) | **315 / 1,000 · 31.5%** |
+| NN AI | Table Code AI (Hard) | **412 / 1,000 · 41.2%** |
+| Table Code AI (Hard) | SDK Code AI baseline | **547 / 1,000 · 54.7%** |
+| NN AI (control) | SDK Code AI baseline | **462 / 1,000 · 46.2%** |
+
+All 4,000 games completed legally. The control reproduces all prior NN/SDK
+outcomes. [Records](experiments/difficulty-v1/table-code-evaluation.json).
+The original browser card/discard order is preserved by evaluating the actual
+`Game.aiStep()`, rather than applying a sorted SDK action on its behalf.
+
+Regression checks cover 100 complete games / 2,550 identical AI decisions,
+including 572 swaps (262 blind). Switching difficulty and deciding do not change
+the saved game or deal RNG. An audit of 3,000 initial states also matched the
+pre-NN release exactly. The rules/deal engine itself did not change.
+
+## Frozen SDK baseline comparison
 
 Each pair: **1,000 completed small games**, 500 Gym evaluation seeds starting at
 81,000,000, swapped seats, balanced first attackers, normal level-2 starts.
@@ -45,20 +72,20 @@ No illegal actions or truncated games.
 
 | Policy | Opponent | Wins |
 | --- | --- | --- |
-| Easy AI | Code AI | **361 / 1,000 · 36.1%** |
+| Easy AI | SDK Code AI | **361 / 1,000 · 36.1%** |
 | Easy AI | NN AI | **441 / 1,000 · 44.1%** |
-| NN AI | Code AI | **462 / 1,000 · 46.2%** |
+| NN AI | SDK Code AI | **462 / 1,000 · 46.2%** |
 
-Easy is distinctly weaker in these games. Medium and Hard remain close: these
-are practical labels, not an Elo scale or a prediction of human win rates.
+Easy is weaker in these comparisons. Difficulty labels are not an Elo scale
+or a prediction of human win rates; the restored Hard results are reported separately above.
 The shipped policy is **easy-v2**, with a **64-play** limit. The earlier 48-play
-version won 30.4% vs Code and 39.0% vs NN on these same evaluation seeds
+version won 30.4% vs SDK Code and 39.0% vs NN on these same evaluation seeds
 ([archived report](experiments/difficulty-v1/evaluation-48.json)). The limit was
 changed after comparing 48 and 64, so these results are a reproducible comparison,
 not an untouched test of the choice. A separate 120-game calibration, starting
 at seed 82,000,000 with deck-only redraws, gave:
 
-| Candidate limit | Wins vs Code AI |
+| Candidate limit | Wins vs SDK Code AI |
 | --- | --- |
 | 24 | 16 / 120 · 13.3% |
 | 32 | 24 / 120 · 20.0% |
@@ -73,7 +100,7 @@ miss strong plays while retaining coherent hand selection and a survival guard.
 The [current calibration](experiments/difficulty-v1/calibration.json) and the
 [initial half-skip experiment](experiments/difficulty-v1/calibration-initial.json)
 are recorded separately. The prior uniform random
-baseline won only 0.1% against Code AI, making it a poor default practice rival.
+baseline won only 0.1% against SDK Code AI, making it a poor default practice rival.
 
 Reproduce after installing [training dependencies](../training/README.md):
 
@@ -81,6 +108,7 @@ Reproduce after installing [training dependencies](../training/README.md):
 python training/evaluate_difficulties.py --output artifacts/difficulties-64.json
 python training/evaluate_difficulties.py --easy-budget 48 --output artifacts/difficulties-48.json
 python training/calibrate_easy.py --output artifacts/easy-calibration.json
+python training/evaluate_table_policy.py --node node --output artifacts/table-code.json
 node tests/easy-policy.cjs
 PYTHONPATH=python python -m unittest discover -s tests -p test_easy_policy.py
 ```

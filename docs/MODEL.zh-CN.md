@@ -1,5 +1,7 @@
 # NN 策略模型 · 256
 
+**策略名称：** SDK Code AI 是固定的训练／评估基线。网页困难档已修复调用回归，恢复原牌桌 Code AI（`code-table-v1`），会保留下一手组合、评估换牌收益并盲换对手手牌。旧 NN 数据仍以 SDK 基线为对手。[当前难度结果](DIFFICULTY.zh-CN.md)。
+
 [English](MODEL.md) · [RL 环境](RL.zh-CN.md) · [复现步骤](../training/README.md)
 
 NN AI 是模仿 Code AI 的**行为克隆基线**：读取当前公开观察，为合法动作评分。

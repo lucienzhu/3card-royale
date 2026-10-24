@@ -1,5 +1,7 @@
 # Portable core & integration
 
+**Policy names:** SDK Code AI is the frozen training/evaluation baseline. Browser Hard uses the original table Code AI (`code-table-v1`), restored after a routing regression. It also preserves the next combination and evaluates swap gains, including blind rival-hand swaps. Historical NN results remain against the SDK baseline. [Current difficulty results](DIFFICULTY.md).
+
 [简体中文](SDK.zh-CN.md) · [RL environment](RL.md) · [Rules](RULES.md)
 
 SDK **0.2.0**, rules **1.0.0**, state schema **2**. Standard browser games use rules 1.0.0 in a separate save namespace; older variants and saves retain their original rules. The SDK's JSON state is a separate host format, not a browser-save replacement.

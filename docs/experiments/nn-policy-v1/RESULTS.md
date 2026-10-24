@@ -1,6 +1,8 @@
 # Measured results
 
-| Policy / hidden layers | ONNX bytes | Best epoch | Val accuracy | Test accuracy | Wins vs Code AI | Browser p95, 220 actions | Browser p95, 512 actions |
+All historical model comparisons here use the **frozen SDK Code AI baseline**. Browser Hard has been restored to the original table Code AI: NN wins 41.2% and Easy 64 wins 31.5% against it. [Separate browser-policy evaluation](../difficulty-v1/table-code-evaluation.json).
+
+| Policy / hidden layers | ONNX bytes | Best epoch | Val accuracy | Test accuracy | Wins vs SDK Code AI | Browser p95, 220 actions | Browser p95, 512 actions |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Uniform random | — | — | — | — | 1/1000 (0.1%) | — | — |
 | Easy AI · 64 candidates | — | — | — | — | 361/1000 (36.1%) | — | — |

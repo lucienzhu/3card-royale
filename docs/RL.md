@@ -1,5 +1,7 @@
 # RL / Gymnasium
 
+**Policy names:** SDK Code AI is the frozen training/evaluation baseline. Browser Hard uses the original table Code AI (`code-table-v1`), restored after a routing regression. It also preserves the next combination and evaluates swap gains, including blind rival-hand swaps. Historical NN results remain against the SDK baseline. [Current difficulty results](DIFFICULTY.md).
+
 [简体中文](RL.zh-CN.md) · [Portable SDK](SDK.md) · [NN model](MODEL.md)
 
 The shipped 256/128 NN policy uses this observation/action contract. It learns

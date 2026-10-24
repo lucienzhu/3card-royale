@@ -1,5 +1,7 @@
 # Reproduce NN AI · 256
 
+Code AI in this training recipe means the **frozen SDK baseline**. Browser Hard uses the restored original table policy. Compare current opponents with `python training/evaluate_table_policy.py --node node`; see [difficulty records](../docs/DIFFICULTY.md).
+
 Production uses **256 → 128 → 1**: two ReLU hidden layers and a shared score for
 each legal action. The input is one public observation (336 values) plus one
 candidate action (72). Training imitates Code AI; it has no history or hidden cards.

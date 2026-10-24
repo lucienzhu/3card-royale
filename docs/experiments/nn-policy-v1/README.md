@@ -1,5 +1,7 @@
 # NN Policy v1 · 2026-10-24
 
+All historical model comparisons here use the **frozen SDK Code AI baseline**. Browser Hard has been restored to the original table Code AI: NN wins 41.2% and Easy 64 wins 31.5% against it. [Separate browser-policy evaluation](../difficulty-v1/table-code-evaluation.json).
+
 Experiment snapshot: Git tag `nn-policy-experiments-20261024`. Game rules remain 1.0.0.
 The selected web model is **256/128**. Reproduce it with `training/reproduce.py`;
 the comparisons below preserve all five historical experiments.
@@ -76,9 +78,10 @@ checks cover 55,584 values. See `tests/nn-policy.cjs` and `training/parity.py`.
 
 The current browser offers **Easy / Medium / Hard** in Settings → Preferences →
 Difficulty, using Easy AI / NN AI / Code AI. New visitors start on Easy (64
-candidates, deck-only redraws); it wins 36.1% vs Code and 44.1% vs NN over 1,000
-games each. [Difficulty records](../difficulty-v1/evaluation.json). Code AI uses
-the same visible-information SDK policy used to generate samples. NN AI uses
+candidates, deck-only redraws); it wins 31.5% vs restored Hard and 44.1% vs NN over
+1,000 games each. [Difficulty records](../../DIFFICULTY.md). Hard uses the original
+table policy, preserving combinations and evaluating swaps. The frozen SDK Code
+baseline remains the training teacher and historical evaluation opponent. NN AI uses
 the 256/128 hidden-layer model. Unsupported older rules keep their original policy.
 
 Models and runtime are hosted as static files from the same origin. Inference
