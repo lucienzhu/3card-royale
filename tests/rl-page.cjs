@@ -7,8 +7,21 @@ const evaluations=JSON.parse(read('docs/experiments/nn-policy-v1/evaluation.json
 const manifest=JSON.parse(read('models/nn-policy/manifest.json'));
 const copy=JSON.parse(html.match(/window.SC_COPY=(\{[\s\S]*?\});<\/script>/)[1]);
 const rows=[...html.matchAll(/<tr data-model="([^"]+)"([^>]*)>([\s\S]*?)<\/tr>/g)];
-assert.equal(rows.length,training.models.length);
+assert.equal(rows.length,training.models.length+1);
 for(const [_,id,attrs,row] of rows){
+ if(id==='random'){
+  const ev=JSON.parse(read('docs/experiments/nn-policy-v1/random-baseline.json'));
+  assert(row.includes((ev.win_rate*100).toFixed(1)+'%'),'random win rate');
+  assert(row.includes(`${ev.wins} / ${ev.games.toLocaleString('en-US')}`),'random wins/games');
+  assert(row.includes('class="rl-size">—'),'random has no ONNX');
+  assert.equal(ev.episodes.length,ev.games);
+  assert.equal(ev.episodes.filter(e=>!e.truncated&&e.reward>0).length,ev.wins);
+  assert.equal(ev.episodes.filter(e=>e.truncated).length,ev.truncated);
+  assert.equal(ev.completed+ev.truncated,ev.games);
+  assert.equal(ev.win_rate,ev.wins/ev.completed);
+  assert.equal(ev.invalid_actions,0);
+  continue;
+ }
  const model=training.models.find(m=>String(m.id||m.width)===id);
  assert(model,'Unknown model '+id);
  const ev=evaluations.find(e=>e.model===`mlp-${id}.onnx`);
@@ -30,4 +43,4 @@ for(const m of html.matchAll(/data-sc="([^"]+)"/g)){
 }
 assert(copy.tryPath[0].includes('设置')&&copy.tryPath[1].includes('Settings'));
 assert(copy.method[0].includes('模仿学习')&&copy.method[1].includes('imitation learning'));
-console.log('RL page: five model comparisons match saved results, deployed artifact and bilingual setup instructions.');
+console.log('RL page: five models and random baseline match saved results, deployed artifact and bilingual setup instructions.');

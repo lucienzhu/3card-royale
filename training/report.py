@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 root = Path('artifacts/nn-policy')
 dest = Path('docs/experiments/nn-policy-v1')
 dest.mkdir(parents=True, exist_ok=True)
-for name in ['dataset.json', 'training.json', 'evaluation.json', 'browser-profile.json', 'browser-profile-first-256x512.json', 'action-counts.json']:
+for name in ['dataset.json', 'training.json', 'evaluation.json', 'browser-profile.json', 'browser-profile-first-256x512.json', 'action-counts.json', 'random-baseline.json']:
     if (root / name).exists():
         shutil.copy2(root / name, dest / name)
 training = json.loads((root / 'training.json').read_text())
@@ -37,7 +37,11 @@ print(dest)
 
 evaluation = {r['model']: r for r in json.loads((root / 'evaluation.json').read_text())}
 profiles = json.loads((root / 'browser-profile.json').read_text())['results']
-lines = ['# Measured results', '', '| Hidden layers | ONNX bytes | Best epoch | Val accuracy | Test accuracy | Wins vs Code AI | Browser p95, 220 actions | Browser p95, 512 actions |', '| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |']
+lines = ['# Measured results', '', '| Policy / hidden layers | ONNX bytes | Best epoch | Val accuracy | Test accuracy | Wins vs Code AI | Browser p95, 220 actions | Browser p95, 512 actions |', '| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |']
+random_report = dest / 'random-baseline.json'
+if random_report.exists():
+    baseline = json.loads(random_report.read_text())
+    lines.append(f"| Uniform random | — | — | — | — | {baseline['wins']}/{baseline['completed']} ({baseline['win_rate']:.1%}) | — | — |")
 for m in training['models']:
     ident = model_id(m); label = '/'.join(map(str, hidden(m)))
     history = json.loads((root / 'models' / f'mlp-{ident}-history.json').read_text())
@@ -53,4 +57,6 @@ if first_profile.exists():
     first = json.loads(first_profile.read_text())['results']
     first_latency = {r['candidates']: r['p95_ms'] for r in first if model_id(r) == '256x512'}
     lines += [f"The table uses the repeat browser run. The first run measured 256/512 at p95 {first_latency[220]:.2f} ms for 220 actions and {first_latency[512]:.2f} ms for 512 actions. Both raw runs are retained; these short measurements vary with browser/system load and are not a latency guarantee.", '']
+if random_report.exists():
+    lines += ['', '[Uniform random](random-baseline.json) uses the same paired seeds and Code AI opponent. It samples legal candidate indices uniformly, including swaps and declines. It has no ONNX model; neural inference latency is not applicable.', '']
 (dest / 'RESULTS.md').write_text('\n'.join(lines))

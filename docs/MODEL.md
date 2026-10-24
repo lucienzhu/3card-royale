@@ -7,6 +7,8 @@ current public observation and scores the legal moves. It has no recurrent memor
 search, private opponent cards or reward-trained value function. The Gym environment
 supports RL experiments; a PPO trainer and critic are not implemented.
 
+The matching uniform legal-action baseline won **1/1,000 (0.1%)** against Code AI, with no truncations or illegal actions. It uses the same 500 paired seeds and level-2 starts. [Protocol and reproduction](../training/README.md#uniform-random-baseline).
+
 ## Released model
 
 | Item | Value |
