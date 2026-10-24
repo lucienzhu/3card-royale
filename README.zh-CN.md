@@ -2,6 +2,8 @@
 
 **简体中文** · [English](README.md)
 
+[**稳定版本 v1.0.0 · 检查记录与固定模型**](docs/releases/v1.0.0.md)
+
 ![深圳花牌 · 一副牌，两个人，从2打到A](assets/repository-cover.svg)
 
 **一副普通扑克，两个人，从 2 打到 A。**
