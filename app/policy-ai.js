@@ -48,6 +48,9 @@
   function adapter(game){const sdk=Object.create(ThreeCardRoyale.Game.prototype);sdk.g=game;return sdk;}
   async function decide(game) {
     if(game.version!=='1.0.0')return {kind:'legacy'};
+    // Hard preserves the original table policy, including retained-hand and swap evaluation.
+    // RoyaleCodePolicy is the frozen, simpler SDK training baseline used by Easy/NN experiments.
+    if(selected==='code')return {kind:'code',version:'code-table-v1'};
     const o=adapter(game).observation(game.currentActor());
     if(selected==='nn' && Date.now()>=retryAfter){
       try{
@@ -56,11 +59,10 @@
         return {kind:'nn',action:o.legal_actions[result.index],version:result.version};
       }catch{state='failed';retryAfter=Date.now()+60000;paint();}
     }
-    if(selected==='code')return {kind:'code',action:RoyaleCodePolicy.chooseAction(o)};
     return {kind:'easy',action:RoyaleEasyPolicy.chooseAction(o),version:RoyaleEasyPolicy.version,fallback:selected==='nn'};
   }
   function apply(game, decision){
-    if(decision.kind==='legacy')game.aiStep();
+    if(decision.kind==='legacy'||decision.kind==='code')game.aiStep();
     else adapter(game).step(decision.action);
   }
   select.addEventListener('change',()=>{

@@ -77,3 +77,5 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
 .rl-contract{display:flex;flex-wrap:wrap;gap:8px 24px;margin:14px 0 0;color:var(--muted);font-size:11px}.rl-contract code{overflow-wrap:anywhere}
+
+.rl-hard{margin-top:24px}.rl-hard th:first-child,.rl-hard thead th:last-child{width:50%}.rl-hard td:last-child{text-align:right;font-size:14px}.rl-hard th{font-size:14px}#hard-results{margin-top:36px}

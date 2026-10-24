@@ -63,3 +63,25 @@ for(const r of difficulty.results){
  if(r.policy==='easy')for(const lang of copy.difficultyNote)assert(lang.includes((r.win_rate*100).toFixed(1)+'%'));
 }
 console.log('Difficulty page: Easy head-to-head figures match the saved paired evaluation.');
+
+const restored=JSON.parse(read('docs/experiments/difficulty-v1/table-code-evaluation.json'));
+const hardRows=[...html.matchAll(/<tr data-hard-policy="([^"]+)"[^>]*>([\s\S]*?)<\/tr>/g)];
+assert.equal(hardRows.length,3);
+for(const [_,id,row] of hardRows){
+ const ev=restored.results.find(r=>id==='sdk-code' ? r.policy==='table-code'&&r.opponent===id : r.policy===id&&r.opponent==='table-code');
+ assert(ev,'Missing restored Hard evaluation: '+id);
+ const wins=id==='sdk-code'?ev.games-ev.wins:ev.wins;
+ assert(row.includes((100*wins/ev.games).toFixed(1)+'%'));
+ assert(row.includes(`${wins} / ${ev.games.toLocaleString('en-US')}`));
+}
+for(const ev of restored.results){
+ assert.equal(ev.games,1000);assert.equal(ev.completed,ev.games);
+ assert.equal(ev.truncated,0);assert.equal(ev.invalid_actions,0);
+ assert.equal(ev.episodes.length,ev.games);
+ assert.equal(ev.episodes.filter(e=>e.reward>0).length,ev.wins);
+ assert.equal(ev.win_rate,ev.wins/ev.games);
+}
+const oldControl=difficulty.results.find(r=>r.policy==='nn'&&r.opponent==='code');
+const newControl=restored.results.find(r=>r.policy==='nn'&&r.opponent==='sdk-code');
+assert.deepEqual(newControl.episodes.map(e=>[e.seed,e.seat,e.first,e.reward]),oldControl.episodes.map(e=>[e.seed,e.seat,e.first,e.reward]));
+console.log('Restored Hard: page agrees with all 4,000 saved games; 1,000 control outcomes reproduce the frozen SDK baseline.');

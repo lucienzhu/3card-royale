@@ -91,7 +91,8 @@ SDK 0.2.0／规则1.0.0：JavaScript＋TypeScript类型、Python／Rust／C++17�
 ## AI 难度
 
 设置 → 偏好 → 难度可选 **简单 / 中等 / 困难**，分别对应 Easy AI / NN AI / Code AI。
-Easy 最多比较 **64** 个出牌候选，换牌只从牌堆抽取。每组 1,000 局，对 Code AI 胜率 **36.1%**，对 NN AI **44.1%**。
+Easy 最多比较 **64** 个出牌候选，换牌只从牌堆抽取。每组 1,000 局，对恢复后的牌桌 Code AI 胜率 **31.5%**，对 NN AI **44.1%**。
+困难档恢复原牌桌策略，包括盲换手牌与保留下一手组合。训练和旧模型统计仍使用固定的 SDK Code AI 基线。
 [策略与实测胜率](docs/DIFFICULTY.zh-CN.md)。用 10,000 局 Code AI 对战训练单次观察的
 MLP，以 PyTorch 训练并导出 ONNX，在浏览器 Web Worker 中推理。上线使用 256/128
 隐藏层模型，ONNX 为 0.55 MB；独立缓存的 WASM 运行时约 14 MB。新玩家默认简单，已有偏好保留。
