@@ -1,0 +1,176 @@
+{
+  "release": "v1.0.0",
+  "date": "2026-10-25",
+  "rules": "1.0.0",
+  "sdk": "0.2.0",
+  "game_audited_commit": "273ea7cef1c71584afe81cc4ee8e72ab0e7e8614",
+  "published_game_tree_equivalent": "2a1a6132770fa1d740ed8a86cb8d0f31a88fb3c4",
+  "site_base_commit": "88cd995928b88cb9d8ad2991e8915acf6efdc289",
+  "site_release_tag": "3card-royale-v1.0.0",
+  "model": {
+    "version": "bc-10000-mlp256-v1",
+    "rules": "1.0.0",
+    "features": "gym-v1",
+    "episode": "game",
+    "file": "policy-mlp-256-v1.onnx",
+    "sha256": "5b98061d4188c116080eb6784c6378536a89e0b3c1db333df88217379e4dde13",
+    "bytes": 552407,
+    "architecture": "obs336 + candidate72 -> MLP 256/128 -> logit",
+    "hidden": [
+      256,
+      128
+    ],
+    "teacher": "sdk-code-policy-v0.2.0",
+    "training_games": 10000,
+    "training_method": "behavioral-cloning",
+    "history": false,
+    "max_candidates": 512
+  },
+  "conformance": {
+    "status": "passed",
+    "rule_version": "1.0.0",
+    "sdk_version": "0.2.0",
+    "native_runtimes": [
+      "JavaScript",
+      "Python",
+      "Rust",
+      "C++"
+    ],
+    "full_matches": 12,
+    "compared_decision_states": 2162,
+    "restored_states": 135,
+    "ace_reset_sequences": 8,
+    "evaluated_hands": 23781,
+    "maximum_legal_actions_seen": 226,
+    "swap_routes": [
+      "hand>blind",
+      "hand>deck",
+      "hand>enemy",
+      "hand>own",
+      "hand>wounds",
+      "wounds>blind",
+      "wounds>deck",
+      "wounds>enemy",
+      "wounds>hand",
+      "wounds>own",
+      "wounds>wounds"
+    ],
+    "invalid_actions_atomic": true,
+    "strategy_js_python_rust_parity": true,
+    "strategy_cpp_parity": true,
+    "seconds": 14.044,
+    "scope": "Synthetic seeded states only. No human balance or enjoyment claim."
+  },
+  "checks": {
+    "product": "passed",
+    "python_gym_tests": 16,
+    "cpp_native_tests": 2,
+    "typescript": "passed",
+    "torch_onnx_parity_positions": 12,
+    "hard_policy_parity_games": 100,
+    "hard_policy_parity_decisions": 2550,
+    "hard_policy_parity_swaps": 572,
+    "hard_policy_parity_blind_swaps": 262,
+    "reproduced_figure_files": 25,
+    "jekyll_build_published_site": "passed",
+    "jekyll_build_local_redesign": "passed",
+    "reproduced_win_rate_charts": 2,
+    "blog_tables": "all five sizes, latencies and win rates match reports"
+  },
+  "sha256": {
+    "gamecore.js": "beb6ec6666d58424b80e6e7d7cfc2f6801a7d0a77c34791df745612494392981",
+    "app/policy-ai.js": "d9068e67f877af5276448809666beb786ad30f401b4ba7dc60770d35398c8b05",
+    "app/card-motion.js": "6f3975c5b4fb91f72e70aa72f9b726919c6034a9e1d5536bb801bd256767b4a6",
+    "sdk/easy-policy.js": "1af6b4fb4aa6003f513419821bc16bf45a09169433037eee55cce0dd44af7ae2",
+    "sdk/policy.js": "18d660f922a46cf66c238794c65bcca7373d3bbfbf53748ade6ab107e85bbe3e",
+    "models/nn-policy/manifest.json": "e443dcb77021cd2243f0863da6ad238de29850271b81bf4f744a3fe67514dc40",
+    "models/nn-policy/policy-mlp-256-v1.onnx": "5b98061d4188c116080eb6784c6378536a89e0b3c1db333df88217379e4dde13",
+    "docs/experiments/nn-policy-v1/evaluation.json": "006f83a05f9a56d6b354ab708a57337edc7ecfb54d4c8ad59ef5e03653a5f678",
+    "docs/experiments/nn-policy-v1/browser-profile.json": "999761db5295530a33fb7f1e96dd92b5641420e293ae6f6dc6fd3a52b45a200d",
+    "docs/experiments/nn-policy-v1/reproduction-256.json": "a8ad2bb9447c89019a6906eed9ca798468ce93dc11f661f1ff907ec529d42c81",
+    "docs/experiments/difficulty-v1/evaluation.json": "5b9375dd927ca549d5da1520632de747191a1db0b9f2fbc054b6be500573e13b",
+    "docs/experiments/difficulty-v1/table-code-evaluation.json": "ae414a3bbf19f9e5d0caaf98ee357966ee1eb00a16c36621b91a13950c5898d3",
+    "app/policy-worker.js": "5b902ca62d66758629b2ced98045d2be0813f26daa43a9a9effc377f51a427e5"
+  },
+  "scope": {
+    "retrained_this_audit": false,
+    "reran_full_evaluation_tournaments": false,
+    "prior_reproduction_verified": true,
+    "physical_iphone_tested": false,
+    "website_redesign_published_by_this_release": false,
+    "concurrent_redesign_already_published": true
+  },
+  "published_site_link_audit": {
+    "pages": 500,
+    "references": 13756,
+    "missing": [],
+    "badanchors": []
+  },
+  "local_redesign_link_audit": {
+    "pages": 500,
+    "references": 13756,
+    "missing": [],
+    "badanchors": []
+  },
+  "site_initial_base_commit": "c44f6225696d56117c997d34547ce55fbab3b3e9",
+  "site_base_tree": "9aca047036a428e6b94a55bab2a92d1123dcd856",
+  "site_local_equivalent_commit": "78f6c153fcbfddbd83d5e15b9bc986b0ac8b8ae2",
+  "superseded_legacy_site_link_audit": {
+    "pages": 220,
+    "references": 4747,
+    "missing": [
+      {
+        "source": "stuffs/index.html",
+        "site": true,
+        "url": "/js/default.orbit.js"
+      },
+      {
+        "source": "stuffs/t420s.html",
+        "site": true,
+        "url": "/js/default.orbit.js"
+      },
+      {
+        "source": "projects/kernelposture/index.html",
+        "site": true,
+        "url": "/jsmodernizr.foundation.js"
+      },
+      {
+        "source": "projects/kernelposture/index.html",
+        "site": true,
+        "url": "/js/jquery-1.7.2.min.js"
+      },
+      {
+        "source": "files/index.html",
+        "site": true,
+        "url": "/js/default.orbit.js"
+      },
+      {
+        "source": "hireme/index.html",
+        "site": true,
+        "url": "./xiaolongzhu_cv_modern_en.pdf"
+      },
+      {
+        "source": "hireme/index.html",
+        "site": true,
+        "url": "./xiaolongzhu_cv_modern_zh.pdf"
+      },
+      {
+        "source": "hireme/index.html",
+        "site": true,
+        "url": "/js/default.orbit.js"
+      }
+    ],
+    "badanchors": [
+      {
+        "source": "projects/kernelposture/index.html",
+        "site": true,
+        "url": "#dataset"
+      },
+      {
+        "source": "projects/sketchhand/index.html",
+        "site": true,
+        "url": "#dataset"
+      }
+    ]
+  }
+}

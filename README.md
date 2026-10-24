@@ -2,6 +2,8 @@
 
 [简体中文](README.zh-CN.md) · **English**
 
+[**Stable release v1.0.0 · audit and frozen checkpoint**](docs/releases/v1.0.0.md)
+
 ![3Card Royale — One deck. Two players. Race to Ace.](assets/repository-cover.svg)
 
 **One standard deck. Two players. Race from 2 to Ace.**
