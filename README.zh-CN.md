@@ -8,7 +8,7 @@
 
 **一副普通扑克，两个人，从 2 打到 A。**
 
-来自深圳的开放扑克玩法：八张手牌选三张，伤牌也能出，防守成功换机会。四炸6分，四张自然同点牌加花牌组成罕见的五炸7分。
+**深圳花牌（3Card Royale，aka Shenzhen Flower Cards）**，来自深圳的开放扑克玩法：八张手牌选三张，伤牌也能出，防守成功换机会。四炸6分，四张自然同点牌加花牌组成罕见的五炸7分。
 
 [**开始试玩 ↗**](https://lucienzhu.github.io/3card-royale/?lang=zh-CN) · [学会怎么玩](https://lucienzhu.github.io/3card-royale/about.html?lang=zh-CN) · [完整规则](docs/RULES.zh-CN.md) · [视觉识别](https://lucienzhu.github.io/3card-royale/brand.html?lang=zh-CN)
 
