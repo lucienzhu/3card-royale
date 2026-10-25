@@ -1,0 +1,851 @@
+{
+  "policy": "godlike-v1",
+  "opponent": "code-table-v1",
+  "rules": "1.0.0",
+  "protocol": "Independent level-2 small games. Each direct core seed is played twice with Godlike seats swapped; first attacker alternates between seed pairs. Not the Gym seed mapping.",
+  "games": 100,
+  "wins": 68,
+  "win_rate": 0.68,
+  "seed_start": 84000000,
+  "seed_end": 84000049,
+  "runtime": {
+    "node": "v24.19.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1"
+  },
+  "milliseconds": 5556.593459,
+  "routes": {
+    "deck": 56,
+    "blind": 76,
+    "wounds": 75,
+    "skip": 23
+  },
+  "latency_ms": {
+    "attack": {
+      "count": 464,
+      "p50": 1.8238329999999223,
+      "p95": 13.81704099999996,
+      "max": 26.059459000000004
+    },
+    "defend": {
+      "count": 446,
+      "p50": 0.4242920000006052,
+      "p95": 8.367166999999426,
+      "max": 10.466042000000016
+    },
+    "refresh": {
+      "count": 230,
+      "p50": 4.218124999999873,
+      "p95": 38.96754199999941,
+      "max": 53.04624999999987
+    }
+  },
+  "sha256": {
+    "sdk/godlike-policy.js": "047f0f33bc45e85d1e79623732342abee16e65ad43e2e77989c40d6efb9e60db",
+    "gamecore.js": "beb6ec6666d58424b80e6e7d7cfc2f6801a7d0a77c34791df745612494392981",
+    "training/evaluate_godlike.cjs": "e81917f6d4bda77616c2f91ffe636637b6d46305cc933746888a9f4ccdbafb8d"
+  },
+  "records": [
+    {
+      "seed": 84000000,
+      "seat": 0,
+      "first": 0,
+      "won": true,
+      "decisions": 5,
+      "trace": "85cb7ffee3c11ccbb40bfaf6829bb790dcdd096868867c90b4bedbfe0c723435"
+    },
+    {
+      "seed": 84000000,
+      "seat": 1,
+      "first": 0,
+      "won": false,
+      "decisions": 6,
+      "trace": "87f316411ac1e091e7ea46f2a418b5e4457db1ad9e1266c99f922ae8375fe0b7"
+    },
+    {
+      "seed": 84000001,
+      "seat": 0,
+      "first": 1,
+      "won": true,
+      "decisions": 14,
+      "trace": "7a493461ab6972ad74cc19ccad8abd95dc08fe46d7755b2f03765dfb608956a9"
+    },
+    {
+      "seed": 84000001,
+      "seat": 1,
+      "first": 1,
+      "won": false,
+      "decisions": 11,
+      "trace": "9ab020bbb19cfedcb023fc497fe299d9b6e0b118347f9c4459ebd77476a37e96"
+    },
+    {
+      "seed": 84000002,
+      "seat": 0,
+      "first": 0,
+      "won": true,
+      "decisions": 5,
+      "trace": "eefbe006766c47e7be3ab99f60a9313c11a76371b5573fe8fb2a16b02cd2c6c6"
+    },
+    {
+      "seed": 84000002,
+      "seat": 1,
+      "first": 0,
+      "won": false,
+      "decisions": 15,
+      "trace": "045d321b06b56fe6039f74ac696080be405864d04528cf8e73f684b6d013af5c"
+    },
+    {
+      "seed": 84000003,
+      "seat": 0,
+      "first": 1,
+      "won": true,
+      "decisions": 13,
+      "trace": "45802fc9a7f23190062d39427f1d1bf061189e819590e78b28ae4eac972f81bc"
+    },
+    {
+      "seed": 84000003,
+      "seat": 1,
+      "first": 1,
+      "won": false,
+      "decisions": 8,
+      "trace": "9bd8d989ef3744e05ae60f6104fdc622fc081ce6f464e3d19bc2e8eba4cfa829"
+    },
+    {
+      "seed": 84000004,
+      "seat": 0,
+      "first": 0,
+      "won": true,
+      "decisions": 15,
+      "trace": "d3d6069b0220dbef2ff8c7e5ff8f14c2bc30f61fbe5f150aef73cf8d41168787"
+    },
+    {
+      "seed": 84000004,
+      "seat": 1,
+      "first": 0,
+      "won": true,
+      "decisions": 11,
+      "trace": "c05f1db94b0ad47d3902d58b556d707db49982115635d75638f1d64741211082"
+    },
+    {
+      "seed": 84000005,
+      "seat": 0,
+      "first": 1,
+      "won": false,
+      "decisions": 9,
+      "trace": "7d9b794b94171975afb8560347dee16eda87ca9a5420512d5ec575d0d7ec9640"
+    },
+    {
+      "seed": 84000005,
+      "seat": 1,
+      "first": 1,
+      "won": true,
+      "decisions": 10,
+      "trace": "45c11d06131a32c814506cf4f60085bdf23433e8784e12da15069c7decb04a01"
+    },
+    {
+      "seed": 84000006,
+      "seat": 0,
+      "first": 0,
+      "won": false,
+      "decisions": 11,
+      "trace": "4cf7628dbcdd5ff09735adbafe085821fcb19eda87eadd8d0b826a24065d3bab"
+    },
+    {
+      "seed": 84000006,
+      "seat": 1,
+      "first": 0,
+      "won": false,
+      "decisions": 14,
+      "trace": "965b087abcaf980d5c254f982497022406f71d0023ba8fa3dee0d4521bc52db5"
+    },
+    {
+      "seed": 84000007,
+      "seat": 0,
+      "first": 1,
+      "won": false,
+      "decisions": 11,
+      "trace": "3b0f63c449acb38dd823af0a284a6580b95e868ee114647208d6f0b2e5256d4d"
+    },
+    {
+      "seed": 84000007,
+      "seat": 1,
+      "first": 1,
+      "won": false,
+      "decisions": 13,
+      "trace": "646118fe7028d8f7b0616aea2a8b516ebead6da5a94a95a25b402005bbf72f9f"
+    },
+    {
+      "seed": 84000008,
+      "seat": 0,
+      "first": 0,
+      "won": true,
+      "decisions": 12,
+      "trace": "2dddabfc05a6df56fb47d60e85c27bb7701c42957994521b144e96e64be91be4"
+    },
+    {
+      "seed": 84000008,
+      "seat": 1,
+      "first": 0,
+      "won": true,
+      "decisions": 9,
+      "trace": "cf7225deaeb04cc0db64fd6aeec46fa76cb738d1f1c62f1815ade05ddc055fea"
+    },
+    {
+      "seed": 84000009,
+      "seat": 0,
+      "first": 1,
+      "won": true,
+      "decisions": 6,
+      "trace": "7ac0a844e4955c2533ccdb417d5450d3e6a5fdc082e23796636ae60279cc15f7"
+    },
+    {
+      "seed": 84000009,
+      "seat": 1,
+      "first": 1,
+      "won": true,
+      "decisions": 17,
+      "trace": "28933874d0f602c3ad2291fbdf5a5b4376a69ba3a5e53f62ebca6659fd6633c8"
+    },
+    {
+      "seed": 84000010,
+      "seat": 0,
+      "first": 0,
+      "won": true,
+      "decisions": 10,
+      "trace": "464191de63752d403ee30d26d1771c61012394e4db5068f0a4a02a51cfb0894e"
+    },
+    {
+      "seed": 84000010,
+      "seat": 1,
+      "first": 0,
+      "won": false,
+      "decisions": 10,
+      "trace": "1f32f7a61daec74559b347492f06d19222fd237bac9d3d2656f2220599b7d26f"
+    },
+    {
+      "seed": 84000011,
+      "seat": 0,
+      "first": 1,
+      "won": true,
+      "decisions": 12,
+      "trace": "d3951d7efcb0fc6e945e9b01b0e230b4342a7a2fbc9bf1437e9a104045bf7df7"
+    },
+    {
+      "seed": 84000011,
+      "seat": 1,
+      "first": 1,
+      "won": true,
+      "decisions": 23,
+      "trace": "1ba899c771b2e070ec1e457ce6385190729253f766f9826d5cc085e1a07d78d7"
+    },
+    {
+      "seed": 84000012,
+      "seat": 0,
+      "first": 0,
+      "won": false,
+      "decisions": 12,
+      "trace": "3ac598dff29f0a6ba33973ffe54113a6aadaa8e476f3125e68befacde56df052"
+    },
+    {
+      "seed": 84000012,
+      "seat": 1,
+      "first": 0,
+      "won": true,
+      "decisions": 14,
+      "trace": "0a6526a876499f9f0c8fc573ade90d4a1ac08ea4fb0d2fdc79b1102bde90e685"
+    },
+    {
+      "seed": 84000013,
+      "seat": 0,
+      "first": 1,
+      "won": false,
+      "decisions": 6,
+      "trace": "e0c1c620b3fda52df5353352de2885bf458210e0b1d73df7de0c1270e23f54dc"
+    },
+    {
+      "seed": 84000013,
+      "seat": 1,
+      "first": 1,
+      "won": true,
+      "decisions": 17,
+      "trace": "295c2b9849fc5722ec58681b568390d4fc64072cf2d2eb695aa184f2f6453248"
+    },
+    {
+      "seed": 84000014,
+      "seat": 0,
+      "first": 0,
+      "won": true,
+      "decisions": 4,
+      "trace": "939401d930cd4c7830450f9590a56ea99f2ea59689b4925bbb2917cbb66fb03e"
+    },
+    {
+      "seed": 84000014,
+      "seat": 1,
+      "first": 0,
+      "won": true,
+      "decisions": 9,
+      "trace": "b125cfa0884f77b7aac71708c7729962184d5c37d8802c740a96f8da0f74c623"
+    },
+    {
+      "seed": 84000015,
+      "seat": 0,
+      "first": 1,
+      "won": true,
+      "decisions": 8,
+      "trace": "9775d0537e864b6613def0b4c757cc0123effba1e6ff5afb4e40b49489b09495"
+    },
+    {
+      "seed": 84000015,
+      "seat": 1,
+      "first": 1,
+      "won": true,
+      "decisions": 16,
+      "trace": "e36a51fe14a2ee423471fe1923091b1312cefc3ef33a303ce29a48214177d5ae"
+    },
+    {
+      "seed": 84000016,
+      "seat": 0,
+      "first": 0,
+      "won": true,
+      "decisions": 10,
+      "trace": "bb48ca1b055308186e6bcc5d739bed0a48707f2ebaadcaa6e4a1920e1d00a19d"
+    },
+    {
+      "seed": 84000016,
+      "seat": 1,
+      "first": 0,
+      "won": true,
+      "decisions": 19,
+      "trace": "86a0ef249b4d76353460288bb5e62a1758721bfc933fb5d5632793394f7123ab"
+    },
+    {
+      "seed": 84000017,
+      "seat": 0,
+      "first": 1,
+      "won": true,
+      "decisions": 11,
+      "trace": "58de78502d37d9f69abc757a6d71bccac164c8a71282c931aed0fe22f6854c64"
+    },
+    {
+      "seed": 84000017,
+      "seat": 1,
+      "first": 1,
+      "won": true,
+      "decisions": 11,
+      "trace": "48ffd3b74a235f885bd1abeb6f1e90ba8c03f03791a16a5a5c3f76b8eaf2db42"
+    },
+    {
+      "seed": 84000018,
+      "seat": 0,
+      "first": 0,
+      "won": true,
+      "decisions": 9,
+      "trace": "8466855d873c4bdbfcd8938d7d427b5270a763c41ed86283a22790d7eade60eb"
+    },
+    {
+      "seed": 84000018,
+      "seat": 1,
+      "first": 0,
+      "won": true,
+      "decisions": 7,
+      "trace": "66f2512e5615b6ecc7a41dc03c1f5f9b04c5c0d2dab85be12acc1a36a537c9eb"
+    },
+    {
+      "seed": 84000019,
+      "seat": 0,
+      "first": 1,
+      "won": true,
+      "decisions": 7,
+      "trace": "71aa7876de48a97dec79ee0f98af8ea12a271b8837d3b47127bc368c45a4b9a8"
+    },
+    {
+      "seed": 84000019,
+      "seat": 1,
+      "first": 1,
+      "won": true,
+      "decisions": 5,
+      "trace": "5841b0891853f9b57bed8a34bed9d3f2c88c0ca4180a363839bb9272fad87d2e"
+    },
+    {
+      "seed": 84000020,
+      "seat": 0,
+      "first": 0,
+      "won": true,
+      "decisions": 5,
+      "trace": "1295671435ec5c364cdf32dcfc886a537d29ea7a4540d4f57bc392094dd95ab5"
+    },
+    {
+      "seed": 84000020,
+      "seat": 1,
+      "first": 0,
+      "won": false,
+      "decisions": 8,
+      "trace": "54d70f24b48d9e9b80c3e1259ee0b6f8945e871e078b7776e10942463f392ac1"
+    },
+    {
+      "seed": 84000021,
+      "seat": 0,
+      "first": 1,
+      "won": true,
+      "decisions": 19,
+      "trace": "872bd47a8659837ba34096836699db6dc61318cba89f29d86760808794d593b7"
+    },
+    {
+      "seed": 84000021,
+      "seat": 1,
+      "first": 1,
+      "won": true,
+      "decisions": 25,
+      "trace": "2108cb565949661ae4a82d0db6f3f42ae7d147d6157952f92aeb1f3d068fbf95"
+    },
+    {
+      "seed": 84000022,
+      "seat": 0,
+      "first": 0,
+      "won": false,
+      "decisions": 14,
+      "trace": "21e2a11aa067b228f8e29eb9b7ae76b701e4f5a341169fb3e3cc5ee413bf3525"
+    },
+    {
+      "seed": 84000022,
+      "seat": 1,
+      "first": 0,
+      "won": true,
+      "decisions": 8,
+      "trace": "39aa2b1f428cb1d30d7305ecba235544d8e8dc17eea0d153bb3b4c0c10f6e3fb"
+    },
+    {
+      "seed": 84000023,
+      "seat": 0,
+      "first": 1,
+      "won": false,
+      "decisions": 14,
+      "trace": "b0b1964bb885a41b43e411ca40aeb2a3a4e4fcb68ab51dd1e36eb3cd91846ca5"
+    },
+    {
+      "seed": 84000023,
+      "seat": 1,
+      "first": 1,
+      "won": true,
+      "decisions": 15,
+      "trace": "f9d50cdf90f77fa448672dfbd23f9eb724a8a04ef4d7a52494803d569ba133be"
+    },
+    {
+      "seed": 84000024,
+      "seat": 0,
+      "first": 0,
+      "won": true,
+      "decisions": 17,
+      "trace": "6f60dff6c1de875b2ffc28c899373d13ba84f7e88bbd710b3d4dc9a744048b2a"
+    },
+    {
+      "seed": 84000024,
+      "seat": 1,
+      "first": 0,
+      "won": true,
+      "decisions": 3,
+      "trace": "405623158e9d64b970ac14616e152493f30bc77c0c010bbceedaaa029849e74d"
+    },
+    {
+      "seed": 84000025,
+      "seat": 0,
+      "first": 1,
+      "won": false,
+      "decisions": 8,
+      "trace": "8e395e851c67d14d6d4a1a60672dbb6ccbd18fd16ef7c755c6e6bc3bc7d93955"
+    },
+    {
+      "seed": 84000025,
+      "seat": 1,
+      "first": 1,
+      "won": true,
+      "decisions": 6,
+      "trace": "833e3667b7fd7e61852d7772961c3a2bbe77b5e6e8ce108ad4d3754d4fbc9495"
+    },
+    {
+      "seed": 84000026,
+      "seat": 0,
+      "first": 0,
+      "won": true,
+      "decisions": 23,
+      "trace": "bf3d0b210bd83f0dff0db0c55695d7d4a3a0de01c47ac6c099cb4f56ca8d32ef"
+    },
+    {
+      "seed": 84000026,
+      "seat": 1,
+      "first": 0,
+      "won": false,
+      "decisions": 10,
+      "trace": "ebf29400e80e649fcb2e80fbb302e03817499945e486cab422eefc1b5b3b0dfc"
+    },
+    {
+      "seed": 84000027,
+      "seat": 0,
+      "first": 1,
+      "won": true,
+      "decisions": 17,
+      "trace": "c027776fd4db74d3d0acce16aab0b9720a069b571c20780d4da9ee8847185701"
+    },
+    {
+      "seed": 84000027,
+      "seat": 1,
+      "first": 1,
+      "won": true,
+      "decisions": 22,
+      "trace": "3ba558ae6dc6c7d6d8bbb9d6eeaf7520151657ff32aa6d89d7d72015c7796b83"
+    },
+    {
+      "seed": 84000028,
+      "seat": 0,
+      "first": 0,
+      "won": false,
+      "decisions": 6,
+      "trace": "8ea777b8ae826e245a4846c662974fa615e44f2207dbf69f4889c7ff425c88ee"
+    },
+    {
+      "seed": 84000028,
+      "seat": 1,
+      "first": 0,
+      "won": true,
+      "decisions": 4,
+      "trace": "1188119486d17c82993546bf4eb07c8b7f9d582e3f999467301f2aa1a2b27d31"
+    },
+    {
+      "seed": 84000029,
+      "seat": 0,
+      "first": 1,
+      "won": true,
+      "decisions": 7,
+      "trace": "4a8d10fcbdd51334571f331c60e63664734d35a1e6bfbfbdcaf07e925aa32dda"
+    },
+    {
+      "seed": 84000029,
+      "seat": 1,
+      "first": 1,
+      "won": true,
+      "decisions": 19,
+      "trace": "aa357d0ac794527f8658cda6b72958ee7161fee24bd0f498d2de10a966e7ac8c"
+    },
+    {
+      "seed": 84000030,
+      "seat": 0,
+      "first": 0,
+      "won": false,
+      "decisions": 9,
+      "trace": "22740ff30eec94c6b89ffe77c27e93a9ce2c2b3faf464945b719a31799748726"
+    },
+    {
+      "seed": 84000030,
+      "seat": 1,
+      "first": 0,
+      "won": false,
+      "decisions": 8,
+      "trace": "22b854f3bfa4eae616862075ce86063e4b40842ba2593806b6b0a227ffba87b7"
+    },
+    {
+      "seed": 84000031,
+      "seat": 0,
+      "first": 1,
+      "won": true,
+      "decisions": 19,
+      "trace": "9419929338f59db5af5186c23494adbc0786deab6ae2f8929a00ce383a0043d3"
+    },
+    {
+      "seed": 84000031,
+      "seat": 1,
+      "first": 1,
+      "won": false,
+      "decisions": 12,
+      "trace": "1ab565fbcddd591d7477513273dd0ed8e6e68b21cc4694ba0c4265f704b22a43"
+    },
+    {
+      "seed": 84000032,
+      "seat": 0,
+      "first": 0,
+      "won": true,
+      "decisions": 12,
+      "trace": "2db872e6b31e5d602b4820e4200ca4a0fb906bd7282a71122af91335cd5fed3c"
+    },
+    {
+      "seed": 84000032,
+      "seat": 1,
+      "first": 0,
+      "won": true,
+      "decisions": 14,
+      "trace": "da07148bd6e152996e07815cf96a25cd7e44de5456bf24e67e9a07c4b1147b3c"
+    },
+    {
+      "seed": 84000033,
+      "seat": 0,
+      "first": 1,
+      "won": true,
+      "decisions": 13,
+      "trace": "777139061cb76f70a1534b47f7da4c33dd921f0244fd34224627169056968360"
+    },
+    {
+      "seed": 84000033,
+      "seat": 1,
+      "first": 1,
+      "won": false,
+      "decisions": 10,
+      "trace": "26c29654f58cebbfe6b2ab90388277fb61a330123a1d7fe09a1e6bee877fa7bc"
+    },
+    {
+      "seed": 84000034,
+      "seat": 0,
+      "first": 0,
+      "won": false,
+      "decisions": 12,
+      "trace": "a0f8e7814fb9460d1d2d6b2cb71254f8c39ad1d19b9219bc6420e45031324785"
+    },
+    {
+      "seed": 84000034,
+      "seat": 1,
+      "first": 0,
+      "won": true,
+      "decisions": 9,
+      "trace": "cb2fd86f69be4401c5e0e3526ecb0a3d397a19201c10dd2c000a544977ae1e5c"
+    },
+    {
+      "seed": 84000035,
+      "seat": 0,
+      "first": 1,
+      "won": false,
+      "decisions": 9,
+      "trace": "70752aae041bc1eb023ea01acb4e5e02536fc86e65354d39f59abdc7bb726b0b"
+    },
+    {
+      "seed": 84000035,
+      "seat": 1,
+      "first": 1,
+      "won": true,
+      "decisions": 11,
+      "trace": "8f8ced8c166fdf4293a1a20df8b355af392f3c7065df95e69a09dca85149c0e7"
+    },
+    {
+      "seed": 84000036,
+      "seat": 0,
+      "first": 0,
+      "won": true,
+      "decisions": 19,
+      "trace": "ea73782f3810c087a4c402db60b7f3ebcce1d99e8f82ceac212e5e6f94253f77"
+    },
+    {
+      "seed": 84000036,
+      "seat": 1,
+      "first": 0,
+      "won": true,
+      "decisions": 4,
+      "trace": "0abad833c620f662c83c38464448a908ee858b35ed33c22cd4fcef24bd96cb81"
+    },
+    {
+      "seed": 84000037,
+      "seat": 0,
+      "first": 1,
+      "won": true,
+      "decisions": 12,
+      "trace": "6cea6d81c2d403c4e5a078dfe5081598a720a1022e7f3b35c08c480404fec57a"
+    },
+    {
+      "seed": 84000037,
+      "seat": 1,
+      "first": 1,
+      "won": true,
+      "decisions": 10,
+      "trace": "47b0c52bcc2af0db9ebb480670a34615c621bd0507d8f79bf9b4ad713b4d3deb"
+    },
+    {
+      "seed": 84000038,
+      "seat": 0,
+      "first": 0,
+      "won": true,
+      "decisions": 10,
+      "trace": "e0c9f56a3e45f59cda265c14d1403c6a67e9ca01c7c80819d1d87d7b10ae1e7e"
+    },
+    {
+      "seed": 84000038,
+      "seat": 1,
+      "first": 0,
+      "won": true,
+      "decisions": 8,
+      "trace": "83f793796ed64bcd477a123d526eda2df2b03c684e75babe228b6b9f26375c76"
+    },
+    {
+      "seed": 84000039,
+      "seat": 0,
+      "first": 1,
+      "won": true,
+      "decisions": 24,
+      "trace": "fffe407af1ce1b169d7994989ae13ede6439540a3fe1d603561c3f0ee8cd032c"
+    },
+    {
+      "seed": 84000039,
+      "seat": 1,
+      "first": 1,
+      "won": true,
+      "decisions": 16,
+      "trace": "29df4f25d341a5b05813ac0d6c4c9061eccc6f9863ca2b21f2d154d8bb7799bd"
+    },
+    {
+      "seed": 84000040,
+      "seat": 0,
+      "first": 0,
+      "won": true,
+      "decisions": 17,
+      "trace": "9ee6d3a7d824297be260fdf01535df0508d2fdaf000c4327c270309538317c7d"
+    },
+    {
+      "seed": 84000040,
+      "seat": 1,
+      "first": 0,
+      "won": false,
+      "decisions": 10,
+      "trace": "1c164432ae8615e8a83f8b98313762c754d32fb3187aeef77d5abc2e6a310504"
+    },
+    {
+      "seed": 84000041,
+      "seat": 0,
+      "first": 1,
+      "won": false,
+      "decisions": 8,
+      "trace": "82ec8b8f390cc5bf535e48edf79002b2ec0b6cce7ac7ac2b625689b1b363845d"
+    },
+    {
+      "seed": 84000041,
+      "seat": 1,
+      "first": 1,
+      "won": true,
+      "decisions": 7,
+      "trace": "adaf9e4f97952de408153fa4c7795440ace17adb98e843ee468503a0b02c2f77"
+    },
+    {
+      "seed": 84000042,
+      "seat": 0,
+      "first": 0,
+      "won": false,
+      "decisions": 11,
+      "trace": "09c4578a82c796df6d3a530a23afa92f5f109e51591798bde69aee7f15f5f969"
+    },
+    {
+      "seed": 84000042,
+      "seat": 1,
+      "first": 0,
+      "won": true,
+      "decisions": 13,
+      "trace": "fac3dd65b24da3ca9b1f50e2d978a1fabdf4f18d1aaf9e841d83a186fad41844"
+    },
+    {
+      "seed": 84000043,
+      "seat": 0,
+      "first": 1,
+      "won": true,
+      "decisions": 13,
+      "trace": "eedb2758b9c406f269fd0e3f38e7ed7964109d081aef62141306d1004e59eec8"
+    },
+    {
+      "seed": 84000043,
+      "seat": 1,
+      "first": 1,
+      "won": false,
+      "decisions": 7,
+      "trace": "3c0427c2d413402db78e9079fde27970e7409254a7c343f0d3537daf6a65d26b"
+    },
+    {
+      "seed": 84000044,
+      "seat": 0,
+      "first": 0,
+      "won": true,
+      "decisions": 8,
+      "trace": "9bd92d8bfaabd0755f3328692fe9eeb62c529d73cb634901b969eab31ae54e7d"
+    },
+    {
+      "seed": 84000044,
+      "seat": 1,
+      "first": 0,
+      "won": false,
+      "decisions": 14,
+      "trace": "9a6cdff158de8de328595ffecf66e3186e9ce8563d59fa37351c36960647c397"
+    },
+    {
+      "seed": 84000045,
+      "seat": 0,
+      "first": 1,
+      "won": false,
+      "decisions": 8,
+      "trace": "94981a5c87f8b3d8ab5204359b1b055e2671805d4c253932adad9827874112e7"
+    },
+    {
+      "seed": 84000045,
+      "seat": 1,
+      "first": 1,
+      "won": true,
+      "decisions": 14,
+      "trace": "7f73fe239fc8cce5c689395b1a5cc4aec301107dddf273dc511a2e6c16740f51"
+    },
+    {
+      "seed": 84000046,
+      "seat": 0,
+      "first": 0,
+      "won": false,
+      "decisions": 7,
+      "trace": "585e75ec7fd3fa5c6eb95038fe6bb9347ee668f5bb9b88d3f44362cbdea21731"
+    },
+    {
+      "seed": 84000046,
+      "seat": 1,
+      "first": 0,
+      "won": true,
+      "decisions": 11,
+      "trace": "40fcfd3053c3afe874381c9359a7535b9b8e439077d950959bd5a39228b7fd7e"
+    },
+    {
+      "seed": 84000047,
+      "seat": 0,
+      "first": 1,
+      "won": true,
+      "decisions": 14,
+      "trace": "084e7a04466c949122893995a41a31d9a5f69800a65ba75a0d98b8e4bca4e308"
+    },
+    {
+      "seed": 84000047,
+      "seat": 1,
+      "first": 1,
+      "won": true,
+      "decisions": 17,
+      "trace": "80b7ce94c657be9fc1754864117b668c84368d901c3cecb30395b9c89943fd67"
+    },
+    {
+      "seed": 84000048,
+      "seat": 0,
+      "first": 0,
+      "won": true,
+      "decisions": 10,
+      "trace": "a428e514d42dc3443f91beee9c8d73a54c37419806db87683887a4bd8cfe21d1"
+    },
+    {
+      "seed": 84000048,
+      "seat": 1,
+      "first": 0,
+      "won": true,
+      "decisions": 8,
+      "trace": "dff3ce00378fc9dd52990cadb562a2c741df9abcb33c6098e5ae54d7fc531a7e"
+    },
+    {
+      "seed": 84000049,
+      "seat": 0,
+      "first": 1,
+      "won": false,
+      "decisions": 6,
+      "trace": "011335f961e8b55b33ab6dad2839cda32ed026e528232b9b7f9cbc766e467111"
+    },
+    {
+      "seed": 84000049,
+      "seat": 1,
+      "first": 1,
+      "won": true,
+      "decisions": 11,
+      "trace": "5b6ef2235a86e3a2d528e69ebe512c49f433a209abd31c257890ba719fe060a2"
+    }
+  ]
+}

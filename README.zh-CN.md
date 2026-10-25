@@ -92,7 +92,8 @@ SDK 0.2.0／规则1.0.0：JavaScript＋TypeScript类型、Python／Rust／C++17�
 
 ## AI 难度
 
-设置 → 偏好 → 难度可选 **简单 / 中等 / 困难**，分别对应 Easy AI / NN AI / Code AI。
+设置 → 偏好 → 难度可选 **简单 / 中等 / 困难 / 超凡**。前三档对应 Easy AI / NN AI / Code AI。
+超凡 Godlike 可看当前手牌、不记已出牌；对困难档 1,000 局胜率 **65.0%**。
 Easy 最多比较 **64** 个出牌候选，换牌只从牌堆抽取。每组 1,000 局，对恢复后的牌桌 Code AI 胜率 **31.5%**，对 NN AI **44.1%**。
 困难档恢复原牌桌策略，包括盲换手牌与保留下一手组合。训练和旧模型统计仍使用固定的 SDK Code AI 基线。
 [策略与实测胜率](docs/DIFFICULTY.zh-CN.md)。用 10,000 局 Code AI 对战训练单次观察的

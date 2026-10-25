@@ -2,16 +2,16 @@
   'use strict';
   const key='sz_policy_ai_v1', select=document.getElementById('policy-select'), status=document.getElementById('policy-status');
   const workerURL=new URL('policy-worker.js',document.currentScript.src);
-  let selected='easy', worker=null, sequence=0, state='idle', version=null, last=null, retryAfter=0;
+  let selected='easy', worker=null, sequence=0, state='idle', version=null, last=null, retryAfter=0, godlikeFailed=false, selectionRevision=0;
   const pending=new Map();
-  try { const saved=localStorage.getItem(key);if(['easy','code','nn'].includes(saved))selected=saved; }catch{}
+  try { const saved=localStorage.getItem(key);if(['easy','code','nn','godlike'].includes(saved))selected=saved; }catch{}
   select.value=selected;
   const en=()=>window.GKLocale?.language==='en';
   function paint() {
     document.getElementById('policy-label').textContent=en()?'Difficulty':'难度';
-    for(const option of select.options)option.textContent=({easy:en()?'Easy · Easy AI':'简单 · Easy AI',nn:en()?'Medium · NN AI':'中等 · NN AI',code:en()?'Hard · Code AI':'困难 · Code AI'})[option.value];
+    for(const option of select.options)option.textContent=({easy:en()?'Easy · Easy AI':'简单 · Easy AI',nn:en()?'Medium · NN AI':'中等 · NN AI',code:en()?'Hard · Code AI':'困难 · Code AI',godlike:en()?'Godlike · Sees your hand':'超凡 · Godlike AI（明牌）'})[option.value];
     const unsupported=window.gkGame && window.gkGame.version!=='1.0.0';
-    status.textContent=unsupported?(en()?'Historical rules use their original Code AI.':'历史规则使用原版 Code AI。'):selected!=='nn'?'':
+    status.textContent=unsupported?(en()?'Historical rules use their original Code AI.':'历史规则使用原版 Code AI。'):selected==='godlike'?(godlikeFailed?(en()?'Godlike unavailable · using Hard Code AI':'Godlike 暂不可用 · 使用困难 Code AI'):(en()?'Sees your hand · No card memory':'可看你的手牌 · 不记牌')):selected!=='nn'?'':
       state==='loading'?(en()?'Loading NN AI…':'正在加载 NN AI…'):
       state==='failed'?(en()?'NN AI unavailable · using Easy AI':'NN AI 暂不可用 · 使用 Easy AI'):
       state==='ready'?(en()?'NN AI ready':'NN AI 已就绪'):'';
@@ -51,6 +51,18 @@
     // Hard preserves the original table policy, including retained-hand and swap evaluation.
     // RoyaleCodePolicy is the frozen, simpler SDK training baseline used by Easy/NN experiments.
     if(selected==='code')return {kind:'code',version:'code-table-v1'};
+    // Never send a public SDK observation (which includes discard/history) to Godlike.
+    if(selected==='godlike'){
+      const revision=selectionRevision;
+      if(!godlikeFailed||Date.now()>=retryAfter){
+        try{
+          const result=await window.SZGodlikeAI.decide(game);
+          if(revision===selectionRevision){godlikeFailed=false;last=result;paint();}
+          return {kind:'godlike',action:result.action,version:result.version};
+        }catch{if(revision===selectionRevision){godlikeFailed=true;retryAfter=Date.now()+60000;paint();}}
+      }
+      return {kind:'code',version:'code-table-v1',fallback:'godlike'};
+    }
     const o=adapter(game).observation(game.currentActor());
     if(selected==='nn' && Date.now()>=retryAfter){
       try{
@@ -66,14 +78,16 @@
     else adapter(game).step(decision.action);
   }
   select.addEventListener('change',()=>{
-    selected=['easy','nn','code'].includes(select.value)?select.value:'easy';
-    retryAfter=0;
+    selectionRevision++;
+    window.SZGodlikeAI?.cancel();
+    selected=['easy','nn','code','godlike'].includes(select.value)?select.value:'easy';
+    retryAfter=0;godlikeFailed=false;
     try{localStorage.setItem(key,selected);}catch{}
     window.dispatchEvent(new Event('sz-policy-change'));paint();preload();
   });
   let language=document.documentElement.lang;
   new MutationObserver(()=>{if(language!==document.documentElement.lang){language=document.documentElement.lang;paint();}}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
   document.getElementById('version-select').addEventListener('change',()=>queueMicrotask(paint));
-  window.SZPolicy={decide,apply,preload,get selected(){return selected;},get diagnostics(){return {selected,state,version,last};}};
+  window.SZPolicy={decide,apply,preload,get selected(){return selected;},get diagnostics(){return {selected,state,version,last,godlikeFailed};}};
   paint();if(selected==='nn')setTimeout(preload,0);
 })();
