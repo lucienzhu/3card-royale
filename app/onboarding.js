@@ -24,7 +24,7 @@
   const picture=dialog.querySelector('.onboarding-picture'),start=dialog.querySelector('#onboarding-start');
   const en=()=>document.documentElement.lang==='en';
   const card=([rank,suit],selected=false)=>'<span class="intro-card '+(SZSuit.isRed(suit)?'intro-red ':'')+(selected?'intro-selected':'')+'"><b>'+rank+'</b><span>'+SZSuit.svg(suit)+'</span><i>'+SZSuit.svg(suit)+'</i>'+(selected?'<em>✓</em>':'')+'</span>';
-  const hand=[['4','d'],['7','d'],['Q','d'],['8','h'],['8','s'],['2','d'],['J','s'],['9','h']];
+  const hand=[['4','d'],['7','d'],['9','s'],['8','h'],['8','s'],['2','d'],['J','s'],['9','h']];
   const flower=color=>'<svg class="player-flower player-flower-'+color+'" viewBox="0 0 64 72" aria-hidden="true">'+window.SZBloomAssets.flower+'</svg>';
   const bracts=Array.from({length:5},()=>'<svg viewBox="22 11 20 26" aria-hidden="true">'+window.SZBloomAssets.bract+'</svg>').join('');
   function text(){
@@ -33,10 +33,11 @@
    setting.querySelector('p').textContent=t('首次进入时显示','Show on your first visit');
    reopen.textContent=t('再看一次','View guide');
    start.textContent=t('开始玩','Let’s play');
-   picture.innerHTML=`<section class="intro-hand"><h3><span class="intro-number">1</span>${t('每人 8 张手牌','Start with 8 cards each')}</h3>
-    <div class="intro-rack" role="img" aria-label="${t('8 张手牌，已选中方块 4、7、Q','Eight cards, with 4, 7 and Q of diamonds selected')}">${hand.map((c,i)=>card(c,i<3)).join('')}</div>
-    <p class="intro-instruction">${t('点选 3 张 → 进攻','Tap 3 cards → Attack')}</p></section>
-   <section class="intro-defense"><h3><span class="intro-number">2</span>${t('对手进攻，你选 3 张防守','They attack. You defend with 3.')}</h3>
+   picture.innerHTML=`<section class="intro-hand"><h3><span class="intro-number">1</span>${t('每人起手 8 张','Start with 8 cards each')}</h3>
+    <div class="intro-rack" role="img" aria-label="${t('8 张手牌，已选中方块 4、7','Eight hand cards, with 4 and 7 of diamonds selected')}">${hand.map((c,i)=>card(c,i<2)).join('')}</div>
+    <div class="intro-wound-choice"><span>${t('公开伤牌也能选','Face-up wounds count too')}</span><div role="img" aria-label="${t('示例：选中公开伤牌方块 Q，与手牌方块 4、7 合成三张同花','Example: select the face-up Q of diamonds wound with 4 and 7 from your hand to make a three-card flush')}">${card(['Q','d'],true)}</div></div>
+    <p class="intro-instruction">${t('手牌 + 伤牌，选 3 张进攻','Hand + wounds → Pick 3 to attack')}</p></section>
+   <section class="intro-defense"><h3><span class="intro-number">2</span>${t('对手进攻，同样选 3 张防守','They attack. Pick 3 the same way.')}</h3>
     <div class="intro-combat"><div class="intro-rival"><strong>${flower('gold')}${t('对手 · 进攻','Rival · Attack')}</strong><div class="intro-trio" aria-hidden="true">${[['4','c'],['7','c'],['Q','c']].map(c=>card(c)).join('')}</div><small>${t('同花 · 3 分','Flush · 3 pts')}</small></div>
     <span class="intro-vs" aria-hidden="true">→</span><div class="intro-you"><strong>${flower('red')}${t('你 · 防守','You · Defense')}</strong><div class="intro-trio" aria-hidden="true">${hand.slice(3,6).map(c=>card(c)).join('')}</div><small>${t('对子 · 1 分','Pair · 1 pt')}</small></div></div>
     <p class="intro-equation">${t('3 − 1 = 你受 2 伤','3 − 1 = 2 wounds for you')}</p></section>

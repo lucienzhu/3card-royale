@@ -13,6 +13,10 @@
 .intro-red{color:var(--card-red)}
 .intro-rack .intro-card+.intro-card{margin-left:-5px}
 .intro-rack .intro-selected{transform:translateY(-12px);border:2px solid var(--red);padding:4px 5px;background:var(--selected)}
+.intro-wound-choice{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:12px;color:var(--muted);font-size:13px;line-height:1.4}
+.intro-wound-choice .intro-card{width:42px;height:58px;border:2px solid var(--red);padding:4px 5px;background:var(--selected)}
+.intro-wound-choice .intro-card b{font-size:20px}
+.intro-wound-choice .intro-card>i{width:20px;height:20px;bottom:4px}
 .intro-card em{position:absolute;right:3px;top:4px;font:700 11px/1 system-ui;color:var(--card-red)}
 .intro-instruction{margin:16px 0 0;text-align:center;color:var(--red-text);font-size:16px;font-weight:650}
 .intro-defense{margin-top:24px;padding-top:22px;border-top:1px solid var(--line)}
