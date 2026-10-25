@@ -99,3 +99,8 @@ The artifact cap is a project policy, not Pages' maximum file size. As the catal
 grows, keep the site below Pages limits; larger future collections can store
 versioned assets elsewhere with explicit CORS / integrity support. Browser-only
 matches are for play and cannot authoritatively award Elo.
+
+The website combines the leaderboard, RL environment, baseline checkpoint and
+submission guide at [AI Arena](../arena.html). Old `rl.html` links preserve
+language and section anchors. Historical experiments are expandable and remain
+distinct from season Elo.

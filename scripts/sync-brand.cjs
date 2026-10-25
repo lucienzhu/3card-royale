@@ -16,7 +16,7 @@ function sync(check=false){
  const html=read('index.html'),header=/<svg class="brand-symbol"[\s\S]*?<\/svg>/;
  if(!header.test(html))throw new Error('Missing header brand');
  update('index.html',html.replace(header,mark.replace('<svg ','<svg class="brand-symbol" aria-hidden="true" ')));
- for(const page of ['brand.html','about.html','probability.html','rl.html']){
+ for(const page of ['brand.html','about.html','probability.html','arena.html']){
   const html=read(page),pattern=/<svg\b[^>]*aria-label="深圳花牌标志"[^>]*>[\s\S]*?<\/svg>/g;
   if(!pattern.test(html))throw new Error('Missing brand lockup: '+page);
   update(page,html.replace(pattern,old=>{const cls=old.match(/ class="[^"]*"/);return mark.replace('<svg ','<svg'+(cls?cls[0]:'')+' ');}));
