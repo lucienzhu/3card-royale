@@ -1,8 +1,10 @@
 # 3Card Royale · 深圳花牌
 
+[**AI Arena · policy plugins and Elo ↗**](https://lucienzhu.github.io/3card-royale/arena.html?lang=en) · [Submit a policy](policies/README.md)
+
 [简体中文](README.zh-CN.md) · **English**
 
-[**Stable release v1.0.0 · audit and frozen checkpoint**](docs/releases/v1.0.0.md)
+[**Release v1.1.0 · AI Arena**](docs/releases/v1.1.0.md) · [v1.0.0 audit](docs/releases/v1.0.0.md)
 
 ![3Card Royale — One deck. Two players. Race to Ace.](assets/repository-cover.svg)
 

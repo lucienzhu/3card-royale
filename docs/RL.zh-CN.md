@@ -1,5 +1,7 @@
 # RL／Gymnasium环境
 
+[AI Arena：提交 JS 或 ONNX 策略](../policies/README.zh-CN.md) · [天梯](../arena.html?lang=zh-CN)
+
 **策略名称：** SDK Code AI 是固定的训练／评估基线。网页困难档已修复调用回归，恢复原牌桌 Code AI（`code-table-v1`），会保留下一手组合、评估换牌收益并盲换对手手牌。旧 NN 数据仍以 SDK 基线为对手。[当前难度结果](DIFFICULTY.zh-CN.md)。
 
 [English](RL.md) · [移植接口](SDK.zh-CN.md) · [NN 模型](MODEL.zh-CN.md)

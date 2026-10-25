@@ -1,17 +1,20 @@
 {
   "name": "3card-royale",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "An open two-player card game from Shenzhen.",
   "license": "MIT",
   "scripts": {
-    "test": "node scripts/check.cjs",
+    "test": "node scripts/check.cjs && node tests/arena/contracts.mjs",
     "test:core": "python3 -m unittest discover -s tests -p 'test_core.py'",
     "test:gym": "python3 -m unittest discover -s tests -p 'test_*.py'",
     "test:conformance": "python3 tests/conformance.py --rust rust/target/debug/royale-json",
     "test:cpp": "cmake -S cpp -B cpp/build -DCMAKE_BUILD_TYPE=Release && cmake --build cpp/build --parallel && ctest --test-dir cpp/build --output-on-failure",
     "test:nn": "node tests/nn-policy.cjs",
-    "vendor:nn": "node scripts/vendor-policy-runtime.cjs"
+    "vendor:nn": "node scripts/vendor-policy-runtime.cjs",
+    "arena:validate": "node arena/validate.mjs",
+    "arena:evaluate": "node arena/evaluate.mjs --games 200 --output arena/results/season-1.json",
+    "arena:test": "node tests/arena/contracts.mjs"
   },
   "main": "sdk/index.js",
   "types": "sdk/index.d.ts",

@@ -1,0 +1,24 @@
+import {catalog} from '../policies/catalog.mjs';
+let data,entries,error;
+const en=()=>document.documentElement.lang==='en',t=(zh,english)=>en()?english:zh;
+function cell(row,text,tag='td'){const node=document.createElement(tag);node.textContent=text;row.append(node);const column=row.children.length;const labels={3:'Elo',4:t('胜率','Win rate'),5:t('对局','Games'),6:t('p95 延迟','p95 latency')};if(labels[column])node.dataset.label=labels[column];return node;}
+function paint(){
+  if(error){document.getElementById('arena-summary').textContent=t('暂时无法加载天梯，请刷新重试。','Unable to load the ladder. Please retry.');return;}
+  if(!data||!entries)return;
+  const body=document.getElementById('arena-rows');body.replaceChildren();
+  const ranked=data.leaderboard.map(r=>({...r,entry:entries.find(e=>e.manifest.id===r.id)})).filter(r=>r.entry);
+  for(const entry of entries)if(!ranked.some(r=>r.id===entry.manifest.id))ranked.push({id:entry.manifest.id,entry});
+  ranked.forEach((r,index)=>{
+    const m=r.entry.manifest,recorded=data.policies.find(p=>p.id===m.id),current=recorded&&JSON.stringify(recorded)===JSON.stringify(m)&&r.games;
+    const row=document.createElement('tr');cell(row,current?String(index+1):'—');
+    const name=cell(row,'');const strong=document.createElement('strong');strong.textContent=m.name;name.append(strong);
+    const small=document.createElement('small');small.textContent=`${m.type==='onnx'?'NN':'JS'} · ${m.author}`;name.append(small);
+    cell(row,current?String(r.elo):'—');cell(row,current?(100*r.wins/r.games).toFixed(1)+'%':'—');cell(row,current?String(r.games):'—');cell(row,current?r.latencyP95Ms.toFixed(1)+' ms':'—');
+    if(!current||r.provisional){const label=document.createElement('small');label.textContent=current?t('暂定','Provisional'):t('待评估','Unrated');name.append(label);}
+    const action=cell(row,'');const a=document.createElement('a');a.className='arena-play';a.href=`index.html?lang=${en()?'en':'zh-CN'}&policy=${encodeURIComponent(m.id)}`;a.textContent=t('挑战 ↗','Play ↗');a.setAttribute('aria-label',t('挑战 ','Play ')+m.name);action.append(a);body.append(row);
+  });
+  document.getElementById('arena-summary').textContent=t(`${entries.length} 个策略 · ${data.records.length.toLocaleString()} 局`,`${entries.length} policies · ${data.records.length.toLocaleString()} games`);
+  document.getElementById('arena-runtime').textContent=`${data.protocol.gamesPerPair} ${t('局 / 对手','games / opponent')} · ${data.runtime.cpu} · ${data.runtime.backend} · ${data.createdAt.slice(0,10)}. `+t('延迟来自本地评估，不代表手机表现。','Latency is from local evaluation, not a mobile benchmark.');
+}
+try{[entries,data]=await Promise.all([catalog(),fetch(new URL('./results/season-1.json',import.meta.url),{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error('Leaderboard unavailable');return r.json();})]);paint();}catch(e){error=e;paint();}
+let language=document.documentElement.lang;new MutationObserver(()=>{if(language!==document.documentElement.lang){language=document.documentElement.lang;paint();}}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
