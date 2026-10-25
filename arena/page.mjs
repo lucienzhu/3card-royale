@@ -22,3 +22,11 @@ function paint(){
 }
 try{[entries,data]=await Promise.all([catalog(),fetch(new URL('./results/season-1.json',import.meta.url),{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error('Leaderboard unavailable');return r.json();})]);paint();}catch(e){error=e;paint();}
 let language=document.documentElement.lang;new MutationObserver(()=>{if(language!==document.documentElement.lang){language=document.documentElement.lang;paint();}}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+
+// Keep links into the former RL page usable, including collapsed results.
+function revealResearchAnchor(){
+  let id;try{id=decodeURIComponent(location.hash.slice(1));}catch{return;}
+  const target=document.getElementById(id),details=target?.closest('details');
+  if(details){details.open=true;requestAnimationFrame(()=>target.scrollIntoView());}
+}
+addEventListener('hashchange',revealResearchAnchor);revealResearchAnchor();

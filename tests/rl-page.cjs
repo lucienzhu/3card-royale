@@ -2,11 +2,12 @@
 // Public experimental claims must agree with the saved reports and deployment artifact.
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');
-const html=read('rl.html'),training=JSON.parse(read('docs/experiments/nn-policy-v1/training.json'));
+const html=read('arena.html'),training=JSON.parse(read('docs/experiments/nn-policy-v1/training.json'));
 const evaluations=JSON.parse(read('docs/experiments/nn-policy-v1/evaluation.json'));
 const manifest=JSON.parse(read('models/nn-policy/manifest.json'));
 const difficulty=JSON.parse(read('docs/experiments/difficulty-v1/evaluation.json'));
-const copy=JSON.parse(html.match(/window.SC_COPY=(\{[\s\S]*?\});<\/script>/)[1]);
+const allCopy=JSON.parse(html.match(/window.SC_COPY=(\{[\s\S]*?\});<\/script>/)[1]);
+const copy={...allCopy,...Object.fromEntries(Object.entries(allCopy).filter(([key])=>key.startsWith('rl-')).map(([key,value])=>[key.slice(3),value]))};
 const rows=[...html.matchAll(/<tr data-model="([^"]+)"([^>]*)>([\s\S]*?)<\/tr>/g)];
 assert.equal(rows.length,training.models.length+2);
 for(const [_,id,attrs,row] of rows){
