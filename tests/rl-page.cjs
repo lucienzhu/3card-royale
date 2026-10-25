@@ -85,3 +85,15 @@ const oldControl=difficulty.results.find(r=>r.policy==='nn'&&r.opponent==='code'
 const newControl=restored.results.find(r=>r.policy==='nn'&&r.opponent==='sdk-code');
 assert.deepEqual(newControl.episodes.map(e=>[e.seed,e.seat,e.first,e.reward]),oldControl.episodes.map(e=>[e.seed,e.seat,e.first,e.reward]));
 console.log('Restored Hard: page agrees with all 4,000 saved games; 1,000 control outcomes reproduce the frozen SDK baseline.');
+// Godlike has privileged information and a separate protocol; do not mix its
+// result into the frozen SDK / NN rows above. Check every displayed timing.
+const godlike=JSON.parse(read('docs/experiments/godlike-v1/evaluation.json'));
+const godlikeSection=html.match(/<section[^>]*id="godlike"[\s\S]*?<\/section>/)[0];
+assert(godlikeSection.includes((godlike.win_rate*100).toFixed(1)+'%'));
+assert(godlikeSection.includes(`${godlike.wins} / ${godlike.games.toLocaleString('en-US')}`));
+assert.equal(godlike.records.length,godlike.games);
+assert.equal(godlike.records.filter(r=>r.won).length,godlike.wins);
+for(const kind of ['attack','defend','refresh'])for(const lang of copy.godlikeLatency)
+ assert(lang.includes(godlike.latency_ms[kind].p95.toFixed(1)+' ms'));
+assert(copy.godlikeProtocol[0].includes('额外手牌信息')&&copy.godlikeProtocol[1].includes('extra hand information'));
+console.log('Godlike page: privileged-info result and Node p95 match all 1,000 recorded games.');
