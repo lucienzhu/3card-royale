@@ -8,7 +8,7 @@
 
 **One standard deck. Two players. Race from 2 to Ace.**
 
-An open card game from Shenzhen: build three-card hands, turn wounds into playable options, and earn swaps by defending well. Four of a kind scores 6; the rare four naturals plus flower form five of a kind for 7.
+**3Card Royale**, aka **Shenzhen Flower Cards** (深圳花牌), is an open card game from Shenzhen: build three-card hands, turn wounds into playable options, and earn swaps by defending well. Four of a kind scores 6; the rare four naturals plus flower form five of a kind for 7.
 
 [**Play in English ↗**](https://lucienzhu.github.io/3card-royale/?lang=en) · [Learn the game](https://lucienzhu.github.io/3card-royale/about.html?lang=en) · [Read the rules](docs/RULES.md) · [Visual identity](https://lucienzhu.github.io/3card-royale/brand.html?lang=en)
 
