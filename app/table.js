@@ -341,7 +341,7 @@ function openResult(){
  if(match&&GK.sharedFlower(variant)){stopCelebration();window.SZBloom.renderResult(bloomHost,game.results,game.snapshot(),game.events.find(e=>e.kind==='deal')?.state?.levelOwner??0,true);}else if(champion)celebrateResult(key);else stopCelebration();
 }
 function syncResult(){
- if(window.SZCardMotion.busy)return;
+ if(window.SZOnboarding?.pending||window.SZDrawer?.active||window.SZDrawer?.closing||window.SZCardMotion.busy)return;
  const r=currentResult(),modal=$('result-modal');
  if(!r){presentedResultKey='';celebratedResultKey='';if(modal.open)modal.close();stopCelebration();return;}
  if(mode!=='play'){if(modal.open)modal.close();stopCelebration();return;}
@@ -425,7 +425,7 @@ function addButton(text,fn,{disabled=false,primary=false,id=null}={}){const b=do
 let motionSerial=0;
 function beginTableMotion(){const before=window.SZCardMotion.capture(game);window.SZCardMotion.hold();return {before,serial:++motionSerial};}
 function finishTableMotion(ticket){window.SZCardMotion.play(ticket.before,game).then(()=>{if(ticket.serial===motionSerial&&mode==='play'){render();driveAI();}});}
-function tryAction(fn){if(window.SZCardMotion.busy)return;const ticket=beginTableMotion();error='';try{fn();selected=[];flipIndices=[];flipMode=null;refreshTarget=null;persist();}catch(e){error=e.message;ticket.before=null;}render();finishTableMotion(ticket);}
+function tryAction(fn){if(window.SZOnboarding?.pending||window.SZDrawer?.active||window.SZDrawer?.closing||window.SZCardMotion.busy)return;const ticket=beginTableMotion();error='';try{fn();selected=[];flipIndices=[];flipMode=null;refreshTarget=null;persist();}catch(e){error=e.message;ticket.before=null;}render();finishTableMotion(ticket);}
 function describeEffect(combat){if(!combat)return '';if(combat.action==='refresh')return '已换 '+combat.refreshes.length+' 次，跳过 '+(combat.skipped||0)+' 次；伤势不变';if(combat.action==='damage')return '新增 '+combat.amount+' 张'+(GK.isRefresh(variant)?'明伤牌':'扣牌')+'，伤势 '+combat.before.join(' / ')+' → '+combat.after.join(' / ');if(combat.action==='open')return '翻开自己 '+combat.amount+' 张，解锁出牌；伤势不变';if(combat.action==='lock')return '扣回对方 '+combat.amount+' 张，封锁机会；伤势不变';if(combat.action==='none')return GK.isRefresh(variant)?'没有可换的牌，机会自动结束':'没有翻面目标，伤势不变';return '等待翻面选择；伤势不变';}
 function renderActions(s,event){
  $('action-panel').classList.remove('is-hand-exchange');const replay=mode==='replay';$('action-buttons').replaceChildren();$('selection-preview').hidden=true;$('settings').hidden=replay;$('error').textContent=error;
@@ -595,7 +595,7 @@ function render(){
  syncResult();
 }
 function driveAI(){
- if(window.SZDrawer?.active||window.SZCardMotion.busy||mode!=='play'||$('settings-modal').open||$('result-modal').open||$('player-name-dialog')?.open||busy||game.currentActor()!==1||!['attack','defend','flip','refresh'].includes(game.phase))return;
+ if(window.SZOnboarding?.pending||window.SZDrawer?.active||window.SZCardMotion.busy||mode!=='play'||$('settings-modal').open||$('result-modal').open||$('player-name-dialog')?.open||busy||game.currentActor()!==1||!['attack','defend','flip','refresh'].includes(game.phase))return;
  busy=true;render();const token=++aiSerial, current=game;
  aiTimer=setTimeout(async()=>{
   aiTimer=null;
