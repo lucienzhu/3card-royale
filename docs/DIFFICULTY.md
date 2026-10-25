@@ -1,4 +1,4 @@
-# Three difficulty levels
+# AI difficulty
 
 [简体中文](DIFFICULTY.zh-CN.md) · [Evaluation records](experiments/difficulty-v1/evaluation.json)
 
@@ -9,12 +9,66 @@ Settings → Preferences → Difficulty:
 | Easy | Easy AI | Limited attention; deck-only redraws |
 | Medium | NN AI | Existing 256/128 behavioral-cloning checkpoint |
 | Hard | Table Code AI | Original table policy; preserves combinations and evaluates swaps |
+| Godlike | Current-hand search | Sees your hand; forgets played cards |
 
 New visitors start on Easy. Saved `code` / `nn` preferences remain Hard / Medium.
 Changing difficulty takes effect on the next AI decision, without redealing.
 NN load/inference failure falls back to Easy with a visible notice; it never
 silently raises the difficulty to Hard. Historical rule variants retain their
-original Code AI and show a notice. Three-level play applies to Standard 1.0.
+original Code AI and show a notice. These difficulty settings apply to Standard 1.0.
+
+## Godlike: current-hand advantage
+
+Opt in through **Settings → Preferences → Difficulty → Godlike · Sees your hand**.
+It sees both current hands, public wounds and the active attack. It never reads
+stock order, discard, seed, RNG, prior combats or results. Other difficulties keep
+their existing information boundaries and behavior. This is a JavaScript search
+policy, not a new NN checkpoint; the public SDK/Gym observation is unchanged.
+
+- **Attack:** enumerate every legal three-card play and four-/five-card bomb,
+  then every legal rival response. Choose the best worst-case current-combat value.
+- **Defense:** compare all legal responses to the actual attack. Avoidable lethal
+  damage is dominated by survival; a guaranteed lethal attack dominates nonlethal outcomes.
+- **Swap:** compare one-step expected gains for deck draws, random rival-hand
+  exchanges and known wound exchanges, including keeping the current cards.
+  Blind swaps remain uniformly random under the rules, even though the AI can
+  see the candidate identities. Re-evaluate after each actual swap.
+- **Forget:** a hypothetical draw can be any identity absent from the current
+  hands, wounds and active play, equally weighted. Previously discarded cards
+  remain possible hypotheses. No remembered card counts or actual deck composition.
+
+“Best” is relative to this bounded heuristic, not a solved match. Combat utility
+prioritizes lethal outcomes (1,000,000), then wound increase using
+`pain(w) = 120w + 25w²`, defensive swap chances (28 each), retained best-hand
+strength (22×), and wound-card use (7×). Retained strength includes rank tiebreaks
+and a small card-count term. Swap value is own best usable combination minus the
+rival's; moving a card between one's own zones does not change that value.
+Unknown replacement cards and future refills are not searched. Two swap chances
+are evaluated one at a time, not as an exhaustive multi-step tree.
+
+Search runs in a separate Web Worker. If it fails or times out, the game visibly
+falls back to Hard Code AI; selecting Godlike again retries. Changing difficulty
+cancels its outstanding search and never changes the deal RNG.
+
+### Measured result
+
+**650 / 1,000 small games · 65.0% against the original browser Hard Code AI.**
+500 independent direct core seeds (83,000,000–83,000,499), seats swapped for each
+seed, first attacker balanced, both players starting at level 2. All games ended
+legally. These use a separate seed protocol from the older Gym experiments, and
+Godlike has privileged information; this is not a fair-information NN benchmark.
+A prior 100-game smoke run on seed range 84,000,000–84,000,049 won 68 games.
+
+On Apple M1 / Node 24, decision p95 was **13.1 ms attack, 8.2 ms defense,
+30.1 ms swap**. These are local Node measurements, not mobile/browser latency.
+The report records each seed, outcome, trace hash, timing and source checksums.
+
+[Evaluation](experiments/godlike-v1/evaluation.json) · [Smoke run](experiments/godlike-v1/calibration.json)
+
+```sh
+node training/evaluate_godlike.cjs --games 1000 --output artifacts/godlike.json
+node tests/godlike-policy.cjs
+```
 
 ## How Easy is weaker
 

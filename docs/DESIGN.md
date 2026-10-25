@@ -56,3 +56,5 @@ Gallery language and theme selectors share a 44px control, token-based surfaces,
 The PNG card renderer consumes a generated copy of the production suit paths, flower mark and card tokens through `app/bloom-assets.js`. Run `node scripts/sync-brand.cjs` after changing these sources; `--check` rejects stale copies. Flower cards use the same flat gold face and flower watermark as the table, with no legacy star badge.
 
 The home introduction reuses the approved layer19 skyline as a softly cropped background. Scale the original drawing proportionally behind the copy, fading it near the text and lower edge. It adds no height or separate illustration row. The phone view uses a smaller skyline to reveal more landmarks without adding vertical space. Controls stay above it with clear focus rings, and the art never intercepts input.
+
+**Godlike difficulty.** Keep Easy, Medium and Hard; add Godlike as an explicit opt-in. Its option and adjacent status must disclose that it sees the player’s hand, without card memory. Keep private hand faces hidden on the table. Use the existing settings drawer/modal and select component; show a visible Hard fallback on search failure.

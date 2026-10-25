@@ -41,3 +41,5 @@ require('../tests/code-policy-regression.cjs');
 require('../tests/replay-motion.cjs');
 
 require('../tests/onboarding.cjs');
+
+require('../tests/godlike-policy.cjs');

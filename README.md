@@ -92,8 +92,9 @@ Swap opportunities may now be skipped one at a time: skipping the first of two s
 
 ## AI difficulty
 
-Choose **Easy / Medium / Hard** in Settings → Preferences → Difficulty. These use
-Easy AI / NN AI / Code AI respectively. [Behavior and measured strength](docs/DIFFICULTY.md).
+Choose **Easy / Medium / Hard / Godlike** in Settings → Preferences → Difficulty. These use
+Easy AI / NN AI / Code AI, plus an opt-in current-hand search.
+Godlike can see your hand, forgets played cards and won **65.0%** of 1,000 games against Hard. [Behavior and measured strength](docs/DIFFICULTY.md).
 Easy compares up to **64** candidate plays and redraws from the deck. In 1,000
 games per matchup it won **31.5%** against the restored table Code AI and **44.1%** against NN AI.
 Hard again uses the original table strategy, including blind hand swaps and preserving the next combination.
