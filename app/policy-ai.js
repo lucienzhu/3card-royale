@@ -4,12 +4,13 @@
   const workerURL=new URL('policy-worker.js',document.currentScript.src);
   let selected='easy', worker=null, sequence=0, state='idle', version=null, last=null, retryAfter=0, godlikeFailed=false, selectionRevision=0;
   const pending=new Map();
-  try { const saved=localStorage.getItem(key);if(['easy','code','nn','godlike'].includes(saved))selected=saved; }catch{}
+  try { const saved=localStorage.getItem(key);if(['easy','code','nn','godlike','arena'].includes(saved))selected=saved; }catch{}
+  if(window.SZArenaPolicy && new URLSearchParams(location.search).has('policy'))selected='arena';
   select.value=selected;
   const en=()=>window.GKLocale?.language==='en';
   function paint() {
     document.getElementById('policy-label').textContent=en()?'Difficulty':'难度';
-    for(const option of select.options)option.textContent=({easy:en()?'Easy · Easy AI':'简单 · Easy AI',nn:en()?'Medium · NN AI':'中等 · NN AI',code:en()?'Hard · Code AI':'困难 · Code AI',godlike:en()?'Godlike · Sees your hand':'超凡 · Godlike AI（明牌）'})[option.value];
+    for(const option of select.options)option.textContent=({easy:en()?'Easy · Easy AI':'简单 · Easy AI',nn:en()?'Medium · NN AI':'中等 · NN AI',code:en()?'Hard · Code AI':'困难 · Code AI',godlike:en()?'Godlike · Sees your hand':'超凡 · Godlike AI（明牌）',arena:en()?'Arena · Community policies':'天梯 · 社区策略'})[option.value];
     const unsupported=window.gkGame && window.gkGame.version!=='1.0.0';
     status.textContent=unsupported?(en()?'Historical rules use their original Code AI.':'历史规则使用原版 Code AI。'):selected==='godlike'?(godlikeFailed?(en()?'Godlike unavailable · using Hard Code AI':'Godlike 暂不可用 · 使用困难 Code AI'):(en()?'Sees your hand · No card memory':'可看你的手牌 · 不记牌')):selected!=='nn'?'':
       state==='loading'?(en()?'Loading NN AI…':'正在加载 NN AI…'):
@@ -63,6 +64,12 @@
       }
       return {kind:'code',version:'code-table-v1',fallback:'godlike'};
     }
+    if(selected==='arena'){
+      try{return await window.SZArenaPolicy.decide(game);}catch{
+        const observation=adapter(game).observation(game.currentActor());
+        return {kind:'easy',action:RoyaleEasyPolicy.chooseAction(observation),version:RoyaleEasyPolicy.version,fallback:'arena'};
+      }
+    }
     const o=adapter(game).observation(game.currentActor());
     if(selected==='nn' && Date.now()>=retryAfter){
       try{
@@ -80,9 +87,11 @@
   select.addEventListener('change',()=>{
     selectionRevision++;
     window.SZGodlikeAI?.cancel();
-    selected=['easy','nn','code','godlike'].includes(select.value)?select.value:'easy';
+    window.SZArenaPolicy?.cancel();
+    selected=['easy','nn','code','godlike','arena'].includes(select.value)?select.value:'easy';
     retryAfter=0;godlikeFailed=false;
     try{localStorage.setItem(key,selected);}catch{}
+    if(typeof location!=='undefined'&&typeof history!=='undefined'){const url=new URL(location.href);if(selected==='arena')url.searchParams.set('policy',window.SZArenaPolicy.selected);else url.searchParams.delete('policy');history.replaceState(null,'',url);}
     window.dispatchEvent(new Event('sz-policy-change'));paint();preload();
   });
   let language=document.documentElement.lang;

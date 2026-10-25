@@ -1,0 +1,18 @@
+{
+  "api": "royale-policy-v1",
+  "id": "nn-256-v1",
+  "name": "NN · 256 → 128",
+  "author": "3Card Royale",
+  "license": "MIT",
+  "type": "onnx",
+  "rules": "1.0.0",
+  "episode": "game",
+  "information": "public",
+  "memory": "none",
+  "artifact": {
+    "file": "policy.onnx",
+    "bytes": 552407,
+    "sha256": "5b98061d4188c116080eb6784c6378536a89e0b3c1db333df88217379e4dde13"
+  },
+  "features": "gym-v1"
+}

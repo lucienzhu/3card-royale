@@ -1,0 +1,17 @@
+{
+  "api": "royale-policy-v1",
+  "id": "sdk-code-v1",
+  "name": "SDK Code AI",
+  "author": "3Card Royale",
+  "license": "MIT",
+  "type": "javascript",
+  "rules": "1.0.0",
+  "episode": "game",
+  "information": "public",
+  "memory": "none",
+  "artifact": {
+    "file": "policy.mjs",
+    "bytes": 199,
+    "sha256": "1af7c73dcaf625eefbfdeec7e1a85c25ac6a8395d123eb5accff42051bca3f4b"
+  }
+}

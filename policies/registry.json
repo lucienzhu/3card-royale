@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "policies": [
+    {
+      "id": "random-v1",
+      "manifest": "entries/random-v1/manifest.json"
+    },
+    {
+      "id": "sdk-code-v1",
+      "manifest": "entries/sdk-code-v1/manifest.json"
+    },
+    {
+      "id": "easy-v2",
+      "manifest": "entries/easy-v2/manifest.json"
+    },
+    {
+      "id": "code-table-v1",
+      "manifest": "entries/code-table-v1/manifest.json"
+    },
+    {
+      "id": "nn-256-v1",
+      "manifest": "entries/nn-256-v1/manifest.json"
+    }
+  ]
+}

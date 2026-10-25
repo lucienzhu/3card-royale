@@ -1,8 +1,10 @@
 # 深圳花牌 · 3Card Royale
 
+[**AI Arena · 策略插件与 Elo 天梯 ↗**](https://lucienzhu.github.io/3card-royale/arena.html?lang=zh-CN) · [提交策略](policies/README.zh-CN.md)
+
 **简体中文** · [English](README.md)
 
-[**稳定版本 v1.0.0 · 检查记录与固定模型**](docs/releases/v1.0.0.md)
+[**发布 v1.1.0 · AI Arena**](docs/releases/v1.1.0.md) · [v1.0.0 审计](docs/releases/v1.0.0.md)
 
 ![深圳花牌 · 一副牌，两个人，从2打到A](assets/repository-cover.svg)
 

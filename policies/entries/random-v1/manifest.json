@@ -1,0 +1,17 @@
+{
+  "api": "royale-policy-v1",
+  "id": "random-v1",
+  "name": "Random",
+  "author": "3Card Royale",
+  "license": "MIT",
+  "type": "javascript",
+  "rules": "1.0.0",
+  "episode": "game",
+  "information": "public",
+  "memory": "none",
+  "artifact": {
+    "file": "policy.mjs",
+    "bytes": 131,
+    "sha256": "f5ffd15a37eef8ab1d24c86844c6b35afada12ab9074e421656b6a9189f62d0c"
+  }
+}

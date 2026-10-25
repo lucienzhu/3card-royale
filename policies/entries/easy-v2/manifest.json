@@ -1,0 +1,17 @@
+{
+  "api": "royale-policy-v1",
+  "id": "easy-v2",
+  "name": "Easy · 64",
+  "author": "3Card Royale",
+  "license": "MIT",
+  "type": "javascript",
+  "rules": "1.0.0",
+  "episode": "game",
+  "information": "public",
+  "memory": "none",
+  "artifact": {
+    "file": "policy.mjs",
+    "bytes": 199,
+    "sha256": "e7d082e63ebd817e5e0c9b078c073b492e453af4e19b49b518fa2744c16d78e7"
+  }
+}

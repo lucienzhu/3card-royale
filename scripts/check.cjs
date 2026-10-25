@@ -7,6 +7,7 @@ const walk=dir=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(x=>['.git','.ob
 let refs=0,scripts=0;
 for(const p of walk(root)){
  if(p.endsWith('.js')||p.endsWith('.cjs')){new vm.Script(fs.readFileSync(p,'utf8'),{filename:p});scripts++;}
+ if(p.endsWith('.mjs')){require('node:child_process').execFileSync(process.execPath,['--check',p],{stdio:'pipe'});scripts++;}
  if(!p.endsWith('.html'))continue;const html=fs.readFileSync(p,'utf8');
  for(const m of html.matchAll(/(?:href|src)="([^"#]+)"/g)){const u=m[1];if(/^(?:https?:|data:|mailto:|#|\?)/.test(u))continue;const local=u.split(/[?#]/)[0];assert(fs.existsSync(path.resolve(path.dirname(p),local)),p+' missing '+local);refs++;}
 }
