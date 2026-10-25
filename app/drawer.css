@@ -1,11 +1,11 @@
 /* One shell for rules and table settings. Only its content changes. */
-:root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal).sz-drawer{
+:root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal,#onboarding-modal).sz-drawer{
  --drawer-head:58px;--drawer-tabs:54px;--drawer-gutter:20px;
  box-sizing:border-box;inset:0;margin:auto;width:min(880px,calc(100vw - 32px));max-width:none;
  height:min(900px,calc(var(--app-height,100dvh) - 32px));max-height:calc(var(--app-height,100dvh) - 32px);
  padding:0;overflow:hidden;border:0;border-radius:18px;background:var(--paper);color:var(--ink);
 }
-:root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal).sz-drawer[open]{display:flex;flex-direction:column}
+:root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal,#onboarding-modal).sz-drawer[open]{display:flex;flex-direction:column}
 :root body .sz-drawer::backdrop{background:#111A1673;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
 :root body .sz-drawer>.modal-head{
  position:relative;box-sizing:border-box;flex:0 0 var(--drawer-head);height:var(--drawer-head);min-height:var(--drawer-head);
@@ -30,7 +30,7 @@
 :root body #settings-modal.sz-drawer .menu-replay-shortcut button{min-height:44px;padding:8px 0}
 :root body .sz-drawer .drawer-head-actions button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 @media(max-width:700px),(max-height:500px) and (max-width:1000px){
- :root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal).sz-drawer{
+ :root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal,#onboarding-modal).sz-drawer{
   --drawer-head:48px;--drawer-tabs:48px;--drawer-gutter:12px;
   inset:var(--app-top,0px) 0 auto;margin:0;width:100%;height:var(--app-height,100dvh);max-height:var(--app-height,100dvh);
   border-radius:0;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
@@ -42,11 +42,11 @@
  :root body .sz-drawer>.drawer-tabs{padding-block:3px;gap:6px}
  :root body .sz-drawer>.modal-body{padding:16px;scrollbar-gutter:auto}
 }
-@media(max-height:500px) and (min-width:480px) and (max-width:1000px){:root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal).sz-drawer{--drawer-head:42px;--drawer-tabs:44px}}
+@media(max-height:500px) and (min-width:480px) and (max-width:1000px){:root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal,#onboarding-modal).sz-drawer{--drawer-head:42px;--drawer-tabs:44px}}
 /* The teaching camera stays clipped inside the same flexible content region. */
 :root body #rule-page.sz-drawer.fg-mobile>.modal-body{display:flex;padding:0 12px;overflow:hidden}
-:root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal).sz-drawer.qb-dialog-fallback{width:min(880px,calc(100vw - 32px))!important;height:min(900px,calc(var(--app-height,100dvh) - 32px))!important;max-height:calc(var(--app-height,100dvh) - 32px)!important;inset:0!important;margin:auto!important}
-@media(max-width:700px),(max-height:500px) and (max-width:1000px){:root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal).sz-drawer.qb-dialog-fallback{width:100%!important;height:var(--app-height,100dvh)!important;max-height:var(--app-height,100dvh)!important;inset:var(--app-top,0px) 0 auto!important;margin:0!important}}
+:root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal,#onboarding-modal).sz-drawer.qb-dialog-fallback{width:min(880px,calc(100vw - 32px))!important;height:min(900px,calc(var(--app-height,100dvh) - 32px))!important;max-height:calc(var(--app-height,100dvh) - 32px)!important;inset:0!important;margin:auto!important}
+@media(max-width:700px),(max-height:500px) and (max-width:1000px){:root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal,#onboarding-modal).sz-drawer.qb-dialog-fallback{width:100%!important;height:var(--app-height,100dvh)!important;max-height:var(--app-height,100dvh)!important;inset:var(--app-top,0px) 0 auto!important;margin:0!important}}
 
 /* Navigation is a single row, with one shared hit area and text rhythm. */
 :root body.table-identity-layout .app-header{grid-template-columns:minmax(0,1fr) auto;column-gap:12px}

@@ -15,6 +15,7 @@
   const back=head.querySelector('#close-settings,#close-rules')||document.createElement('button');
   back.id='close-'+name;back.type='button';back.dataset.drawerClose='';
   actions.append(language,back);languageButtons.push(language);closeButtons.push(back);
+  back.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();close();},true);
  }
  function create(name){const dialog=document.createElement('dialog');dialog.id=name+'-modal';dialog.className='modal sz-drawer';dialog.setAttribute('aria-labelledby',name+'-heading');dialog.innerHTML='<div class="modal-head"><h2 id="'+name+'-heading"></h2></div><div class="modal-body"></div>';document.body.append(dialog);dialogs[name]=dialog;return dialog;}
  const ranks=create('ranks'),replay=create('replay');
@@ -24,7 +25,8 @@
  const board=$('play-area'),transport=$('replay-controls'),main=board.parentElement,anchor=document.createComment('live table');board.before(anchor);
  const fallbackBackdrop=document.createElement('div');fallbackBackdrop.className='drawer-fallback-backdrop';fallbackBackdrop.setAttribute('aria-hidden','true');fallbackBackdrop.addEventListener('click',()=>close());
  let frozen=null,replayUI=null,active=null,queue=Promise.resolve(),animation=null,closing=false;
- for(const [name,dialog]of Object.entries(dialogs)){
+ function register(name,dialog,trigger,title){
+  dialogs[name]=dialog;triggers[name]=trigger;if(title)labels[name]=title;
   dialog.classList.add('sz-drawer');header(dialog,name);
   dialog.querySelector('.rg-toolbar,.qb-menu-tabs')?.classList.add('drawer-tabs');
   dialog.addEventListener('cancel',e=>{e.preventDefault();e.stopImmediatePropagation();close();},true);
@@ -39,7 +41,7 @@
   // Stop old popover/mode handlers: the drawer owns opening, closing and pause/resume.
   triggers[name].addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();open(name);},true);
  }
- closeButtons.forEach(b=>b.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();close();},true));
+ for(const [name,dialog]of Object.entries(dialogs))register(name,dialog,triggers[name]);
  document.querySelector('[data-tab="play"]').addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();close();},true);
  const nav=document.querySelector('.app-header .tabs'),controls=document.querySelector('.header-controls');
  nav.classList.add('app-navigation');nav.removeAttribute('role');nav.dataset.noI18n='';nav.append($('open-rules'),$('open-settings'));controls.remove();
@@ -77,7 +79,7 @@
   const name=active,dialog=dialogs[name];closing=true;window.SZTablePanels.pause();await motion(dialog,true);
   dialog.close();if(name==='replay')unmountReplay();dialog.hidden=true;triggers[name].setAttribute('aria-expanded','false');
   active=null;closing=false;fallbackBackdrop.remove();document.body.classList.remove('drawer-open');
-  if(resume){(name==='replay'?triggers.settings:triggers[name]).focus({preventScroll:true});window.SZTablePanels.resume();}
+  if(resume){const target=name==='replay'?triggers.settings:triggers[name];(target.getClientRects().length?target:play).focus({preventScroll:true});window.SZTablePanels.resume();}
  }
  function open(name){return run(async()=>{
   if(active===name)return;if(active)await dismiss(false);
@@ -86,10 +88,11 @@
   if(name==='ranks')window.SZHandReference.paint();
   if(name==='replay')mountReplay();
   const dialog=dialogs[name];dialog.hidden=false;document.body.classList.add('drawer-open');dialog.showModal();if(dialog.classList.contains('qb-dialog-fallback'))document.body.append(fallbackBackdrop);triggers[name].setAttribute('aria-expanded','true');
+  window.dispatchEvent(new CustomEvent('sz-drawer-open',{detail:{name}}));
   // Predictable focus, without scrolling the lesson or settings body.
   dialog.tabIndex=-1;dialog.focus({preventScroll:true});await motion(dialog,false);
  });}
  function close(options={}){return run(()=>dismiss(options.resume!==false));}
- window.SZDrawer={open,close,get active(){return active;},get closing(){return closing;}};
+ window.SZDrawer={open,close,register(name,dialog,trigger,title){register(name,dialog,trigger,title);translate();},get active(){return active;},get closing(){return closing;}};
  reduce.addEventListener('change',()=>{if(reduce.matches)animation?.finish();});
 })();
