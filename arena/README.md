@@ -157,6 +157,20 @@ rating fields for traceability; use **`rating.json`** for the new estimate. The
 website's published season report is unchanged. A maintainer reviews the complete
 report before any leaderboard publication; CI never commits its own results.
 
+[Verified 400-game run](https://github.com/lucienzhu/3card-royale/actions/runs/40349419761)
+([saved rating](benchmarks/linux-2026-10-26/quick-rating/rating.json)):
+11.54 seconds including validation and fitting, 311.5 MiB peak container memory,
+2 CPU / 2 GiB limit, Intel Xeon Platinum 8573C, Node 24.22.1 / Linux x64.
+All 400 game records match the corresponding subset of the historical run.
+
+| Policy | Provisional batch Elo | Games |
+| --- | ---: | ---: |
+| Code AI (anchor) | 1500 | 160 |
+| SDK Code AI | 1479 | 160 |
+| NN 256 → 128 | 1440 | 160 |
+| Easy 64 | 1387 | 160 |
+| Random | 567 | 160 |
+
 ### Measured Linux capacity
 
 [GitHub run](https://github.com/lucienzhu/3card-royale/actions/runs/40347273843) ·
@@ -179,6 +193,7 @@ also match. Official Elo was not rewritten.
 
 Current capacity is sufficient for the five-policy season. With 200 games per
 pair, N policies require `100 × N × (N − 1)` games; future, slower strategies may
-also increase time per game. The 2,000-game run was a one-off capacity check; routine ratings now use 400
-games by default. Keep ordinary PR checks short and request rating runs after review. CI success is an execution check, not admission to the
+also increase time per game. The 2,000-game run was a capacity check; routine
+ratings now use 400 games by default. Keep ordinary PR checks short and request
+rating runs after review. CI success is an execution check, not admission to the
 ladder. Automatic publication of Elo remains disabled.

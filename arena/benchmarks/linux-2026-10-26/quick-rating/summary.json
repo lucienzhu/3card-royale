@@ -1,0 +1,17 @@
+{
+  "mode": "rating",
+  "status": "passed",
+  "elapsedMs": 11539,
+  "completedGames": 400,
+  "cpu": "INTEL(R) XEON(R) PLATINUM 8573C",
+  "node": "v24.22.1",
+  "platform": "linux",
+  "arch": "x64",
+  "cgroup": {
+    "cpuMax": "200000 100000",
+    "memoryMax": "2147483648",
+    "memoryPeakBytes": 326668288
+  },
+  "reportFiles": 1,
+  "officialRatingsUpdated": false
+}
