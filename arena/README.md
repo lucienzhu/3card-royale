@@ -38,7 +38,7 @@ no fallback AI. A failed entrant must be fixed or withdrawn before the official
 round-robin rerun. Local execution timing is recorded with CPU, Node version and
 single-thread WASM backend, not marketed as mobile latency.
 
-## Elo
+## Published season-1 Elo (historical)
 
 Start everyone at 1500; K=24 per game. Expected score is
 `1 / (1 + 10 ** ((opponentElo - elo) / 400))`.
@@ -113,12 +113,49 @@ against table Code AI in four small games, covering both seats and first movers.
 It runs on PRs touching policies, Arena, the engine/SDK or the WASM runtime.
 Illegal actions, decision timeouts and unfinished games fail the check.
 
-A manual workflow dispatch or maintainer-added `arena-benchmark` PR label runs
-the complete tournament: 200 games per pair, 2,000 games for five entries.
+A manual workflow dispatch or maintainer-added `arena-benchmark` PR label now
+runs a **quick provisional rating**, defaulting to 40 games per pair: 400 games
+for five policies, 160 per entrant. Manual dispatch can instead choose 20 per pair
+(200 total). Every seed is played twice with seats swapped, and first attack is
+balanced. Ordinary unlabelled PRs only run the four-game validity checks.
+
 Reports capture elapsed time, container peak memory, CPU quota, Node/CPU details,
 source hashes and the resolved Docker image digest. Artifacts expire in seven days.
 The container receives no credentials or network access; the workflow token is
 read-only. Workflow edits still need review. Neither job updates official Elo.
+
+### Quick provisional Elo
+
+```sh
+npm run arena:rate
+# Smaller initial sample:
+node arena/ci.mjs --mode rating --games 20 --output /tmp/royale-arena-rating
+```
+
+`rating.json` uses `batch-elo-v1`, distinct from the frozen season-1 sequential
+ratings. Code AI is fixed at **1500**. The expected win probability is:
+
+`P(A wins B) = 1 / (1 + 10 ** ((R_B - R_A) / 400))`.
+
+Fit all recorded wins and losses at once using the Bradley–Terry likelihood. Each
+non-anchor rating has a weak Gaussian prior centered at 1500, standard deviation
+400 Elo: minimize negative log likelihood plus
+`sum((R_i - 1500)^2 / (2 * 400^2))`. This declared smoothing keeps all-win/all-loss
+scores finite; it is not an extra played game. No online K factor or processing
+order affects this estimate. Opponent strengths are fitted jointly, rather than
+converting an overall win percentage into Elo.
+
+The report includes the method, source hash, actual wins/losses and per-policy
+sample counts. Fewer than 200 games per entrant remains **provisional**. This flag
+is a sample-count convention, not a confidence bound; even larger samples do not
+prove small differences in strength. With the default five-policy / 400-game run,
+every score is provisional. Do not compare a new batch score directly with the
+old sequential Elo; any future official migration must refit the whole field.
+
+`raw-games.json` retains the evaluator's original game records and historical
+rating fields for traceability; use **`rating.json`** for the new estimate. The
+website's published season report is unchanged. A maintainer reviews the complete
+report before any leaderboard publication; CI never commits its own results.
 
 ### Measured Linux capacity
 
@@ -142,6 +179,6 @@ also match. Official Elo was not rewritten.
 
 Current capacity is sufficient for the five-policy season. With 200 games per
 pair, N policies require `100 × N × (N − 1)` games; future, slower strategies may
-also increase time per game. Keep ordinary PR checks short and use the full
-benchmark after review. CI success is an execution check, not admission to the
+also increase time per game. The 2,000-game run was a one-off capacity check; routine ratings now use 400
+games by default. Keep ordinary PR checks short and request rating runs after review. CI success is an execution check, not admission to the
 ladder. Automatic publication of Elo remains disabled.

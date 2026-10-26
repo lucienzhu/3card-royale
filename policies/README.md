@@ -86,11 +86,14 @@ The released NN is a behavioral-cloning baseline, not a reward-trained RL agent.
 2. Run `npm run arena:validate` (metadata and hashes only; does not execute entries).
    PR CI also completes four balanced games per challenger against Code AI in an
    isolated Linux container; invalid actions, timeouts or unfinished games fail.
-3. Maintainer reviews JS and assets, then runs `npm run arena:evaluate` locally.
-   The optional `arena-benchmark` PR label or manual Actions run checks full Linux
-   tournament capacity ([measurements](../arena/README.md#measured-linux-capacity));
-   CI does not automatically publish ratings.
-4. Commit the resulting season report alongside the policy PR. Merge and deploy.
+3. Maintainer reviews JS and assets, then requests a quick provisional Elo run:
+   `npm run arena:rate`, the `arena-benchmark` PR label, or manual Actions.
+   Default: 40 games per pair (400 total for five entrants), with paired seats.
+   [Batch rating method](../arena/README.md#quick-provisional-elo); CI does not
+   automatically publish ratings or overwrite the historical season.
+4. Review the rating report. To publish a new season, rate the complete field
+   with one declared method and commit its report alongside the policy PR. Merge
+   and deploy. Historical sequential Elo and new batch scores must not be mixed.
    The Arena reads the registry and report; “Play” opens that policy on the table.
 
 Policy IDs not yet evaluated show **Unrated**, never invented Elo. Current artifacts

@@ -32,13 +32,17 @@ float32，动态 N≤512，输出有限数值，最高分对应动作。[训练�
 
 ## 工作流程
 
-PR → 检查格式与代码 → 本地评估 → 提交 Elo 与原始对局 → 合并 → Pages 试玩。
+PR → CI 有效性检查 → 审核与少量对局评分 → 提交 Elo 与原始对局 → 合并 → Pages 试玩。
 
 `npm run arena:validate` 仅检查元数据和文件哈希，不运行投稿代码。
 PR 的 CI 另在隔离 Linux 容器中，让每个参赛策略与 Code AI 打 4 小局，平衡席位和先攻。
 非法动作、超时或未完成对局都会失败。维护者可加 `arena-benchmark` 标签，或在 Actions
-手动跑完整循环赛。[Linux 实测](../arena/README.md#measured-linux-capacity)：2 核、2 GiB，
-2,000 局约 47 秒、峰值约 360 MiB。CI 不自动发布 Elo，投稿仍需审核和正式评估。
+手动生成暂定 Elo：默认每对策略 40 局，当前 5 个策略共 400 局；也可手动选 20 局/对手。
+本地用 `npm run arena:rate`。Code AI 固定 1500，汇总胜负批量拟合；
+[计算方法与平滑](../arena/README.md#quick-provisional-elo)不受对局处理顺序影响。
+读取 `rating.json`；每策略不足 200 局标为暂定。CI 不自动发布 Elo，投稿仍需审核。
+新批量评分与旧赛季的逐局 Elo 算法不同，不能直接混榜；发布新赛季应统一重算。
+此前 2,000 局只做容量测试：[Linux 实测](../arena/README.md#measured-linux-capacity)约 47 秒、360 MiB。
 `npm run arena:evaluate` 默认每对策略 200 小局，交换座位并平衡先攻。
 新增对手需重跑整个赛季，让所有策略面对相同对手池。未评估或哈希变化的策略显示“待评估”。
 Godlike 不进天梯。网页挑战结果不改变正式 Elo。

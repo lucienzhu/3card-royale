@@ -3,9 +3,13 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 import {spawn} from 'node:child_process';
+import {createHash} from 'node:crypto';
+import {estimateRatings,RATING_METHOD} from './rating.mjs';
 const args=process.argv.slice(2),arg=(key,fallback)=>{const i=args.indexOf(key);return i<0?fallback:args[i+1];};
 const mode=arg('--mode','smoke'),out=path.resolve(arg('--output','/tmp/arena-ci'));
-if(!['smoke','benchmark'].includes(mode))throw Error('Expected smoke or benchmark');
+const gamesPerPair=Number(arg('--games','40'));
+if(!['smoke','rating','benchmark'].includes(mode))throw Error('Expected smoke, rating or benchmark');
+if(mode==='rating'&&![20,40].includes(gamesPerPair))throw Error('Quick ratings use 20 or 40 games per pair');
 await fs.mkdir(out,{recursive:true});
 const start=performance.now(),reports=[];let passed=false;
 function run(script,extra=[]){return new Promise((resolve,reject)=>{
@@ -14,7 +18,19 @@ function run(script,extra=[]){return new Promise((resolve,reject)=>{
 });}
 try{
  await run('arena/validate.mjs');
- if(mode==='benchmark'){
+ await run('tests/arena/rating.mjs');
+ if(mode==='rating'){
+  const file=path.join(out,'raw-games.json');
+  await run('arena/evaluate.mjs',['--games',String(gamesPerPair),'--output',file]);
+  const raw=await fs.readFile(file),report=JSON.parse(raw);reports.push(report);
+  const leaderboard=estimateRatings(report.records,report.policies.map(p=>p.id)).map(row=>{const timing=report.leaderboard.find(r=>r.id===row.id);return {...row,latencyP95Ms:timing.latencyP95Ms,decisions:timing.decisions};});
+  const protocol={...report.protocol,ratingMethod:RATING_METHOD};
+  for(const field of ['initialElo','k','anchor','ratingOrder','provisionalBelowGames'])delete protocol[field];
+  const digest=data=>createHash('sha256').update(data).digest('hex');
+  const rating={...report,protocol,leaderboard,publication:'provisional-review-required',officialRatingsUpdated:false,matchReportSha256:digest(raw),ratingSourceSha256:digest(await fs.readFile(new URL('./rating.mjs',import.meta.url)))};
+  await fs.writeFile(path.join(out,'rating.json'),JSON.stringify(rating,null,2)+'\n');
+  console.log(JSON.stringify({ratingMethod:RATING_METHOD,leaderboard},null,2));
+ }else if(mode==='benchmark'){
   const file=path.join(out,'round-robin.json');
   await run('arena/evaluate.mjs',['--games','200','--output',file]);reports.push(JSON.parse(await fs.readFile(file)));
  }else{
