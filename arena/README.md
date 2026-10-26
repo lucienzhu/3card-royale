@@ -62,8 +62,9 @@ privileged information or different rule / episode contracts into this season.
 `arena:validate` checks manifest schema, registry paths, size and hashes without
 importing policy code. It is a metadata check, not a malware detector. Review a
 JS submission before importing it. **Workers and timeouts are not security
-sandboxes**; Node plugins can access the host. There is deliberately no privileged
-auto-evaluation action for untrusted PRs.
+sandboxes**; Node plugins can access the host. PR smoke tests run in a credential-free, network-disabled container with read-only
+source, 2 CPUs, 2 GiB of memory and a job timeout. They never publish ratings.
+A passing smoke test checks execution, not security or playing strength.
 
 For unfamiliar code, review then use an isolated checkout and a credential-free
 container with networking disabled. For example, from a disposable checkout:
@@ -104,3 +105,17 @@ The website combines the leaderboard, RL environment, baseline checkpoint and
 submission guide at [AI Arena](../arena.html). Old `rl.html` links preserve
 language and section anchors. Historical experiments are expandable and remain
 distinct from season Elo.
+
+## CI checks
+
+The `Arena policy checks` workflow validates manifest hashes and plays each entry
+against table Code AI in four small games, covering both seats and first movers.
+It runs on PRs touching policies, Arena, the engine/SDK or the WASM runtime.
+Illegal actions, decision timeouts and unfinished games fail the check.
+
+A manual workflow dispatch or maintainer-added `arena-benchmark` PR label runs
+the complete tournament: 200 games per pair, 2,000 games for five entries.
+Reports capture elapsed time, container peak memory, CPU quota, Node/CPU details,
+source hashes and the resolved Docker image digest. Artifacts expire in seven days.
+The container receives no credentials or network access; the workflow token is
+read-only. Workflow edits still need review. Neither job updates official Elo.

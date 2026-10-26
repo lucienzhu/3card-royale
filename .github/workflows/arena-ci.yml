@@ -1,0 +1,68 @@
+name: Arena policy checks
+on:
+  pull_request:
+    paths:
+      - 'policies/**'
+      - 'arena/**'
+      - 'sdk/**'
+      - 'gamecore.js'
+      - 'vendor/onnxruntime/**'
+      - 'tests/arena/**'
+      - '.github/workflows/arena-ci.yml'
+    types: [opened, synchronize, reopened, labeled]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: arena-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Validate and play against Code AI in an isolated container
+        run: |
+          mkdir -p "$RUNNER_TEMP/arena-smoke"
+          docker pull node:24-bookworm-slim
+          docker image inspect node:24-bookworm-slim --format '{{index .RepoDigests 0}}' > "$RUNNER_TEMP/arena-smoke/image.txt"
+          docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges \
+            --cpus 2 --memory 2g --pids-limit 128 --tmpfs /tmp:rw,noexec,nosuid,size=64m \
+            --user "$(id -u):$(id -g)" -v "$GITHUB_WORKSPACE:/app:ro" \
+            -v "$RUNNER_TEMP/arena-smoke:/output" -w /app node:24-bookworm-slim \
+            node arena/ci.mjs --mode smoke --output /output
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: arena-smoke
+          path: ${{ runner.temp }}/arena-smoke
+          retention-days: 7
+          if-no-files-found: warn
+  benchmark:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'arena-benchmark')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Measure the complete tournament with 2 CPUs and 2 GiB
+        run: |
+          mkdir -p "$RUNNER_TEMP/arena-benchmark"
+          docker pull node:24-bookworm-slim
+          docker image inspect node:24-bookworm-slim --format '{{index .RepoDigests 0}}' > "$RUNNER_TEMP/arena-benchmark/image.txt"
+          docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges \
+            --cpus 2 --memory 2g --pids-limit 128 --tmpfs /tmp:rw,noexec,nosuid,size=64m \
+            --user "$(id -u):$(id -g)" -v "$GITHUB_WORKSPACE:/app:ro" \
+            -v "$RUNNER_TEMP/arena-benchmark:/output" -w /app node:24-bookworm-slim \
+            node arena/ci.mjs --mode benchmark --output /output
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: arena-linux-benchmark
+          path: ${{ runner.temp }}/arena-benchmark
+          retention-days: 7
+          if-no-files-found: warn
