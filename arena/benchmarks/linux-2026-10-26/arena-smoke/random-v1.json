@@ -1,0 +1,159 @@
+{
+  "schema": 1,
+  "release": "1.1.0",
+  "season": "public-game-v1",
+  "rules": "1.0.0",
+  "episode": "game",
+  "information": "public",
+  "createdAt": "2026-10-26T15:14:23.620Z",
+  "protocol": {
+    "gamesPerPair": 4,
+    "seedStart": 86000000,
+    "seedCount": 2,
+    "levels": [
+      2,
+      2
+    ],
+    "pairedSeats": true,
+    "balancedFirst": true,
+    "actionOrder": "SDK canonical",
+    "maxDecisions": 4096,
+    "decisionTimeoutMs": 1000,
+    "initialElo": 1500,
+    "k": 24,
+    "anchor": "code-table-v1",
+    "ratingOrder": "seed, then alphabetical pair; simultaneous updates within seat pairs",
+    "provisionalBelowGames": 200
+  },
+  "runtime": {
+    "node": "v24.22.1",
+    "platform": "linux",
+    "arch": "x64",
+    "cpu": "AMD EPYC 7763 64-Core Processor",
+    "backend": "ONNX Runtime Web / single-thread WASM",
+    "elapsedMs": 182
+  },
+  "sourceSha256": {
+    "gamecore.js": "beb6ec6666d58424b80e6e7d7cfc2f6801a7d0a77c34791df745612494392981",
+    "sdk/index.js": "e9f2b4e1d9de59d0786dca5ac4b47580d3c6456f812c4f532b6af33f438de717",
+    "sdk/features.js": "043b0a66e0e0dbe877760ffa51515d5b1178e0e53e479d5d49028762e4479562",
+    "sdk/policy.js": "18d660f922a46cf66c238794c65bcca7373d3bbfbf53748ade6ab107e85bbe3e",
+    "sdk/easy-policy.js": "1af6b4fb4aa6003f513419821bc16bf45a09169433037eee55cce0dd44af7ae2",
+    "policies/contract.mjs": "e608cc76eabb14a0a58d4f29be93c24fb7bd9986cd83b2fcdf6108f2a5f3331d",
+    "policies/runtime.mjs": "f50b6c86103dad996bf82433eede746a66bad8847e1a3923e151b9cf03828f08",
+    "policies/client.mjs": "44d6b09ef10b9c3c56d09719ac2b8b4aba8b54ebb615f1cb445e2e48bd4913b1",
+    "policies/worker.mjs": "67c9a2c9b9818f874ec3e3d254b7aba0eb897116fd7fccc55e8ad4cacef2f263",
+    "policies/dependencies.mjs": "68b31ca1b81b339d6ee8263ea32fd8bba818c1ab326f5cac6a0b4147cf4a5dc1",
+    "policies/catalog.mjs": "ce4f3a24ef9d1f939adc435e48c6c37f06e6a817f66011dd2c9facb4ec01806f",
+    "arena/evaluate.mjs": "1f37fcb89e48e530a71e0f719a3f9edc15c7ee74d8736f582e75c91b5be96a80",
+    "arena/elo.mjs": "45316930c3f5cf374b85bf8f19e86ad257379b58848003bb770f70b8485f54e5"
+  },
+  "policies": [
+    {
+      "api": "royale-policy-v1",
+      "id": "code-table-v1",
+      "name": "Code AI",
+      "author": "3Card Royale",
+      "license": "MIT",
+      "type": "javascript",
+      "rules": "1.0.0",
+      "episode": "game",
+      "information": "public",
+      "memory": "none",
+      "artifact": {
+        "file": "policy.mjs",
+        "bytes": 1533,
+        "sha256": "fe07b4669f18a59fa4cc28fe9c7fa4c4814c67fd0608262582a45a3085b81ff6"
+      }
+    },
+    {
+      "api": "royale-policy-v1",
+      "id": "random-v1",
+      "name": "Random",
+      "author": "3Card Royale",
+      "license": "MIT",
+      "type": "javascript",
+      "rules": "1.0.0",
+      "episode": "game",
+      "information": "public",
+      "memory": "none",
+      "artifact": {
+        "file": "policy.mjs",
+        "bytes": 131,
+        "sha256": "f5ffd15a37eef8ab1d24c86844c6b35afada12ab9074e421656b6a9189f62d0c"
+      }
+    }
+  ],
+  "leaderboard": [
+    {
+      "id": "code-table-v1",
+      "elo": 1500,
+      "games": 4,
+      "wins": 4,
+      "losses": 0,
+      "provisional": true,
+      "latencyP95Ms": 3.643,
+      "decisions": 32
+    },
+    {
+      "id": "random-v1",
+      "elo": 1411,
+      "games": 4,
+      "wins": 0,
+      "losses": 4,
+      "provisional": true,
+      "latencyP95Ms": 0.42,
+      "decisions": 14
+    }
+  ],
+  "records": [
+    {
+      "pair": "code-table-v1/random-v1",
+      "left": "code-table-v1",
+      "right": "random-v1",
+      "seed": 86000000,
+      "leftSeat": 0,
+      "first": 0,
+      "winner": "code-table-v1",
+      "status": "complete",
+      "decisions": 18,
+      "finalStateSha256": "9612c58447dd975d673889b988315936851fb2260ff38eaa3b0ca68ebd82b99d"
+    },
+    {
+      "pair": "code-table-v1/random-v1",
+      "left": "code-table-v1",
+      "right": "random-v1",
+      "seed": 86000000,
+      "leftSeat": 1,
+      "first": 0,
+      "winner": "code-table-v1",
+      "status": "complete",
+      "decisions": 12,
+      "finalStateSha256": "2f54778b2106ae04caf07824a91f2aae1ec988fa321b64a0948b0ee5e692b558"
+    },
+    {
+      "pair": "code-table-v1/random-v1",
+      "left": "code-table-v1",
+      "right": "random-v1",
+      "seed": 86000001,
+      "leftSeat": 0,
+      "first": 1,
+      "winner": "code-table-v1",
+      "status": "complete",
+      "decisions": 9,
+      "finalStateSha256": "2ff7d218da0606aff0a220317cbe65f5bf868eb8e0a4962ef13c50708ddbeb52"
+    },
+    {
+      "pair": "code-table-v1/random-v1",
+      "left": "code-table-v1",
+      "right": "random-v1",
+      "seed": 86000001,
+      "leftSeat": 1,
+      "first": 1,
+      "winner": "code-table-v1",
+      "status": "complete",
+      "decisions": 17,
+      "finalStateSha256": "7a3196b334a4823a6dd7fc3bc257034c652f3c6c9393727c098fd358ea986c74"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "runUrl": "https://github.com/lucienzhu/3card-royale/actions/runs/40349419761",
+  "headCommit": "f3ba024548e8384a8522deafd591b853f473f04f",
+  "all400RecordsMatchHistoricalSubset": true,
+  "recordSelection": "first 20 seeds per pair from the saved season-1 report",
+  "ratingSourceHashVerified": true,
+  "matchReportHashVerified": true,
+  "officialRatingsUpdated": false
+}

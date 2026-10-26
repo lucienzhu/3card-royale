@@ -1,0 +1,17 @@
+{
+  "mode": "smoke",
+  "status": "passed",
+  "elapsedMs": 1930,
+  "completedGames": 16,
+  "cpu": "AMD EPYC 7763 64-Core Processor",
+  "node": "v24.22.1",
+  "platform": "linux",
+  "arch": "x64",
+  "cgroup": {
+    "cpuMax": "200000 100000",
+    "memoryMax": "2147483648",
+    "memoryPeakBytes": 166207488
+  },
+  "reportFiles": 4,
+  "officialRatingsUpdated": false
+}

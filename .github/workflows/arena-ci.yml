@@ -1,0 +1,76 @@
+name: Arena policy checks
+on:
+  pull_request:
+    paths:
+      - 'policies/**'
+      - 'arena/**'
+      - 'sdk/**'
+      - 'gamecore.js'
+      - 'vendor/onnxruntime/**'
+      - 'tests/arena/**'
+      - '.github/workflows/arena-ci.yml'
+    types: [opened, synchronize, reopened, labeled]
+  workflow_dispatch:
+    inputs:
+      games_per_pair:
+        description: Small games per pair for provisional Elo
+        type: choice
+        options: ['20', '40']
+        default: '40'
+permissions:
+  contents: read
+concurrency:
+  group: arena-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Validate and play against Code AI in an isolated container
+        run: |
+          mkdir -p "$RUNNER_TEMP/arena-smoke"
+          docker pull node:24-bookworm-slim
+          docker image inspect node:24-bookworm-slim --format '{{index .RepoDigests 0}}' > "$RUNNER_TEMP/arena-smoke/image.txt"
+          docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges \
+            --cpus 2 --memory 2g --pids-limit 128 --tmpfs /tmp:rw,noexec,nosuid,size=64m \
+            --user "$(id -u):$(id -g)" -v "$GITHUB_WORKSPACE:/app:ro" \
+            -v "$RUNNER_TEMP/arena-smoke:/output" -w /app node:24-bookworm-slim \
+            node arena/ci.mjs --mode smoke --output /output
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: arena-smoke
+          path: ${{ runner.temp }}/arena-smoke
+          retention-days: 7
+          if-no-files-found: warn
+  rating:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'arena-benchmark')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Estimate provisional Elo with 2 CPUs and 2 GiB
+        env:
+          GAMES_PER_PAIR: ${{ inputs.games_per_pair || '40' }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/arena-rating"
+          docker pull node:24-bookworm-slim
+          docker image inspect node:24-bookworm-slim --format '{{index .RepoDigests 0}}' > "$RUNNER_TEMP/arena-rating/image.txt"
+          docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges \
+            --cpus 2 --memory 2g --pids-limit 128 --tmpfs /tmp:rw,noexec,nosuid,size=64m \
+            --user "$(id -u):$(id -g)" -v "$GITHUB_WORKSPACE:/app:ro" \
+            -v "$RUNNER_TEMP/arena-rating:/output" -w /app node:24-bookworm-slim \
+            node arena/ci.mjs --mode rating --games "$GAMES_PER_PAIR" --output /output
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: arena-provisional-elo
+          path: ${{ runner.temp }}/arena-rating
+          retention-days: 7
+          if-no-files-found: warn
