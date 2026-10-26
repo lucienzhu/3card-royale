@@ -1,0 +1,17 @@
+{
+  "mode": "benchmark",
+  "status": "passed",
+  "elapsedMs": 47166,
+  "completedGames": 2000,
+  "cpu": "AMD EPYC 9V74 80-Core Processor",
+  "node": "v24.22.1",
+  "platform": "linux",
+  "arch": "x64",
+  "cgroup": {
+    "cpuMax": "200000 100000",
+    "memoryMax": "2147483648",
+    "memoryPeakBytes": 377774080
+  },
+  "reportFiles": 1,
+  "officialRatingsUpdated": false
+}

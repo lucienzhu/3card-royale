@@ -119,3 +119,29 @@ Reports capture elapsed time, container peak memory, CPU quota, Node/CPU details
 source hashes and the resolved Docker image digest. Artifacts expire in seven days.
 The container receives no credentials or network access; the workflow token is
 read-only. Workflow edits still need review. Neither job updates official Elo.
+
+### Measured Linux capacity
+
+[GitHub run](https://github.com/lucienzhu/3card-royale/actions/runs/40347273843) ·
+[Saved summaries, raw games and verification](benchmarks/linux-2026-10-26/verification.json)
+
+On 2026-10-26, `ubuntu-24.04`, Node 24.22.1 / x64, inside a container capped at
+**2 CPUs and 2 GiB**:
+
+| Check | Games | Evaluation + validation | Peak container memory | Entire job |
+| --- | ---: | ---: | ---: | ---: |
+| Submission smoke | 16 | 1.93 s | 158.5 MiB | 11 s |
+| Full round robin | 2,000 | 47.17 s | 360.3 MiB | 60 s |
+
+The jobs ran on different AMD EPYC hosts (7763 and 9V74); these are measured runs,
+not guaranteed timings. Job duration includes checkout, image preparation and
+artifact upload, but excludes queue time. `memory.peak` includes all container
+processes and charged cache, not just one policy. All 2,000 game records, including
+final-state hashes, exactly match the saved local season; policy and source hashes
+also match. Official Elo was not rewritten.
+
+Current capacity is sufficient for the five-policy season. With 200 games per
+pair, N policies require `100 × N × (N − 1)` games; future, slower strategies may
+also increase time per game. Keep ordinary PR checks short and use the full
+benchmark after review. CI success is an execution check, not admission to the
+ladder. Automatic publication of Elo remains disabled.

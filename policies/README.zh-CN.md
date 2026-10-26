@@ -35,6 +35,10 @@ float32，动态 N≤512，输出有限数值，最高分对应动作。[训练�
 PR → 检查格式与代码 → 本地评估 → 提交 Elo 与原始对局 → 合并 → Pages 试玩。
 
 `npm run arena:validate` 仅检查元数据和文件哈希，不运行投稿代码。
+PR 的 CI 另在隔离 Linux 容器中，让每个参赛策略与 Code AI 打 4 小局，平衡席位和先攻。
+非法动作、超时或未完成对局都会失败。维护者可加 `arena-benchmark` 标签，或在 Actions
+手动跑完整循环赛。[Linux 实测](../arena/README.md#measured-linux-capacity)：2 核、2 GiB，
+2,000 局约 47 秒、峰值约 360 MiB。CI 不自动发布 Elo，投稿仍需审核和正式评估。
 `npm run arena:evaluate` 默认每对策略 200 小局，交换座位并平衡先攻。
 新增对手需重跑整个赛季，让所有策略面对相同对手池。未评估或哈希变化的策略显示“待评估”。
 Godlike 不进天梯。网页挑战结果不改变正式 Elo。

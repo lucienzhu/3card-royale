@@ -84,7 +84,12 @@ The released NN is a behavioral-cloning baseline, not a reward-trained RL agent.
 
 1. Submit the folder, registry entry and README. Use the policy PR template.
 2. Run `npm run arena:validate` (metadata and hashes only; does not execute entries).
+   PR CI also completes four balanced games per challenger against Code AI in an
+   isolated Linux container; invalid actions, timeouts or unfinished games fail.
 3. Maintainer reviews JS and assets, then runs `npm run arena:evaluate` locally.
+   The optional `arena-benchmark` PR label or manual Actions run checks full Linux
+   tournament capacity ([measurements](../arena/README.md#measured-linux-capacity));
+   CI does not automatically publish ratings.
 4. Commit the resulting season report alongside the policy PR. Merge and deploy.
    The Arena reads the registry and report; “Play” opens that policy on the table.
 

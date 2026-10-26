@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "runUrl": "https://github.com/lucienzhu/3card-royale/actions/runs/40347273843",
+  "headCommit": "c1eed19ac2dcdca50c40fc6c9aa5b0a23be2913b",
+  "runner": "ubuntu-24.04",
+  "date": "2026-10-26",
+  "jobElapsedSeconds": {
+    "smoke": 11,
+    "benchmark": 60
+  },
+  "referenceReport": "arena/results/season-1.json",
+  "referenceReportSha256": "735ddcdf25c802ac06305d5ff4849b2e8a4b7320e51cab151a47bd384930bf2e",
+  "comparison": {
+    "all2000RecordsEqual": true,
+    "sourceHashesEqual": true,
+    "policyManifestsEqual": true
+  },
+  "officialRatingsUpdated": false
+}
