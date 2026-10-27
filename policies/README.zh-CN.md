@@ -15,7 +15,9 @@
 - `README.md`：策略说明、来源、训练／复现方法。
 - `validation.json`：本地验证生成的记录，CI 会独立复跑。
 
-复制已有示例，加入 `policies/registry.json`，运行 `node arena/stamp.mjs <id>` 更新哈希。
+复制已有示例，加入 `policies/registry.json`，为目录条目填写 `"github": "你的GitHub用户名"`（不带 @ 或网址）；新 manifest 的 `author` 使用相同用户名。天梯显示可点击的 `@用户名`。目录署名独立于已评分的 manifest，修改展示资料不会使旧评分失效。
+
+运行 `node arena/stamp.mjs <id>` 更新哈希。
 已评分的 ID 不覆盖修改；新代码或权重用新 ID。兼容接口为 `royale-policy-v1`，
 玩法规则 1.0.0，按独立小局评估，所有策略只获得公开观察。
 

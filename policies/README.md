@@ -29,6 +29,11 @@ for existing users and historical experiments. Built-in plugins adapt those
 sources; the NN entry contains the same hash-verified model blob. GameCore stays
 independent of policy selection.
 
+Each registry entry declares `"github": "your-handle"` (without `@` or a URL).
+The leaderboard links `@your-handle` to your GitHub profile. Use the same handle
+as the new manifest's `author`. Registry attribution is display metadata; existing
+rated manifests and scores remain immutable. Credit collaborators in README.md.
+
 ## Pure JavaScript
 
 A **single self-contained ES module** exports a factory:

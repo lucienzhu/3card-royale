@@ -74,7 +74,9 @@ node scripts/check.cjs
 
 The five-size experiment remains in Git tag `nn-policy-experiments-20261024`.
 Its metrics and curves remain in `docs/experiments/nn-policy-v1/`; non-selected
-ONNX files are removed from the current deployment directory.
+ONNX files are removed from the current deployment directory. The original 512/256
+checkpoint is also available as the optional [NN512 Arena entry](../policies/entries/nn-512-v1/README.md);
+it does not replace the default 256/128 model.
 
 ## TensorBoard and browser
 

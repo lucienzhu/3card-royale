@@ -20,3 +20,5 @@
 .arena-history .site-section{border:0;padding-top:24px}
 .arena-page .rl-hard th,.arena-page .rl-hard td{overflow-wrap:anywhere}
 @media(max-width:700px){.arena-sections{gap:10px 22px;padding:16px 0}.arena-sections a{font-size:13px}.arena-research .rl-hero{padding:32px 0;gap:24px}.arena-research .rl-hero>div>h2{font-size:30px}.arena-research .rl-results th:first-child{width:40%}.arena-research .rl-layer{white-space:normal}.arena-research .rl-hard th:first-child{width:50%}.arena-research .rl-contract code{max-width:100%}.arena-research .rl-hard td{font-size:12px}}
+
+.arena-author{text-decoration:none;overflow-wrap:anywhere}.arena-author:hover,.arena-author:focus-visible{text-decoration:underline;text-underline-offset:3px}
