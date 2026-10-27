@@ -59,3 +59,6 @@ body.site-lab>header:not(.site-header){display:none}body.site-lab .site-header{m
 .site-opponents-link{display:inline-block;margin-top:24px;font-size:13px;text-underline-offset:4px}
 @media(max-width:900px){.site-opponents{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:380px){.site-opponents{grid-template-columns:1fr}}
+
+/* Arena introduction shares the learning steps, with room after the play path. */
+#arena .site-steps{margin-top:28px}
