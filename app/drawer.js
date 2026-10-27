@@ -32,7 +32,12 @@
   dialog.addEventListener('cancel',e=>{e.preventDefault();e.stopImmediatePropagation();close();},true);
   dialog.addEventListener('keydown',e=>{
    if(e.key!=='Tab')return;
-   const items=[...dialog.querySelectorAll('button:not(:disabled),a[href],input:not(:disabled),select:not(:disabled),summary,[tabindex="0"]')].filter(n=>n.getClientRects().length);
+   const items=[...dialog.querySelectorAll('button:not(:disabled),a[href],input:not(:disabled),select:not(:disabled),summary,[tabindex="0"]')].filter(n=>{
+    if(!n.getClientRects().length||n.tabIndex<0||getComputedStyle(n).visibility==='hidden')return false;
+    // Closed details may still report layout boxes, but only their summary is focusable.
+    for(let parent=n.parentElement;parent&&parent!==dialog;parent=parent.parentElement)if(parent.tagName==='DETAILS'&&!parent.open&&!parent.querySelector(':scope>summary')?.contains(n))return false;
+    return true;
+   });
    const first=items[0],last=items[items.length-1],focused=document.activeElement;
    if(first&&(focused===dialog||e.shiftKey&&focused===first||!e.shiftKey&&focused===last)){e.preventDefault();(e.shiftKey?last:first).focus({preventScroll:true});}
   });
