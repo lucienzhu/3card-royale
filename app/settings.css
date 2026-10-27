@@ -6,8 +6,7 @@
 :root body #settings-modal .menu-preferences{display:flex;flex-direction:column;gap:0}
 :root body #settings-modal :is(.sz-appearance,.policy-field,.settings-field,.sz-motion-setting label){display:grid;grid-template-columns:minmax(120px,1fr) minmax(0,320px);align-items:center;gap:6px 24px;margin:0;padding:16px 0;max-width:none;border:0;color:var(--ink);font-size:14px;font-weight:500;line-height:1.5}
 :root body #settings-modal :is(.sz-appearance,.policy-field,.sz-motion-setting,.sz-egg,.sz-onboarding-setting)+:is(.sz-appearance,.policy-field,.sz-motion-setting,.sz-egg,.sz-onboarding-setting){border-top:1px solid var(--line)}
-:root body #settings-modal :is(select,input[type=number]){box-sizing:border-box;width:100%;max-width:none;min-width:0;min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);color:var(--ink);font-family:inherit;font-size:16px;font-weight:400;line-height:1.4}
-:root body #settings-modal select{font-family:inherit;font-size:16px;line-height:1.4}
+:root body #settings-modal input[type=number]{box-sizing:border-box;width:100%;max-width:none;min-width:0;min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);color:var(--ink);font-family:inherit;font-size:16px;font-weight:400;line-height:1.4}
 :root body #settings-modal.sz-drawer .sz-appearance select{width:100%;max-width:none}
 :root body #settings-modal :is(.policy-field small,.policy-field a){grid-column:2;font-size:12px;font-weight:400;line-height:1.5}
 :root body #settings-modal .sz-motion-setting{margin:0;padding:0 0 16px;min-width:0}
@@ -33,8 +32,6 @@
 :root body #settings-modal details{border-top:1px solid var(--line);padding:0;margin:0;font-size:13px}
 :root body #settings-modal details summary{display:flex;align-items:center;justify-content:space-between;gap:16px;list-style:none;box-sizing:border-box;min-height:48px;padding:12px 0;cursor:pointer;font-size:14px;font-weight:500;line-height:1.5;color:var(--ink)}
 :root body #settings-modal details summary::-webkit-details-marker{display:none}
-:root body #settings-modal details summary::after{content:'';width:7px;height:7px;flex:none;margin-right:4px;border-right:1.5px solid var(--muted);border-bottom:1.5px solid var(--muted);transform:rotate(45deg)}
-:root body #settings-modal details[open]>summary::after{transform:rotate(225deg)}
 :root body #settings-modal details[open]>summary{margin-bottom:4px}
 :root body #settings-modal details details{margin-left:12px}
 :root body #settings-modal details p{margin:8px 0 16px;color:var(--muted);font-size:12px;line-height:1.6}

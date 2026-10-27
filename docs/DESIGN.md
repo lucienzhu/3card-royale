@@ -63,3 +63,14 @@ The PNG card renderer consumes a generated copy of the production suit paths, fl
 The home introduction reuses the approved layer19 skyline as a softly cropped background. Scale the original drawing proportionally behind the copy, fading it near the text and lower edge. It adds no height or separate illustration row. The phone view uses a smaller skyline to reveal more landmarks without adding vertical space. Controls stay above it with clear focus rings, and the art never intercepts input.
 
 **Godlike difficulty.** Keep Easy, Medium and Hard; add Godlike as an explicit opt-in. Its option and adjacent status must disclose that it sees the player’s hand, without card memory. Keep private hand faces hidden on the table. Use the existing settings drawer/modal and select component; show a visible Hard fallback on search failure.
+
+### Selects and disclosures · 2026-10-27
+
+`app/controls.css` is shared by Settings, the replay chapter picker and the live
+component gallery. Native selects retain keyboard navigation and mobile pickers:
+44 px minimum height, 16 px text, 14 px left padding, 48 px text clearance on the
+right, and a 20 px rounded chevron inset 14 px. Surfaces, border and arrow follow
+the light/dark tokens. Hover strengthens the border; keyboard focus uses the red
+text token and a soft ring. Disabled fields are muted; reduced motion and forced
+colors are supported. Disclosures use the same chevron and right inset, rotating
+only when expanded. The gallery shows default, focus, disabled and expand states.
