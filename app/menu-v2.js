@@ -1,23 +1,14 @@
-/* Presentation only: the New match tab leads with its two actions; seeds sit under an Advanced disclosure; the rule-version switch, the quick rank list and the comparison studies sit under Research & history. No game state is touched. */
+/* A single settings page. Existing controls retain their game/storage listeners. */
 (()=>{'use strict';
- const modal=document.getElementById('settings-modal'),settings=document.getElementById('settings');
- if(!modal||!settings)return;
- const actions=settings.querySelector('.menu-match-actions'),readout=settings.querySelector('.seed-readout'),fixedRow=settings.querySelector('.seed-fixed-row'),mode=document.getElementById('seed-mode');
- if(actions)settings.prepend(actions);
- const adv=document.createElement('details');adv.className='menu-detail qb-advanced';const sum=document.createElement('summary');sum.dataset.noI18n='';adv.append(sum);
- if(readout)adv.append(readout);if(fixedRow)adv.append(fixedRow);
- const notice=settings.querySelector(':scope>.notice');(notice||settings).insertAdjacentElement(notice?'beforebegin':'beforeend',adv);
- // Research & history: the records tab's "资料与研究" disclosure also takes the rule-version switch and the quick rank list; nothing is removed.
- const summaryOf=d=>d.querySelector(':scope>summary');
- const research=[...modal.querySelectorAll('details')].find(d=>/资料与研究|Materials|Research/.test(summaryOf(d)?.textContent||''));
- const rsum=research?summaryOf(research):null;if(rsum)rsum.dataset.noI18n='';
- const versionField=modal.querySelector('.version-field'),quick=[...modal.querySelectorAll('details')].find(d=>d!==research&&/牌型速查|Hand ranks|Quick ranks/.test(summaryOf(d)?.textContent||''));
- if(rsum){for(const el of [quick,versionField])if(el)rsum.after(el);}
- const version=document.getElementById('version-select');if(research&&version&&!/^1\./.test(version.value))research.open=true;
- const root=document.documentElement;let lastLanguage='';
- function language(){lastLanguage=root.lang;sum.textContent=root.lang==='en'?'Advanced · seeds':'高级 · 种子';if(rsum)rsum.textContent=root.lang==='en'?'Research & history':'研究与历史';}
- new MutationObserver(()=>{if(root.lang!==lastLanguage)language();}).observe(root,{attributes:true,attributeFilter:['lang']});
- if(mode)mode.addEventListener('change',()=>{if(mode.value==='fixed')adv.open=true;});
- if(mode&&mode.value==='fixed')adv.open=true;
- language();
+ const root=document.documentElement,modal=document.getElementById('settings-modal');if(!modal)return;
+ const replay=modal.querySelector('.menu-replay-shortcut button');if(replay){modal.querySelector('.settings-record-actions').prepend(replay);modal.querySelector('.menu-replay-shortcut').remove();}
+ const seedDetails=document.getElementById('settings-seeds'),mode=document.getElementById('seed-mode'),research=document.getElementById('settings-research');
+ const note=document.getElementById('settings-storage-note');try{const key='sz-storage-check';localStorage.setItem(key,'1');localStorage.removeItem(key);}catch(_){note.hidden=false;}
+ const headings={preferences:['偏好','Preferences'],match:['开局','New match'],records:['记录','Records']};
+ const copy={advanced:['高级 · 种子','Advanced · seeds'],seeds:['同种子、同先攻、同操作，可重现对局。','Same seed, first attacker and moves reproduce the match.'],replace:['新开局会替换当前存档。','New match replaces this save.'],research:['研究与历史','Research & history']};
+ let lastLanguage='';function language(){lastLanguage=root.lang;const en=root.lang==='en';for(const el of modal.querySelectorAll('[data-settings-heading]'))el.textContent=headings[el.dataset.settingsHeading][en?1:0];for(const el of modal.querySelectorAll('[data-settings-copy]'))el.textContent=copy[el.dataset.settingsCopy][en?1:0];note.textContent=en?'Saving unavailable. Keep this window open.':'无法存档，请保留此窗口。';}
+ function sync(){if(mode.value==='fixed')seedDetails.open=true;if(!/^1\./.test(document.getElementById('version-select').value))research.open=true;}
+ document.getElementById('new-match').addEventListener('click',()=>{if(mode.value==='fixed'&&!document.getElementById('seed-input').validity.valid)seedDetails.open=true;},true);
+ mode.addEventListener('change',sync);window.addEventListener('sz-drawer-open',e=>{if(e.detail.name==='settings')sync();});
+ new MutationObserver(()=>{if(root.lang!==lastLanguage)language();}).observe(root,{attributes:true,attributeFilter:['lang']});language();sync();
 })();

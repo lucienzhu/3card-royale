@@ -1,5 +1,5 @@
 /* Narrow and embedded viewports keep controls readable and content inside its own scroller. */
-:root body .sz-drawer :is(.modal-body,.qb-menu-panel,.standard-rules,#rg-text){min-width:0;overflow-wrap:break-word}
+:root body .sz-drawer :is(.modal-body,.settings-section,.standard-rules,#rg-text){min-width:0;overflow-wrap:break-word}
 :root body .sz-drawer :is(input,select){max-width:100%;box-sizing:border-box}
 :root body .sz-drawer .standard-rules table{width:100%;table-layout:fixed;font-size:12px}
 :root body .sz-drawer .standard-rules :is(th,td){overflow-wrap:anywhere;padding:8px 6px}

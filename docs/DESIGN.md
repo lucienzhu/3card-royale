@@ -49,6 +49,7 @@ The [live component page](../design-system.html?lang=en) loads the production ca
 
 Gallery language and theme selectors share a 44px control, token-based surfaces, leading icons and a visible focus ring. Native selection keeps keyboard and mobile pickers available. Chapter 04 groups result conventions and share previews.
 
+- **Settings:** One scrolling page, ordered Preferences, New match, Records, without section tabs. Fields, switches, actions and disclosures share a consistent layout. Desktop labels sit beside controls; mobile fields stack. Choose match options before starting; seed and historical research details expand on demand. Language and Back remain in the fixed header; saves and preference behavior are retained.
 - **Navigation and help:** Play, Hands, Rules, Settings share one spacing system; Replay is inside Settings. Rules, hand ranks, settings and replay use the same fixed-height shell: a right-side drawer on phones, a centered modal on desktop. Language switching belongs in the header.
 - **Replay motion:** forward playback and Next animate visible card moves inside the replay drawer/modal. Public replay hands stay face-up; live rival hands remain anonymous. Backward steps and non-adjacent seeks restore the selected frame immediately. Navigation, scrolling and viewport changes settle any interrupted flight; reduced-motion preferences still apply.
 - **Swap choice:** each opportunity offers Swap or Skip this one. The selected source lifts; only valid destination zones carry one circle-⇄ marker. The source zone has no target marker.
