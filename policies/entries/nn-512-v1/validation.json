@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "policyId": "nn-512-v1",
+  "manifestSha256": "c895ddac71ccd7c5493ed3e46d37a90d4f41b05973873424829dd4dec452aa91",
+  "panelSha256": "197c97f1aaa89f81b70fa287f3e96b3ca9501a317458e38fcf76f5493f4cec81",
+  "games": 4,
+  "seedStart": 88000000,
+  "records": [
+    {
+      "pair": "code-table-v1/nn-512-v1",
+      "left": "code-table-v1",
+      "right": "nn-512-v1",
+      "seed": 88000000,
+      "leftSeat": 0,
+      "first": 0,
+      "winner": "nn-512-v1",
+      "status": "complete",
+      "decisions": 18,
+      "finalStateSha256": "1cdfd9157e7b8c8a21e909b771fd740b022832b52cb7e2b81880c901d91693e2"
+    },
+    {
+      "pair": "code-table-v1/nn-512-v1",
+      "left": "code-table-v1",
+      "right": "nn-512-v1",
+      "seed": 88000000,
+      "leftSeat": 1,
+      "first": 0,
+      "winner": "code-table-v1",
+      "status": "complete",
+      "decisions": 21,
+      "finalStateSha256": "d11496decaeac5a1c2d498b5f6db8080f25bb09b4a02c75c9e48eeaf1968bf7d"
+    },
+    {
+      "pair": "code-table-v1/nn-512-v1",
+      "left": "code-table-v1",
+      "right": "nn-512-v1",
+      "seed": 88000001,
+      "leftSeat": 0,
+      "first": 1,
+      "winner": "nn-512-v1",
+      "status": "complete",
+      "decisions": 80,
+      "finalStateSha256": "b94158c15b5c4624080a1b89e1b2baf6e826519f465814d8bcc7e916d49f7577"
+    },
+    {
+      "pair": "code-table-v1/nn-512-v1",
+      "left": "code-table-v1",
+      "right": "nn-512-v1",
+      "seed": 88000001,
+      "leftSeat": 1,
+      "first": 1,
+      "winner": "nn-512-v1",
+      "status": "complete",
+      "decisions": 51,
+      "finalStateSha256": "6d4a1afbdb1d0762f5e718ccd6d5c3f2b3970e46540276d566d1b4ebfa8ec69b"
+    }
+  ]
+}

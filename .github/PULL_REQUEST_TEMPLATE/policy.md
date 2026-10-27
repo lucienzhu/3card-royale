@@ -1,7 +1,7 @@
 ## Policy
 
 - New policy ID:
-- Author / license:
+- GitHub handle (registry `github` and new manifest `author`) / license:
 - Type: JavaScript / ONNX
 - Method and source / training recipe:
 - Memory: none / within one small game

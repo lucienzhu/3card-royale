@@ -1,0 +1,18 @@
+{
+  "api": "royale-policy-v1",
+  "id": "nn-512-v1",
+  "name": "NN · 512 → 256",
+  "author": "lucienzhu",
+  "license": "MIT",
+  "type": "onnx",
+  "rules": "1.0.0",
+  "episode": "game",
+  "information": "public",
+  "memory": "none",
+  "artifact": {
+    "file": "policy.onnx",
+    "bytes": 1365463,
+    "sha256": "6ecafc81a29aefcff3cb9922f9070db42dc84b81fe7c937fc08de1354b7d10de"
+  },
+  "features": "gym-v1"
+}

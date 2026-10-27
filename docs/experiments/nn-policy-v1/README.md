@@ -119,7 +119,9 @@ The 256/512 experiment won 465/1,000 evaluation games versus 462/1,000 for 256/1
 browser timing runs are retained in this folder because their timings varied;
 RESULTS.md documents the repeat run and the first run's slower measurements.
 Production selects the smaller 256/128 model (552,407 bytes). The alternative
-weights remain in the experiment tag rather than the deployment directory.
+weights remain in the experiment tag rather than the deployment directory. The original
+512/256 checkpoint is now also submitted as [nn-512-v1](../../../policies/entries/nn-512-v1/README.md)
+for the Arena; the default web model remains 256/128.
 
 ## Uniform random baseline · 2026-10-24
 

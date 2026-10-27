@@ -3,23 +3,33 @@
   "policies": [
     {
       "id": "random-v1",
-      "manifest": "entries/random-v1/manifest.json"
+      "manifest": "entries/random-v1/manifest.json",
+      "github": "lucienzhu"
     },
     {
       "id": "sdk-code-v1",
-      "manifest": "entries/sdk-code-v1/manifest.json"
+      "manifest": "entries/sdk-code-v1/manifest.json",
+      "github": "lucienzhu"
     },
     {
       "id": "easy-v2",
-      "manifest": "entries/easy-v2/manifest.json"
+      "manifest": "entries/easy-v2/manifest.json",
+      "github": "lucienzhu"
     },
     {
       "id": "code-table-v1",
-      "manifest": "entries/code-table-v1/manifest.json"
+      "manifest": "entries/code-table-v1/manifest.json",
+      "github": "lucienzhu"
     },
     {
       "id": "nn-256-v1",
-      "manifest": "entries/nn-256-v1/manifest.json"
+      "manifest": "entries/nn-256-v1/manifest.json",
+      "github": "lucienzhu"
+    },
+    {
+      "id": "nn-512-v1",
+      "manifest": "entries/nn-512-v1/manifest.json",
+      "github": "lucienzhu"
     }
   ]
 }

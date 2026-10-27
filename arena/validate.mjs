@@ -2,8 +2,10 @@
 import fs from 'node:fs/promises';
 import {validateManifest} from '../policies/contract.mjs';
 import {createHash} from 'node:crypto';
+import {registryAuthors} from '../policies/authors.mjs';
 const root=new URL('../policies/',import.meta.url),registry=JSON.parse(await fs.readFile(new URL('registry.json',root)));
 if(registry.version!==1||!Array.isArray(registry.policies))throw Error('Invalid registry');
+registryAuthors(registry);
 const seen=new Set();
 for(const entry of registry.policies){
  if(!entry||typeof entry.id!=='string'||!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(entry.id)||seen.has(entry.id)||entry.manifest!==`entries/${entry.id}/manifest.json`)throw Error('Bad registry path / duplicate');

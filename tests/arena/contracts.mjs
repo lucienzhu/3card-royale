@@ -5,6 +5,7 @@ import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 import {Worker} from 'node:worker_threads';
 import {catalog} from '../../policies/catalog.mjs';
+import {registryAuthors} from '../../policies/authors.mjs';
 import {validateManifest,validateIndex,seededRandom} from '../../policies/contract.mjs';
 import {loadPolicy,sha256} from '../../policies/runtime.mjs';
 import {PolicyClient} from '../../policies/client.mjs';
@@ -14,6 +15,11 @@ import testBrowser from './browser.cjs';
 await testBrowser();
 const root=new URL('../../',import.meta.url),entries=await catalog();
 assert(!entries.some(e=>e.manifest.id.includes('godlike')));
+const registry=JSON.parse(await fs.readFile(new URL('policies/registry.json',root)));
+const authors=registryAuthors(registry);assert.equal(authors.size,entries.length);
+for(const github of ['@name','https://github.com/name','a/b','a--b','-a','a-','a'.repeat(40),'',null])assert.throws(()=>registryAuthors({version:1,policies:[{id:'example-v1',github}]}));
+assert.equal(registryAuthors({version:1,policies:[{id:'example-v1',github:'a-b'}]}).get('example-v1'),'a-b');
+assert.throws(()=>registryAuthors({version:1,policies:[registry.policies[0],registry.policies[0]]}));
 const base=entries[0].manifest;
 for(const update of [{id:undefined},{id:'../bad'},{rules:'0.3.3'},{information:'privileged'},{episode:'match'},{type:'python'},{license:{}},{memory:'forever'},{artifact:{...base.artifact,file:'../policy.mjs'}},{artifact:{...base.artifact,bytes:5000001}},{artifact:{...base.artifact,sha256:'wrong'}}])assert.throws(()=>validateManifest({...base,...update}));
 for(const index of [-1,1.5,NaN,Infinity,'0',3])assert.throws(()=>validateIndex(index,3));
@@ -53,7 +59,7 @@ try {
   const random=plugins[entries.findIndex(e=>e.manifest.id==='random-v1')],o=new sdk.Game(15,0).observation(0);
   random.reset(81);const seq=await Promise.all(Array.from({length:12},()=>random.act(o)));random.reset(81);assert.deepEqual(await Promise.all(Array.from({length:12},()=>random.act(o))),seq);
  }finally{for(const p of plugins)await p.dispose();}
- console.log(`Arena: manifest / integrity, public observations, five JS/ONNX plugins, ${parity} Hard/SDK decisions, seeded reset.`);
+ console.log(`Arena: manifest / integrity, public observations, ${entries.length} JS/ONNX plugins, ${parity} Hard/SDK decisions, seeded reset.`);
  // Timeout, cancellation and an error from a dead worker must not affect a replacement.
  const workers=[];const client=new PolicyClient({decisionMs:20,makeWorker:()=>{const w={terminate(){this.dead=true;},postMessage(m){this.last=m;}};workers.push(w);return w;}});
  await assert.rejects(client.act({legal_actions:[{}]}),/timed out/);assert.equal(client.pending.size,0);assert(workers[0].dead);
