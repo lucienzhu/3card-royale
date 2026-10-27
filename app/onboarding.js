@@ -42,8 +42,8 @@
  function mount(){
   const en=()=>document.documentElement.lang==='en',t=(zh,english)=>en()?english:zh;
   const setting=document.createElement('section');setting.className='sz-onboarding-setting';setting.dataset.noI18n='';
-  setting.innerHTML='<div><label for="onboarding-enabled"><input id="onboarding-enabled" type="checkbox" role="switch" aria-describedby="onboarding-setting-note"><span></span></label><p id="onboarding-setting-note"></p></div><button id="onboarding-reopen" type="button"></button>';
-  document.querySelector('.menu-preferences').after(setting);
+  setting.innerHTML='<div><label for="onboarding-enabled"><span></span></label><p id="onboarding-setting-note"></p></div><div class="settings-toggle-actions"><button id="onboarding-reopen" type="button"></button><input id="onboarding-enabled" type="checkbox" role="switch" aria-describedby="onboarding-setting-note"></div>';
+  document.querySelector('.menu-preferences').append(setting);
   const toggle=setting.querySelector('input'),reopen=setting.querySelector('button');toggle.checked=prefs.enabled;
   const dialog=document.createElement('dialog');dialog.id='onboarding-modal';dialog.className='modal';dialog.hidden=true;dialog.dataset.noI18n='';dialog.setAttribute('aria-labelledby','onboarding-heading');
   dialog.innerHTML='<div class="modal-head"><h2 id="onboarding-heading"></h2></div><div class="modal-body"><div class="onboarding-picture"></div></div><div class="onboarding-footer"><p id="intro-feedback" role="status" aria-live="polite"></p><button type="button" class="primary" id="onboarding-start"></button></div>';

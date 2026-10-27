@@ -16,7 +16,7 @@ html,:root body,[data-sz-theme=dark] body{background:var(--paper);color:var(--in
 :root body .primary:active,:root body .table .action-buttons .primary:active{background:var(--red-deep)!important}
 :root body .table .action-buttons button:not(.primary),[data-sz-theme=dark] .table .action-buttons button:not(.primary){color:var(--ink);background:transparent;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:4px}
 :root body button:disabled{opacity:.4}
-:root body .table .tabs button:after,:root body.table-identity-layout .app-header .tabs button[aria-selected=true]::after,.qb-menu-tabs button[aria-selected=true]:after{background:var(--red)}
+:root body .table .tabs button:after,:root body.table-identity-layout .app-header .tabs button[aria-selected=true]::after{background:var(--red)}
 /* the flower-card chip is a miniature of the card itself: label in ink, a 22×31 gold card with the red heart index */
 :root body .table .shared-flower,[data-sz-theme=dark] .table .shared-flower{display:inline-flex;align-items:center;gap:7px;padding:0;color:var(--ink);font-size:13px;font-weight:600}
 :root body .table .shared-flower .card{--rk:16px;flex:none;width:32px;height:45px;padding:4px;border-radius:5px;margin:0;box-shadow:var(--flat-shadow);cursor:default}
@@ -109,14 +109,6 @@ html,:root body,[data-sz-theme=dark] body{background:var(--paper);color:var(--in
 /* sizes: bigger ranks on mid-size desktops; flat hands where there is room */
 @media(min-width:761px) and (min-height:651px) and (max-height:760px){:root body .app-main:not(.is-replay){--handrank:28px}}
 @media(min-width:900px){:root body .app-main:not(.is-replay){--handstep:calc(var(--handw) + 6px)}}
-/* settings: actions first, seeds under Advanced */
-:root body .settings-modal .menu-match-actions{display:grid;grid-template-columns:1fr;gap:8px;border:0;padding:0;margin:0 0 4px}
-:root body .settings-modal .menu-match-actions button{width:100%;min-height:46px;font-size:14px;border-radius:var(--r)}
-:root body .settings-modal .menu-match-actions button:not(.primary){background:transparent;border:0;color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:4px}
-:root body .settings-modal .qb-advanced{border-top:1px solid var(--line);margin-top:8px}
-:root body .settings-modal .qb-advanced summary{font-size:14px;min-height:48px;padding:14px 0;cursor:pointer}
-:root body .settings-modal .qb-advanced .seed-readout{border:0;padding:4px 0 12px;margin:0}
-:root body .settings-modal .qb-advanced .seed-fixed-row{padding-bottom:12px}
 /* result sheet: a bottom sheet with one sentence, the new level, both wounds, two actions */
 :root body .result-modal{width:min(480px,100vw);max-width:none}
 :root body .result-sheet,[data-sz-theme=dark] .result-sheet{background:var(--paper);border:0;border-radius:var(--r-lg);box-shadow:0 24px 80px #101A1840}

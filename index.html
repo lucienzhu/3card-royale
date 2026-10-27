@@ -23,7 +23,8 @@
 <link rel="stylesheet" href="app/refill-guide.css?v=sz-mobile-motion1">
 <link rel="stylesheet" href="app/focus-guide.css?v=sz-mobile-motion1">
 <link rel="stylesheet" href="app/compact-axis.css?v=sz-progress-spacing2">
-<link rel="stylesheet" href="app/mobile-guide.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/night-table.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/quiet-bloom.css?v=sz-mobile-motion1"><script src="app/browser-shell.js?v=sz-mobile-motion1"></script><link rel="stylesheet" href="app/card-motion.css?v=replay-motion1"><link rel="stylesheet" href="app/table-identity.css?ui=sz-swap-choice1"><link rel="stylesheet" href="app/player-profile.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/rules-shell.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/replay-player.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/drawer.css?v=quick-start1"><link rel="stylesheet" href="app/guide-layout.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/responsive.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/guide-motion.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/motion-preferences.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/tokens.css?v=result-flower1"><link rel="stylesheet" href="app/finale.css?v=6"><link rel="stylesheet" href="app/texture-pcb.css?v=14"><link rel="stylesheet" href="app/onboarding.css?v=guided-damage1">
+<link rel="stylesheet" href="app/mobile-guide.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/night-table.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/quiet-bloom.css?v=settings-sections1"><script src="app/browser-shell.js?v=sz-mobile-motion1"></script><link rel="stylesheet" href="app/card-motion.css?v=replay-motion1"><link rel="stylesheet" href="app/table-identity.css?ui=sz-swap-choice1"><link rel="stylesheet" href="app/player-profile.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/rules-shell.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/replay-player.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/drawer.css?v=settings-sections1"><link rel="stylesheet" href="app/guide-layout.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/responsive.css?v=settings-sections1"><link rel="stylesheet" href="app/guide-motion.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/motion-preferences.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/tokens.css?v=settings-sections1"><link rel="stylesheet" href="app/finale.css?v=6"><link rel="stylesheet" href="app/texture-pcb.css?v=14"><link rel="stylesheet" href="app/onboarding.css?v=guided-damage1">
+<link rel="stylesheet" href="app/settings.css?v=settings-sections1">
 </head>
 <body>
 <header class="app-header">
@@ -98,22 +99,46 @@
  </div></div>
 <div class="rg-navigation" id="rg-navigation" data-no-i18n></div></dialog>
 <dialog class="modal settings-modal" id="settings-modal" aria-labelledby="settings-heading">
- <div class="modal-head"><h2 id="settings-heading">新开局与记录</h2><button id="close-settings" autofocus>回到牌桌</button></div>
+ <div class="modal-head"><h2 id="settings-heading">设置</h2><button id="close-settings" autofocus>回到牌桌</button></div>
  <div class="modal-body">
-  <div class="menu-preferences"><label class="language-field">语言<select id="language-select" data-language-select aria-label="语言"><option value="zh-CN" data-no-i18n>简体中文</option><option value="en" data-no-i18n>English</option></select></label><label class="sz-appearance" data-no-i18n><span data-sz-theme-label>外观</span><select data-sz-theme-select aria-label="外观"><option value="system">跟随系统</option><option value="light">浅色 · 绿牌</option><option value="dark">深色 · 主板</option></select></label><label class="sz-egg" data-no-i18n><span class="sz-egg-text"><span data-sz-egg-label>电路板</span><small data-sz-egg-hint>彩蛋：牌桌变成一块会动的电路板</small></span><input type="checkbox" role="switch" data-sz-egg-toggle aria-label="电路板彩蛋"></label>
+ <section class="settings-section" id="settings-preferences" aria-labelledby="settings-preferences-heading">
+  <h3 id="settings-preferences-heading" data-settings-heading="preferences" data-no-i18n>偏好</h3>
+  <div class="menu-preferences"><label class="language-field">语言<select id="language-select" data-language-select aria-label="语言"><option value="zh-CN" data-no-i18n>简体中文</option><option value="en" data-no-i18n>English</option></select></label><label class="sz-appearance" data-no-i18n><span data-sz-theme-label>外观</span><select data-sz-theme-select aria-label="外观"><option value="system">跟随系统</option><option value="light">浅色 · 绿牌</option><option value="dark">深色 · 主板</option></select></label>
   <label class="policy-field" data-no-i18n><span id="policy-label">难度</span><select id="policy-select" aria-labelledby="policy-label"><option value="easy">简单 · Easy AI</option><option value="nn">中等 · NN AI</option><option value="code">困难 · Code AI</option><option value="godlike">超凡 · Godlike AI（明牌）</option><option value="arena">天梯 · 社区策略</option></select><small id="policy-status" role="status" hidden></small></label>
   <label class="policy-field" id="arena-policy-field" data-no-i18n hidden><span id="arena-policy-label">天梯对手</span><select id="arena-policy-select" aria-labelledby="arena-policy-label"><option>…</option></select><small id="arena-policy-status" role="status"></small><a id="arena-link" href="arena.html">查看天梯 ↗</a></label>
-  </div><p id="version-note"></p>
-  <p id="replay-detail" hidden></p>
-  <label class="version-field">规则版本<select id="version-select" aria-label="规则版本"><option value="1.0.0">1.0 · 标准规则</option><option value="0.3.8">0.3.8 · 共用花牌</option><option value="0.3.7">0.3.7 · 血牌反击</option><option value="0.3.6">0.3.6 · 防守反击</option><option value="0.3.5">0.3.5 · 胜者先攻</option><option value="0.3.4">0.3.4 · 四炸6分试验</option><option value="0.3.3">0.3.3 · 换牌</option><option value="0.3.2">0.3.2 · 翻牌</option><option value="0.3.1b">0.3.1b · 比大小</option><option value="0.3.1a">0.3.1a · 同分伤 1</option><option value="0.3">0.3 · 原版</option></select></label>
-  <section class="settings" id="settings"><div class="seed-readout" aria-label="当前对局种子"><div><span>整场种子</span><output id="current-match-seed"></output></div><div><span>本小局种子</span><output id="current-game-seed"></output></div></div><p class="seed-help">整场种子不变，每小局记录新的发牌种子。同种子、同先攻设置与同操作，可重现整场。</p><div class="settings-body"><label class="seed-mode-field">种子方式<select id="seed-mode"><option value="random">随机种子（默认）</option><option value="fixed">固定种子</option></select></label><label>首局先攻<select id="first-input"><option value="random">随机先攻</option><option value="0">你先攻</option><option value="1">对手先攻</option></select></label><div class="seed-fixed-row"><label id="seed-value-label" hidden>整场固定种子<input id="seed-input" type="number" min="0" max="4294967295" step="1" placeholder="0–4294967295" disabled></label><button type="button" id="reuse-seed">填入当前整场种子</button></div><div class="menu-match-actions"><button id="new-match" class="primary">开新一场</button><button id="export-match">导出记录</button></div></div><p class="notice">默认随机种子，刷新续玩。开新一场会替换当前版本的存档。</p></section>
-  <details class="menu-detail"><summary>牌型速查</summary><p id="score-list"></p><p id="menu-flower-text">本局花牌：双方共用的红桃级牌，可代任意牌。</p></details>
+  <label class="sz-egg" data-no-i18n><span class="sz-egg-text"><span data-sz-egg-label>电路板</span><small data-sz-egg-hint>彩蛋：牌桌变成一块会动的电路板</small></span><input type="checkbox" role="switch" data-sz-egg-toggle aria-label="电路板彩蛋"></label>
+  </div>
+ </section>
+ <section class="settings-section" id="settings-match" aria-labelledby="settings-match-heading">
+  <h3 id="settings-match-heading" data-settings-heading="match" data-no-i18n>开局</h3>
+  <section class="settings" id="settings">
+   <p id="settings-storage-note" class="notice" data-no-i18n hidden></p>
+   <div class="settings-body">
+    <label class="settings-field">首局先攻<select id="first-input"><option value="random">随机先攻</option><option value="0">你先攻</option><option value="1">对手先攻</option></select></label>
+    <details class="menu-detail" id="settings-seeds"><summary data-settings-copy="advanced" data-no-i18n>高级 · 种子</summary>
+     <label class="settings-field seed-mode-field">种子方式<select id="seed-mode"><option value="random">随机种子（默认）</option><option value="fixed">固定种子</option></select></label>
+     <div class="seed-fixed-row"><label id="seed-value-label" hidden>整场固定种子<input id="seed-input" type="number" min="0" max="4294967295" step="1" placeholder="0–4294967295" disabled></label><button type="button" id="reuse-seed">填入当前整场种子</button></div>
+     <p class="seed-help" data-settings-copy="seeds" data-no-i18n>同种子、同先攻、同操作，可重现对局。</p>
+    </details>
+   </div>
+   <div class="settings-start"><p class="notice" data-settings-copy="replace" data-no-i18n>新开局会替换当前存档。</p><button id="new-match" class="primary">开新一场</button></div>
+  </section>
+ </section>
+ <section class="settings-section" id="settings-records" aria-labelledby="settings-records-heading">
+  <h3 id="settings-records-heading" data-settings-heading="records" data-no-i18n>记录</h3>
+  <div class="settings-record-actions"><button id="export-match">导出记录</button></div>
   <details class="menu-detail"><summary>最近结算</summary><div class="log" id="event-log"></div><p class="budget" id="budget"></p></details>
-  <details class="menu-detail"><summary>对局信息</summary><p id="card-check"></p></details>
+  <details class="menu-detail"><summary>对局信息</summary><p id="card-check"></p><div class="seed-readout" aria-label="当前对局种子"><div><span>整场种子</span><output id="current-match-seed"></output></div><div><span>本小局种子</span><output id="current-game-seed"></output></div></div></details>
+  <details class="menu-detail" id="settings-research"><summary data-settings-copy="research" data-no-i18n>研究与历史</summary>
+  <label class="version-field">规则版本<select id="version-select" aria-label="规则版本"><option value="1.0.0">1.0 · 标准规则</option><option value="0.3.8">0.3.8 · 共用花牌</option><option value="0.3.7">0.3.7 · 血牌反击</option><option value="0.3.6">0.3.6 · 防守反击</option><option value="0.3.5">0.3.5 · 胜者先攻</option><option value="0.3.4">0.3.4 · 四炸6分试验</option><option value="0.3.3">0.3.3 · 换牌</option><option value="0.3.2">0.3.2 · 翻牌</option><option value="0.3.1b">0.3.1b · 比大小</option><option value="0.3.1a">0.3.1a · 同分伤 1</option><option value="0.3">0.3 · 原版</option></select></label>
+  <p id="version-note"></p><p id="replay-detail" hidden></p>
+  <details class="menu-detail"><summary>牌型速查</summary><p id="score-list"></p><p id="menu-flower-text">本局花牌：双方共用的红桃级牌，可代任意牌。</p></details>
   <details class="trial-comparison"><summary>四炸 · 新旧各100场对照</summary><div id="four-study-content"></div></details>
   <details class="trial-comparison"><summary>历史20种子对照</summary><div class="comparison-scroll"><table><thead><tr><th>版本</th><th>单局中位数</th><th>最长单局</th><th>无效果攻防</th></tr></thead><tbody id="comparison-rows"></tbody></table></div><p>旧五版各20场，采用可见信息启发式。相同种子只保证首局发牌相同；后续会分叉。程序结果不代表真人体验。</p></details>
   <div class="identity-note"><span>深圳花牌 · 开放的双人扑克玩法</span><a href="about.html">玩法介绍</a><a href="brand.html">标志与视觉</a><a href="https://github.com/lucienzhu/3card-royale" target="_blank" rel="noopener">规则与源码 ↗</a></div>
   <p><a href="probability.html">查看三张花样概率（不含四炸、五炸）↗</a></p>
+  </details>
+ </section>
  </div>
 </dialog>
 <dialog class="modal result-modal" id="result-modal" aria-labelledby="result-title" aria-describedby="result-subtitle result-hint">
@@ -134,11 +159,11 @@
 <script src="app/replays.js"></script>
 <script src="app/player-profile.js?ui=sz-copy2"></script><script src="app/bloom-assets.js?ui=sz-system-sync1-cards"></script><script src="app/finale.js?v=9"></script><script src="app/bloom.js?v=sz-progress-spacing2"></script>
 <script src="app/share-assets.js?v=sz-share1"></script><script src="app/share-card.js?ui=3card-address1"></script>
-<script src="app/motion-preferences.js?ui=sz-copy2"></script><script src="app/card-face.js?v=sz-v2.2"></script><script src="app/card-motion.js?v=replay-motion1"></script>
+<script src="app/motion-preferences.js?v=settings-sections1"></script><script src="app/card-face.js?v=sz-v2.2"></script><script src="app/card-motion.js?v=replay-motion1"></script>
 <script src="sdk/index.js"></script><script src="sdk/policy.js"></script><script src="sdk/easy-policy.js?v=difficulty2-64"></script><script src="sdk/godlike-policy.js?v=godlike1"></script><script src="app/godlike-ai.js?v=godlike1"></script><script src="app/arena-ai.js?v=arena1"></script><script src="app/policy-ai.js?v=arena1"></script>
 <script src="app/table-interaction.js?v=guided-flow1"></script>
-<script src="app/onboarding.js?v=guided-damage1"></script>
+<script src="app/onboarding.js?v=settings-sections1"></script>
 <script src="app/table.js?ui=result-flower1"></script>
 <script src="app/standard-rules.js?ui=sz-swap-choice1"></script><script src="app/rule-cases.js?v=sz-guide4"></script><script src="app/swap-cases.js?v=sz-guide7"></script>
 <script src="app/focus-cases.js?v=sz-guide9"></script>
-<script src="app/guide-motion.js?v=sz-mobile-motion1"></script><script src="app/rules.js?ui=sz-copy2"></script><script src="app/hand-reference.js?v=sz-v2.4"></script><script src="app/theme-tokens.js?v=sz-v3.1"></script><script src="app/theme.js?v=sz-v3.1"></script><script src="app/experience.js?v=sz-v2.9"></script><script src="app/rack-hints.js?v=sz-hints1"></script><script src="app/quiet-bloom.js?ui=sz-copy2"></script><script src="app/table-identity.js?v=sz-mobile-motion1"></script><script src="app/menu-v2.js?v=sz-v2.9"></script><script src="app/table-v2.js?v=sz-v2.8"></script><script src="app/texture-chips.js?v=38"></script><script src="app/board.js?ui=sz-copy2"></script><script src="app/drawer.js?v=quick-start1"></script></body></html>
+<script src="app/guide-motion.js?v=sz-mobile-motion1"></script><script src="app/rules.js?ui=sz-copy2"></script><script src="app/hand-reference.js?v=sz-v2.4"></script><script src="app/theme-tokens.js?v=sz-v3.1"></script><script src="app/theme.js?v=sz-v3.1"></script><script src="app/experience.js?v=sz-v2.9"></script><script src="app/rack-hints.js?v=sz-hints1"></script><script src="app/table-identity.js?v=sz-mobile-motion1"></script><script src="app/menu-v2.js?v=settings-sections1"></script><script src="app/table-v2.js?v=sz-v2.8"></script><script src="app/texture-chips.js?v=38"></script><script src="app/board.js?ui=sz-copy2"></script><script src="app/drawer.js?v=settings-sections1"></script></body></html>
