@@ -74,3 +74,7 @@ the light/dark tokens. Hover strengthens the border; keyboard focus uses the red
 text token and a soft ring. Disabled fields are muted; reduced motion and forced
 colors are supported. Disclosures use the same chevron and right inset, rotating
 only when expanded. The gallery shows default, focus, disabled and expand states.
+
+Settings switches align to the right of their title and description. Secondary
+actions such as “Practice again” sit below the description, left-aligned, on both
+desktop and mobile. Keep the action separate from the on/off control.
