@@ -76,5 +76,7 @@ colors are supported. Disclosures use the same chevron and right inset, rotating
 only when expanded. The gallery shows default, focus, disabled and expand states.
 
 Settings switches align to the right of their title and description. Secondary
-actions such as “Practice again” sit below the description, left-aligned, on both
-desktop and mobile. Keep the action separate from the on/off control.
+actions such as “Practice again” use an outlined secondary button below the
+description, left-aligned, on desktop and mobile. Use the shared panel, border and
+radius tokens, a 44 px minimum height, and no link underline. Keep the action
+separate from the on/off control.

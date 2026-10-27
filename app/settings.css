@@ -23,7 +23,8 @@
 :root body #settings-modal input[role=switch]:checked{background:var(--red)}
 :root body #settings-modal input[role=switch]:checked::after{transform:translateX(18px)}
 :root body #settings-modal :is(button,select,input,summary,a):focus-visible{outline:2px solid var(--red);outline-offset:3px}
-:root body #settings-modal #onboarding-reopen{font-size:13px;min-height:44px;padding:8px 0;color:var(--ink);white-space:nowrap;text-decoration-color:var(--line)}
+:root body #settings-modal #onboarding-reopen{box-sizing:border-box;min-height:44px;min-width:120px;margin-top:8px;padding:10px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);color:var(--ink);font:500 14px/1.4 system-ui;white-space:nowrap;text-decoration:none}
+@media(hover:hover){:root body #settings-modal #onboarding-reopen:hover{border-color:var(--muted);background:var(--table)}}
 :root body #settings-modal .settings-body{display:block;margin:0}
 :root body #settings-modal .settings-start{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:16px}
 :root body #settings-modal .notice{margin:0;font-size:12px;line-height:1.5;color:var(--muted)}
