@@ -29,7 +29,7 @@ async function testLifecycle(){
  const fragment=source.slice(source.indexOf('function driveAI(){'),source.indexOf('function renderReplayControls(){'));
  let callback,resolve,applied=0;
  const game={phase:'attack',currentActor:()=>1};
- const ctx={game,mode:'play',busy:false,aiSerial:0,aiTimer:null,motionSerial:0,error:'',
+ const ctx={turnFlow:{stop(){}},game,mode:'play',busy:false,aiSerial:0,aiTimer:null,motionSerial:0,error:'',
   window:{SZCardMotion:{busy:false,cancel(){}},SZPolicy:{decide:()=>new Promise(r=>{resolve=r;}),apply:()=>{applied++;}}},
   $:()=>({open:false}),render(){},tryAction:fn=>fn(),setTimeout:fn=>{callback=fn;return 1;},clearTimeout(){}};
  vm.createContext(ctx);vm.runInContext(fragment,ctx);

@@ -269,6 +269,9 @@ function randomSeed(){const value=new Uint32Array(1);if(globalThis.crypto&&typeo
 function loadGame(){try{const saved=localStorage.getItem(storageKey());if(saved){const g=GK.Game.restore(JSON.parse(saved));if(g.version===variant)return g;}}catch(_){}return new GK.Game(randomSeed(),{version:variant});}
 let game=loadGame();
 window.gkGame=game;
+const turnFlow=window.SZTableInteraction.autoAdvance({read:()=>game,
+ ready:()=>mode==='play'&&!document.hidden&&!busy&&!window.SZOnboarding?.pending&&!window.SZDrawer?.active&&!window.SZDrawer?.closing&&!window.SZCardMotion.busy&&!document.querySelector('dialog[open]'),
+ advance:()=>tryAction(()=>game.advance())});
 function persist(){try{localStorage.setItem(storageKey(),JSON.stringify(game.save()));localStorage.setItem('gk031_variant',variant);}catch(_){}}
 function isPlaying(){return mode==='play'&&(game.phase==='attack'||game.phase==='defend')&&game.currentActor()===0&&!busy;}
 const currentFlower=(state,who)=>GK.sharedFlower(variant)?state.flowerLevel:state.players[who].level;
@@ -476,7 +479,7 @@ function renderActions(s,event){
   if(flipMode){const o=game.flipOptions().find(x=>x.action===flipMode);$('selection-preview').hidden=false;$('selection-preview').textContent='选牌 '+flipIndices.length+' / '+o.count;addButton('确认',()=>tryAction(()=>game.flip(flipMode,flipIndices)),{disabled:flipIndices.length!==o.count,primary:true,id:'submit-flip'});$('submit-flip').setAttribute('aria-label','确认翻面');}
  }else if(p==='resolved'){
   $('action-title').textContent='结算完成';$('action-description').textContent=game.battleIndex===0?'交换进攻与防守':'保留余牌，补到 8 张';
-  addButton(game.battleIndex===0?'交换攻防':'补牌 · 下一轮',()=>tryAction(()=>game.advance()),{primary:true,id:'continue-game'});
+  // No player choice here: advance after the result and card motion can be read.
  }else if(p==='game_over'||p==='match_over'){
   const r=game.results[game.results.length-1];$('action-title').textContent=(r.winner===0?'你赢了':'对手赢了')+(p==='match_over'?'整场':'这一局');$('action-description').textContent='终局伤势 '+r.damage.join(' / ')+'，胜者升 '+r.gain+' 级，'+GK.rankLabel(r.from)+' → '+GK.rankLabel(r.to)+'。';
   $('selection-preview').hidden=false;$('selection-preview').innerHTML='<strong class="upgrade-jump">'+GK.rankLabel(r.from)+' <span>→</span> '+GK.rankLabel(r.to)+'</strong><small>'+(r.winner===0?'你':'对手')+(p==='match_over'?'闯过自己的 A':r.from===14?'赢下小局，下一局打自己的 A':'升 '+(r.to-r.from)+' 级')+'</small>';$('action-description').textContent=p==='match_over'?'整场结束':r.to===14?'下一局以 A 级争胜':'继续升级，向 A 前进';
@@ -593,6 +596,8 @@ function render(){
  const r=s.lastRefill;$('budget').textContent=r?'上一轮：保留 '+r.before.join(' / ')+' 张，补手牌 '+r.drawn.join(' / ')+' 张；桌面补位 '+r.tableUses.join(' / ')+' 张。'+(GK.isRefresh(variant)?'换牌另抽 '+(r.refreshDraws||[0,0]).join(' / ')+' 张。':''):'保留全部余牌，轮末只补到八张。明牌用后补位，伤势不变。';
  if(replay)renderReplayControls();
  syncResult();
+ turnFlow.sync();
+ window.SZOnboarding?.update?.({game,mode,busy:busy||window.SZCardMotion.busy});
 }
 function driveAI(){
  if(window.SZOnboarding?.pending||window.SZDrawer?.active||window.SZCardMotion.busy||mode!=='play'||$('settings-modal').open||$('result-modal').open||$('player-name-dialog')?.open||busy||game.currentActor()!==1||!['attack','defend','flip','refresh'].includes(game.phase))return;
@@ -606,7 +611,7 @@ function driveAI(){
   }catch(e){if(token===aiSerial){busy=false;error=e.message;render();}}
  },400);
 }
-function stopAI(){aiSerial++;motionSerial++;window.SZCardMotion.cancel();if(aiTimer){clearTimeout(aiTimer);aiTimer=null;}busy=false;}
+function stopAI(){turnFlow.stop();aiSerial++;motionSerial++;window.SZCardMotion.cancel();if(aiTimer){clearTimeout(aiTimer);aiTimer=null;}busy=false;}
 function renderReplayControls(){
  const en=GKLocale.language==='en',events=ROLLOUT.events,total=events.length,event=events[cursor];
  const name=en?['Previous step','Next step',autoTimer?'Pause':cursor===total-1?'Play again':'Play']:['上一步','下一步',autoTimer?'暂停':cursor===total-1?'重新播放':'播放'];
@@ -693,7 +698,7 @@ window.addEventListener('sz-profile-locale',()=>render());
 window.addEventListener('sz-player-namechange',()=>{render();if($('result-modal').open)openResult();});
 GKLocale.init();
 
-document.addEventListener('visibilitychange',()=>{if(document.hidden)stopReplay();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){stopAI();stopReplay();}else{render();driveAI();}});
 
 // UI state is suspended while the shared renderer shows a read-only sample replay.
 window.SZTablePanels={
@@ -703,3 +708,11 @@ window.SZTablePanels={
  leaveReplay(saved){mode='play';if(saved){selected=saved.selected;flipMode=saved.flipMode;flipIndices=saved.flipIndices;refreshTarget=saved.refreshTarget;error=saved.error;}render();},
  resume(){render();driveAI();}
 };
+
+// Slide across hand or face-up wound cards, then confirm the play normally.
+for(const id of ['own-hand','own-table'])window.SZTableInteraction.swipe({
+ container:$(id),cards:()=>[...$(id).querySelectorAll('button.card.selectable[data-card]')],
+ enabled:()=>isPlaying()&&!window.SZDrawer?.active&&!window.SZCardMotion.busy,
+ selected:()=>selected.map(String),limit:()=>GK.allowsFive(variant)?5:GK.allowsFour(variant)?4:3,
+ apply:ids=>{selected=ids.map(Number);error='';render();}
+});
