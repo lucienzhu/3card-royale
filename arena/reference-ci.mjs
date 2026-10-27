@@ -3,11 +3,16 @@ import path from 'node:path';
 import os from 'node:os';
 import {context,targetsFor,LIMITS,checkMatch,checkReceipt,fixedRating} from './reference.mjs';
 import {runPair} from './run-pair.mjs';
+import {releaseTargets} from './release.mjs';
 const args=process.argv.slice(2),arg=(key,fallback)=>{const i=args.indexOf(key);return i<0?fallback:args[i+1];};
 const out=path.resolve(arg('--output','/tmp/royale-reference')),ctx=await context();
 const changedFile=arg('--changed',''),changed=changedFile?(await fs.readFile(changedFile,'utf8')).trim().split('\n').filter(Boolean):null;
 const baseFile=arg('--base-manifests',''),baseManifests=baseFile?JSON.parse(await fs.readFile(baseFile)):null;
-const targets=targetsFor(ctx,{baseManifests,explicit:arg('--policies',''),changed,limit:arg('--event','manual')==='manual'?LIMITS.batchTargets:LIMITS.prTargets});
+const release=args.includes('--release');
+if(release&&!args.includes('--rate'))throw Error('Release mode requires --rate');
+let board=null;
+if(release)try{board=JSON.parse(await fs.readFile('arena/results/leaderboard.json'));}catch(e){if(e.code!=='ENOENT')throw e;}
+const targets=release?releaseTargets(ctx,board,{explicit:arg('--policies','')}):targetsFor(ctx,{baseManifests,explicit:arg('--policies',''),changed,limit:arg('--event','manual')==='manual'?LIMITS.batchTargets:LIMITS.prTargets});
 await fs.mkdir(out,{recursive:true});await fs.rm(path.join(out,'result.json'),{force:true});const start=Date.now(),deadline=start+LIMITS.totalMs;let complete=0,passed=false;
 try{
  const receipts=new Map(),smokes=new Map();

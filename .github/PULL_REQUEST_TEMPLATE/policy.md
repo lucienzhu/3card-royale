@@ -16,6 +16,6 @@
 - [ ] `npm run arena:submit -- --policy <id>` passes; generated `validation.json` committed
 - [ ] Fixed reference decisions agree with original implementation (if ported)
 
-Maintainer: review before executing. CI replays local validation; merge triggers
-60 reference games per entrant and automatic leaderboard / Pages publication.
+Maintainer: review before executing. PR/main CI only replays local validation.
+Publish Arena rates pending entries and updates the leaderboard / Pages at release.
 At most 3 entrants per PR. Godlike / privileged-information policies are excluded.

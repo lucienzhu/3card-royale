@@ -21,12 +21,31 @@ state hashes. CI independently replays the games and requires identical results
 before rating. Missing or stale receipts fail the run. This verifies reproducible
 play, not which computer produced a receipt. Review unfamiliar code before running it.
 
-1. A PR validates metadata and replays each changed/new policy's receipt.
-2. A maintainer may add `arena-benchmark` to preview ratings on the PR. PRs cannot publish.
-3. After review and merge to `main`, CI repeats the gate, then rates each entrant.
-4. A separate trusted job checks the JSON and recalculates scores. It commits only
+1. `Arena policy checks` validates metadata and replays each changed/new policy's
+   four-game receipt on PRs and ordinary main pushes. It never rates or publishes.
+2. Publish a GitHub Release, or run **Actions → Publish Arena → Run workflow** on
+   `main`. This separate workflow rates pending policies, then publishes the board.
+   Leave `policies` blank to reuse unchanged scores; specify IDs only to rerate them.
+3. A separate trusted job checks the JSON and recalculates scores. It commits only
    `arena/results/leaderboard.json` and `arena/results/reference-elo-v1/<id>.json`.
-5. The job explicitly requests a GitHub Pages build; the Arena reads the new JSON.
+4. The job explicitly requests a GitHub Pages build; the Arena reads the new JSON.
+
+A merge alone does not award Elo. A new policy can appear on the existing Pages
+site as **Unrated** until the publication workflow runs. Release selection compares
+all registered policy manifests with the saved board, so it includes pending
+policies from multiple merged PRs, not just the last commit. Releasing with no
+pending policies plays zero games and rebuilds Pages using the existing scores.
+
+Publish the current main revision. A release tag must contain the same source as
+`main`; result-only commits may differ. If main code advances during rating, the
+publisher stops instead of mixing two releases. Existing tags are never rewritten.
+The workflow may be rerun after a failure. To check selection/rating locally:
+
+```sh
+npm run arena:release:check
+# Explicit rerating of one policy:
+npm run arena:release:check -- --policies your-policy-v1
+```
 
 Invalid actions, decision timeouts, incomplete games or mismatched receipts stop
 publication. There is no substitute AI and no partial leaderboard. New or unmatched
@@ -35,24 +54,26 @@ entry's report; it does not accumulate repeated games. Browser play never awards
 
 ## Bounded work
 
-Each entrant plays **20 games against each of 3 frozen references**: Easy, NN and
-Code AI. That is **60 rated games + 4 validation games**, independent of how many
+At publication, each pending entrant plays **20 games against each of 3 frozen
+references**: Easy, NN and Code AI. That is **60 rated games + 4 validation games**, independent of how many
 policies are registered. N entrants require 64N games, not an all-pairs tournament.
-Only changed/new entrants are scheduled on normal submissions; adding a policy
-does not replay the existing field. Registry/manifest bookkeeping remains O(N).
+Submission checks play only four validation games per changed/new entrant. Release
+rating selects pending entries and reuses matching existing scores. Registry/manifest
+bookkeeping remains O(N).
 
 | Limit | Budget |
 | --- | ---: |
-| Policies per PR or main push | 3 |
-| Policies per manual dispatch | 10 |
+| Validated policies per PR or main push | 3 |
+| Rated policies per publication run | 10 |
 | Each opponent batch | 60 seconds |
 | Total match-running time | 180 seconds |
 | Evaluation job | 5 minutes |
 | Container | 2 CPUs / 2 GiB / no network |
 
-Manual Actions accepts comma-separated policy IDs. Documentation or frontend changes
-do not replay existing policies. Re-evaluate shared maintenance changes with explicit
-manual batches. Engine/runtime or reference changes require a new calibrated panel;
+Publish Arena accepts comma-separated policy IDs for explicit rerating. If more than
+10 pending policies have accumulated, publish explicit batches of at most 10 first,
+then run with a blank field to collect the remainder. Documentation or frontend
+changes do not replay existing policies. Engine/runtime or reference changes require a new calibrated panel;
 the source-hash check refuses to silently mix incompatible seasons. Already published
 IDs are immutable: submit a new ID for changed code, weights or metadata.
 
@@ -100,8 +121,9 @@ alone is not a security sandbox. Do not use privileged `pull_request_target` exe
 Review both policies and workflow changes before merging. Local Node plugins can
 access the host; use an isolated checkout/container for unfamiliar code.
 
-The evaluation job has read-only repository permissions. Only the separate publisher
-has `contents: write` and `pages: write`, and it runs only on `main`, never PRs.
+Validation and release evaluation jobs have read-only repository permissions. Only
+the publication workflow has a separate publisher with `contents: write` and
+`pages: write`. It writes to `main` after a successful release evaluation, never on PRs.
 It reads bounded JSON, checks hashes and recomputes scores without importing entrant
 code. Artifacts expire after 7 days; per-policy raw results remain in Git.
 

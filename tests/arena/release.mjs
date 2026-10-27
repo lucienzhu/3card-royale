@@ -1,0 +1,30 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import {context} from '../../arena/reference.mjs';
+import {releaseTargets} from '../../arena/release.mjs';
+const ctx=await context(),refs=new Set(ctx.panel.opponents.map(p=>p.id));
+const eligible=[...ctx.manifests.keys()].filter(id=>!refs.has(id));
+const board={schema:2,method:ctx.panel.id,panelSha256:ctx.panelSha256,policies:[...ctx.manifests.values()],leaderboard:eligible.map(id=>({id,elo:1500,games:60,reference:false}))};
+assert.deepEqual(releaseTargets(ctx,board),[]);
+const pending=structuredClone(board);pending.leaderboard=pending.leaderboard.filter(r=>r.id!=='sdk-code-v1');
+assert.deepEqual(releaseTargets(ctx,pending),['sdk-code-v1']);
+assert.deepEqual(releaseTargets(ctx,board,{explicit:'sdk-code-v1'}),['sdk-code-v1']);
+assert.deepEqual(releaseTargets(ctx,null,{limit:Infinity}),eligible.sort());
+assert.throws(()=>releaseTargets(ctx,{...board,panelSha256:'stale'}),/panel/);
+assert.throws(()=>releaseTargets(ctx,board,{explicit:'code-table-v1'}));
+assert.throws(()=>releaseTargets(ctx,board,{explicit:'sdk-code-v1,sdk-code-v1'}));
+const stale=structuredClone(board);stale.policies=stale.policies.map(m=>m.id==='sdk-code-v1'?{...m,name:'old'}:m);
+assert.deepEqual(releaseTargets(ctx,stale),['sdk-code-v1']);
+const many={...ctx,manifests:new Map(ctx.manifests)},rated=structuredClone(board);
+for(let i=0;i<1000;i++){const m={id:'fixture-'+i};many.manifests.set(m.id,m);rated.policies.push(m);rated.leaderboard.push({id:m.id,elo:1500,games:60});}
+assert.deepEqual(releaseTargets(many,rated),[]);
+many.manifests.set('new-one',{id:'new-one'});assert.deepEqual(releaseTargets(many,rated),['new-one']);
+for(let i=0;i<10;i++)many.manifests.set('pending-'+i,{id:'pending-'+i});
+assert.throws(()=>releaseTargets(many,rated),/At most 10/);
+assert.deepEqual(releaseTargets(many,rated,{explicit:'new-one'}),['new-one']);
+// A submission check must never acquire rating/publication behavior again.
+const ci=await fs.readFile(new URL('../../.github/workflows/arena-ci.yml',import.meta.url),'utf8');
+assert(!ci.includes('--rate'));assert(!ci.includes('arena/publish.mjs'));assert(!/(?:contents|pages):\s*write/.test(ci));assert(!ci.includes('arena-benchmark'));
+const release=await fs.readFile(new URL('../../.github/workflows/arena-release.yml',import.meta.url),'utf8');
+assert.match(release,/release:\n\s+types: \[published\]/);assert.match(release,/--release --rate/);assert.match(release,/needs: rate/);
+console.log('Release Arena: pending-only selection, unchanged rating reuse, explicit rerating, fixed batch cap and validation-only CI passed.');
