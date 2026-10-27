@@ -71,8 +71,8 @@ try {
  assert.equal(report.records.length,2000);assert(report.leaderboard.every(r=>r.games===800));
  const recalculated=ratings(report.records,report.policies.map(p=>p.id));for(const r of report.leaderboard){const x=recalculated.find(x=>x.id===r.id);for(const k of ['elo','games','wins','losses','provisional'])assert.equal(r[k],x[k]);}
  for(const [file,hash]of Object.entries(report.sourceSha256))assert.equal(await sha256(await fs.readFile(new URL(file,root))),hash,`Regenerate evaluation after changing ${file}`);
- for(const e of entries)assert.deepEqual(report.policies.find(p=>p.id===e.manifest.id),e.manifest);
- const output=path.join(temp,'smoke.json');execFileSync(process.execPath,['arena/evaluate.mjs','--games','4','--output',output],{cwd:root,stdio:'pipe'});
+ for(const m of report.policies)assert.deepEqual(entries.find(e=>e.manifest.id===m.id)?.manifest,m);
+ const output=path.join(temp,'smoke.json');execFileSync(process.execPath,['arena/evaluate.mjs','--games','4','--policies',report.policies.map(p=>p.id).join(','),'--output',output],{cwd:root,stdio:'pipe'});
  const smoke=JSON.parse(await fs.readFile(output));assert.equal(smoke.records.length,40);
  for(const r of smoke.records)assert.deepEqual(r,report.records.find(x=>x.pair===r.pair&&x.seed===r.seed&&x.leftSeat===r.leftSeat));
  console.log('Arena: paired Elo, source hashes, and all 40 replayed games match the published report.');

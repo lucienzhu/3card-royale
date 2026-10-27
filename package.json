@@ -5,7 +5,7 @@
   "description": "An open two-player card game from Shenzhen.",
   "license": "MIT",
   "scripts": {
-    "test": "node scripts/check.cjs && node tests/arena/contracts.mjs && node tests/arena/rating.mjs",
+    "test": "node scripts/check.cjs && node tests/arena/contracts.mjs && node tests/arena/rating.mjs && node tests/arena/reference.mjs",
     "test:core": "python3 -m unittest discover -s tests -p 'test_core.py'",
     "test:gym": "python3 -m unittest discover -s tests -p 'test_*.py'",
     "test:conformance": "python3 tests/conformance.py --rust rust/target/debug/royale-json",
@@ -13,9 +13,11 @@
     "test:nn": "node tests/nn-policy.cjs",
     "vendor:nn": "node scripts/vendor-policy-runtime.cjs",
     "arena:validate": "node arena/validate.mjs",
-    "arena:evaluate": "node arena/evaluate.mjs --games 200 --output arena/results/season-1.json",
-    "arena:test": "node tests/arena/contracts.mjs && node tests/arena/rating.mjs",
-    "arena:rate": "node arena/ci.mjs --mode rating --games 40 --output /tmp/royale-arena-rating"
+    "arena:evaluate": "node arena/evaluate.mjs --games 200 --output /tmp/royale-round-robin.json",
+    "arena:test": "node tests/arena/contracts.mjs && node tests/arena/rating.mjs && node tests/arena/reference.mjs",
+    "arena:rate": "node arena/reference-ci.mjs --rate --output /tmp/royale-reference",
+    "arena:submit": "node arena/submit.mjs",
+    "arena:reference:test": "node tests/arena/reference.mjs"
   },
   "main": "sdk/index.js",
   "types": "sdk/index.d.ts",

@@ -1,0 +1,36 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import {context,targetsFor,digest,fixedRating,receiptFor,checkReceipt,LIMITS} from '../../arena/reference.mjs';
+import {mergeLeaderboard} from '../../arena/leaderboard.mjs';
+const ctx=await context();
+const eligible=[...ctx.manifests.keys()].filter(id=>!ctx.panel.opponents.some(p=>p.id===id)).sort();
+assert.deepEqual(targetsFor(ctx,{limit:Infinity}),eligible);
+assert.deepEqual(targetsFor(ctx,{changed:['policies/entries/random-v1/validation.json']}),['random-v1']);
+assert.deepEqual(targetsFor(ctx,{changed:['arena/results/leaderboard.json']}),[]);
+assert.deepEqual(targetsFor(ctx,{changed:['arena/README.md','arena/page.mjs']}),[]);
+assert.deepEqual(targetsFor(ctx,{changed:['policies/registry.json'],baseManifests:Object.fromEntries([...ctx.manifests].filter(([id])=>id!=='sdk-code-v1'))}),['sdk-code-v1']);
+assert.throws(()=>targetsFor(ctx,{explicit:'code-table-v1'}));
+assert.throws(()=>targetsFor(ctx,{explicit:'random-v1,random-v1'}));
+assert.throws(()=>targetsFor(ctx,{baseManifests:{'random-v1':{}}}));
+const large={...ctx,manifests:new Map(ctx.manifests)};for(let i=0;i<1000;i++)large.manifests.set('test-'+i,{id:'test-'+i});
+assert.throws(()=>targetsFor(large,{}),/At most/);assert.equal(targetsFor(large,{explicit:'test-0'}).length,1);
+assert.equal(ctx.panel.opponents.length*ctx.panel.gamesPerOpponent,60);
+// Real saved games validate fitting without rerunning a full tournament.
+const old=JSON.parse(await fs.readFile(new URL('../../arena/results/season-1.json',import.meta.url))),id='sdk-code-v1';
+const fixture={...ctx,panel:{...ctx.panel,seedStart:old.protocol.seedStart,smokeSeedStart:old.protocol.seedStart}};
+function match(opponent,games){const pair=[id,opponent].sort().join('/');return {...old,protocol:{...old.protocol,gamesPerPair:games},policies:old.policies.filter(p=>[id,opponent].includes(p.id)),records:old.records.filter(r=>r.pair===pair&&r.seed<old.protocol.seedStart+games/2)};}
+const matches=fixture.panel.opponents.map(p=>({opponent:p.id,report:match(p.id,20)})),rating=fixedRating(fixture,id,matches);
+assert.equal(rating.games,60);assert(rating.provisional&&Number.isFinite(rating.elo));assert.deepEqual(rating,fixedRating(fixture,id,[...matches].reverse()));
+const smokeReport=match('code-table-v1',4),receipt=receiptFor(fixture,id,smokeReport);checkReceipt(receipt,fixture,id,smokeReport);
+assert.throws(()=>checkReceipt({...receipt,manifestSha256:'bad'},fixture,id,smokeReport));
+assert.throws(()=>fixedRating(fixture,id,matches.slice(1)));
+const bundle={schema:1,method:fixture.panel.id,panelSha256:fixture.panelSha256,sourceCommit:'local',rated:true,createdAt:'2026-10-27T00:00:00.000Z',targets:[id],results:[{id,manifest:ctx.manifests.get(id),receipt,smokeReport,matches,rating}]};
+const board=mergeLeaderboard(null,bundle,fixture,{expectedCommit:'local'});assert.equal(board.leaderboard.length,4);assert.equal(board.leaderboard.find(r=>r.id==='code-table-v1').elo,1500);
+assert.throws(()=>mergeLeaderboard(null,bundle,fixture,{expectedCommit:'different'}));
+assert.throws(()=>mergeLeaderboard(null,{...bundle,rated:false},fixture,{expectedCommit:'local'}));
+assert.throws(()=>mergeLeaderboard(null,{...bundle,results:[{...bundle.results[0],rating:{...rating,elo:9999}}]},fixture,{expectedCommit:'local'}));
+assert.throws(()=>mergeLeaderboard({...board,panelSha256:'stale'},bundle,fixture,{expectedCommit:'local'}));
+assert.deepEqual(mergeLeaderboard(board,bundle,fixture,{expectedCommit:'local'}),board);
+const idle=mergeLeaderboard(board,{...bundle,targets:[],results:[]},fixture,{expectedCommit:'local'});assert.deepEqual(idle.leaderboard,board.leaderboard);
+const incomplete=structuredClone(bundle);incomplete.results[0].matches[0].report.records.pop();assert.throws(()=>mergeLeaderboard(board,incomplete,fixture,{expectedCommit:'local'}));
+console.log('Reference Arena: fixed 60-game cost, target caps, immutable IDs, receipt gate, balanced matches and publication integrity passed.');
