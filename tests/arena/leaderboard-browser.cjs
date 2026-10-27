@@ -21,6 +21,7 @@ const base=process.env.PLAYTEST_URL||'http://127.0.0.1:59157/';
    await page.locator('.arena-play[href*="policy=nn-512-v1"]').click();
    await page.waitForFunction(()=>window.SZArenaPolicy?.selected==='nn-512-v1');
    await page.locator('#open-settings').click();await page.waitForSelector('#settings-modal[open]');
+   await page.waitForFunction(()=>document.querySelector('#arena-policy-select')?.value==='nn-512-v1');
    assert.equal(await page.locator('#arena-policy-select').inputValue(),'nn-512-v1');
    const result=await page.evaluate(async()=>{
     const {sdk,code}=await import('./policies/dependencies.mjs');
