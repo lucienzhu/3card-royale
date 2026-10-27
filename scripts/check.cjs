@@ -35,6 +35,8 @@ require('../tests/nn-policy.cjs');
 
 require('../tests/rl-page.cjs');
 
+require('../tests/arena-observation.cjs');
+
 require('../tests/easy-policy.cjs');
 
 require('../tests/code-policy-regression.cjs');
