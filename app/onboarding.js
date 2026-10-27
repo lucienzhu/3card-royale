@@ -51,6 +51,11 @@
   const picture=dialog.querySelector('.onboarding-picture'),start=dialog.querySelector('#onboarding-start'),feedback=dialog.querySelector('#intro-feedback');
   let practice=lesson(GK),timer=null,flights=[],warning=false;
   const flower=color=>'<svg class="player-flower player-flower-'+color+'" viewBox="0 0 64 72" aria-hidden="true">'+window.SZBloomAssets.flower+'</svg>';
+  function damage(who){
+   const count=practice.damage[who],name=who===0?t('你','You'):t('对手','Rival');
+   const marks=Array.from({length:5},(_,i)=>'<svg class="wound-bract '+(i<count?'filled':'')+'" viewBox="22 11 20 26" aria-hidden="true">'+window.SZBloomAssets.bract+'<circle class="bract-core" cx="32" cy="30.6" r="2.4"/></svg>').join('');
+   return `<span class="intro-damage" role="img" aria-label="${name} · ${t(count+' / 5 伤',count+' / 5 damage')}">${marks}</span><span class="intro-damage-count" aria-hidden="true">${count} / 5</span>`;
+  }
   function card(id,interactive=false){
    const chosen=practice.chosen.includes(id),rank=GK.rankLabel(GK.rank(id)),suit=GK.suit(id);
    return `<${interactive?'button type="button"':'span'} class="intro-card ${SZSuit.isRed(suit)?'intro-red ':''}${chosen?'intro-selected':''}" data-card="${id}" ${interactive?`aria-pressed="${chosen}" aria-label="${rank} ${['♠','♥','♣','♦'][suit]}"`:''}><b>${rank}</b><span>${SZSuit.svg(suit)}</span><i>${SZSuit.svg(suit)}</i>${chosen?'<em>✓</em>':''}</${interactive?'button':'span'}>`;
@@ -64,9 +69,9 @@
    const title=done?t('先到 5 伤，就输掉本局','Reach 5 damage and lose the game'):defending?t('该你防守','Your defense'):resolving?t('你打出了 2 伤','You dealt 2 damage'):t('8 张牌，先选 3 张进攻','8 cards. Pick 3 to attack');
    const hint=done?t('现在开始正式对局。','You’re ready to play.'):defending?t('选出 ♦4、♦8、♦Q，组成同花。','Pick 4♦, 8♦ and Q♦ for a flush.'):resolving?t('5 − 3 = 2。接下来，对手进攻。','5 − 3 = 2. Now they attack.'):t('试试三个 A。点选，也可以划过牌面。','Try the three Aces. Tap or slide across them.');
    picture.innerHTML=`<div class="intro-step">${t('练习','Practice')} · ${defending||done?'2':'1'} / 2</div><h3>${title}</h3><p class="intro-instruction">${hint}</p>
-    <section class="intro-opponent"><div class="intro-player">${flower('gold')}<strong>${t('对手','Rival')}</strong><span>${practice.damage[1]} / 5</span></div><div class="intro-trio intro-rival-cards">${practice.rival.length?practice.rival.map(c=>card(c)).join(''):`<span class="intro-wait">${t('等你进攻','Waiting for your attack')}</span>`}</div><small>${stage==='attack'?'':resolving?t('同花 · 3 分','Flush · 3 pts'):t('同花顺 · 4 分','Straight flush · 4 pts')}</small></section>
+    <section class="intro-opponent"><div class="intro-player">${flower('gold')}<strong>${t('对手','Rival')}</strong>${damage(1)}</div><div class="intro-trio intro-rival-cards">${practice.rival.length?practice.rival.map(c=>card(c)).join(''):`<span class="intro-wait">${t('等你进攻','Waiting for your attack')}</span>`}</div><small>${stage==='attack'?'':resolving?t('同花 · 3 分','Flush · 3 pts'):t('同花顺 · 4 分','Straight flush · 4 pts')}</small></section>
     <div class="intro-result" role="status">${resolving?t('三炸 5 分 → 同花 3 分','Three of a kind 5 → Flush 3'):done?t('4 − 3 = 你受 1 伤','4 − 3 = 1 damage for you'):defending?t('同花 3 分，能挡住大部分伤害','A flush scores 3 and blocks most damage'):t('三个 A = 三炸 · 5 分','Three Aces = Three of a kind · 5 pts')}</div>
-    <section class="intro-self"><div class="intro-player">${flower('red')}<strong>${t('你','You')}</strong><span>${practice.damage[0]} / 5</span></div>
+    <section class="intro-self"><div class="intro-player">${flower('red')}<strong>${t('你','You')}</strong>${damage(0)}</div>
     <div class="intro-trio intro-played">${practice.played.map(c=>card(c)).join('')}</div><div class="intro-rack">${practice.hand.map(c=>card(c,!done&&!resolving)).join('')}</div></section>`;
    start.disabled=!done&&(resolving||!practice.valid);start.textContent=done?t('开始正式对局','Start playing'):resolving?t('对手准备进攻…','Rival is getting ready…'):defending?t('防守','Defend'):t('进攻','Attack');
    feedback.textContent=warning?t(defending?'选三张方块试试':'选三个 A 试试',defending?'Try the three diamonds':'Try the three Aces'):(done?t('双方各攻守一次，再补到 8 张。','After both attack, refill to 8.'):t('已选 '+practice.chosen.length+' / 3',practice.chosen.length+' / 3 selected'));
