@@ -318,10 +318,14 @@ function openResult(){
  modal.classList.toggle('is-champion',champion);modal.classList.toggle('is-a-reset',!!r.a_reset);modal.classList.toggle('is-loss',!own);modal.classList.toggle('reduce-motion',matchMedia('(prefers-reduced-motion: reduce)').matches);
  $('result-kicker').textContent=match?'整场结束':'第 '+r.game+' 局 · 结算';
  $('result-title').textContent=champion?'恭喜，赢下整场！':match?'这场，对手赢了':own?'这一局，你赢了':'这一局，对手赢了';
- $('result-subtitle').textContent=champion?'赢下自己的 A 局，闯关成功。':match?'对手赢下了自己打 A 的闯关局。':who+(r.to===14?(r.from===14?'守住 A，下一局打自己的 A':'升到 A，下一局打自己的 A'):'升了 '+(r.to-r.from)+' 级');
+ const winnerFlower=$('result-winner-flower');winnerFlower.innerHTML=window.SZBloomAssets.flower;winnerFlower.setAttribute('class','player-flower player-flower-'+(own?'red':'gold'));winnerFlower.toggleAttribute('hidden',match);
+ $('result-subtitle').textContent=champion?'赢下自己的 A 局，闯关成功。':match?'对手赢下了自己打 A 的闯关局。':who+'下局打 '+GK.rankLabel(r.to);
  $('result-upgrade').hidden=match;
- $('result-from').textContent=GK.rankLabel(r.from);$('result-to').textContent=GK.rankLabel(r.to);
- $('result-upgrade-note').textContent=r.to===14?'最高级 · A':who+'的级数';
+ $('result-from').textContent=GK.rankLabel(r.from);
+ // Reuse the same physical heart card and gold wildcard styling as the table chip.
+ const nextFlower=card(r.to+11,{level:r.to});nextFlower.removeAttribute('aria-label');nextFlower.setAttribute('aria-hidden','true');
+ $('result-to').replaceChildren(nextFlower);$('result-to').setAttribute('aria-label',(GKLocale.language==='en'?'Next wild card: ':'下局花牌：')+GK.label(r.to+11));
+ $('result-upgrade-note').textContent=GK.sharedFlower(variant)?'下局共用花牌':who+'下局花牌';
  $('result-own-damage').textContent=r.damage[0];$('result-opp-damage').textContent=r.damage[1];
  $('result-own').classList.toggle('result-winner',own);$('result-opp').classList.toggle('result-winner',!own);
  $('result-net').textContent=match?'本场 '+game.results.length+' 局 · 共 '+game.results.reduce((n,x)=>n+x.rounds,0)+' 轮':'净胜 '+r.gain+' 伤 · 第 '+r.rounds+' 轮结束';
