@@ -2,7 +2,7 @@
   "schema": 2,
   "method": "reference-elo-v1",
   "panelSha256": "197c97f1aaa89f81b70fa287f3e96b3ca9501a317458e38fcf76f5493f4cec81",
-  "createdAt": "2026-10-27T12:27:28.328Z",
+  "createdAt": "2026-10-27T14:34:28.080Z",
   "protocol": {
     "gamesPerOpponent": 20,
     "opponents": [
@@ -110,6 +110,24 @@
         "sha256": "5b98061d4188c116080eb6784c6378536a89e0b3c1db333df88217379e4dde13"
       },
       "features": "gym-v1"
+    },
+    {
+      "api": "royale-policy-v1",
+      "id": "nn-512-v1",
+      "name": "NN · 512 → 256",
+      "author": "lucienzhu",
+      "license": "MIT",
+      "type": "onnx",
+      "rules": "1.0.0",
+      "episode": "game",
+      "information": "public",
+      "memory": "none",
+      "artifact": {
+        "file": "policy.onnx",
+        "bytes": 1365463,
+        "sha256": "6ecafc81a29aefcff3cb9922f9070db42dc84b81fe7c937fc08de1354b7d10de"
+      },
+      "features": "gym-v1"
     }
   ],
   "leaderboard": [
@@ -156,6 +174,40 @@
       "updatedAt": "2026-10-27T12:27:28.328Z",
       "sourceCommit": "504645db4625595084aaad8f43d10b6db97450e9",
       "runUrl": "https://github.com/lucienzhu/3card-royale/actions/runs/40503863484"
+    },
+    {
+      "id": "nn-512-v1",
+      "elo": 1443,
+      "games": 60,
+      "wins": 30,
+      "losses": 30,
+      "provisional": true,
+      "reference": false,
+      "opponents": [
+        {
+          "id": "code-table-v1",
+          "elo": 1500,
+          "games": 20,
+          "wins": 8
+        },
+        {
+          "id": "easy-v2",
+          "elo": 1387,
+          "games": 20,
+          "wins": 13
+        },
+        {
+          "id": "nn-256-v1",
+          "elo": 1440,
+          "games": 20,
+          "wins": 9
+        }
+      ],
+      "latencyP95Ms": 4.096,
+      "decisions": 686,
+      "updatedAt": "2026-10-27T14:34:28.080Z",
+      "sourceCommit": "6d9b2d1942d2133ad5ef22fff92c4b4aba946a17",
+      "runUrl": "https://github.com/lucienzhu/3card-royale/actions/runs/40522335018"
     },
     {
       "id": "nn-256-v1",

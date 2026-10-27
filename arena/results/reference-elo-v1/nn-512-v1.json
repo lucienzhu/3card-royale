@@ -1,0 +1,1341 @@
+{
+  "id": "nn-512-v1",
+  "manifest": {
+    "api": "royale-policy-v1",
+    "id": "nn-512-v1",
+    "name": "NN · 512 → 256",
+    "author": "lucienzhu",
+    "license": "MIT",
+    "type": "onnx",
+    "rules": "1.0.0",
+    "episode": "game",
+    "information": "public",
+    "memory": "none",
+    "artifact": {
+      "file": "policy.onnx",
+      "bytes": 1365463,
+      "sha256": "6ecafc81a29aefcff3cb9922f9070db42dc84b81fe7c937fc08de1354b7d10de"
+    },
+    "features": "gym-v1"
+  },
+  "receipt": {
+    "schema": 1,
+    "policyId": "nn-512-v1",
+    "manifestSha256": "c895ddac71ccd7c5493ed3e46d37a90d4f41b05973873424829dd4dec452aa91",
+    "panelSha256": "197c97f1aaa89f81b70fa287f3e96b3ca9501a317458e38fcf76f5493f4cec81",
+    "games": 4,
+    "seedStart": 88000000,
+    "records": [
+      {
+        "pair": "code-table-v1/nn-512-v1",
+        "left": "code-table-v1",
+        "right": "nn-512-v1",
+        "seed": 88000000,
+        "leftSeat": 0,
+        "first": 0,
+        "winner": "nn-512-v1",
+        "status": "complete",
+        "decisions": 18,
+        "finalStateSha256": "1cdfd9157e7b8c8a21e909b771fd740b022832b52cb7e2b81880c901d91693e2"
+      },
+      {
+        "pair": "code-table-v1/nn-512-v1",
+        "left": "code-table-v1",
+        "right": "nn-512-v1",
+        "seed": 88000000,
+        "leftSeat": 1,
+        "first": 0,
+        "winner": "code-table-v1",
+        "status": "complete",
+        "decisions": 21,
+        "finalStateSha256": "d11496decaeac5a1c2d498b5f6db8080f25bb09b4a02c75c9e48eeaf1968bf7d"
+      },
+      {
+        "pair": "code-table-v1/nn-512-v1",
+        "left": "code-table-v1",
+        "right": "nn-512-v1",
+        "seed": 88000001,
+        "leftSeat": 0,
+        "first": 1,
+        "winner": "nn-512-v1",
+        "status": "complete",
+        "decisions": 80,
+        "finalStateSha256": "b94158c15b5c4624080a1b89e1b2baf6e826519f465814d8bcc7e916d49f7577"
+      },
+      {
+        "pair": "code-table-v1/nn-512-v1",
+        "left": "code-table-v1",
+        "right": "nn-512-v1",
+        "seed": 88000001,
+        "leftSeat": 1,
+        "first": 1,
+        "winner": "nn-512-v1",
+        "status": "complete",
+        "decisions": 51,
+        "finalStateSha256": "6d4a1afbdb1d0762f5e718ccd6d5c3f2b3970e46540276d566d1b4ebfa8ec69b"
+      }
+    ]
+  },
+  "smokeReport": {
+    "schema": 1,
+    "release": "1.1.0",
+    "season": "public-game-v1",
+    "rules": "1.0.0",
+    "episode": "game",
+    "information": "public",
+    "createdAt": "2026-10-27T14:34:24.804Z",
+    "protocol": {
+      "gamesPerPair": 4,
+      "seedStart": 88000000,
+      "seedCount": 2,
+      "levels": [
+        2,
+        2
+      ],
+      "pairedSeats": true,
+      "balancedFirst": true,
+      "actionOrder": "SDK canonical",
+      "maxDecisions": 4096,
+      "decisionTimeoutMs": 1000,
+      "initialElo": 1500,
+      "k": 24,
+      "anchor": "code-table-v1",
+      "ratingOrder": "seed, then alphabetical pair; simultaneous updates within seat pairs",
+      "provisionalBelowGames": 200
+    },
+    "runtime": {
+      "node": "v24.22.1",
+      "platform": "linux",
+      "arch": "x64",
+      "cpu": "AMD EPYC 9V45 96-Core Processor",
+      "backend": "ONNX Runtime Web / single-thread WASM",
+      "elapsedMs": 477
+    },
+    "sourceSha256": {
+      "gamecore.js": "beb6ec6666d58424b80e6e7d7cfc2f6801a7d0a77c34791df745612494392981",
+      "sdk/index.js": "e9f2b4e1d9de59d0786dca5ac4b47580d3c6456f812c4f532b6af33f438de717",
+      "sdk/features.js": "043b0a66e0e0dbe877760ffa51515d5b1178e0e53e479d5d49028762e4479562",
+      "sdk/policy.js": "18d660f922a46cf66c238794c65bcca7373d3bbfbf53748ade6ab107e85bbe3e",
+      "sdk/easy-policy.js": "1af6b4fb4aa6003f513419821bc16bf45a09169433037eee55cce0dd44af7ae2",
+      "policies/contract.mjs": "e608cc76eabb14a0a58d4f29be93c24fb7bd9986cd83b2fcdf6108f2a5f3331d",
+      "policies/runtime.mjs": "f50b6c86103dad996bf82433eede746a66bad8847e1a3923e151b9cf03828f08",
+      "policies/client.mjs": "44d6b09ef10b9c3c56d09719ac2b8b4aba8b54ebb615f1cb445e2e48bd4913b1",
+      "policies/worker.mjs": "67c9a2c9b9818f874ec3e3d254b7aba0eb897116fd7fccc55e8ad4cacef2f263",
+      "policies/dependencies.mjs": "68b31ca1b81b339d6ee8263ea32fd8bba818c1ab326f5cac6a0b4147cf4a5dc1",
+      "policies/catalog.mjs": "ce4f3a24ef9d1f939adc435e48c6c37f06e6a817f66011dd2c9facb4ec01806f",
+      "arena/evaluate.mjs": "1f37fcb89e48e530a71e0f719a3f9edc15c7ee74d8736f582e75c91b5be96a80",
+      "arena/elo.mjs": "45316930c3f5cf374b85bf8f19e86ad257379b58848003bb770f70b8485f54e5"
+    },
+    "policies": [
+      {
+        "api": "royale-policy-v1",
+        "id": "code-table-v1",
+        "name": "Code AI",
+        "author": "3Card Royale",
+        "license": "MIT",
+        "type": "javascript",
+        "rules": "1.0.0",
+        "episode": "game",
+        "information": "public",
+        "memory": "none",
+        "artifact": {
+          "file": "policy.mjs",
+          "bytes": 1533,
+          "sha256": "fe07b4669f18a59fa4cc28fe9c7fa4c4814c67fd0608262582a45a3085b81ff6"
+        }
+      },
+      {
+        "api": "royale-policy-v1",
+        "id": "nn-512-v1",
+        "name": "NN · 512 → 256",
+        "author": "lucienzhu",
+        "license": "MIT",
+        "type": "onnx",
+        "rules": "1.0.0",
+        "episode": "game",
+        "information": "public",
+        "memory": "none",
+        "artifact": {
+          "file": "policy.onnx",
+          "bytes": 1365463,
+          "sha256": "6ecafc81a29aefcff3cb9922f9070db42dc84b81fe7c937fc08de1354b7d10de"
+        },
+        "features": "gym-v1"
+      }
+    ],
+    "leaderboard": [
+      {
+        "id": "nn-512-v1",
+        "elo": 1548,
+        "games": 4,
+        "wins": 3,
+        "losses": 1,
+        "provisional": true,
+        "latencyP95Ms": 4.157,
+        "decisions": 67
+      },
+      {
+        "id": "code-table-v1",
+        "elo": 1500,
+        "games": 4,
+        "wins": 1,
+        "losses": 3,
+        "provisional": true,
+        "latencyP95Ms": 2.369,
+        "decisions": 60
+      }
+    ],
+    "records": [
+      {
+        "pair": "code-table-v1/nn-512-v1",
+        "left": "code-table-v1",
+        "right": "nn-512-v1",
+        "seed": 88000000,
+        "leftSeat": 0,
+        "first": 0,
+        "winner": "nn-512-v1",
+        "status": "complete",
+        "decisions": 18,
+        "finalStateSha256": "1cdfd9157e7b8c8a21e909b771fd740b022832b52cb7e2b81880c901d91693e2"
+      },
+      {
+        "pair": "code-table-v1/nn-512-v1",
+        "left": "code-table-v1",
+        "right": "nn-512-v1",
+        "seed": 88000000,
+        "leftSeat": 1,
+        "first": 0,
+        "winner": "code-table-v1",
+        "status": "complete",
+        "decisions": 21,
+        "finalStateSha256": "d11496decaeac5a1c2d498b5f6db8080f25bb09b4a02c75c9e48eeaf1968bf7d"
+      },
+      {
+        "pair": "code-table-v1/nn-512-v1",
+        "left": "code-table-v1",
+        "right": "nn-512-v1",
+        "seed": 88000001,
+        "leftSeat": 0,
+        "first": 1,
+        "winner": "nn-512-v1",
+        "status": "complete",
+        "decisions": 80,
+        "finalStateSha256": "b94158c15b5c4624080a1b89e1b2baf6e826519f465814d8bcc7e916d49f7577"
+      },
+      {
+        "pair": "code-table-v1/nn-512-v1",
+        "left": "code-table-v1",
+        "right": "nn-512-v1",
+        "seed": 88000001,
+        "leftSeat": 1,
+        "first": 1,
+        "winner": "nn-512-v1",
+        "status": "complete",
+        "decisions": 51,
+        "finalStateSha256": "6d4a1afbdb1d0762f5e718ccd6d5c3f2b3970e46540276d566d1b4ebfa8ec69b"
+      }
+    ]
+  },
+  "matches": [
+    {
+      "opponent": "easy-v2",
+      "report": {
+        "schema": 1,
+        "release": "1.1.0",
+        "season": "public-game-v1",
+        "rules": "1.0.0",
+        "episode": "game",
+        "information": "public",
+        "createdAt": "2026-10-27T14:34:25.830Z",
+        "protocol": {
+          "gamesPerPair": 20,
+          "seedStart": 87000000,
+          "seedCount": 10,
+          "levels": [
+            2,
+            2
+          ],
+          "pairedSeats": true,
+          "balancedFirst": true,
+          "actionOrder": "SDK canonical",
+          "maxDecisions": 4096,
+          "decisionTimeoutMs": 1000,
+          "initialElo": 1500,
+          "k": 24,
+          "anchor": "code-table-v1",
+          "ratingOrder": "seed, then alphabetical pair; simultaneous updates within seat pairs",
+          "provisionalBelowGames": 200
+        },
+        "runtime": {
+          "node": "v24.22.1",
+          "platform": "linux",
+          "arch": "x64",
+          "cpu": "AMD EPYC 9V45 96-Core Processor",
+          "backend": "ONNX Runtime Web / single-thread WASM",
+          "elapsedMs": 981
+        },
+        "sourceSha256": {
+          "gamecore.js": "beb6ec6666d58424b80e6e7d7cfc2f6801a7d0a77c34791df745612494392981",
+          "sdk/index.js": "e9f2b4e1d9de59d0786dca5ac4b47580d3c6456f812c4f532b6af33f438de717",
+          "sdk/features.js": "043b0a66e0e0dbe877760ffa51515d5b1178e0e53e479d5d49028762e4479562",
+          "sdk/policy.js": "18d660f922a46cf66c238794c65bcca7373d3bbfbf53748ade6ab107e85bbe3e",
+          "sdk/easy-policy.js": "1af6b4fb4aa6003f513419821bc16bf45a09169433037eee55cce0dd44af7ae2",
+          "policies/contract.mjs": "e608cc76eabb14a0a58d4f29be93c24fb7bd9986cd83b2fcdf6108f2a5f3331d",
+          "policies/runtime.mjs": "f50b6c86103dad996bf82433eede746a66bad8847e1a3923e151b9cf03828f08",
+          "policies/client.mjs": "44d6b09ef10b9c3c56d09719ac2b8b4aba8b54ebb615f1cb445e2e48bd4913b1",
+          "policies/worker.mjs": "67c9a2c9b9818f874ec3e3d254b7aba0eb897116fd7fccc55e8ad4cacef2f263",
+          "policies/dependencies.mjs": "68b31ca1b81b339d6ee8263ea32fd8bba818c1ab326f5cac6a0b4147cf4a5dc1",
+          "policies/catalog.mjs": "ce4f3a24ef9d1f939adc435e48c6c37f06e6a817f66011dd2c9facb4ec01806f",
+          "arena/evaluate.mjs": "1f37fcb89e48e530a71e0f719a3f9edc15c7ee74d8736f582e75c91b5be96a80",
+          "arena/elo.mjs": "45316930c3f5cf374b85bf8f19e86ad257379b58848003bb770f70b8485f54e5"
+        },
+        "policies": [
+          {
+            "api": "royale-policy-v1",
+            "id": "easy-v2",
+            "name": "Easy · 64",
+            "author": "3Card Royale",
+            "license": "MIT",
+            "type": "javascript",
+            "rules": "1.0.0",
+            "episode": "game",
+            "information": "public",
+            "memory": "none",
+            "artifact": {
+              "file": "policy.mjs",
+              "bytes": 199,
+              "sha256": "e7d082e63ebd817e5e0c9b078c073b492e453af4e19b49b518fa2744c16d78e7"
+            }
+          },
+          {
+            "api": "royale-policy-v1",
+            "id": "nn-512-v1",
+            "name": "NN · 512 → 256",
+            "author": "lucienzhu",
+            "license": "MIT",
+            "type": "onnx",
+            "rules": "1.0.0",
+            "episode": "game",
+            "information": "public",
+            "memory": "none",
+            "artifact": {
+              "file": "policy.onnx",
+              "bytes": 1365463,
+              "sha256": "6ecafc81a29aefcff3cb9922f9070db42dc84b81fe7c937fc08de1354b7d10de"
+            },
+            "features": "gym-v1"
+          }
+        ],
+        "leaderboard": [
+          {
+            "id": "nn-512-v1",
+            "elo": 1547,
+            "games": 20,
+            "wins": 13,
+            "losses": 7,
+            "provisional": true,
+            "latencyP95Ms": 3.059,
+            "decisions": 269
+          },
+          {
+            "id": "easy-v2",
+            "elo": 1453,
+            "games": 20,
+            "wins": 7,
+            "losses": 13,
+            "provisional": true,
+            "latencyP95Ms": 1.353,
+            "decisions": 266
+          }
+        ],
+        "records": [
+          {
+            "pair": "easy-v2/nn-512-v1",
+            "left": "easy-v2",
+            "right": "nn-512-v1",
+            "seed": 87000000,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 42,
+            "finalStateSha256": "29dc9d11bf8bd0522962c518d378067f85cf64627acdbb05310738e2acc0d311"
+          },
+          {
+            "pair": "easy-v2/nn-512-v1",
+            "left": "easy-v2",
+            "right": "nn-512-v1",
+            "seed": 87000000,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 42,
+            "finalStateSha256": "c6ab054e10fbc82d5833dc949759da5d929a95c7100788b2c271ae8196a96b3d"
+          },
+          {
+            "pair": "easy-v2/nn-512-v1",
+            "left": "easy-v2",
+            "right": "nn-512-v1",
+            "seed": 87000001,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 28,
+            "finalStateSha256": "61d8814213c67dbf36ef759ec221a892fa64a60e9b0afc93bd29e9f667f7a386"
+          },
+          {
+            "pair": "easy-v2/nn-512-v1",
+            "left": "easy-v2",
+            "right": "nn-512-v1",
+            "seed": 87000001,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "easy-v2",
+            "status": "complete",
+            "decisions": 30,
+            "finalStateSha256": "e4884cef3d71d7f6bea7031a356f9247467d03d77eec4c879d11814a95e31bf5"
+          },
+          {
+            "pair": "easy-v2/nn-512-v1",
+            "left": "easy-v2",
+            "right": "nn-512-v1",
+            "seed": 87000002,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 58,
+            "finalStateSha256": "f99ce0b3946693602fac6f84cb24b74484bf4c6b0460055c91680c80b5587e4d"
+          },
+          {
+            "pair": "easy-v2/nn-512-v1",
+            "left": "easy-v2",
+            "right": "nn-512-v1",
+            "seed": 87000002,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 31,
+            "finalStateSha256": "04738fa75ca36ff339b69fb27d16722620fa1e907b68c869dc287083db99970d"
+          },
+          {
+            "pair": "easy-v2/nn-512-v1",
+            "left": "easy-v2",
+            "right": "nn-512-v1",
+            "seed": 87000003,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "easy-v2",
+            "status": "complete",
+            "decisions": 8,
+            "finalStateSha256": "2340b153c803fd3d7094866dacbb6f2ea2b40108a7b4e1f5b15777f45b70d168"
+          },
+          {
+            "pair": "easy-v2/nn-512-v1",
+            "left": "easy-v2",
+            "right": "nn-512-v1",
+            "seed": 87000003,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 8,
+            "finalStateSha256": "2340b153c803fd3d7094866dacbb6f2ea2b40108a7b4e1f5b15777f45b70d168"
+          },
+          {
+            "pair": "easy-v2/nn-512-v1",
+            "left": "easy-v2",
+            "right": "nn-512-v1",
+            "seed": 87000004,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "easy-v2",
+            "status": "complete",
+            "decisions": 73,
+            "finalStateSha256": "bc19f6cfee0c293914baa4ca737d6fcaca2f75359e3b619e5779437bbe009dc5"
+          },
+          {
+            "pair": "easy-v2/nn-512-v1",
+            "left": "easy-v2",
+            "right": "nn-512-v1",
+            "seed": 87000004,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "easy-v2",
+            "status": "complete",
+            "decisions": 22,
+            "finalStateSha256": "ba642a380e82f1170333caa717c18c1ecec1fda96bb0ecfb1a22f150d0c86fca"
+          },
+          {
+            "pair": "easy-v2/nn-512-v1",
+            "left": "easy-v2",
+            "right": "nn-512-v1",
+            "seed": 87000005,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "easy-v2",
+            "status": "complete",
+            "decisions": 51,
+            "finalStateSha256": "089abc4b45f82ea3ee9232ac9057ed43699cdadceced23e3bfffd4eef1a91fb9"
+          },
+          {
+            "pair": "easy-v2/nn-512-v1",
+            "left": "easy-v2",
+            "right": "nn-512-v1",
+            "seed": 87000005,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "easy-v2",
+            "status": "complete",
+            "decisions": 31,
+            "finalStateSha256": "0ac44ac4fd47b6fde1cab07b5a843b4f692a9e9c20bc061098fc222377728ddd"
+          },
+          {
+            "pair": "easy-v2/nn-512-v1",
+            "left": "easy-v2",
+            "right": "nn-512-v1",
+            "seed": 87000006,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 21,
+            "finalStateSha256": "20f54aa03da0d44cc31e9a3b28ce246de27dd411c83f7667c1901ada5dc51f70"
+          },
+          {
+            "pair": "easy-v2/nn-512-v1",
+            "left": "easy-v2",
+            "right": "nn-512-v1",
+            "seed": 87000006,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 43,
+            "finalStateSha256": "db333dad75f3d7442f18dc8328227d931e9c8d5c945dd3b80df3aa83b3228941"
+          },
+          {
+            "pair": "easy-v2/nn-512-v1",
+            "left": "easy-v2",
+            "right": "nn-512-v1",
+            "seed": 87000007,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 31,
+            "finalStateSha256": "2fadd0149260c334878f8d551a6637dff39c793ecd30a6e08de2ede6067efe65"
+          },
+          {
+            "pair": "easy-v2/nn-512-v1",
+            "left": "easy-v2",
+            "right": "nn-512-v1",
+            "seed": 87000007,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 40,
+            "finalStateSha256": "cbd6556e813865026a34aa5ff96b6c94cfbb9ee23d36df7eec0c091f04aeb723"
+          },
+          {
+            "pair": "easy-v2/nn-512-v1",
+            "left": "easy-v2",
+            "right": "nn-512-v1",
+            "seed": 87000008,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 17,
+            "finalStateSha256": "e8b7cea39561c8ad74cf09555d5ae31fb2145845af9202e8e8c8fb4d22799203"
+          },
+          {
+            "pair": "easy-v2/nn-512-v1",
+            "left": "easy-v2",
+            "right": "nn-512-v1",
+            "seed": 87000008,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "easy-v2",
+            "status": "complete",
+            "decisions": 41,
+            "finalStateSha256": "c14a0320d1be59949d6fc1014143406af833698925151c9b667f11702aaf60f6"
+          },
+          {
+            "pair": "easy-v2/nn-512-v1",
+            "left": "easy-v2",
+            "right": "nn-512-v1",
+            "seed": 87000009,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 63,
+            "finalStateSha256": "f7483b843ad7a78572e325dae78637b903f730b0c726d698c76a6080275e27c5"
+          },
+          {
+            "pair": "easy-v2/nn-512-v1",
+            "left": "easy-v2",
+            "right": "nn-512-v1",
+            "seed": 87000009,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 37,
+            "finalStateSha256": "b08b42339aa4ae40b25caef1a7f8ffc9d86fbed7e8fd19f2cc17887a351bd287"
+          }
+        ]
+      }
+    },
+    {
+      "opponent": "nn-256-v1",
+      "report": {
+        "schema": 1,
+        "release": "1.1.0",
+        "season": "public-game-v1",
+        "rules": "1.0.0",
+        "episode": "game",
+        "information": "public",
+        "createdAt": "2026-10-27T14:34:26.935Z",
+        "protocol": {
+          "gamesPerPair": 20,
+          "seedStart": 87000000,
+          "seedCount": 10,
+          "levels": [
+            2,
+            2
+          ],
+          "pairedSeats": true,
+          "balancedFirst": true,
+          "actionOrder": "SDK canonical",
+          "maxDecisions": 4096,
+          "decisionTimeoutMs": 1000,
+          "initialElo": 1500,
+          "k": 24,
+          "anchor": "code-table-v1",
+          "ratingOrder": "seed, then alphabetical pair; simultaneous updates within seat pairs",
+          "provisionalBelowGames": 200
+        },
+        "runtime": {
+          "node": "v24.22.1",
+          "platform": "linux",
+          "arch": "x64",
+          "cpu": "AMD EPYC 9V45 96-Core Processor",
+          "backend": "ONNX Runtime Web / single-thread WASM",
+          "elapsedMs": 1047
+        },
+        "sourceSha256": {
+          "gamecore.js": "beb6ec6666d58424b80e6e7d7cfc2f6801a7d0a77c34791df745612494392981",
+          "sdk/index.js": "e9f2b4e1d9de59d0786dca5ac4b47580d3c6456f812c4f532b6af33f438de717",
+          "sdk/features.js": "043b0a66e0e0dbe877760ffa51515d5b1178e0e53e479d5d49028762e4479562",
+          "sdk/policy.js": "18d660f922a46cf66c238794c65bcca7373d3bbfbf53748ade6ab107e85bbe3e",
+          "sdk/easy-policy.js": "1af6b4fb4aa6003f513419821bc16bf45a09169433037eee55cce0dd44af7ae2",
+          "policies/contract.mjs": "e608cc76eabb14a0a58d4f29be93c24fb7bd9986cd83b2fcdf6108f2a5f3331d",
+          "policies/runtime.mjs": "f50b6c86103dad996bf82433eede746a66bad8847e1a3923e151b9cf03828f08",
+          "policies/client.mjs": "44d6b09ef10b9c3c56d09719ac2b8b4aba8b54ebb615f1cb445e2e48bd4913b1",
+          "policies/worker.mjs": "67c9a2c9b9818f874ec3e3d254b7aba0eb897116fd7fccc55e8ad4cacef2f263",
+          "policies/dependencies.mjs": "68b31ca1b81b339d6ee8263ea32fd8bba818c1ab326f5cac6a0b4147cf4a5dc1",
+          "policies/catalog.mjs": "ce4f3a24ef9d1f939adc435e48c6c37f06e6a817f66011dd2c9facb4ec01806f",
+          "arena/evaluate.mjs": "1f37fcb89e48e530a71e0f719a3f9edc15c7ee74d8736f582e75c91b5be96a80",
+          "arena/elo.mjs": "45316930c3f5cf374b85bf8f19e86ad257379b58848003bb770f70b8485f54e5"
+        },
+        "policies": [
+          {
+            "api": "royale-policy-v1",
+            "id": "nn-256-v1",
+            "name": "NN · 256 → 128",
+            "author": "3Card Royale",
+            "license": "MIT",
+            "type": "onnx",
+            "rules": "1.0.0",
+            "episode": "game",
+            "information": "public",
+            "memory": "none",
+            "artifact": {
+              "file": "policy.onnx",
+              "bytes": 552407,
+              "sha256": "5b98061d4188c116080eb6784c6378536a89e0b3c1db333df88217379e4dde13"
+            },
+            "features": "gym-v1"
+          },
+          {
+            "api": "royale-policy-v1",
+            "id": "nn-512-v1",
+            "name": "NN · 512 → 256",
+            "author": "lucienzhu",
+            "license": "MIT",
+            "type": "onnx",
+            "rules": "1.0.0",
+            "episode": "game",
+            "information": "public",
+            "memory": "none",
+            "artifact": {
+              "file": "policy.onnx",
+              "bytes": 1365463,
+              "sha256": "6ecafc81a29aefcff3cb9922f9070db42dc84b81fe7c937fc08de1354b7d10de"
+            },
+            "features": "gym-v1"
+          }
+        ],
+        "leaderboard": [
+          {
+            "id": "nn-256-v1",
+            "elo": 1519,
+            "games": 20,
+            "wins": 11,
+            "losses": 9,
+            "provisional": true,
+            "latencyP95Ms": 2.547,
+            "decisions": 202
+          },
+          {
+            "id": "nn-512-v1",
+            "elo": 1481,
+            "games": 20,
+            "wins": 9,
+            "losses": 11,
+            "provisional": true,
+            "latencyP95Ms": 3.391,
+            "decisions": 196
+          }
+        ],
+        "records": [
+          {
+            "pair": "nn-256-v1/nn-512-v1",
+            "left": "nn-256-v1",
+            "right": "nn-512-v1",
+            "seed": 87000000,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "nn-256-v1",
+            "status": "complete",
+            "decisions": 16,
+            "finalStateSha256": "e48d3381e346fa8c367e2f7ea9ff6d67207bba63504c46a59350de2720cefe56"
+          },
+          {
+            "pair": "nn-256-v1/nn-512-v1",
+            "left": "nn-256-v1",
+            "right": "nn-512-v1",
+            "seed": 87000000,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "nn-256-v1",
+            "status": "complete",
+            "decisions": 34,
+            "finalStateSha256": "dd6bfe75b3dc802f90515ce4aa0205f1b97049e28917b4bec0bba805dd58c301"
+          },
+          {
+            "pair": "nn-256-v1/nn-512-v1",
+            "left": "nn-256-v1",
+            "right": "nn-512-v1",
+            "seed": 87000001,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "nn-256-v1",
+            "status": "complete",
+            "decisions": 37,
+            "finalStateSha256": "103c4e3f71a6fd19cb0628bb43451ae3e345c6aede511fcc2cdc301de6b509d1"
+          },
+          {
+            "pair": "nn-256-v1/nn-512-v1",
+            "left": "nn-256-v1",
+            "right": "nn-512-v1",
+            "seed": 87000001,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 37,
+            "finalStateSha256": "6d212eaff61ea6a786db3fcaaac2492e28e35d9144072331da239f4b8ad588f1"
+          },
+          {
+            "pair": "nn-256-v1/nn-512-v1",
+            "left": "nn-256-v1",
+            "right": "nn-512-v1",
+            "seed": 87000002,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 36,
+            "finalStateSha256": "a0bb0cfe03e35e4bace699b8595ee89c131733ba7244d229874071d29aa22636"
+          },
+          {
+            "pair": "nn-256-v1/nn-512-v1",
+            "left": "nn-256-v1",
+            "right": "nn-512-v1",
+            "seed": 87000002,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 30,
+            "finalStateSha256": "97108528f155b235e1878df802165e4aeec8f5208e244c191312af77d0c63ae2"
+          },
+          {
+            "pair": "nn-256-v1/nn-512-v1",
+            "left": "nn-256-v1",
+            "right": "nn-512-v1",
+            "seed": 87000003,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "nn-256-v1",
+            "status": "complete",
+            "decisions": 8,
+            "finalStateSha256": "2340b153c803fd3d7094866dacbb6f2ea2b40108a7b4e1f5b15777f45b70d168"
+          },
+          {
+            "pair": "nn-256-v1/nn-512-v1",
+            "left": "nn-256-v1",
+            "right": "nn-512-v1",
+            "seed": 87000003,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 8,
+            "finalStateSha256": "2340b153c803fd3d7094866dacbb6f2ea2b40108a7b4e1f5b15777f45b70d168"
+          },
+          {
+            "pair": "nn-256-v1/nn-512-v1",
+            "left": "nn-256-v1",
+            "right": "nn-512-v1",
+            "seed": 87000004,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 34,
+            "finalStateSha256": "c78e221526d6a7321ace1f2ab46a8eab1edbe37417562a5dc598f7b25b628549"
+          },
+          {
+            "pair": "nn-256-v1/nn-512-v1",
+            "left": "nn-256-v1",
+            "right": "nn-512-v1",
+            "seed": 87000004,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "nn-256-v1",
+            "status": "complete",
+            "decisions": 35,
+            "finalStateSha256": "b1649c37435e1edc17dd2d582564219670a6a9f9e05bc69c33279d8bfb6fb887"
+          },
+          {
+            "pair": "nn-256-v1/nn-512-v1",
+            "left": "nn-256-v1",
+            "right": "nn-512-v1",
+            "seed": 87000005,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 25,
+            "finalStateSha256": "ab6d32f2ab3b10ad3a907e5742159c51603e20ca79054a20a7ff732e8f316c35"
+          },
+          {
+            "pair": "nn-256-v1/nn-512-v1",
+            "left": "nn-256-v1",
+            "right": "nn-512-v1",
+            "seed": 87000005,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "nn-256-v1",
+            "status": "complete",
+            "decisions": 26,
+            "finalStateSha256": "e071c1b133f0ebe56e68a6bc7b43ad70fdcf3f356dc9d5acd58957ffc5f17108"
+          },
+          {
+            "pair": "nn-256-v1/nn-512-v1",
+            "left": "nn-256-v1",
+            "right": "nn-512-v1",
+            "seed": 87000006,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "nn-256-v1",
+            "status": "complete",
+            "decisions": 14,
+            "finalStateSha256": "8641154ed55cf459ba39322542af43694ddd6be25939763e9e78100aba7a7a08"
+          },
+          {
+            "pair": "nn-256-v1/nn-512-v1",
+            "left": "nn-256-v1",
+            "right": "nn-512-v1",
+            "seed": 87000006,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "nn-256-v1",
+            "status": "complete",
+            "decisions": 21,
+            "finalStateSha256": "3cb793a347b69d53b238d51080496899ce34be8db996aafda235c358e3d32cea"
+          },
+          {
+            "pair": "nn-256-v1/nn-512-v1",
+            "left": "nn-256-v1",
+            "right": "nn-512-v1",
+            "seed": 87000007,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 32,
+            "finalStateSha256": "b6e0ea821408a4d9292e532943a4881b0cf08b2f019e69ab2d6eb61a930118d4"
+          },
+          {
+            "pair": "nn-256-v1/nn-512-v1",
+            "left": "nn-256-v1",
+            "right": "nn-512-v1",
+            "seed": 87000007,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 39,
+            "finalStateSha256": "c40affbadb1ea536ef6f5a54cfa336a04e538ae4cc072c0f2b90d84ed44df93e"
+          },
+          {
+            "pair": "nn-256-v1/nn-512-v1",
+            "left": "nn-256-v1",
+            "right": "nn-512-v1",
+            "seed": 87000008,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "nn-256-v1",
+            "status": "complete",
+            "decisions": 24,
+            "finalStateSha256": "5d5396b6f04b5ec705011cf97c20612bb80c2ba81fbccb35eb3ec58223a97867"
+          },
+          {
+            "pair": "nn-256-v1/nn-512-v1",
+            "left": "nn-256-v1",
+            "right": "nn-512-v1",
+            "seed": 87000008,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 24,
+            "finalStateSha256": "29f4f11247e2db9925f872c9958335e2e2bbe1d69ed82e9014152b21c5495215"
+          },
+          {
+            "pair": "nn-256-v1/nn-512-v1",
+            "left": "nn-256-v1",
+            "right": "nn-512-v1",
+            "seed": 87000009,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "nn-256-v1",
+            "status": "complete",
+            "decisions": 32,
+            "finalStateSha256": "3142fbd8660a858ad1a0638aa67b75bb89357828e170960c44293917abee1531"
+          },
+          {
+            "pair": "nn-256-v1/nn-512-v1",
+            "left": "nn-256-v1",
+            "right": "nn-512-v1",
+            "seed": 87000009,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "nn-256-v1",
+            "status": "complete",
+            "decisions": 30,
+            "finalStateSha256": "d03c9adc326937ba3691c0c605735b17bff94b6f39e8d8d0af7d32b0fd90eb5c"
+          }
+        ]
+      }
+    },
+    {
+      "opponent": "code-table-v1",
+      "report": {
+        "schema": 1,
+        "release": "1.1.0",
+        "season": "public-game-v1",
+        "rules": "1.0.0",
+        "episode": "game",
+        "information": "public",
+        "createdAt": "2026-10-27T14:34:28.057Z",
+        "protocol": {
+          "gamesPerPair": 20,
+          "seedStart": 87000000,
+          "seedCount": 10,
+          "levels": [
+            2,
+            2
+          ],
+          "pairedSeats": true,
+          "balancedFirst": true,
+          "actionOrder": "SDK canonical",
+          "maxDecisions": 4096,
+          "decisionTimeoutMs": 1000,
+          "initialElo": 1500,
+          "k": 24,
+          "anchor": "code-table-v1",
+          "ratingOrder": "seed, then alphabetical pair; simultaneous updates within seat pairs",
+          "provisionalBelowGames": 200
+        },
+        "runtime": {
+          "node": "v24.22.1",
+          "platform": "linux",
+          "arch": "x64",
+          "cpu": "AMD EPYC 9V45 96-Core Processor",
+          "backend": "ONNX Runtime Web / single-thread WASM",
+          "elapsedMs": 1073
+        },
+        "sourceSha256": {
+          "gamecore.js": "beb6ec6666d58424b80e6e7d7cfc2f6801a7d0a77c34791df745612494392981",
+          "sdk/index.js": "e9f2b4e1d9de59d0786dca5ac4b47580d3c6456f812c4f532b6af33f438de717",
+          "sdk/features.js": "043b0a66e0e0dbe877760ffa51515d5b1178e0e53e479d5d49028762e4479562",
+          "sdk/policy.js": "18d660f922a46cf66c238794c65bcca7373d3bbfbf53748ade6ab107e85bbe3e",
+          "sdk/easy-policy.js": "1af6b4fb4aa6003f513419821bc16bf45a09169433037eee55cce0dd44af7ae2",
+          "policies/contract.mjs": "e608cc76eabb14a0a58d4f29be93c24fb7bd9986cd83b2fcdf6108f2a5f3331d",
+          "policies/runtime.mjs": "f50b6c86103dad996bf82433eede746a66bad8847e1a3923e151b9cf03828f08",
+          "policies/client.mjs": "44d6b09ef10b9c3c56d09719ac2b8b4aba8b54ebb615f1cb445e2e48bd4913b1",
+          "policies/worker.mjs": "67c9a2c9b9818f874ec3e3d254b7aba0eb897116fd7fccc55e8ad4cacef2f263",
+          "policies/dependencies.mjs": "68b31ca1b81b339d6ee8263ea32fd8bba818c1ab326f5cac6a0b4147cf4a5dc1",
+          "policies/catalog.mjs": "ce4f3a24ef9d1f939adc435e48c6c37f06e6a817f66011dd2c9facb4ec01806f",
+          "arena/evaluate.mjs": "1f37fcb89e48e530a71e0f719a3f9edc15c7ee74d8736f582e75c91b5be96a80",
+          "arena/elo.mjs": "45316930c3f5cf374b85bf8f19e86ad257379b58848003bb770f70b8485f54e5"
+        },
+        "policies": [
+          {
+            "api": "royale-policy-v1",
+            "id": "code-table-v1",
+            "name": "Code AI",
+            "author": "3Card Royale",
+            "license": "MIT",
+            "type": "javascript",
+            "rules": "1.0.0",
+            "episode": "game",
+            "information": "public",
+            "memory": "none",
+            "artifact": {
+              "file": "policy.mjs",
+              "bytes": 1533,
+              "sha256": "fe07b4669f18a59fa4cc28fe9c7fa4c4814c67fd0608262582a45a3085b81ff6"
+            }
+          },
+          {
+            "api": "royale-policy-v1",
+            "id": "nn-512-v1",
+            "name": "NN · 512 → 256",
+            "author": "lucienzhu",
+            "license": "MIT",
+            "type": "onnx",
+            "rules": "1.0.0",
+            "episode": "game",
+            "information": "public",
+            "memory": "none",
+            "artifact": {
+              "file": "policy.onnx",
+              "bytes": 1365463,
+              "sha256": "6ecafc81a29aefcff3cb9922f9070db42dc84b81fe7c937fc08de1354b7d10de"
+            },
+            "features": "gym-v1"
+          }
+        ],
+        "leaderboard": [
+          {
+            "id": "code-table-v1",
+            "elo": 1500,
+            "games": 20,
+            "wins": 12,
+            "losses": 8,
+            "provisional": true,
+            "latencyP95Ms": 3.197,
+            "decisions": 226
+          },
+          {
+            "id": "nn-512-v1",
+            "elo": 1427,
+            "games": 20,
+            "wins": 8,
+            "losses": 12,
+            "provisional": true,
+            "latencyP95Ms": 4.096,
+            "decisions": 221
+          }
+        ],
+        "records": [
+          {
+            "pair": "code-table-v1/nn-512-v1",
+            "left": "code-table-v1",
+            "right": "nn-512-v1",
+            "seed": 87000000,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 16,
+            "finalStateSha256": "e48d3381e346fa8c367e2f7ea9ff6d67207bba63504c46a59350de2720cefe56"
+          },
+          {
+            "pair": "code-table-v1/nn-512-v1",
+            "left": "code-table-v1",
+            "right": "nn-512-v1",
+            "seed": 87000000,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 62,
+            "finalStateSha256": "4fb9f5eed11aa2c7406a23514db82006857e47d9d32755335facd1377bdb9ff3"
+          },
+          {
+            "pair": "code-table-v1/nn-512-v1",
+            "left": "code-table-v1",
+            "right": "nn-512-v1",
+            "seed": 87000001,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 32,
+            "finalStateSha256": "022eede2d8d2725527f2819e87788cab703a41a0bd9d08da0643a14f389e0edd"
+          },
+          {
+            "pair": "code-table-v1/nn-512-v1",
+            "left": "code-table-v1",
+            "right": "nn-512-v1",
+            "seed": 87000001,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 46,
+            "finalStateSha256": "3a98933565d4095d68cfd1dedb0abc106fffebf56a69e1f89a77db8b89bde1f7"
+          },
+          {
+            "pair": "code-table-v1/nn-512-v1",
+            "left": "code-table-v1",
+            "right": "nn-512-v1",
+            "seed": 87000002,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 60,
+            "finalStateSha256": "15b9b09f13cb30475b8741225f3e7d83d0d8e5738435af86382f08c83bf323f4"
+          },
+          {
+            "pair": "code-table-v1/nn-512-v1",
+            "left": "code-table-v1",
+            "right": "nn-512-v1",
+            "seed": 87000002,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 33,
+            "finalStateSha256": "c852d501c2cc8ba86c3ffe0df5c13a5d5fee9216fa628045d84f81ba14d5ea4e"
+          },
+          {
+            "pair": "code-table-v1/nn-512-v1",
+            "left": "code-table-v1",
+            "right": "nn-512-v1",
+            "seed": 87000003,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 8,
+            "finalStateSha256": "2340b153c803fd3d7094866dacbb6f2ea2b40108a7b4e1f5b15777f45b70d168"
+          },
+          {
+            "pair": "code-table-v1/nn-512-v1",
+            "left": "code-table-v1",
+            "right": "nn-512-v1",
+            "seed": 87000003,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 8,
+            "finalStateSha256": "599d16beca81e8756c81648a3ca5acc06d1392c00d15fe379213ae5e46ea629e"
+          },
+          {
+            "pair": "code-table-v1/nn-512-v1",
+            "left": "code-table-v1",
+            "right": "nn-512-v1",
+            "seed": 87000004,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 32,
+            "finalStateSha256": "3da8d910f05ebbddfa3174dbd032372874e66fba3bc42049b6c2520c88421035"
+          },
+          {
+            "pair": "code-table-v1/nn-512-v1",
+            "left": "code-table-v1",
+            "right": "nn-512-v1",
+            "seed": 87000004,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 21,
+            "finalStateSha256": "00a25d835d9f30ae5fc97c02da817998655bf68c127c1667b8bf4ef4b62bc8fb"
+          },
+          {
+            "pair": "code-table-v1/nn-512-v1",
+            "left": "code-table-v1",
+            "right": "nn-512-v1",
+            "seed": 87000005,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 34,
+            "finalStateSha256": "26a494a802147ecf2a04830b19233de261f2526d2def84a5d6fce88b05fe882b"
+          },
+          {
+            "pair": "code-table-v1/nn-512-v1",
+            "left": "code-table-v1",
+            "right": "nn-512-v1",
+            "seed": 87000005,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 36,
+            "finalStateSha256": "09667dd859b57712191499ae8371224d0a55d0b243e9a65e1fbaf07f4a42af14"
+          },
+          {
+            "pair": "code-table-v1/nn-512-v1",
+            "left": "code-table-v1",
+            "right": "nn-512-v1",
+            "seed": 87000006,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 14,
+            "finalStateSha256": "effd1bbe0ae199f74ab751599811e1abc4ee832bccb65ada46e6a0e31436dd8a"
+          },
+          {
+            "pair": "code-table-v1/nn-512-v1",
+            "left": "code-table-v1",
+            "right": "nn-512-v1",
+            "seed": 87000006,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 21,
+            "finalStateSha256": "9af77f38bf3dde9f4c55744e16f4e455f62b01461ef867a01310a3f3ac54b324"
+          },
+          {
+            "pair": "code-table-v1/nn-512-v1",
+            "left": "code-table-v1",
+            "right": "nn-512-v1",
+            "seed": 87000007,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 38,
+            "finalStateSha256": "12e18875a770da658c86da56eb0c0083634d2d80fad746965fc6793e0b6d4628"
+          },
+          {
+            "pair": "code-table-v1/nn-512-v1",
+            "left": "code-table-v1",
+            "right": "nn-512-v1",
+            "seed": 87000007,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 49,
+            "finalStateSha256": "f8d397c7fdb0e511109ae0cb27f2048d93a203266952c8ae1606043664cd8c4f"
+          },
+          {
+            "pair": "code-table-v1/nn-512-v1",
+            "left": "code-table-v1",
+            "right": "nn-512-v1",
+            "seed": 87000008,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 17,
+            "finalStateSha256": "dfb96a8937eb999b0dc2cba602fd52b982ddcea436de434ac92d7a449ef8ecb3"
+          },
+          {
+            "pair": "code-table-v1/nn-512-v1",
+            "left": "code-table-v1",
+            "right": "nn-512-v1",
+            "seed": 87000008,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "nn-512-v1",
+            "status": "complete",
+            "decisions": 24,
+            "finalStateSha256": "fa17aa4e6f5f5a83f9519aece5012f25e6e33de95e6923a065fd52d809a3f27b"
+          },
+          {
+            "pair": "code-table-v1/nn-512-v1",
+            "left": "code-table-v1",
+            "right": "nn-512-v1",
+            "seed": 87000009,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 24,
+            "finalStateSha256": "f97dec1bf0c794bb401c2cfa7c8eafbea7b533c233d52aaae85d2f4e0866c5a7"
+          },
+          {
+            "pair": "code-table-v1/nn-512-v1",
+            "left": "code-table-v1",
+            "right": "nn-512-v1",
+            "seed": 87000009,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 30,
+            "finalStateSha256": "adf9531db82ed4e841b83f34a3e359d6f0ddcdc2ddcb9aff69a7e44235084a5a"
+          }
+        ]
+      }
+    }
+  ],
+  "rating": {
+    "id": "nn-512-v1",
+    "elo": 1443,
+    "games": 60,
+    "wins": 30,
+    "losses": 30,
+    "provisional": true,
+    "reference": false,
+    "opponents": [
+      {
+        "id": "code-table-v1",
+        "elo": 1500,
+        "games": 20,
+        "wins": 8
+      },
+      {
+        "id": "easy-v2",
+        "elo": 1387,
+        "games": 20,
+        "wins": 13
+      },
+      {
+        "id": "nn-256-v1",
+        "elo": 1440,
+        "games": 20,
+        "wins": 9
+      }
+    ],
+    "latencyP95Ms": 4.096,
+    "decisions": 686
+  },
+  "panelSha256": "197c97f1aaa89f81b70fa287f3e96b3ca9501a317458e38fcf76f5493f4cec81",
+  "sourceCommit": "6d9b2d1942d2133ad5ef22fff92c4b4aba946a17",
+  "runUrl": "https://github.com/lucienzhu/3card-royale/actions/runs/40522335018"
+}
