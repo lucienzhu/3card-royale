@@ -15,13 +15,16 @@
 :root body #settings-modal :is(.sz-egg,.sz-onboarding-setting){display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0;padding:16px 0;border-bottom:0;color:var(--ink);font-size:14px;line-height:1.5}
 :root body #settings-modal .sz-onboarding-setting label{display:block;min-height:0;font-size:14px;font-weight:500;cursor:pointer;color:var(--ink)}
 :root body #settings-modal :is(.sz-egg small,.sz-onboarding-setting p){margin:3px 0 0;font-size:12px;line-height:1.5;color:var(--muted)}
-:root body #settings-modal .settings-toggle-actions{display:flex;align-items:center;justify-content:flex-end;gap:16px;flex:none}
+:root body #settings-modal .sz-onboarding-setting{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px}
+:root body #settings-modal #onboarding-enabled{grid-row:1;grid-column:2}
+:root body #settings-modal #onboarding-reopen{grid-row:2;grid-column:1;justify-self:start}
 :root body #settings-modal input[role=switch]{-webkit-appearance:none;appearance:none;position:relative;flex:none;box-sizing:border-box;width:44px;height:26px;min-width:44px;min-height:0;max-height:26px;padding:0;margin:0;border:0;border-radius:13px;background:var(--line);cursor:pointer;transition:background-color .2s}
 :root body #settings-modal input[role=switch]::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#FFFEFA;box-shadow:0 1px 2px #10231B40;transition:transform .2s}
 :root body #settings-modal input[role=switch]:checked{background:var(--red)}
 :root body #settings-modal input[role=switch]:checked::after{transform:translateX(18px)}
 :root body #settings-modal :is(button,select,input,summary,a):focus-visible{outline:2px solid var(--red);outline-offset:3px}
-:root body #settings-modal #onboarding-reopen{font-size:13px;min-height:44px;padding:8px 0;color:var(--ink);white-space:nowrap;text-decoration-color:var(--line)}
+:root body #settings-modal #onboarding-reopen{box-sizing:border-box;min-height:44px;min-width:120px;margin-top:8px;padding:10px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);color:var(--ink);font:500 14px/1.4 system-ui;white-space:nowrap;text-decoration:none}
+@media(hover:hover){:root body #settings-modal #onboarding-reopen:hover{border-color:var(--muted);background:var(--table)}}
 :root body #settings-modal .settings-body{display:block;margin:0}
 :root body #settings-modal .settings-start{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:16px}
 :root body #settings-modal .notice{margin:0;font-size:12px;line-height:1.5;color:var(--muted)}
@@ -49,15 +52,10 @@
  :root body #settings-modal :is(.policy-field small,.policy-field a){grid-column:1}
  :root body #settings-modal .sz-motion-setting label{padding-bottom:0}
  :root body #settings-modal .sz-motion-setting p{width:auto;margin:6px 0 0}
- :root body #settings-modal .settings-toggle-actions{gap:12px}
  :root body #settings-modal .settings-start{align-items:flex-start;flex-direction:column;gap:12px}
  :root body #settings-modal #new-match{width:100%}
 }
 @media(max-width:360px){
  :root body #settings-modal .modal-body{padding-inline:16px}
- :root body #settings-modal .sz-onboarding-setting{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px}
- :root body #settings-modal .settings-toggle-actions{display:contents}
- :root body #settings-modal #onboarding-enabled{grid-row:1;grid-column:2}
- :root body #settings-modal #onboarding-reopen{grid-row:2;grid-column:1/-1;justify-self:start}
 }
 @media(prefers-reduced-motion:reduce){:root body #settings-modal input[role=switch],:root body #settings-modal input[role=switch]::after{transition:none}}

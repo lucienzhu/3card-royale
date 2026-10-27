@@ -42,7 +42,7 @@
  function mount(){
   const en=()=>document.documentElement.lang==='en',t=(zh,english)=>en()?english:zh;
   const setting=document.createElement('section');setting.className='sz-onboarding-setting';setting.dataset.noI18n='';
-  setting.innerHTML='<div><label for="onboarding-enabled"><span></span></label><p id="onboarding-setting-note"></p></div><div class="settings-toggle-actions"><button id="onboarding-reopen" type="button"></button><input id="onboarding-enabled" type="checkbox" role="switch" aria-describedby="onboarding-setting-note"></div>';
+  setting.innerHTML='<div><label for="onboarding-enabled"><span></span></label><p id="onboarding-setting-note"></p></div><input id="onboarding-enabled" type="checkbox" role="switch" aria-describedby="onboarding-setting-note"><button id="onboarding-reopen" type="button"></button>';
   document.querySelector('.menu-preferences').append(setting);
   const toggle=setting.querySelector('input'),reopen=setting.querySelector('button');toggle.checked=prefs.enabled;
   const dialog=document.createElement('dialog');dialog.id='onboarding-modal';dialog.className='modal';dialog.hidden=true;dialog.dataset.noI18n='';dialog.setAttribute('aria-labelledby','onboarding-heading');
