@@ -1,15 +1,15 @@
 name: Arena policy checks
 on:
   pull_request:
-    paths: ['policies/**', 'arena/**', 'sdk/**', 'gamecore.js', 'vendor/onnxruntime/**', 'tests/arena/**', '.github/workflows/arena-ci.yml']
-    types: [opened, synchronize, reopened, labeled]
+    paths: ['policies/**', 'arena/**', 'sdk/**', 'gamecore.js', 'vendor/onnxruntime/**', 'tests/arena/**', '.github/workflows/arena-ci.yml', '.github/workflows/arena-release.yml']
+    types: [opened, synchronize, reopened]
   push:
     branches: [main]
-    paths: ['policies/**', 'arena/**', '!arena/results/**', '!arena/benchmarks/**', 'sdk/**', 'gamecore.js', 'vendor/onnxruntime/**', 'tests/arena/**', '.github/workflows/arena-ci.yml']
+    paths: ['policies/**', 'arena/**', '!arena/results/**', '!arena/benchmarks/**', 'sdk/**', 'gamecore.js', 'vendor/onnxruntime/**', 'tests/arena/**', '.github/workflows/arena-ci.yml', '.github/workflows/arena-release.yml']
   workflow_dispatch:
     inputs:
       policies:
-        description: Comma-separated non-reference policy IDs (maximum 10; blank selects all)
+        description: Policies to validate (maximum 10; no ratings or publication)
         type: string
         default: ''
 permissions:
@@ -45,11 +45,10 @@ jobs:
           Path(os.environ['RUNNER_TEMP'],'arena-input','base-manifests.json').write_text(json.dumps(manifests))
           PY
           fi
-      - name: Replay local validation before bounded reference matches
+      - name: Validate playable submissions without rating
         env:
           POLICY_IDS: ${{ inputs.policies }}
           EVENT_KIND: ${{ github.event_name == 'workflow_dispatch' && 'manual' || 'change' }}
-          RATE: ${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'arena-benchmark') }}
         run: |
           docker pull node:24-bookworm-slim
           docker image inspect node:24-bookworm-slim --format '{{index .RepoDigests 0}}' > "$RUNNER_TEMP/arena-output/image.txt"
@@ -57,46 +56,15 @@ jobs:
           if [ -f "$RUNNER_TEMP/arena-input/changed.txt" ]; then
             args+=(--changed /input/changed.txt --base-manifests /input/base-manifests.json)
           fi
-          if [ "$RATE" = true ]; then args+=(--rate); fi
           docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges \
             --cpus 2 --memory 2g --pids-limit 128 --tmpfs /tmp:rw,noexec,nosuid,size=64m \
             --user "$(id -u):$(id -g)" -v "$GITHUB_WORKSPACE:/app:ro" \
             -v "$RUNNER_TEMP/arena-input:/input:ro" -v "$RUNNER_TEMP/arena-output:/output" -w /app node:24-bookworm-slim \
-            sh -c 'node arena/validate.mjs && node tests/arena/reference.mjs && exec node arena/reference-ci.mjs "$@"' _ "${args[@]}"
+            sh -c 'node arena/validate.mjs && node tests/arena/reference.mjs && node tests/arena/release.mjs && exec node arena/reference-ci.mjs "$@"' _ "${args[@]}"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
-          name: arena-reference-results
+          name: arena-validation-results
           path: ${{ runner.temp }}/arena-output
           retention-days: 7
           if-no-files-found: warn
-  publish:
-    needs: evaluate
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-24.04
-    timeout-minutes: 5
-    permissions:
-      contents: write
-      pages: write
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          ref: main
-      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-        with:
-          name: arena-reference-results
-          path: ${{ runner.temp }}/arena-result
-      - name: Recompute ratings from JSON and update only leaderboard files
-        env:
-          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        run: |
-          node arena/publish.mjs --input "$RUNNER_TEMP/arena-result/result.json" --commit "$GITHUB_SHA" --run-url "$RUN_URL"
-          git add arena/results/leaderboard.json arena/results/reference-elo-v1/
-          if ! git diff --cached --quiet; then
-            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Update reference Elo leaderboard'
-            git push origin HEAD:main
-          fi
-      - name: Rebuild GitHub Pages explicitly after the bot commit
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"

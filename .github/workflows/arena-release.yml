@@ -1,0 +1,101 @@
+name: Publish Arena
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      policies:
+        description: Leave blank to rate pending policies, or specify IDs to rerate (maximum 10)
+        type: string
+        default: ''
+permissions:
+  contents: read
+concurrency:
+  group: arena-release
+  cancel-in-progress: false
+jobs:
+  rate:
+    if: github.event_name == 'release' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      commit: ${{ steps.source.outputs.commit }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Pin the release source and require merged current code
+        id: source
+        run: |
+          git fetch --no-tags origin main
+          commit=$(git rev-parse HEAD)
+          git merge-base --is-ancestor "$commit" origin/main
+          if [ -n "$(git diff --name-only "$commit" origin/main -- . ':!arena/results/**')" ]; then
+            echo 'Main has different release code; publish the current main revision.' >&2
+            exit 1
+          fi
+          # A prior publication may have added ratings after this tag was created.
+          git show origin/main:arena/results/leaderboard.json > arena/results/leaderboard.json
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+          mkdir -p "$RUNNER_TEMP/arena-output"
+      - name: Verify receipts and rate pending policies
+        env:
+          POLICY_IDS: ${{ inputs.policies }}
+          SOURCE_SHA: ${{ steps.source.outputs.commit }}
+        run: |
+          docker pull node:24-bookworm-slim
+          docker image inspect node:24-bookworm-slim --format '{{index .RepoDigests 0}}' > "$RUNNER_TEMP/arena-output/image.txt"
+          docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges \
+            --cpus 2 --memory 2g --pids-limit 128 --tmpfs /tmp:rw,noexec,nosuid,size=64m \
+            --user "$(id -u):$(id -g)" -v "$GITHUB_WORKSPACE:/app:ro" \
+            -v "$RUNNER_TEMP/arena-output:/output" -w /app node:24-bookworm-slim \
+            sh -c 'node arena/validate.mjs && node tests/arena/reference.mjs && node tests/arena/release.mjs && exec node arena/reference-ci.mjs "$@"' _ \
+            --release --rate --policies "$POLICY_IDS" --commit "$SOURCE_SHA" --output /output
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: arena-release-results
+          path: ${{ runner.temp }}/arena-output
+          retention-days: 7
+          if-no-files-found: warn
+  publish:
+    needs: rate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pages: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Refuse to publish over newer code
+        env:
+          SOURCE_SHA: ${{ needs.rate.outputs.commit }}
+        run: |
+          git merge-base --is-ancestor "$SOURCE_SHA" HEAD
+          if [ -n "$(git diff --name-only "$SOURCE_SHA" HEAD -- . ':!arena/results/**')" ]; then
+            echo 'Main changed during rating; publish the new revision instead.' >&2
+            exit 1
+          fi
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: arena-release-results
+          path: ${{ runner.temp }}/arena-result
+      - name: Recompute ratings and commit leaderboard files
+        env:
+          SOURCE_SHA: ${{ needs.rate.outputs.commit }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          node arena/publish.mjs --input "$RUNNER_TEMP/arena-result/result.json" --commit "$SOURCE_SHA" --run-url "$RUN_URL"
+          git add arena/results/leaderboard.json arena/results/reference-elo-v1/
+          if ! git diff --cached --quiet; then
+            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Publish Arena release ratings'
+            git push origin HEAD:main
+          fi
+      - name: Build GitHub Pages with the published leaderboard
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"

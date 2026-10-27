@@ -4,7 +4,7 @@
 
 Submit a **policy**, either pure JavaScript or an ONNX network. Both run in the
 browser and in the same local evaluator. Training is optional. GitHub Pages serves
-static files; inference runs on the visitor's device. Official reference Elo is computed by CI after review and merge, then published automatically.
+static files; inference runs on the visitor's device. Official reference Elo is computed and published by the release workflow after review and merge.
 
 ## One policy, one folder
 
@@ -80,21 +80,21 @@ non-finite outputs and chooses argmax, first index on ties. Use `memory: "none"`
 The released NN is a behavioral-cloning baseline, not a reward-trained RL agent.
 [Features, training and ONNX export](../docs/MODEL.md).
 
-## Local validation → PR → Elo → play
+## Local validation → PR → release → Elo
 
 1. Add a new immutable policy ID, its folder and registry entry.
 2. Run `npm run arena:validate`, then `npm run arena:submit -- --policy <id>`.
    Commit the generated `validation.json`: four balanced games against Code AI.
 3. Submit the PR. CI replays the receipt and requires matching final game hashes.
    Missing/stale receipts, illegal actions and timeouts block rating.
-4. After review and merge, CI plays **60 rated games**: 20 each against frozen Easy,
-   NN and Code AI references. It automatically commits the new leaderboard and
-   triggers a GitHub Pages rebuild. A maintainer may preview the same rating on
-   a PR with `arena-benchmark`, without publishing it.
+4. PRs and ordinary main pushes only validate playability. A new policy remains
+   **Unrated** until **Publish Arena** runs: publishing a GitHub Release or manually
+   dispatching that workflow on main. It plays **60 rated games** per pending policy,
+   commits the leaderboard and rebuilds GitHub Pages. Unchanged scores are reused.
 
 [Reference Elo method and limits](../arena/README.md): at most 3 entrants per PR,
-10 per manual run, 180 seconds of match-running time. Adding one entrant costs
-64 games including validation, independent of the catalog size. Browser play never
+10 rated policies per publication run, 180 seconds of match-running time. Publication costs
+64 games per pending entrant including a fresh validation, independent of the catalog size. Browser play never
 changes ratings. Fixed references are labeled separately; all new scores are
 provisional. Godlike is excluded. Policies without matching results show **Unrated**.
 
