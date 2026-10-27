@@ -1,0 +1,22 @@
+'use strict';
+const assert=require('node:assert/strict'),GK=require('../gamecore.js');
+const {preferences,lesson,nextHint,identity}=require('../app/onboarding.js');
+const {autoAdvance}=require('../app/table-interaction.js');
+const l=lesson(GK),real=new GK.Game(19,{version:'1.0.0',first:0}),before=JSON.stringify(real.save());
+assert.equal(l.hand.length,8);l.select(l.hand.slice(2,5));assert(!l.valid);assert(!l.submit());
+l.select(l.target);assert(l.valid);l.submit();assert.equal(l.stage,'attack-result');assert.deepEqual(l.damage,[0,2]);assert.equal(l.hand.length,5);
+l.next();assert.equal(l.stage,'defend');l.select(l.target);l.submit();assert.equal(l.stage,'done');assert.deepEqual(l.damage,[1,2]);assert.equal(l.hand.length,2);assert(!l.submit());
+assert.equal(JSON.stringify(real.save()),before,'lesson never touches a real deal or RNG');
+const store=new Map(),prefs=preferences([()=>({getItem:k=>store.get(k),setItem:(k,v)=>store.set(k,v)})]);
+prefs.begin(identity(real));real.players[0].table=[{card:30,up:true}];assert.equal(nextHint(prefs,real),'wounds');prefs.ack('wounds');assert.notEqual(nextHint(prefs,real),'wounds');
+real.phase='refresh';real.pendingRefresh={actor:0,remaining:2};assert.equal(nextHint(prefs,real),'swap');prefs.enable(false);assert.equal(nextHint(prefs,real),null);prefs.enable(true);prefs.ack('swap');assert.equal(nextHint(prefs,real),null);
+real.game++;assert.equal(nextHint(prefs,real),null,'hints are restricted to the first real game');prefs.begin(identity(real));assert.notEqual(prefs.hintGame,identity(real),'manual replay cannot extend first-game hints');
+let game={phase:'resolved',lastEvent:{}},ready=true,clock=new Map(),serial=0,count=0;
+const flow=autoAdvance({read:()=>game,ready:()=>ready,advance:()=>{count++;game.phase='attack';},schedule:f=>{clock.set(++serial,f);return serial;},cancel:id=>clock.delete(id)});
+const fire=()=>{const callbacks=[...clock.values()];clock.clear();callbacks.forEach(f=>f());};
+flow.sync();flow.sync();assert.equal(clock.size,1);fire();assert.equal(count,1);
+for(const phase of ['attack','defend','refresh','flip','game_over','match_over']){game.phase=phase;flow.sync();assert.equal(clock.size,0,phase+' must wait for an actual choice');}
+game.phase='resolved';flow.sync();ready=false;flow.sync();assert.equal(clock.size,0);ready=true;flow.sync();fire();assert.equal(count,2,'resume advances once');
+game.phase='resolved';flow.sync();game={phase:'resolved',lastEvent:{}};fire();assert.equal(count,2,'stale game ignored');flow.sync();game.lastEvent={};fire();assert.equal(count,2,'stale event ignored');
+flow.sync();ready=false;fire();assert.equal(count,2,'drawer/motion/background checked again at deadline');ready=true;flow.sync();flow.stop();assert.equal(clock.size,0);
+console.log('Guided flow: 8-card attack/defense practice, 2/1 damage, isolated RNG, first-game hints and guarded automatic transitions.');

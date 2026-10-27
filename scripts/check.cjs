@@ -43,4 +43,6 @@ require('../tests/replay-motion.cjs');
 
 require('../tests/onboarding.cjs');
 
+require('../tests/guided-flow.cjs');
+
 require('../tests/godlike-policy.cjs');
