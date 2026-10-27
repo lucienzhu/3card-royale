@@ -1,15 +1,16 @@
-# AI difficulty
+# AI opponents
 
 [简体中文](DIFFICULTY.zh-CN.md) · [Evaluation records](experiments/difficulty-v1/evaluation.json)
 
-Settings → Preferences → Difficulty:
+Settings → Preferences → AI opponent:
 
-| Difficulty | Policy | Behavior |
+| Opponent | Policy | Behavior |
 | --- | --- | --- |
 | Easy | Easy AI | Limited attention; deck-only redraws |
 | Medium | NN AI | Existing 256/128 behavioral-cloning checkpoint |
 | Hard | Table Code AI | Original table policy; preserves combinations and evaluates swaps |
 | Godlike | Current-hand search | Sees your hand; forgets played cards |
+| Arena AI | Registered JS / NN policy | Choose a policy in the Arena selector below |
 
 New visitors start on Easy. Saved `code` / `nn` preferences remain Hard / Medium.
 Changing difficulty takes effect on the next AI decision, without redealing.
@@ -19,7 +20,7 @@ original Code AI and show a notice. These difficulty settings apply to Standard 
 
 ## Godlike: current-hand advantage
 
-Opt in through **Settings → Preferences → Difficulty → Godlike · Sees your hand**.
+Opt in through **Settings → Preferences → AI opponent → Godlike · Sees your hand**.
 It sees both current hands, public wounds and the active attack. It never reads
 stock order, discard, seed, RNG, prior combats or results. Other difficulties keep
 their existing information boundaries and behavior. This is a JavaScript search

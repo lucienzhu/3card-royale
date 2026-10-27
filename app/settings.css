@@ -8,6 +8,8 @@
 :root body #settings-modal :is(.sz-appearance,.policy-field,.sz-motion-setting,.sz-egg,.sz-onboarding-setting)+:is(.sz-appearance,.policy-field,.sz-motion-setting,.sz-egg,.sz-onboarding-setting){border-top:1px solid var(--line)}
 :root body #settings-modal input[type=number]{box-sizing:border-box;width:100%;max-width:none;min-width:0;min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);color:var(--ink);font-family:inherit;font-size:16px;font-weight:400;line-height:1.4}
 :root body #settings-modal.sz-drawer .sz-appearance select{width:100%;max-width:none}
+:root body #settings-modal .policy-field>label{font:inherit;color:inherit;margin:0}
+:root body #settings-modal #arena-policy-status{color:var(--muted)}
 :root body #settings-modal :is(.policy-field small,.policy-field a){grid-column:2;font-size:12px;font-weight:400;line-height:1.5}
 :root body #settings-modal .sz-motion-setting{margin:0;padding:0 0 16px;min-width:0}
 :root body #settings-modal .sz-motion-setting label{padding-bottom:0}

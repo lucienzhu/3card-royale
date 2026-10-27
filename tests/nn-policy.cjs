@@ -64,7 +64,7 @@ async function testPolicyFailureAndLocale(){
  vm.createContext(ctx);vm.runInContext(fs.readFileSync(path.join(root,'app/policy-ai.js'),'utf8'),ctx);
  assert.equal(ctx.window.SZPolicy.selected,'easy');assert.equal((await ctx.window.SZPolicy.decide(game)).kind,'easy');assert.equal(requests,0);
  const initial=paints;mutated();assert.equal(paints,initial,'Repeated lang attribute must not repaint recursively');
- document.documentElement.lang='en';ctx.window.GKLocale.language='en';mutated();assert.equal(element('policy-label').text,'Difficulty');
+ document.documentElement.lang='en';ctx.window.GKLocale.language='en';mutated();assert.equal(element('policy-label').text,'AI opponent');
  assert.deepEqual(element('policy-select').options.map(o=>o.textContent),['Easy · Easy AI','Medium · NN AI','Hard · Code AI']);
  element('policy-select').value='nn';element('policy-select').listeners.change();await new Promise(setImmediate);
  assert.equal(requests,1);assert.equal((await ctx.window.SZPolicy.decide(game)).kind,'easy');assert.equal(requests,1,'Offline requests should back off');

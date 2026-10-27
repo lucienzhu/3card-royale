@@ -80,3 +80,7 @@ actions such as “Practice again” use an outlined secondary button below the
 description, left-aligned, on desktop and mobile. Use the shared panel, border and
 radius tokens, a 44 px minimum height, and no link underline. Keep the action
 separate from the on/off control.
+
+**AI opponent.** Keep built-in difficulty choices and Arena AI in the same selector.
+Selecting Arena reveals a second selector for its registered policy; keep the
+leaderboard link visible beside the main selector for discovery.
