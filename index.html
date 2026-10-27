@@ -7,7 +7,7 @@
 <meta property="og:title" content="深圳花牌"><meta property="og:description" content="两个人，一副牌，打到 A。"><meta property="og:locale" content="zh_CN">
 <meta name="theme-color" content="#EDF4EF">
 <title>深圳花牌 · 试玩</title><script>(()=>{const q=new URLSearchParams(location.search);let egg=false;try{egg=localStorage.getItem('sz_board_egg_v1')==='1';}catch{}if(q.get('board')!=null)egg=q.get('board')!=='0';if(egg)document.documentElement.dataset.szChips='1';let p='system';try{p=localStorage.getItem('sz_visual_theme_v1')||p;}catch{}if(!['system','light','dark'].includes(p))p='system';document.documentElement.dataset.szThemePreference=p;document.documentElement.dataset.szTheme=p==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):p;})();</script>
-<script src="app/locale.js?ui=sz-copy2"></script>
+<script src="app/locale.js?v=result-flower1"></script>
 
 <link rel="icon" type="image/svg+xml" href="brand-mark.svg"><meta property="og:type" content="website"><meta property="og:site_name" content="深圳花牌 · 3Card Royale"><meta property="og:image" content="https://lucienzhu.github.io/3card-royale/social-preview.png?v=sz-v2"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://lucienzhu.github.io/3card-royale/social-preview.png?v=sz-v2"><script src="app/mark.js"></script><link rel="stylesheet" href="app/game.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/experience.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/bloom.css?v=sz-mobile-motion1">
 <link rel="stylesheet" href="app/layout.css?v=sz-mobile-motion1">
@@ -23,7 +23,7 @@
 <link rel="stylesheet" href="app/refill-guide.css?v=sz-mobile-motion1">
 <link rel="stylesheet" href="app/focus-guide.css?v=sz-mobile-motion1">
 <link rel="stylesheet" href="app/compact-axis.css?v=sz-progress-spacing2">
-<link rel="stylesheet" href="app/mobile-guide.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/night-table.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/quiet-bloom.css?v=sz-mobile-motion1"><script src="app/browser-shell.js?v=sz-mobile-motion1"></script><link rel="stylesheet" href="app/card-motion.css?v=replay-motion1"><link rel="stylesheet" href="app/table-identity.css?ui=sz-swap-choice1"><link rel="stylesheet" href="app/player-profile.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/rules-shell.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/replay-player.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/drawer.css?v=quick-start1"><link rel="stylesheet" href="app/guide-layout.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/responsive.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/guide-motion.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/motion-preferences.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/tokens.css?v=sz-progress-spacing2"><link rel="stylesheet" href="app/finale.css?v=6"><link rel="stylesheet" href="app/texture-pcb.css?v=14"><link rel="stylesheet" href="app/onboarding.css?v=guided-damage1">
+<link rel="stylesheet" href="app/mobile-guide.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/night-table.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/quiet-bloom.css?v=sz-mobile-motion1"><script src="app/browser-shell.js?v=sz-mobile-motion1"></script><link rel="stylesheet" href="app/card-motion.css?v=replay-motion1"><link rel="stylesheet" href="app/table-identity.css?ui=sz-swap-choice1"><link rel="stylesheet" href="app/player-profile.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/rules-shell.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/replay-player.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/drawer.css?v=quick-start1"><link rel="stylesheet" href="app/guide-layout.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/responsive.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/guide-motion.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/motion-preferences.css?v=sz-mobile-motion1"><link rel="stylesheet" href="app/tokens.css?v=result-flower1"><link rel="stylesheet" href="app/finale.css?v=6"><link rel="stylesheet" href="app/texture-pcb.css?v=14"><link rel="stylesheet" href="app/onboarding.css?v=guided-damage1">
 </head>
 <body>
 <header class="app-header">
@@ -121,8 +121,8 @@
  <div class="result-sheet">
   <div class="result-head"><span id="result-kicker"></span><button id="close-result" aria-label="关闭结算，查看牌桌">×</button></div>
   <div class="result-content">
-   <h2 id="result-title"></h2><p id="result-subtitle"></p>
-   <div class="result-upgrade" id="result-upgrade"><span id="result-from"></span><span class="result-arrow" aria-hidden="true">→</span><strong id="result-to"></strong><p id="result-upgrade-note"></p></div>
+   <div class="result-title-row"><svg id="result-winner-flower" class="player-flower" viewBox="0 0 64 72" aria-hidden="true" focusable="false"></svg><h2 id="result-title"></h2></div><p id="result-subtitle"></p>
+   <div class="result-upgrade" id="result-upgrade"><span id="result-from"></span><span class="result-arrow" aria-hidden="true">→</span><strong id="result-to" role="img" data-no-i18n></strong><p id="result-upgrade-note"></p></div>
    <div class="result-damage" aria-label="本局终局伤势"><div id="result-own"><span>你</span><strong id="result-own-damage"></strong><small>伤</small></div><div id="result-opp"><span>对手</span><strong id="result-opp-damage"></strong><small>伤</small></div></div>
    <div id="result-attempts"></div><p class="result-net" id="result-net"></p><p class="result-hint" id="result-hint"></p>
   </div>
@@ -138,7 +138,7 @@
 <script src="sdk/index.js"></script><script src="sdk/policy.js"></script><script src="sdk/easy-policy.js?v=difficulty2-64"></script><script src="sdk/godlike-policy.js?v=godlike1"></script><script src="app/godlike-ai.js?v=godlike1"></script><script src="app/arena-ai.js?v=arena1"></script><script src="app/policy-ai.js?v=arena1"></script>
 <script src="app/table-interaction.js?v=guided-flow1"></script>
 <script src="app/onboarding.js?v=guided-damage1"></script>
-<script src="app/table.js?ui=guided-flow1"></script>
+<script src="app/table.js?ui=result-flower1"></script>
 <script src="app/standard-rules.js?ui=sz-swap-choice1"></script><script src="app/rule-cases.js?v=sz-guide4"></script><script src="app/swap-cases.js?v=sz-guide7"></script>
 <script src="app/focus-cases.js?v=sz-guide9"></script>
 <script src="app/guide-motion.js?v=sz-mobile-motion1"></script><script src="app/rules.js?ui=sz-copy2"></script><script src="app/hand-reference.js?v=sz-v2.4"></script><script src="app/theme-tokens.js?v=sz-v3.1"></script><script src="app/theme.js?v=sz-v3.1"></script><script src="app/experience.js?v=sz-v2.9"></script><script src="app/rack-hints.js?v=sz-hints1"></script><script src="app/quiet-bloom.js?ui=sz-copy2"></script><script src="app/table-identity.js?v=sz-mobile-motion1"></script><script src="app/menu-v2.js?v=sz-v2.9"></script><script src="app/table-v2.js?v=sz-v2.8"></script><script src="app/texture-chips.js?v=38"></script><script src="app/board.js?ui=sz-copy2"></script><script src="app/drawer.js?v=quick-start1"></script></body></html>

@@ -39,7 +39,7 @@ After completing or leaving practice, contextual bubbles introduce playable woun
 
 Original assets use MIT. Custom emoji PNGs are images for platforms that support uploads, not universal Unicode emoji. The mark is stylized and is not a claim of uniqueness or botanical realism.
 
-Single-game results remain a compact panel. Only the match result fills the visible viewport, with no drawer corners or bottom slide. The legacy embedded-browser dialog fallback also fills the screen; short screens scroll within the result.
+Single-game results remain a compact panel. A red/gold flower identifies the winner beside the title; the level arrow ends in the same gold heart wildcard chip used on the table, showing the next game’s wild rank. Only the match result fills the visible viewport, with no drawer corners or bottom slide. The legacy embedded-browser dialog fallback also fills the screen; short screens scroll within the result.
 
 UI copy leads with one current action or result. Remove repeated explanations and interface narration. Tutorials retain cause, valid targets and essential rules. Keep full rules in the rulebook and a three-line overview on the home page. Update both languages; retain complete accessible labels.
 
