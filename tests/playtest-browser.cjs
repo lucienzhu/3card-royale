@@ -16,11 +16,11 @@ async function swipe(page,selector,count=3,cancel=false,vertical=false){
  const ctx=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});const page=await ctx.newPage();page.on('pageerror',e=>errors.push(e.message));
  await page.goto(base+'?lang=zh-CN',{waitUntil:'networkidle'});await page.waitForSelector('#onboarding-modal[open]');await page.waitForTimeout(300);
  const saved=await page.evaluate(()=>JSON.stringify(gkGame.save()));
- assert.equal(await page.locator('.intro-rack button').count(),8);assert(!(await page.locator('#onboarding-modal').innerText()).includes('伤牌'));
+ assert.equal(await page.locator('.intro-rack button').count(),8);assert.equal(await page.locator('.intro-damage .wound-bract').count(),10);assert.equal(await page.locator('.intro-damage .filled').count(),0);assert(!(await page.locator('#onboarding-modal').innerText()).includes('伤牌'));
  await swipe(page,'.intro-rack button');assert.equal(await page.locator('.intro-selected').count(),3);assert((await page.locator('.intro-selected').first().evaluate(n=>new DOMMatrix(getComputedStyle(n).transform).m42))<0);
- await page.locator('#onboarding-start').click();await page.waitForSelector('[data-lesson-stage="defend"]');assert.equal(await page.locator('.intro-rack button').count(),5);
+ await page.locator('#onboarding-start').click();await page.waitForSelector('[data-lesson-stage="defend"]');assert.equal(await page.locator('.intro-rack button').count(),5);assert.equal(await page.locator('.intro-opponent .intro-damage .filled').count(),2);
  await swipe(page,'.intro-rack button');assert.equal(await page.locator('.intro-selected').count(),3);await page.locator('#onboarding-start').click();await page.waitForSelector('[data-lesson-stage="done"]');
- assert((await page.locator('.intro-result').innerText()).includes('1 伤'));assert.equal(await page.evaluate(()=>JSON.stringify(gkGame.save())),saved);
+ assert((await page.locator('.intro-result').innerText()).includes('1 伤'));assert.equal(await page.locator('.intro-self .intro-damage .filled').count(),1);assert.equal(await page.locator('.intro-opponent .intro-damage .filled').count(),2);assert.equal(await page.evaluate(()=>JSON.stringify(gkGame.save())),saved);
  await page.locator('#onboarding-start').click();await page.waitForSelector('#onboarding-modal[open]',{state:'hidden'});
  await page.reload({waitUntil:'networkidle'});assert.equal(await page.locator('#onboarding-modal[open]').count(),0,'no repeat tutorial');
  // Put the real renderer on a deterministic human turn. The policy itself is unchanged.
