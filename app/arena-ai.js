@@ -9,8 +9,9 @@
   const en=()=>window.GKLocale?.language==='en';
   function paint(){
     field.hidden=window.SZPolicy?.selected!=='arena';
-    document.getElementById('arena-policy-label').textContent=en()?'Arena opponent':'天梯对手';
+    document.getElementById('arena-policy-label').textContent=en()?'Arena policy':'天梯策略';
     document.getElementById('arena-link').textContent=en()?'Leaderboard ↗':'查看天梯 ↗';
+    document.getElementById('arena-link').href='arena.html?lang='+(en()?'en':'zh-CN');
     status.textContent=failed?(en()?'Policy unavailable · using Easy AI':'策略暂不可用 · 使用 Easy AI'):loaded?(en()?'Ready · runs on this device':'已就绪 · 本机运行'):(en()?"Loads on opponent’s turn":'对手行动时加载');
   }
   const ready=Promise.all([import(new URL('catalog.mjs',root)),import(new URL('client.mjs',root))]).then(async([catalog,{PolicyClient}])=>{

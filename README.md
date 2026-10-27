@@ -92,9 +92,11 @@ Choose Share PNG after a game or match to preview and save a PNG. On supported d
 
 Swap opportunities may now be skipped one at a time: skipping the first of two still leaves the second available, without drawing, discarding or changing wounds. The live table, guide and all four language cores agree. Game-story entries have clear spacing, and single-game PNGs place the logo and name in the top-right corner.
 
-## AI difficulty
+## AI opponents
 
-Choose **Easy / Medium / Hard / Godlike** in Settings → Preferences → Difficulty. These use
+Choose **Arena AI** in the same selector to try a registered JS or NN policy; the leaderboard link stays visible.
+
+Choose **Easy / Medium / Hard / Godlike** in Settings → Preferences → AI opponent. These use
 Easy AI / NN AI / Code AI, plus an opt-in current-hand search.
 Godlike can see your hand, forgets played cards and won **65.0%** of 1,000 games against Hard. [Behavior and measured strength](docs/DIFFICULTY.md).
 Easy compares up to **64** candidate plays and redraws from the deck. In 1,000
