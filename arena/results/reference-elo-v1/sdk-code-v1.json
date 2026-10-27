@@ -82,7 +82,7 @@
     "rules": "1.0.0",
     "episode": "game",
     "information": "public",
-    "createdAt": "2026-10-27T11:56:43.586Z",
+    "createdAt": "2026-10-27T12:27:26.560Z",
     "protocol": {
       "gamesPerPair": 4,
       "seedStart": 88000000,
@@ -106,9 +106,9 @@
       "node": "v24.22.1",
       "platform": "linux",
       "arch": "x64",
-      "cpu": "AMD EPYC 7763 64-Core Processor",
+      "cpu": "AMD EPYC 9V45 96-Core Processor",
       "backend": "ONNX Runtime Web / single-thread WASM",
-      "elapsedMs": 373
+      "elapsedMs": 206
     },
     "sourceSha256": {
       "gamecore.js": "beb6ec6666d58424b80e6e7d7cfc2f6801a7d0a77c34791df745612494392981",
@@ -169,7 +169,7 @@
         "wins": 3,
         "losses": 1,
         "provisional": true,
-        "latencyP95Ms": 3.327,
+        "latencyP95Ms": 1.625,
         "decisions": 64
       },
       {
@@ -179,7 +179,7 @@
         "wins": 1,
         "losses": 3,
         "provisional": true,
-        "latencyP95Ms": 3.905,
+        "latencyP95Ms": 1.927,
         "decisions": 59
       }
     ],
@@ -244,7 +244,7 @@
         "rules": "1.0.0",
         "episode": "game",
         "information": "public",
-        "createdAt": "2026-10-27T11:56:46.218Z",
+        "createdAt": "2026-10-27T12:27:27.066Z",
         "protocol": {
           "gamesPerPair": 20,
           "seedStart": 87000000,
@@ -268,9 +268,9 @@
           "node": "v24.22.1",
           "platform": "linux",
           "arch": "x64",
-          "cpu": "AMD EPYC 7763 64-Core Processor",
+          "cpu": "AMD EPYC 9V45 96-Core Processor",
           "backend": "ONNX Runtime Web / single-thread WASM",
-          "elapsedMs": 904
+          "elapsedMs": 469
         },
         "sourceSha256": {
           "gamecore.js": "beb6ec6666d58424b80e6e7d7cfc2f6801a7d0a77c34791df745612494392981",
@@ -331,7 +331,7 @@
             "wins": 15,
             "losses": 5,
             "provisional": true,
-            "latencyP95Ms": 2.024,
+            "latencyP95Ms": 1.083,
             "decisions": 267
           },
           {
@@ -341,7 +341,7 @@
             "wins": 5,
             "losses": 15,
             "provisional": true,
-            "latencyP95Ms": 1.89,
+            "latencyP95Ms": 1.044,
             "decisions": 255
           }
         ],
@@ -598,7 +598,7 @@
         "rules": "1.0.0",
         "episode": "game",
         "information": "public",
-        "createdAt": "2026-10-27T11:56:47.466Z",
+        "createdAt": "2026-10-27T12:27:27.781Z",
         "protocol": {
           "gamesPerPair": 20,
           "seedStart": 87000000,
@@ -622,9 +622,9 @@
           "node": "v24.22.1",
           "platform": "linux",
           "arch": "x64",
-          "cpu": "AMD EPYC 7763 64-Core Processor",
+          "cpu": "AMD EPYC 9V45 96-Core Processor",
           "backend": "ONNX Runtime Web / single-thread WASM",
-          "elapsedMs": 1186
+          "elapsedMs": 672
         },
         "sourceSha256": {
           "gamecore.js": "beb6ec6666d58424b80e6e7d7cfc2f6801a7d0a77c34791df745612494392981",
@@ -686,7 +686,7 @@
             "wins": 12,
             "losses": 8,
             "provisional": true,
-            "latencyP95Ms": 3.111,
+            "latencyP95Ms": 1.805,
             "decisions": 220
           },
           {
@@ -696,7 +696,7 @@
             "wins": 8,
             "losses": 12,
             "provisional": true,
-            "latencyP95Ms": 2.079,
+            "latencyP95Ms": 1.134,
             "decisions": 218
           }
         ],
@@ -953,7 +953,7 @@
         "rules": "1.0.0",
         "episode": "game",
         "information": "public",
-        "createdAt": "2026-10-27T11:56:48.446Z",
+        "createdAt": "2026-10-27T12:27:28.312Z",
         "protocol": {
           "gamesPerPair": 20,
           "seedStart": 87000000,
@@ -977,9 +977,9 @@
           "node": "v24.22.1",
           "platform": "linux",
           "arch": "x64",
-          "cpu": "AMD EPYC 7763 64-Core Processor",
+          "cpu": "AMD EPYC 9V45 96-Core Processor",
           "backend": "ONNX Runtime Web / single-thread WASM",
-          "elapsedMs": 913
+          "elapsedMs": 482
         },
         "sourceSha256": {
           "gamecore.js": "beb6ec6666d58424b80e6e7d7cfc2f6801a7d0a77c34791df745612494392981",
@@ -1040,7 +1040,7 @@
             "wins": 12,
             "losses": 8,
             "provisional": true,
-            "latencyP95Ms": 3.893,
+            "latencyP95Ms": 2.104,
             "decisions": 224
           },
           {
@@ -1050,7 +1050,7 @@
             "wins": 8,
             "losses": 12,
             "provisional": true,
-            "latencyP95Ms": 2.121,
+            "latencyP95Ms": 1.224,
             "decisions": 220
           }
         ],
@@ -1327,10 +1327,10 @@
         "wins": 8
       }
     ],
-    "latencyP95Ms": 2.121,
+    "latencyP95Ms": 1.224,
     "decisions": 705
   },
   "panelSha256": "197c97f1aaa89f81b70fa287f3e96b3ca9501a317458e38fcf76f5493f4cec81",
-  "sourceCommit": "d1bae68c2ef96618a64006fa725ef24057b849f9",
-  "runUrl": "https://github.com/lucienzhu/3card-royale/actions/runs/40499902327"
+  "sourceCommit": "504645db4625595084aaad8f43d10b6db97450e9",
+  "runUrl": "https://github.com/lucienzhu/3card-royale/actions/runs/40503863484"
 }
