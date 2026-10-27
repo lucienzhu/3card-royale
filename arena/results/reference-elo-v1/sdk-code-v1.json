@@ -1,0 +1,1336 @@
+{
+  "id": "sdk-code-v1",
+  "manifest": {
+    "api": "royale-policy-v1",
+    "id": "sdk-code-v1",
+    "name": "SDK Code AI",
+    "author": "3Card Royale",
+    "license": "MIT",
+    "type": "javascript",
+    "rules": "1.0.0",
+    "episode": "game",
+    "information": "public",
+    "memory": "none",
+    "artifact": {
+      "file": "policy.mjs",
+      "bytes": 199,
+      "sha256": "1af7c73dcaf625eefbfdeec7e1a85c25ac6a8395d123eb5accff42051bca3f4b"
+    }
+  },
+  "receipt": {
+    "schema": 1,
+    "policyId": "sdk-code-v1",
+    "manifestSha256": "7b201028d4dd31ead55ae541af981dabda64d3987f04e13402845663300dbca9",
+    "panelSha256": "197c97f1aaa89f81b70fa287f3e96b3ca9501a317458e38fcf76f5493f4cec81",
+    "games": 4,
+    "seedStart": 88000000,
+    "records": [
+      {
+        "pair": "code-table-v1/sdk-code-v1",
+        "left": "code-table-v1",
+        "right": "sdk-code-v1",
+        "seed": 88000000,
+        "leftSeat": 0,
+        "first": 0,
+        "winner": "sdk-code-v1",
+        "status": "complete",
+        "decisions": 18,
+        "finalStateSha256": "1cdfd9157e7b8c8a21e909b771fd740b022832b52cb7e2b81880c901d91693e2"
+      },
+      {
+        "pair": "code-table-v1/sdk-code-v1",
+        "left": "code-table-v1",
+        "right": "sdk-code-v1",
+        "seed": 88000000,
+        "leftSeat": 1,
+        "first": 0,
+        "winner": "sdk-code-v1",
+        "status": "complete",
+        "decisions": 25,
+        "finalStateSha256": "b5154849c94d74c8f4cabd481058d714c7cf88451dc1c70e9e3ee2eb8cfe2155"
+      },
+      {
+        "pair": "code-table-v1/sdk-code-v1",
+        "left": "code-table-v1",
+        "right": "sdk-code-v1",
+        "seed": 88000001,
+        "leftSeat": 0,
+        "first": 1,
+        "winner": "sdk-code-v1",
+        "status": "complete",
+        "decisions": 80,
+        "finalStateSha256": "b94158c15b5c4624080a1b89e1b2baf6e826519f465814d8bcc7e916d49f7577"
+      },
+      {
+        "pair": "code-table-v1/sdk-code-v1",
+        "left": "code-table-v1",
+        "right": "sdk-code-v1",
+        "seed": 88000001,
+        "leftSeat": 1,
+        "first": 1,
+        "winner": "code-table-v1",
+        "status": "complete",
+        "decisions": 42,
+        "finalStateSha256": "6992f4b230f29c7928d432ead73201f1259c12fe03dc879e992fb2d8426b83c4"
+      }
+    ]
+  },
+  "smokeReport": {
+    "schema": 1,
+    "release": "1.1.0",
+    "season": "public-game-v1",
+    "rules": "1.0.0",
+    "episode": "game",
+    "information": "public",
+    "createdAt": "2026-10-27T11:56:43.586Z",
+    "protocol": {
+      "gamesPerPair": 4,
+      "seedStart": 88000000,
+      "seedCount": 2,
+      "levels": [
+        2,
+        2
+      ],
+      "pairedSeats": true,
+      "balancedFirst": true,
+      "actionOrder": "SDK canonical",
+      "maxDecisions": 4096,
+      "decisionTimeoutMs": 1000,
+      "initialElo": 1500,
+      "k": 24,
+      "anchor": "code-table-v1",
+      "ratingOrder": "seed, then alphabetical pair; simultaneous updates within seat pairs",
+      "provisionalBelowGames": 200
+    },
+    "runtime": {
+      "node": "v24.22.1",
+      "platform": "linux",
+      "arch": "x64",
+      "cpu": "AMD EPYC 7763 64-Core Processor",
+      "backend": "ONNX Runtime Web / single-thread WASM",
+      "elapsedMs": 373
+    },
+    "sourceSha256": {
+      "gamecore.js": "beb6ec6666d58424b80e6e7d7cfc2f6801a7d0a77c34791df745612494392981",
+      "sdk/index.js": "e9f2b4e1d9de59d0786dca5ac4b47580d3c6456f812c4f532b6af33f438de717",
+      "sdk/features.js": "043b0a66e0e0dbe877760ffa51515d5b1178e0e53e479d5d49028762e4479562",
+      "sdk/policy.js": "18d660f922a46cf66c238794c65bcca7373d3bbfbf53748ade6ab107e85bbe3e",
+      "sdk/easy-policy.js": "1af6b4fb4aa6003f513419821bc16bf45a09169433037eee55cce0dd44af7ae2",
+      "policies/contract.mjs": "e608cc76eabb14a0a58d4f29be93c24fb7bd9986cd83b2fcdf6108f2a5f3331d",
+      "policies/runtime.mjs": "f50b6c86103dad996bf82433eede746a66bad8847e1a3923e151b9cf03828f08",
+      "policies/client.mjs": "44d6b09ef10b9c3c56d09719ac2b8b4aba8b54ebb615f1cb445e2e48bd4913b1",
+      "policies/worker.mjs": "67c9a2c9b9818f874ec3e3d254b7aba0eb897116fd7fccc55e8ad4cacef2f263",
+      "policies/dependencies.mjs": "68b31ca1b81b339d6ee8263ea32fd8bba818c1ab326f5cac6a0b4147cf4a5dc1",
+      "policies/catalog.mjs": "ce4f3a24ef9d1f939adc435e48c6c37f06e6a817f66011dd2c9facb4ec01806f",
+      "arena/evaluate.mjs": "1f37fcb89e48e530a71e0f719a3f9edc15c7ee74d8736f582e75c91b5be96a80",
+      "arena/elo.mjs": "45316930c3f5cf374b85bf8f19e86ad257379b58848003bb770f70b8485f54e5"
+    },
+    "policies": [
+      {
+        "api": "royale-policy-v1",
+        "id": "code-table-v1",
+        "name": "Code AI",
+        "author": "3Card Royale",
+        "license": "MIT",
+        "type": "javascript",
+        "rules": "1.0.0",
+        "episode": "game",
+        "information": "public",
+        "memory": "none",
+        "artifact": {
+          "file": "policy.mjs",
+          "bytes": 1533,
+          "sha256": "fe07b4669f18a59fa4cc28fe9c7fa4c4814c67fd0608262582a45a3085b81ff6"
+        }
+      },
+      {
+        "api": "royale-policy-v1",
+        "id": "sdk-code-v1",
+        "name": "SDK Code AI",
+        "author": "3Card Royale",
+        "license": "MIT",
+        "type": "javascript",
+        "rules": "1.0.0",
+        "episode": "game",
+        "information": "public",
+        "memory": "none",
+        "artifact": {
+          "file": "policy.mjs",
+          "bytes": 199,
+          "sha256": "1af7c73dcaf625eefbfdeec7e1a85c25ac6a8395d123eb5accff42051bca3f4b"
+        }
+      }
+    ],
+    "leaderboard": [
+      {
+        "id": "sdk-code-v1",
+        "elo": 1541,
+        "games": 4,
+        "wins": 3,
+        "losses": 1,
+        "provisional": true,
+        "latencyP95Ms": 3.327,
+        "decisions": 64
+      },
+      {
+        "id": "code-table-v1",
+        "elo": 1500,
+        "games": 4,
+        "wins": 1,
+        "losses": 3,
+        "provisional": true,
+        "latencyP95Ms": 3.905,
+        "decisions": 59
+      }
+    ],
+    "records": [
+      {
+        "pair": "code-table-v1/sdk-code-v1",
+        "left": "code-table-v1",
+        "right": "sdk-code-v1",
+        "seed": 88000000,
+        "leftSeat": 0,
+        "first": 0,
+        "winner": "sdk-code-v1",
+        "status": "complete",
+        "decisions": 18,
+        "finalStateSha256": "1cdfd9157e7b8c8a21e909b771fd740b022832b52cb7e2b81880c901d91693e2"
+      },
+      {
+        "pair": "code-table-v1/sdk-code-v1",
+        "left": "code-table-v1",
+        "right": "sdk-code-v1",
+        "seed": 88000000,
+        "leftSeat": 1,
+        "first": 0,
+        "winner": "sdk-code-v1",
+        "status": "complete",
+        "decisions": 25,
+        "finalStateSha256": "b5154849c94d74c8f4cabd481058d714c7cf88451dc1c70e9e3ee2eb8cfe2155"
+      },
+      {
+        "pair": "code-table-v1/sdk-code-v1",
+        "left": "code-table-v1",
+        "right": "sdk-code-v1",
+        "seed": 88000001,
+        "leftSeat": 0,
+        "first": 1,
+        "winner": "sdk-code-v1",
+        "status": "complete",
+        "decisions": 80,
+        "finalStateSha256": "b94158c15b5c4624080a1b89e1b2baf6e826519f465814d8bcc7e916d49f7577"
+      },
+      {
+        "pair": "code-table-v1/sdk-code-v1",
+        "left": "code-table-v1",
+        "right": "sdk-code-v1",
+        "seed": 88000001,
+        "leftSeat": 1,
+        "first": 1,
+        "winner": "code-table-v1",
+        "status": "complete",
+        "decisions": 42,
+        "finalStateSha256": "6992f4b230f29c7928d432ead73201f1259c12fe03dc879e992fb2d8426b83c4"
+      }
+    ]
+  },
+  "matches": [
+    {
+      "opponent": "easy-v2",
+      "report": {
+        "schema": 1,
+        "release": "1.1.0",
+        "season": "public-game-v1",
+        "rules": "1.0.0",
+        "episode": "game",
+        "information": "public",
+        "createdAt": "2026-10-27T11:56:46.218Z",
+        "protocol": {
+          "gamesPerPair": 20,
+          "seedStart": 87000000,
+          "seedCount": 10,
+          "levels": [
+            2,
+            2
+          ],
+          "pairedSeats": true,
+          "balancedFirst": true,
+          "actionOrder": "SDK canonical",
+          "maxDecisions": 4096,
+          "decisionTimeoutMs": 1000,
+          "initialElo": 1500,
+          "k": 24,
+          "anchor": "code-table-v1",
+          "ratingOrder": "seed, then alphabetical pair; simultaneous updates within seat pairs",
+          "provisionalBelowGames": 200
+        },
+        "runtime": {
+          "node": "v24.22.1",
+          "platform": "linux",
+          "arch": "x64",
+          "cpu": "AMD EPYC 7763 64-Core Processor",
+          "backend": "ONNX Runtime Web / single-thread WASM",
+          "elapsedMs": 904
+        },
+        "sourceSha256": {
+          "gamecore.js": "beb6ec6666d58424b80e6e7d7cfc2f6801a7d0a77c34791df745612494392981",
+          "sdk/index.js": "e9f2b4e1d9de59d0786dca5ac4b47580d3c6456f812c4f532b6af33f438de717",
+          "sdk/features.js": "043b0a66e0e0dbe877760ffa51515d5b1178e0e53e479d5d49028762e4479562",
+          "sdk/policy.js": "18d660f922a46cf66c238794c65bcca7373d3bbfbf53748ade6ab107e85bbe3e",
+          "sdk/easy-policy.js": "1af6b4fb4aa6003f513419821bc16bf45a09169433037eee55cce0dd44af7ae2",
+          "policies/contract.mjs": "e608cc76eabb14a0a58d4f29be93c24fb7bd9986cd83b2fcdf6108f2a5f3331d",
+          "policies/runtime.mjs": "f50b6c86103dad996bf82433eede746a66bad8847e1a3923e151b9cf03828f08",
+          "policies/client.mjs": "44d6b09ef10b9c3c56d09719ac2b8b4aba8b54ebb615f1cb445e2e48bd4913b1",
+          "policies/worker.mjs": "67c9a2c9b9818f874ec3e3d254b7aba0eb897116fd7fccc55e8ad4cacef2f263",
+          "policies/dependencies.mjs": "68b31ca1b81b339d6ee8263ea32fd8bba818c1ab326f5cac6a0b4147cf4a5dc1",
+          "policies/catalog.mjs": "ce4f3a24ef9d1f939adc435e48c6c37f06e6a817f66011dd2c9facb4ec01806f",
+          "arena/evaluate.mjs": "1f37fcb89e48e530a71e0f719a3f9edc15c7ee74d8736f582e75c91b5be96a80",
+          "arena/elo.mjs": "45316930c3f5cf374b85bf8f19e86ad257379b58848003bb770f70b8485f54e5"
+        },
+        "policies": [
+          {
+            "api": "royale-policy-v1",
+            "id": "easy-v2",
+            "name": "Easy · 64",
+            "author": "3Card Royale",
+            "license": "MIT",
+            "type": "javascript",
+            "rules": "1.0.0",
+            "episode": "game",
+            "information": "public",
+            "memory": "none",
+            "artifact": {
+              "file": "policy.mjs",
+              "bytes": 199,
+              "sha256": "e7d082e63ebd817e5e0c9b078c073b492e453af4e19b49b518fa2744c16d78e7"
+            }
+          },
+          {
+            "api": "royale-policy-v1",
+            "id": "sdk-code-v1",
+            "name": "SDK Code AI",
+            "author": "3Card Royale",
+            "license": "MIT",
+            "type": "javascript",
+            "rules": "1.0.0",
+            "episode": "game",
+            "information": "public",
+            "memory": "none",
+            "artifact": {
+              "file": "policy.mjs",
+              "bytes": 199,
+              "sha256": "1af7c73dcaf625eefbfdeec7e1a85c25ac6a8395d123eb5accff42051bca3f4b"
+            }
+          }
+        ],
+        "leaderboard": [
+          {
+            "id": "sdk-code-v1",
+            "elo": 1568,
+            "games": 20,
+            "wins": 15,
+            "losses": 5,
+            "provisional": true,
+            "latencyP95Ms": 2.024,
+            "decisions": 267
+          },
+          {
+            "id": "easy-v2",
+            "elo": 1432,
+            "games": 20,
+            "wins": 5,
+            "losses": 15,
+            "provisional": true,
+            "latencyP95Ms": 1.89,
+            "decisions": 255
+          }
+        ],
+        "records": [
+          {
+            "pair": "easy-v2/sdk-code-v1",
+            "left": "easy-v2",
+            "right": "sdk-code-v1",
+            "seed": 87000000,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 50,
+            "finalStateSha256": "857cf08372ef5e31d96e4cdec8f9648f0c135b38f8722341f6cb01866d953455"
+          },
+          {
+            "pair": "easy-v2/sdk-code-v1",
+            "left": "easy-v2",
+            "right": "sdk-code-v1",
+            "seed": 87000000,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 42,
+            "finalStateSha256": "c6ab054e10fbc82d5833dc949759da5d929a95c7100788b2c271ae8196a96b3d"
+          },
+          {
+            "pair": "easy-v2/sdk-code-v1",
+            "left": "easy-v2",
+            "right": "sdk-code-v1",
+            "seed": 87000001,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 28,
+            "finalStateSha256": "61d8814213c67dbf36ef759ec221a892fa64a60e9b0afc93bd29e9f667f7a386"
+          },
+          {
+            "pair": "easy-v2/sdk-code-v1",
+            "left": "easy-v2",
+            "right": "sdk-code-v1",
+            "seed": 87000001,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "easy-v2",
+            "status": "complete",
+            "decisions": 45,
+            "finalStateSha256": "251031df64814faf7e40262427a72ff177d9ba61c4cb9ab4b6f584de66d36a27"
+          },
+          {
+            "pair": "easy-v2/sdk-code-v1",
+            "left": "easy-v2",
+            "right": "sdk-code-v1",
+            "seed": 87000002,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 66,
+            "finalStateSha256": "620ad4814240bcdbf34593a466ac35620309fbd6b58effc6e75ec7b6bf55d657"
+          },
+          {
+            "pair": "easy-v2/sdk-code-v1",
+            "left": "easy-v2",
+            "right": "sdk-code-v1",
+            "seed": 87000002,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 31,
+            "finalStateSha256": "fedc5f9d9f5e0613102444303b2243943a64360784a99d4b9b3a52fa93d8891e"
+          },
+          {
+            "pair": "easy-v2/sdk-code-v1",
+            "left": "easy-v2",
+            "right": "sdk-code-v1",
+            "seed": 87000003,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "easy-v2",
+            "status": "complete",
+            "decisions": 8,
+            "finalStateSha256": "2340b153c803fd3d7094866dacbb6f2ea2b40108a7b4e1f5b15777f45b70d168"
+          },
+          {
+            "pair": "easy-v2/sdk-code-v1",
+            "left": "easy-v2",
+            "right": "sdk-code-v1",
+            "seed": 87000003,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 8,
+            "finalStateSha256": "2340b153c803fd3d7094866dacbb6f2ea2b40108a7b4e1f5b15777f45b70d168"
+          },
+          {
+            "pair": "easy-v2/sdk-code-v1",
+            "left": "easy-v2",
+            "right": "sdk-code-v1",
+            "seed": 87000004,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 67,
+            "finalStateSha256": "93542936be6b28194769c84518016d083bf7da52f39454305d5be06214c7af58"
+          },
+          {
+            "pair": "easy-v2/sdk-code-v1",
+            "left": "easy-v2",
+            "right": "sdk-code-v1",
+            "seed": 87000004,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "easy-v2",
+            "status": "complete",
+            "decisions": 22,
+            "finalStateSha256": "ba642a380e82f1170333caa717c18c1ecec1fda96bb0ecfb1a22f150d0c86fca"
+          },
+          {
+            "pair": "easy-v2/sdk-code-v1",
+            "left": "easy-v2",
+            "right": "sdk-code-v1",
+            "seed": 87000005,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 30,
+            "finalStateSha256": "f5c78fef5431eb06aa4842129f3fd8504ec680c89e4466278d2a26be0b7233fa"
+          },
+          {
+            "pair": "easy-v2/sdk-code-v1",
+            "left": "easy-v2",
+            "right": "sdk-code-v1",
+            "seed": 87000005,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 36,
+            "finalStateSha256": "5cc9514907795b375d1b0de0c233704a04b54267af1c9dd3d61335657eb4862d"
+          },
+          {
+            "pair": "easy-v2/sdk-code-v1",
+            "left": "easy-v2",
+            "right": "sdk-code-v1",
+            "seed": 87000006,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 33,
+            "finalStateSha256": "f0194f2f14744ccc1ba0ce312b790bce0ce9585f253af786829b2ea6a0e7082a"
+          },
+          {
+            "pair": "easy-v2/sdk-code-v1",
+            "left": "easy-v2",
+            "right": "sdk-code-v1",
+            "seed": 87000006,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 41,
+            "finalStateSha256": "9bb6f6f8e1b334bde6bafd3c97269c91a3d367e0b216078d990a3525b5d61965"
+          },
+          {
+            "pair": "easy-v2/sdk-code-v1",
+            "left": "easy-v2",
+            "right": "sdk-code-v1",
+            "seed": 87000007,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 31,
+            "finalStateSha256": "2fadd0149260c334878f8d551a6637dff39c793ecd30a6e08de2ede6067efe65"
+          },
+          {
+            "pair": "easy-v2/sdk-code-v1",
+            "left": "easy-v2",
+            "right": "sdk-code-v1",
+            "seed": 87000007,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "easy-v2",
+            "status": "complete",
+            "decisions": 31,
+            "finalStateSha256": "ccde9a4936e5a7ead4d8dadc4e4ff9972d9c7fe0d7c5de68854cf187021c9846"
+          },
+          {
+            "pair": "easy-v2/sdk-code-v1",
+            "left": "easy-v2",
+            "right": "sdk-code-v1",
+            "seed": 87000008,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 17,
+            "finalStateSha256": "e8b7cea39561c8ad74cf09555d5ae31fb2145845af9202e8e8c8fb4d22799203"
+          },
+          {
+            "pair": "easy-v2/sdk-code-v1",
+            "left": "easy-v2",
+            "right": "sdk-code-v1",
+            "seed": 87000008,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "easy-v2",
+            "status": "complete",
+            "decisions": 35,
+            "finalStateSha256": "44d249f57a0ce03e46f5b6e7ef7c1cb60cfa253d642038317be3ce95efdf2991"
+          },
+          {
+            "pair": "easy-v2/sdk-code-v1",
+            "left": "easy-v2",
+            "right": "sdk-code-v1",
+            "seed": 87000009,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 46,
+            "finalStateSha256": "23645ce35d45a1fdd8602c893a1595f32e2213218f2c5e86effced39a4727f06"
+          },
+          {
+            "pair": "easy-v2/sdk-code-v1",
+            "left": "easy-v2",
+            "right": "sdk-code-v1",
+            "seed": 87000009,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 37,
+            "finalStateSha256": "b08b42339aa4ae40b25caef1a7f8ffc9d86fbed7e8fd19f2cc17887a351bd287"
+          }
+        ]
+      }
+    },
+    {
+      "opponent": "nn-256-v1",
+      "report": {
+        "schema": 1,
+        "release": "1.1.0",
+        "season": "public-game-v1",
+        "rules": "1.0.0",
+        "episode": "game",
+        "information": "public",
+        "createdAt": "2026-10-27T11:56:47.466Z",
+        "protocol": {
+          "gamesPerPair": 20,
+          "seedStart": 87000000,
+          "seedCount": 10,
+          "levels": [
+            2,
+            2
+          ],
+          "pairedSeats": true,
+          "balancedFirst": true,
+          "actionOrder": "SDK canonical",
+          "maxDecisions": 4096,
+          "decisionTimeoutMs": 1000,
+          "initialElo": 1500,
+          "k": 24,
+          "anchor": "code-table-v1",
+          "ratingOrder": "seed, then alphabetical pair; simultaneous updates within seat pairs",
+          "provisionalBelowGames": 200
+        },
+        "runtime": {
+          "node": "v24.22.1",
+          "platform": "linux",
+          "arch": "x64",
+          "cpu": "AMD EPYC 7763 64-Core Processor",
+          "backend": "ONNX Runtime Web / single-thread WASM",
+          "elapsedMs": 1186
+        },
+        "sourceSha256": {
+          "gamecore.js": "beb6ec6666d58424b80e6e7d7cfc2f6801a7d0a77c34791df745612494392981",
+          "sdk/index.js": "e9f2b4e1d9de59d0786dca5ac4b47580d3c6456f812c4f532b6af33f438de717",
+          "sdk/features.js": "043b0a66e0e0dbe877760ffa51515d5b1178e0e53e479d5d49028762e4479562",
+          "sdk/policy.js": "18d660f922a46cf66c238794c65bcca7373d3bbfbf53748ade6ab107e85bbe3e",
+          "sdk/easy-policy.js": "1af6b4fb4aa6003f513419821bc16bf45a09169433037eee55cce0dd44af7ae2",
+          "policies/contract.mjs": "e608cc76eabb14a0a58d4f29be93c24fb7bd9986cd83b2fcdf6108f2a5f3331d",
+          "policies/runtime.mjs": "f50b6c86103dad996bf82433eede746a66bad8847e1a3923e151b9cf03828f08",
+          "policies/client.mjs": "44d6b09ef10b9c3c56d09719ac2b8b4aba8b54ebb615f1cb445e2e48bd4913b1",
+          "policies/worker.mjs": "67c9a2c9b9818f874ec3e3d254b7aba0eb897116fd7fccc55e8ad4cacef2f263",
+          "policies/dependencies.mjs": "68b31ca1b81b339d6ee8263ea32fd8bba818c1ab326f5cac6a0b4147cf4a5dc1",
+          "policies/catalog.mjs": "ce4f3a24ef9d1f939adc435e48c6c37f06e6a817f66011dd2c9facb4ec01806f",
+          "arena/evaluate.mjs": "1f37fcb89e48e530a71e0f719a3f9edc15c7ee74d8736f582e75c91b5be96a80",
+          "arena/elo.mjs": "45316930c3f5cf374b85bf8f19e86ad257379b58848003bb770f70b8485f54e5"
+        },
+        "policies": [
+          {
+            "api": "royale-policy-v1",
+            "id": "nn-256-v1",
+            "name": "NN · 256 → 128",
+            "author": "3Card Royale",
+            "license": "MIT",
+            "type": "onnx",
+            "rules": "1.0.0",
+            "episode": "game",
+            "information": "public",
+            "memory": "none",
+            "artifact": {
+              "file": "policy.onnx",
+              "bytes": 552407,
+              "sha256": "5b98061d4188c116080eb6784c6378536a89e0b3c1db333df88217379e4dde13"
+            },
+            "features": "gym-v1"
+          },
+          {
+            "api": "royale-policy-v1",
+            "id": "sdk-code-v1",
+            "name": "SDK Code AI",
+            "author": "3Card Royale",
+            "license": "MIT",
+            "type": "javascript",
+            "rules": "1.0.0",
+            "episode": "game",
+            "information": "public",
+            "memory": "none",
+            "artifact": {
+              "file": "policy.mjs",
+              "bytes": 199,
+              "sha256": "1af7c73dcaf625eefbfdeec7e1a85c25ac6a8395d123eb5accff42051bca3f4b"
+            }
+          }
+        ],
+        "leaderboard": [
+          {
+            "id": "nn-256-v1",
+            "elo": 1529,
+            "games": 20,
+            "wins": 12,
+            "losses": 8,
+            "provisional": true,
+            "latencyP95Ms": 3.111,
+            "decisions": 220
+          },
+          {
+            "id": "sdk-code-v1",
+            "elo": 1471,
+            "games": 20,
+            "wins": 8,
+            "losses": 12,
+            "provisional": true,
+            "latencyP95Ms": 2.079,
+            "decisions": 218
+          }
+        ],
+        "records": [
+          {
+            "pair": "nn-256-v1/sdk-code-v1",
+            "left": "nn-256-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000000,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 34,
+            "finalStateSha256": "c1a76498e6f63060dc14fc02679cb8e090375b3005499fde63574ee4adc0711e"
+          },
+          {
+            "pair": "nn-256-v1/sdk-code-v1",
+            "left": "nn-256-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000000,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "nn-256-v1",
+            "status": "complete",
+            "decisions": 34,
+            "finalStateSha256": "c1a76498e6f63060dc14fc02679cb8e090375b3005499fde63574ee4adc0711e"
+          },
+          {
+            "pair": "nn-256-v1/sdk-code-v1",
+            "left": "nn-256-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000001,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "nn-256-v1",
+            "status": "complete",
+            "decisions": 37,
+            "finalStateSha256": "67829444e31c7619f333046f141934905006ed0f2bb53bb41e24635179fba1ac"
+          },
+          {
+            "pair": "nn-256-v1/sdk-code-v1",
+            "left": "nn-256-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000001,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "nn-256-v1",
+            "status": "complete",
+            "decisions": 27,
+            "finalStateSha256": "b93e31c68c32ac37e41832a3f73f9c2b85dab90882b1e56a06696626e4d343da"
+          },
+          {
+            "pair": "nn-256-v1/sdk-code-v1",
+            "left": "nn-256-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000002,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "nn-256-v1",
+            "status": "complete",
+            "decisions": 30,
+            "finalStateSha256": "6158200bad87df964393c9b97f80cab11162530df1b1dd4e20605ada04e4359a"
+          },
+          {
+            "pair": "nn-256-v1/sdk-code-v1",
+            "left": "nn-256-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000002,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 30,
+            "finalStateSha256": "a14947b903961cb9cdcfa436023fad8c50d135c478b0b14df3d9617b01d8945e"
+          },
+          {
+            "pair": "nn-256-v1/sdk-code-v1",
+            "left": "nn-256-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000003,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "nn-256-v1",
+            "status": "complete",
+            "decisions": 8,
+            "finalStateSha256": "2340b153c803fd3d7094866dacbb6f2ea2b40108a7b4e1f5b15777f45b70d168"
+          },
+          {
+            "pair": "nn-256-v1/sdk-code-v1",
+            "left": "nn-256-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000003,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 8,
+            "finalStateSha256": "2340b153c803fd3d7094866dacbb6f2ea2b40108a7b4e1f5b15777f45b70d168"
+          },
+          {
+            "pair": "nn-256-v1/sdk-code-v1",
+            "left": "nn-256-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000004,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 34,
+            "finalStateSha256": "c78e221526d6a7321ace1f2ab46a8eab1edbe37417562a5dc598f7b25b628549"
+          },
+          {
+            "pair": "nn-256-v1/sdk-code-v1",
+            "left": "nn-256-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000004,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "nn-256-v1",
+            "status": "complete",
+            "decisions": 35,
+            "finalStateSha256": "9abc831ed7b7c2046020f42eb9729bacf6a9950390795abd08e7c1abeb81b42e"
+          },
+          {
+            "pair": "nn-256-v1/sdk-code-v1",
+            "left": "nn-256-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000005,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 30,
+            "finalStateSha256": "b7917f9b49ef04a106df88100281de8cf1465eadf32f09f5f92db1ddb31d64d5"
+          },
+          {
+            "pair": "nn-256-v1/sdk-code-v1",
+            "left": "nn-256-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000005,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "nn-256-v1",
+            "status": "complete",
+            "decisions": 26,
+            "finalStateSha256": "e884ccd054a1abcc59b98ffe675581f8e68ddbedcee16c598949aba449d8f31d"
+          },
+          {
+            "pair": "nn-256-v1/sdk-code-v1",
+            "left": "nn-256-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000006,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "nn-256-v1",
+            "status": "complete",
+            "decisions": 45,
+            "finalStateSha256": "b71e7c821633d0af38fc94ade21211c886ca7e19a33d116b160e63791f50ce04"
+          },
+          {
+            "pair": "nn-256-v1/sdk-code-v1",
+            "left": "nn-256-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000006,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "nn-256-v1",
+            "status": "complete",
+            "decisions": 37,
+            "finalStateSha256": "96a516fb60cd5f12a332d96ac59a841b88b17e2676a8be52f7595ad1e3b2ef92"
+          },
+          {
+            "pair": "nn-256-v1/sdk-code-v1",
+            "left": "nn-256-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000007,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 32,
+            "finalStateSha256": "04504a00be4b6fee411694e61a3e1ac2f44019dc6d45a2c313414ff38e61cb29"
+          },
+          {
+            "pair": "nn-256-v1/sdk-code-v1",
+            "left": "nn-256-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000007,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 37,
+            "finalStateSha256": "48683c1c080da6807b4a8ae98494c20f06fa9c1386409cb275dc94d2b3655b94"
+          },
+          {
+            "pair": "nn-256-v1/sdk-code-v1",
+            "left": "nn-256-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000008,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "nn-256-v1",
+            "status": "complete",
+            "decisions": 24,
+            "finalStateSha256": "29f4f11247e2db9925f872c9958335e2e2bbe1d69ed82e9014152b21c5495215"
+          },
+          {
+            "pair": "nn-256-v1/sdk-code-v1",
+            "left": "nn-256-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000008,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 24,
+            "finalStateSha256": "29f4f11247e2db9925f872c9958335e2e2bbe1d69ed82e9014152b21c5495215"
+          },
+          {
+            "pair": "nn-256-v1/sdk-code-v1",
+            "left": "nn-256-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000009,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "nn-256-v1",
+            "status": "complete",
+            "decisions": 32,
+            "finalStateSha256": "1d6d5e864a85e1187b65b297ba9b9e6915ea09f27f5e2a7bef02904c1f7ba62d"
+          },
+          {
+            "pair": "nn-256-v1/sdk-code-v1",
+            "left": "nn-256-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000009,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "nn-256-v1",
+            "status": "complete",
+            "decisions": 30,
+            "finalStateSha256": "d03c9adc326937ba3691c0c605735b17bff94b6f39e8d8d0af7d32b0fd90eb5c"
+          }
+        ]
+      }
+    },
+    {
+      "opponent": "code-table-v1",
+      "report": {
+        "schema": 1,
+        "release": "1.1.0",
+        "season": "public-game-v1",
+        "rules": "1.0.0",
+        "episode": "game",
+        "information": "public",
+        "createdAt": "2026-10-27T11:56:48.446Z",
+        "protocol": {
+          "gamesPerPair": 20,
+          "seedStart": 87000000,
+          "seedCount": 10,
+          "levels": [
+            2,
+            2
+          ],
+          "pairedSeats": true,
+          "balancedFirst": true,
+          "actionOrder": "SDK canonical",
+          "maxDecisions": 4096,
+          "decisionTimeoutMs": 1000,
+          "initialElo": 1500,
+          "k": 24,
+          "anchor": "code-table-v1",
+          "ratingOrder": "seed, then alphabetical pair; simultaneous updates within seat pairs",
+          "provisionalBelowGames": 200
+        },
+        "runtime": {
+          "node": "v24.22.1",
+          "platform": "linux",
+          "arch": "x64",
+          "cpu": "AMD EPYC 7763 64-Core Processor",
+          "backend": "ONNX Runtime Web / single-thread WASM",
+          "elapsedMs": 913
+        },
+        "sourceSha256": {
+          "gamecore.js": "beb6ec6666d58424b80e6e7d7cfc2f6801a7d0a77c34791df745612494392981",
+          "sdk/index.js": "e9f2b4e1d9de59d0786dca5ac4b47580d3c6456f812c4f532b6af33f438de717",
+          "sdk/features.js": "043b0a66e0e0dbe877760ffa51515d5b1178e0e53e479d5d49028762e4479562",
+          "sdk/policy.js": "18d660f922a46cf66c238794c65bcca7373d3bbfbf53748ade6ab107e85bbe3e",
+          "sdk/easy-policy.js": "1af6b4fb4aa6003f513419821bc16bf45a09169433037eee55cce0dd44af7ae2",
+          "policies/contract.mjs": "e608cc76eabb14a0a58d4f29be93c24fb7bd9986cd83b2fcdf6108f2a5f3331d",
+          "policies/runtime.mjs": "f50b6c86103dad996bf82433eede746a66bad8847e1a3923e151b9cf03828f08",
+          "policies/client.mjs": "44d6b09ef10b9c3c56d09719ac2b8b4aba8b54ebb615f1cb445e2e48bd4913b1",
+          "policies/worker.mjs": "67c9a2c9b9818f874ec3e3d254b7aba0eb897116fd7fccc55e8ad4cacef2f263",
+          "policies/dependencies.mjs": "68b31ca1b81b339d6ee8263ea32fd8bba818c1ab326f5cac6a0b4147cf4a5dc1",
+          "policies/catalog.mjs": "ce4f3a24ef9d1f939adc435e48c6c37f06e6a817f66011dd2c9facb4ec01806f",
+          "arena/evaluate.mjs": "1f37fcb89e48e530a71e0f719a3f9edc15c7ee74d8736f582e75c91b5be96a80",
+          "arena/elo.mjs": "45316930c3f5cf374b85bf8f19e86ad257379b58848003bb770f70b8485f54e5"
+        },
+        "policies": [
+          {
+            "api": "royale-policy-v1",
+            "id": "code-table-v1",
+            "name": "Code AI",
+            "author": "3Card Royale",
+            "license": "MIT",
+            "type": "javascript",
+            "rules": "1.0.0",
+            "episode": "game",
+            "information": "public",
+            "memory": "none",
+            "artifact": {
+              "file": "policy.mjs",
+              "bytes": 1533,
+              "sha256": "fe07b4669f18a59fa4cc28fe9c7fa4c4814c67fd0608262582a45a3085b81ff6"
+            }
+          },
+          {
+            "api": "royale-policy-v1",
+            "id": "sdk-code-v1",
+            "name": "SDK Code AI",
+            "author": "3Card Royale",
+            "license": "MIT",
+            "type": "javascript",
+            "rules": "1.0.0",
+            "episode": "game",
+            "information": "public",
+            "memory": "none",
+            "artifact": {
+              "file": "policy.mjs",
+              "bytes": 199,
+              "sha256": "1af7c73dcaf625eefbfdeec7e1a85c25ac6a8395d123eb5accff42051bca3f4b"
+            }
+          }
+        ],
+        "leaderboard": [
+          {
+            "id": "code-table-v1",
+            "elo": 1500,
+            "games": 20,
+            "wins": 12,
+            "losses": 8,
+            "provisional": true,
+            "latencyP95Ms": 3.893,
+            "decisions": 224
+          },
+          {
+            "id": "sdk-code-v1",
+            "elo": 1454,
+            "games": 20,
+            "wins": 8,
+            "losses": 12,
+            "provisional": true,
+            "latencyP95Ms": 2.121,
+            "decisions": 220
+          }
+        ],
+        "records": [
+          {
+            "pair": "code-table-v1/sdk-code-v1",
+            "left": "code-table-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000000,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 15,
+            "finalStateSha256": "31828792709fbf06fe1d4c943b0b939cd974506864cb308e19b8a49eb48ffbc3"
+          },
+          {
+            "pair": "code-table-v1/sdk-code-v1",
+            "left": "code-table-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000000,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 44,
+            "finalStateSha256": "6611f0a6eefec3a1174c2d18f789bf14902c95a5b2337413fdc9bc4abd88ee6b"
+          },
+          {
+            "pair": "code-table-v1/sdk-code-v1",
+            "left": "code-table-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000001,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 39,
+            "finalStateSha256": "e5375038f0ce165205b7cfb7cd661b70ed02f5871126ffc98e5c897b0f1d6a32"
+          },
+          {
+            "pair": "code-table-v1/sdk-code-v1",
+            "left": "code-table-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000001,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 42,
+            "finalStateSha256": "611f9929cdf8062770ad0b2cdd5eb67ba6dd98bbc880e0989479bfcdaf12887b"
+          },
+          {
+            "pair": "code-table-v1/sdk-code-v1",
+            "left": "code-table-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000002,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 43,
+            "finalStateSha256": "44ceb636b4412ddd46ac692af848aed5bceafdc5b35f4dfabcf5637762abc692"
+          },
+          {
+            "pair": "code-table-v1/sdk-code-v1",
+            "left": "code-table-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000002,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 33,
+            "finalStateSha256": "c852d501c2cc8ba86c3ffe0df5c13a5d5fee9216fa628045d84f81ba14d5ea4e"
+          },
+          {
+            "pair": "code-table-v1/sdk-code-v1",
+            "left": "code-table-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000003,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 8,
+            "finalStateSha256": "2340b153c803fd3d7094866dacbb6f2ea2b40108a7b4e1f5b15777f45b70d168"
+          },
+          {
+            "pair": "code-table-v1/sdk-code-v1",
+            "left": "code-table-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000003,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 8,
+            "finalStateSha256": "599d16beca81e8756c81648a3ca5acc06d1392c00d15fe379213ae5e46ea629e"
+          },
+          {
+            "pair": "code-table-v1/sdk-code-v1",
+            "left": "code-table-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000004,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 32,
+            "finalStateSha256": "3da8d910f05ebbddfa3174dbd032372874e66fba3bc42049b6c2520c88421035"
+          },
+          {
+            "pair": "code-table-v1/sdk-code-v1",
+            "left": "code-table-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000004,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 22,
+            "finalStateSha256": "3de25100a0a7512b52140e3e89da34ce8e4d1d367078b713d959bd1083447973"
+          },
+          {
+            "pair": "code-table-v1/sdk-code-v1",
+            "left": "code-table-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000005,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 38,
+            "finalStateSha256": "a604bf0a88247cb0e126d51c96ffe91ac2683a10b4b68f029e23f3d5ecf32a21"
+          },
+          {
+            "pair": "code-table-v1/sdk-code-v1",
+            "left": "code-table-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000005,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 37,
+            "finalStateSha256": "714f201f0120aa4529fd21c4fed4ad2514a258b9278c928ef7ce51a0252a9e14"
+          },
+          {
+            "pair": "code-table-v1/sdk-code-v1",
+            "left": "code-table-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000006,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 25,
+            "finalStateSha256": "cfdb2c6af62d2bc8992e9cba98e3858466b5a692b2036799cffb3705e329ebf9"
+          },
+          {
+            "pair": "code-table-v1/sdk-code-v1",
+            "left": "code-table-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000006,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 21,
+            "finalStateSha256": "9af77f38bf3dde9f4c55744e16f4e455f62b01461ef867a01310a3f3ac54b324"
+          },
+          {
+            "pair": "code-table-v1/sdk-code-v1",
+            "left": "code-table-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000007,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 48,
+            "finalStateSha256": "b468a030eedb9d4c31e10caa2179871f5b19c52107d5964137d82d81979c5b26"
+          },
+          {
+            "pair": "code-table-v1/sdk-code-v1",
+            "left": "code-table-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000007,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 52,
+            "finalStateSha256": "e6ef0fbe558d7fe01a042f3c6cbbb9c7e9f8ec4913fb47d34b2d34b7840c7c53"
+          },
+          {
+            "pair": "code-table-v1/sdk-code-v1",
+            "left": "code-table-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000008,
+            "leftSeat": 0,
+            "first": 0,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 17,
+            "finalStateSha256": "dfb96a8937eb999b0dc2cba602fd52b982ddcea436de434ac92d7a449ef8ecb3"
+          },
+          {
+            "pair": "code-table-v1/sdk-code-v1",
+            "left": "code-table-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000008,
+            "leftSeat": 1,
+            "first": 0,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 17,
+            "finalStateSha256": "4fc43d3fb2de097def0a5711737687bbf2aadb6731d8069859202d0522d10331"
+          },
+          {
+            "pair": "code-table-v1/sdk-code-v1",
+            "left": "code-table-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000009,
+            "leftSeat": 0,
+            "first": 1,
+            "winner": "sdk-code-v1",
+            "status": "complete",
+            "decisions": 30,
+            "finalStateSha256": "a7079cb95c1ba4d90ee0374bbf4559909bb750b0e34e1317e27d077a4ef444c7"
+          },
+          {
+            "pair": "code-table-v1/sdk-code-v1",
+            "left": "code-table-v1",
+            "right": "sdk-code-v1",
+            "seed": 87000009,
+            "leftSeat": 1,
+            "first": 1,
+            "winner": "code-table-v1",
+            "status": "complete",
+            "decisions": 30,
+            "finalStateSha256": "227c7083df400d733b32266b70705921b9d2374376c592832f87f547edc61826"
+          }
+        ]
+      }
+    }
+  ],
+  "rating": {
+    "id": "sdk-code-v1",
+    "elo": 1455,
+    "games": 60,
+    "wins": 31,
+    "losses": 29,
+    "provisional": true,
+    "reference": false,
+    "opponents": [
+      {
+        "id": "code-table-v1",
+        "elo": 1500,
+        "games": 20,
+        "wins": 8
+      },
+      {
+        "id": "easy-v2",
+        "elo": 1387,
+        "games": 20,
+        "wins": 15
+      },
+      {
+        "id": "nn-256-v1",
+        "elo": 1440,
+        "games": 20,
+        "wins": 8
+      }
+    ],
+    "latencyP95Ms": 2.121,
+    "decisions": 705
+  },
+  "panelSha256": "197c97f1aaa89f81b70fa287f3e96b3ca9501a317458e38fcf76f5493f4cec81",
+  "sourceCommit": "d1bae68c2ef96618a64006fa725ef24057b849f9",
+  "runUrl": "https://github.com/lucienzhu/3card-royale/actions/runs/40499902327"
+}

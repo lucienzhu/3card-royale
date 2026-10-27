@@ -2,7 +2,7 @@
   "schema": 2,
   "method": "reference-elo-v1",
   "panelSha256": "197c97f1aaa89f81b70fa287f3e96b3ca9501a317458e38fcf76f5493f4cec81",
-  "createdAt": "2026-10-27T11:42:43.369Z",
+  "createdAt": "2026-10-27T11:56:48.461Z",
   "protocol": {
     "gamesPerOpponent": 20,
     "opponents": [
@@ -124,6 +124,40 @@
       "latencyP95Ms": null
     },
     {
+      "id": "sdk-code-v1",
+      "elo": 1455,
+      "games": 60,
+      "wins": 31,
+      "losses": 29,
+      "provisional": true,
+      "reference": false,
+      "opponents": [
+        {
+          "id": "code-table-v1",
+          "elo": 1500,
+          "games": 20,
+          "wins": 8
+        },
+        {
+          "id": "easy-v2",
+          "elo": 1387,
+          "games": 20,
+          "wins": 15
+        },
+        {
+          "id": "nn-256-v1",
+          "elo": 1440,
+          "games": 20,
+          "wins": 8
+        }
+      ],
+      "latencyP95Ms": 2.121,
+      "decisions": 705,
+      "updatedAt": "2026-10-27T11:56:48.461Z",
+      "sourceCommit": "d1bae68c2ef96618a64006fa725ef24057b849f9",
+      "runUrl": "https://github.com/lucienzhu/3card-royale/actions/runs/40499902327"
+    },
+    {
       "id": "nn-256-v1",
       "elo": 1440,
       "games": 0,
@@ -142,6 +176,40 @@
       "provisional": false,
       "reference": true,
       "latencyP95Ms": null
+    },
+    {
+      "id": "random-v1",
+      "elo": 703,
+      "games": 60,
+      "wins": 0,
+      "losses": 60,
+      "provisional": true,
+      "reference": false,
+      "opponents": [
+        {
+          "id": "code-table-v1",
+          "elo": 1500,
+          "games": 20,
+          "wins": 0
+        },
+        {
+          "id": "easy-v2",
+          "elo": 1387,
+          "games": 20,
+          "wins": 0
+        },
+        {
+          "id": "nn-256-v1",
+          "elo": 1440,
+          "games": 20,
+          "wins": 0
+        }
+      ],
+      "latencyP95Ms": 0.425,
+      "decisions": 260,
+      "updatedAt": "2026-10-27T11:56:48.461Z",
+      "sourceCommit": "d1bae68c2ef96618a64006fa725ef24057b849f9",
+      "runUrl": "https://github.com/lucienzhu/3card-royale/actions/runs/40499902327"
     }
   ]
 }
