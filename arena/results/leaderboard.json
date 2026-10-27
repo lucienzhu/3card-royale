@@ -1,0 +1,147 @@
+{
+  "schema": 2,
+  "method": "reference-elo-v1",
+  "panelSha256": "197c97f1aaa89f81b70fa287f3e96b3ca9501a317458e38fcf76f5493f4cec81",
+  "createdAt": "2026-10-27T11:42:43.369Z",
+  "protocol": {
+    "gamesPerOpponent": 20,
+    "opponents": [
+      {
+        "id": "easy-v2",
+        "elo": 1387
+      },
+      {
+        "id": "nn-256-v1",
+        "elo": 1440
+      },
+      {
+        "id": "code-table-v1",
+        "elo": 1500
+      }
+    ],
+    "priorMean": 1500,
+    "priorSd": 400,
+    "pairedSeats": true,
+    "balancedFirst": true
+  },
+  "policies": [
+    {
+      "api": "royale-policy-v1",
+      "id": "random-v1",
+      "name": "Random",
+      "author": "3Card Royale",
+      "license": "MIT",
+      "type": "javascript",
+      "rules": "1.0.0",
+      "episode": "game",
+      "information": "public",
+      "memory": "none",
+      "artifact": {
+        "file": "policy.mjs",
+        "bytes": 131,
+        "sha256": "f5ffd15a37eef8ab1d24c86844c6b35afada12ab9074e421656b6a9189f62d0c"
+      }
+    },
+    {
+      "api": "royale-policy-v1",
+      "id": "sdk-code-v1",
+      "name": "SDK Code AI",
+      "author": "3Card Royale",
+      "license": "MIT",
+      "type": "javascript",
+      "rules": "1.0.0",
+      "episode": "game",
+      "information": "public",
+      "memory": "none",
+      "artifact": {
+        "file": "policy.mjs",
+        "bytes": 199,
+        "sha256": "1af7c73dcaf625eefbfdeec7e1a85c25ac6a8395d123eb5accff42051bca3f4b"
+      }
+    },
+    {
+      "api": "royale-policy-v1",
+      "id": "easy-v2",
+      "name": "Easy · 64",
+      "author": "3Card Royale",
+      "license": "MIT",
+      "type": "javascript",
+      "rules": "1.0.0",
+      "episode": "game",
+      "information": "public",
+      "memory": "none",
+      "artifact": {
+        "file": "policy.mjs",
+        "bytes": 199,
+        "sha256": "e7d082e63ebd817e5e0c9b078c073b492e453af4e19b49b518fa2744c16d78e7"
+      }
+    },
+    {
+      "api": "royale-policy-v1",
+      "id": "code-table-v1",
+      "name": "Code AI",
+      "author": "3Card Royale",
+      "license": "MIT",
+      "type": "javascript",
+      "rules": "1.0.0",
+      "episode": "game",
+      "information": "public",
+      "memory": "none",
+      "artifact": {
+        "file": "policy.mjs",
+        "bytes": 1533,
+        "sha256": "fe07b4669f18a59fa4cc28fe9c7fa4c4814c67fd0608262582a45a3085b81ff6"
+      }
+    },
+    {
+      "api": "royale-policy-v1",
+      "id": "nn-256-v1",
+      "name": "NN · 256 → 128",
+      "author": "3Card Royale",
+      "license": "MIT",
+      "type": "onnx",
+      "rules": "1.0.0",
+      "episode": "game",
+      "information": "public",
+      "memory": "none",
+      "artifact": {
+        "file": "policy.onnx",
+        "bytes": 552407,
+        "sha256": "5b98061d4188c116080eb6784c6378536a89e0b3c1db333df88217379e4dde13"
+      },
+      "features": "gym-v1"
+    }
+  ],
+  "leaderboard": [
+    {
+      "id": "code-table-v1",
+      "elo": 1500,
+      "games": 0,
+      "wins": 0,
+      "losses": 0,
+      "provisional": false,
+      "reference": true,
+      "latencyP95Ms": null
+    },
+    {
+      "id": "nn-256-v1",
+      "elo": 1440,
+      "games": 0,
+      "wins": 0,
+      "losses": 0,
+      "provisional": false,
+      "reference": true,
+      "latencyP95Ms": null
+    },
+    {
+      "id": "easy-v2",
+      "elo": 1387,
+      "games": 0,
+      "wins": 0,
+      "losses": 0,
+      "provisional": false,
+      "reference": true,
+      "latencyP95Ms": null
+    }
+  ]
+}

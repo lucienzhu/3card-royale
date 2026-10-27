@@ -13,8 +13,9 @@
 - [ ] Registered, new immutable ID, hash and ≤5 MB artifact checked
 - [ ] Public observations only; no network, external imports, clock or hidden state
 - [ ] `npm run arena:validate` passes
+- [ ] `npm run arena:submit -- --policy <id>` passes; generated `validation.json` committed
 - [ ] Fixed reference decisions agree with original implementation (if ported)
 
-Maintainer: review before executing. Evaluate in an isolated environment, rerun
-all season pairs and attach raw results. Do not substitute local smoke-test scores
-for official Elo. Godlike / privileged-information policies do not enter the ladder.
+Maintainer: review before executing. CI replays local validation; merge triggers
+60 reference games per entrant and automatic leaderboard / Pages publication.
+At most 3 entrants per PR. Godlike / privileged-information policies are excluded.

@@ -4,7 +4,7 @@
 
 参赛单位是 **policy**，既可以是纯 JavaScript，也可以是 ONNX 神经网络。
 训练不是必要条件。网页试玩与本地评估加载同一份文件；GitHub Pages 只托管文件，
-推理在玩家设备上完成，正式 Elo 由维护者本地评估后提交。
+推理在玩家设备上完成，审核合并后，CI 计算基准 Elo 并自动更新榜单和网页。
 
 ## 投稿格式
 
@@ -13,6 +13,7 @@
 - `manifest.json`：作者、许可、接口版本、规则、记忆范围、文件大小和 SHA-256。
 - `policy.mjs` 或 `policy.onnx`：单文件，不超过 5,000,000 字节。
 - `README.md`：策略说明、来源、训练／复现方法。
+- `validation.json`：本地验证生成的记录，CI 会独立复跑。
 
 复制已有示例，加入 `policies/registry.json`，运行 `node arena/stamp.mjs <id>` 更新哈希。
 已评分的 ID 不覆盖修改；新代码或权重用新 ID。兼容接口为 `royale-policy-v1`，
@@ -32,25 +33,14 @@ float32，动态 N≤512，输出有限数值，最高分对应动作。[训练�
 
 ## 工作流程
 
-PR → CI 有效性检查 → 审核与少量对局评分 → 提交 Elo 与原始对局 → 合并 → Pages 试玩。
+1. 新策略使用新 ID，加入 registry。
+2. 运行 `npm run arena:validate`，再运行 `npm run arena:submit -- --policy <id>`。
+   本地与 Code AI 打 4 小局，平衡席位和先攻；把生成的 `validation.json` 一起提交。
+3. PR 的 CI 复跑同样的 4 局并核对结果。缺少记录、记录过期、非法动作或超时，都不能评分。
+4. 审核合并后，自动与固定的 Easy、NN、Code AI 各打 20 局，计算 **60 局的基准 Elo**，
+   提交榜单并重新构建 GitHub Pages。PR 可加 `arena-benchmark` 标签预览评分，但不能发布。
 
-`npm run arena:validate` 仅检查元数据和文件哈希，不运行投稿代码。
-PR 的 CI 另在隔离 Linux 容器中，让每个参赛策略与 Code AI 打 4 小局，平衡席位和先攻。
-非法动作、超时或未完成对局都会失败。维护者可加 `arena-benchmark` 标签，或在 Actions
-手动生成暂定 Elo：默认每对策略 40 局，当前 5 个策略共 400 局；也可手动选 20 局/对手。
-本地用 `npm run arena:rate`。Code AI 固定 1500，汇总胜负批量拟合；
-[计算方法与平滑](../arena/README.md#quick-provisional-elo)不受对局处理顺序影响。
-读取 `rating.json`；每策略不足 200 局标为暂定。CI 不自动发布 Elo，投稿仍需审核。
-新批量评分与旧赛季的逐局 Elo 算法不同，不能直接混榜；发布新赛季应统一重算。
-此前 2,000 局只做容量测试：[Linux 实测](../arena/README.md#measured-linux-capacity)约 47 秒、360 MiB。
-`npm run arena:evaluate` 默认每对策略 200 小局，交换座位并平衡先攻。
-新增对手需重跑整个赛季，让所有策略面对相同对手池。未评估或哈希变化的策略显示“待评估”。
-Godlike 不进天梯。网页挑战结果不改变正式 Elo。
-
-Worker 用于不卡界面和超时终止，**不是安全沙箱**。只加载已审核合并的注册策略；
-不接受任意 URL 的 JS。评估陌生 PR 时，用无凭据、禁网的容器，不在有秘密的工作流中运行。
-本地决策超时、非法动作或小局未结束都会中止整次评估，不用回退 AI 冒充参赛结果。
-网页试玩失败则明确显示提示并回退 Easy。
-
-新投稿、加载器、接口集中在 `policies/`。旧 `sdk/` 策略与 `models/nn-policy/` 保留为
-兼容入口和历史基线，现有困难档、Godlike、存档与规则不变。
+每个策略固定 64 局（含验证），不随参赛数量增长。每次 PR 最多 3 个策略，手动运行最多
+10 个，整个对战过程最多 180 秒。[计分方法与限制](../arena/README.md)。
+固定基准单独标示，新评分均为暂定；它不涵盖所有策略间的克制关系。没有匹配结果的策略
+显示“待评估”，网页试玩不改分。Godlike 不参赛。
