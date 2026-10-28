@@ -84,19 +84,52 @@ function actionName(a){
 }
 function actionGroup(a){if(a.type!=='swap')return a.type;if(a.target.zone==='deck'||a.target.zone==='blind')return a.target.zone;return a.target.who===sample.player?'own':'rival';}
 const actionGroups=[['deck','换牌堆','Deck'],['blind','盲换对手','Blind rival'],['rival','换对手伤牌','Rival wounds'],['own','手牌 ⇄ 伤牌','Hand ⇄ wounds'],['skip_swap','跳过本次','Skip one'],['stop_swaps','结束换牌','End swaps']];
+function groupIndices(key){return sample.observation.legal_actions.flatMap((a,i)=>actionGroup(a)===key?[i]:[]);}
+function groupExplanation(key){
+  const o=sample.observation,h=o.hand.length,w=o.wounds.length,n=h+w;
+  return {
+    deck:t(`${n} 张来源牌 × 牌堆`,`${n} source cards × deck`),
+    blind:t(`${n} 张来源牌 × 随机暗牌`,`${n} source cards × random rival card`),
+    rival:t(`${n} 张来源牌 × ${o.enemy_wounds.length} 张伤牌`,`${n} source cards × ${o.enemy_wounds.length} rival wounds`),
+    own:t(`${h} 手牌 × ${w} 伤牌 × 2 个方向`,`${h} hand × ${w} wounds × 2 directions`),
+    skip_swap:t('用掉本次，保留下次','Use this chance; keep the next'),
+    stop_swaps:t('放弃剩余换牌机会','Forgo all remaining chances')
+  }[key];
+}
+function maskSlot(value,index){
+  const slot=el('span','obs-mask-slot');slot.append(bit(value,index,'action_mask'),el('small','',`[${index}]`));return slot;
+}
+function updateMaskExamples(group){
+  const indices=groupIndices(group.dataset.group),current=indices.indexOf(selected);
+  // Show at most three real indices per group, including the inspected candidate.
+  // Groups are interleaved in the candidate table, not contiguous index ranges.
+  const positions=[...new Set([0,current>=0?current:Math.min(1,indices.length-1),indices.length-1])].sort((a,b)=>a-b);
+  const preview=group.querySelector('.obs-mask-sample');preview.replaceChildren();
+  positions.forEach((position,k)=>{
+    if(k&&position>positions[k-1]+1)preview.append(el('span','obs-mask-ellipsis','…'));
+    const index=indices[position],slot=maskSlot(1,index);
+    slot.querySelector('.obs-bit').classList.toggle('is-inspected',index===selected);preview.append(slot);
+  });
+}
+
 function renderActions(){
   const actions=el('section','obs-actions');actions.append(heading(t('合法动作','Legal actions'),'512 · action_mask'));
   const count=el('p','obs-action-count');count.append(el('strong','',String(sample.candidateCount)),document.createTextNode(t(' 个合法候选 / 512 个槽位',' legal candidates / 512 slots')));actions.append(count);
-  actions.append(el('p','obs-note',t('本例处于换牌阶段：72 种换牌 + 跳过本次 + 结束换牌。','This is a swap turn: 72 swaps + skip this chance + end swaps.')));
+  actions.append(el('p','obs-note',t('本例换牌：6 手牌 + 3 伤牌。点击动作分类查看，方格仅举例。','Swap turn: 6 hand cards + 3 wounds. Select a group; bits are examples.')));
   const groups=el('div','obs-action-groups');
-  actionGroups.forEach(([key,zh,en])=>{const matching=sample.observation.legal_actions.map((a,i)=>({a,i})).filter(({a})=>actionGroup(a)===key);const b=el('button','',t(zh,en)+' · '+matching.length);b.type='button';b.dataset.action=matching[0].i;b.dataset.group=key;groups.append(b);});actions.append(groups);
+  actionGroups.forEach(([key,zh,en])=>{
+    const indices=groupIndices(key),b=el('button');b.type='button';b.dataset.action=indices[0];b.dataset.group=key;
+    const title=el('span','obs-group-title');title.append(el('strong','',t(zh,en)),el('span','obs-group-count',String(indices.length)));
+    const preview=el('span','obs-mask-sample');preview.setAttribute('aria-hidden','true');
+    b.append(title,el('span','obs-group-explanation',groupExplanation(key)),preview);groups.append(b);
+  });actions.append(groups);
+  const padding=el('div','obs-mask-padding'),paddingText=el('div');
+  paddingText.append(el('strong','',t(`其余 ${512-sample.candidateCount} 个空槽`,`${512-sample.candidateCount} padding slots`)),el('p','obs-note',t('0：没有动作，选最高分前屏蔽。','0: no action; masked before selecting the top score.')));
+  const zeros=el('div','obs-mask-sample');zeros.setAttribute('aria-hidden','true');zeros.append(maskSlot(0,sample.candidateCount),maskSlot(0,sample.candidateCount+1),el('span','obs-mask-ellipsis','…'),maskSlot(0,511));
+  padding.append(paddingText,zeros);actions.append(padding,el('p','obs-mask-key',t('1 = 可选 · 序号仅对当前局面有效','1 = legal · indices belong to this position only')));
   const controls=el('div','obs-action-controls'),label=el('label','',t('查看候选','Inspect candidate')),select=el('select','sz-select-control');select.id='obs-candidate';label.htmlFor=select.id;
   sample.observation.legal_actions.forEach((a,i)=>{const option=el('option','',`[${i}] ${actionName(a)}`);option.value=i;select.append(option);});select.value=selected;
   controls.append(label,select);actions.append(controls,el('div','obs-action-detail'));
-  const mask=el('div','obs-mask');mask.setAttribute('role','img');mask.setAttribute('aria-label',t('前 74 槽有效，其余为填充；粉色框是当前查看的候选。','The first 74 slots are valid; the rest are padding. Pink outlines the inspected candidate.'));
-  for(let i=0;i<512;i++)mask.append(bit(+(i<sample.candidateCount),i,'action_mask'));
-  actions.append(mask,legend(t('可选','legal'),t('空槽','padding')),el('p','obs-note',t('候选序号只对当前局面有效。模型逐个评分，屏蔽空槽后选最高分。','Indices belong to this position only. Score each candidate, mask padding, then choose the highest.')));
-  const countDetails=el('details','obs-action-counting');countDetails.append(el('summary','',t('74 个候选是怎样来的？','Where do the 74 candidates come from?')),el('p','obs-note',t('6 张手牌 + 3 张伤牌，共 9 个来源。每个可换牌堆、对手暗牌或 2 张对手伤牌：9 × 4 = 36。自己的手牌与伤牌按两个来源方向列出：6 × 3 × 2 = 36。再加跳过与结束，共 74。','6 hand cards + 3 wound cards give 9 sources. Each can target the deck, a blind rival card or either of 2 rival wounds: 9 × 4 = 36. Own hand–wound exchanges are listed in both source directions: 6 × 3 × 2 = 36. Add skip and end: 74.')));actions.append(countDetails);
   const details=el('details','obs-action-encoding');details.append(el('summary','',t('展开这个候选的 72 维编码','Expand this candidate’s 72 features')),el('div','obs-action-features'));actions.append(details);
   const rules=el('details','obs-action-rules');rules.append(el('summary','',t('其他阶段有哪些动作？','What is legal in other phases?')));
   const list=el('dl');
@@ -115,8 +148,7 @@ const extraFeatures=[
 function updateAction(){
   const a=selectedAction(),o=sample.observation,detail=host.querySelector('.obs-action-detail');if(!detail)return;
   host.querySelector('#obs-candidate').value=selected;
-  host.querySelectorAll('[data-group]').forEach(n=>n.setAttribute('aria-pressed',String(n.dataset.group===actionGroup(a))));
-  host.querySelectorAll('.obs-mask .obs-bit').forEach((n,i)=>n.classList.toggle('is-inspected',i===selected));
+  host.querySelectorAll('[data-group]').forEach(n=>{n.setAttribute('aria-pressed',String(n.dataset.group===actionGroup(a)));updateMaskExamples(n);});
   host.querySelectorAll('.is-source,.is-target').forEach(n=>n.classList.remove('is-source','is-target'));
   detail.replaceChildren(el('strong','',`[${selected}] ${actionName(a)}`));
   const highlight=(zone,id,cls)=>{host.querySelectorAll(`.obs-playing-card[data-board-zone="${zone}"][data-card="${id}"],.obs-zone[data-zone="${zone}"] .obs-bit[data-index="${zone*52+id}"]`).forEach(n=>n.classList.add(cls));};

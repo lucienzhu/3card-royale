@@ -16,8 +16,16 @@ for(const [width,height] of [[1440,1000],[1280,800],[768,1024],[390,844],[320,56
  const groups=[o.hand,o.wounds,o.enemy_wounds,o.discard,[],[]];
  for(let zone=0;zone<6;zone++)assert.deepEqual(await p.locator(`.obs-board .obs-playing-card[data-board-zone="${zone}"]`).evaluateAll(ns=>ns.map(n=>Number(n.dataset.card))),groups[zone]);
  assert.equal(await p.locator('.obs-hidden .obs-back').count(),o.enemy_hand_count);
- assert.equal(await p.locator('.obs-mask .is-set').count(),sample.candidateCount);
- assert.equal(await p.locator('.obs-mask .obs-bit').count(),512);
+ assert.equal(await p.locator('.obs-mask').count(),0);
+ assert.deepEqual((await p.locator('.obs-group-count').allTextContents()).map(Number),[9,9,18,36,1,1]);
+ assert((await p.locator('.obs-action-groups .obs-bit').count())<=14);
+ assert.deepEqual(await p.locator('.obs-mask-padding .obs-bit').evaluateAll(ns=>ns.map(n=>[Number(n.dataset.index),Number(n.textContent)])),[[74,0],[75,0],[511,0]]);
+ assert((await p.locator('.obs-mask-padding').innerText()).includes('438'));
+ const previews=await p.locator('[data-group]').evaluateAll(ns=>ns.map(n=>({key:n.dataset.group,indices:[...n.querySelectorAll('.obs-bit')].map(b=>Number(b.dataset.index))})));
+ for(const {key,indices} of previews)for(const i of indices){
+   const a=o.legal_actions[i],actual=a.type!=='swap'?a.type:['deck','blind'].includes(a.target.zone)?a.target.zone:a.target.who===o.player?'own':'rival';
+   assert.equal(actual,key,'sample bits must belong to the displayed group');
+ }
  assert.equal(await p.locator('#obs-candidate option').count(),74);
  await p.locator('.obs-meta summary').click();
  assert.equal(await p.locator('.obs-meta-table tbody tr').count(),18);
@@ -32,11 +40,10 @@ for(const [width,height] of [[1440,1000],[1280,800],[768,1024],[390,844],[320,56
  await p.locator('.obs-board-zone[data-board-zone="2"] [data-zone-link]').click();
  assert.equal(await p.locator('.obs-zone.is-zone-linked').count(),0);
  await p.locator('.obs-action-encoding summary').click();
- await p.locator('.obs-action-counting summary').click();
  await p.locator('.obs-action-rules summary').click();
  for(const i of (width===1440&&lang==='en'&&theme==='light'?Array.from({length:74},(_,i)=>i):[1,2,4,42,72,73])){
   await p.locator('#obs-candidate').selectOption(String(i));
-  assert.equal(await p.locator('.obs-mask .is-inspected').getAttribute('data-index'),String(i));
+  assert.equal(await p.locator('.obs-action-groups .is-inspected').getAttribute('data-index'),String(i));
   const f=sample.candidates[i],a=o.legal_actions[i];
   assert.deepEqual((await p.locator('.obs-action-features .obs-bit').allTextContents()).map(Number),f.slice(0,57));
   (await p.locator('.obs-extra-table tr td:last-child').allTextContents()).map(Number).forEach((v,k)=>assert(Math.abs(v-f[57+k])<=0.000001));
@@ -53,11 +60,11 @@ for(const [width,height] of [[1440,1000],[1280,800],[768,1024],[390,844],[320,56
  // Language switches preserve inspected candidate and expanded disclosures.
  await p.locator('[data-site-language]').first().click();
  await p.waitForFunction(l=>document.documentElement.lang!==l,lang);
- for(const cls of ['obs-meta','obs-action-encoding','obs-action-counting','obs-action-rules'])assert.equal(await p.locator('.'+cls).evaluate(n=>n.open),true);
+ for(const cls of ['obs-meta','obs-action-encoding','obs-action-rules'])assert.equal(await p.locator('.'+cls).evaluate(n=>n.open),true);
  assert.equal(await p.locator('#obs-candidate').inputValue(),'73');
  assert((await p.locator('.obs-phase').innerText()).includes(lang==='en'?'换牌':'Swap'));
  if((width===1440||width===390)&&theme==='light'){
-  await p.locator('.obs-meta summary').click();await p.locator('.obs-action-encoding summary').click();await p.locator('.obs-action-rules summary').click();await p.locator('.obs-action-counting summary').click();await p.locator('#obs-candidate').selectOption('2');
+  await p.locator('.obs-meta summary').click();await p.locator('.obs-action-encoding summary').click();await p.locator('.obs-action-rules summary').click();await p.locator('#obs-candidate').selectOption('2');
   await p.locator('.obs-board').screenshot({path:`/tmp/action-board-${width}-${lang}.png`});
   await p.locator('.obs-actions').screenshot({path:`/tmp/action-panel-${width}-${lang}.png`});
  }
@@ -65,5 +72,5 @@ for(const [width,height] of [[1440,1000],[1280,800],[768,1024],[390,844],[320,56
 }
 // Failed data loading leaves readable static contract, without a partially painted board.
 const p=await browser.newPage();await p.route('**/observation-example.json*',route=>route.abort());await p.goto(base+'arena.html?lang=en',{waitUntil:'networkidle'});assert(await p.locator('#arena-observation .rl-spaces').isVisible());await p.close();
-assert.deepEqual(errors,[]);console.log('Arena explorer: 24 viewport/language/theme combinations; all 74 actions, 336 state values and 72 candidate features; board highlights, language switches and load fallback passed.');
+assert.deepEqual(errors,[]);console.log('Arena explorer: 24 viewport/language/theme combinations; six action groups and compact mask examples; all 74 actions, 336 state values and 72 candidate features; board highlights, language switches and load fallback passed.');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});
