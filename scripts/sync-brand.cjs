@@ -16,10 +16,18 @@ function sync(check=false){
  const html=read('index.html'),header=/<svg class="brand-symbol"[\s\S]*?<\/svg>/;
  if(!header.test(html))throw new Error('Missing header brand');
  update('index.html',html.replace(header,mark.replace('<svg ','<svg class="brand-symbol" aria-hidden="true" ')));
- for(const page of ['brand.html','about.html','probability.html','arena.html']){
-  const html=read(page),pattern=/<svg\b[^>]*aria-label="深圳花牌标志"[^>]*>[\s\S]*?<\/svg>/g;
-  if(!pattern.test(html))throw new Error('Missing brand lockup: '+page);
-  update(page,html.replace(pattern,old=>{const cls=old.match(/ class="[^"]*"/);return mark.replace('<svg ','<svg'+(cls?cls[0]:'')+' ');}));
+ const lockup=/<svg\b[^>]*aria-label="深圳花牌标志"[^>]*>[\s\S]*?<\/svg>/g;
+ const replaceLockup=html=>html.replace(lockup,old=>{const cls=old.match(/ class="[^"]*"/);return mark.replace('<svg ','<svg'+(cls?cls[0]:'')+' ');});
+ const nav=read('app/site-header.js'),template=nav.match(/const markup=("(?:[^"\\]|\\.)*");/);
+ if(!template)throw new Error('Missing shared navigation template');
+ const markup=JSON.parse(template[1]);
+ if(!markup.includes('aria-label="深圳花牌标志"'))throw new Error('Missing shared navigation brand');
+ update('app/site-header.js',nav.replace(template[0],'const markup='+JSON.stringify(replaceLockup(markup))+';'));
+ for(const page of ['brand.html','about.html','probability.html','arena.html','rules.html']){
+  const html=read(page);
+  if(!html.includes('data-site-header')||!html.includes('app/site-header.js'))throw new Error('Missing shared navigation: '+page);
+  // Identity also has a large inline lockup; all navigation logos live in the shared template.
+  update(page,replaceLockup(html));
  }
  update('assets/brand-mark-dark.svg',read('brand-mark.svg'));
  if(stale.length)throw new Error('Brand copies are stale: '+stale.join(', ')+'. Run node scripts/sync-brand.cjs.');

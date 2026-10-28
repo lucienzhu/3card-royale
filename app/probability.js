@@ -1,6 +1,6 @@
 'use strict';
 const $=id=>document.getElementById(id),DATA=PROBABILITY_DATA;
-const CATEGORIES=[{id:5,name:'同花顺',color:'#d7a944'},{id:4,name:'炸弹',color:'#b66a53'},{id:3,name:'同花',color:'#527b62'},{id:2,name:'顺子',color:'#72959a'},{id:1,name:'对子',color:'#8c8fa8'},{id:0,name:'高牌',color:'#aeb5ac'}];
+const CATEGORIES=[{id:5,name:'同花顺',color:'var(--gold)'},{id:4,name:'炸弹',color:'var(--red)'},{id:3,name:'同花',color:'var(--leaf)'},{id:2,name:'顺子',color:'var(--chart-straight)'},{id:1,name:'对子',color:'var(--chart-pair)'},{id:0,name:'高牌',color:'var(--chart-high)'}];
 let level=2,n=8,ranking='0.3.2';
 const dataFor=()=>ranking==='0.3.2'?DATA:DATA.previous_ranking;
 const categories=()=>ranking==='0.3.2'?[CATEGORIES[1],CATEGORIES[0],...CATEGORIES.slice(2)]:CATEGORIES;
@@ -27,7 +27,7 @@ function renderHighest(){
  $('highest-chart').replaceChildren();const rows=exactMode(level).rows;
  for(const row of rows){const b=element('button','pool-row');b.type='button';b.dataset.n=row.n;b.setAttribute('aria-pressed',String(row.n===n));b.setAttribute('aria-label',row.n+' 张，最高牌型：'+categories().map(c=>c.name+' '+pct(row.highest_counts[c.id]/row.denominator)).join('，'));b.addEventListener('click',()=>setN(row.n));
   const label=element('span','pool-label',row.n+' 张');label.append(element('small','',combinations(row.n)+' 种选法'));const stack=element('span','stack');stack.setAttribute('aria-hidden','true');
-  for(const c of categories()){const probability=row.highest_counts[c.id]/row.denominator,seg=element('span','segment'+(c.id===5?' gold':'')+(probability<.2?' small-label':''));seg.style.width=100*probability+'%';seg.style.setProperty('--color',c.color);seg.title=c.name+'：'+pct(probability);if(probability>=.12)seg.append(element('span','',pct(probability)));stack.append(seg);}
+  for(const c of categories()){const probability=row.highest_counts[c.id]/row.denominator,seg=element('span','segment'+(c.id===5?' gold':c.id===0?' high':'')+(probability<.2?' small-label':''));seg.style.width=100*probability+'%';seg.style.setProperty('--color',c.color);seg.title=c.name+'：'+pct(probability);if(probability>=.12)seg.append(element('span','',pct(probability)));stack.append(seg);}
   b.append(label,stack);$('highest-chart').append(b);
  }
  const row=exactRow(level,n);$('selected-breakdown').replaceChildren();
@@ -37,7 +37,7 @@ function renderAvailable(){
  const values=available(level,n),e=exactRow(level,n);$('availability-chart').replaceChildren();
  for(const c of categories()){const a=values.find(x=>x.category===c.id),best=e.highest_counts[c.id]/e.denominator,item=element('div','availability-item');item.dataset.category=c.id;
   const name=element('div','availability-type',c.name);name.append(element('small','',a.probability===null?'可用率未计算':a.estimated?'可用率估计':'可用率精确'));
-  const tracks=element('div','dual-track');for(const [p,klass]of [[a.probability,'fill'],[best,'fill best']]){const track=element('div','track'),fill=element('div',klass);fill.style.width=p===null?'0%':100*p+'%';if(p===null)track.style.background='repeating-linear-gradient(45deg,#e2e6db,#e2e6db 3px,#f4f1e8 3px,#f4f1e8 6px)';track.append(fill);tracks.append(track);}
+  const tracks=element('div','dual-track');for(const [p,klass]of [[a.probability,'fill'],[best,'fill best']]){const track=element('div','track'),fill=element('div',klass);fill.style.width=p===null?'0%':100*p+'%';if(p===null)track.style.background='repeating-linear-gradient(45deg,var(--line),var(--line) 3px,var(--panel) 3px,var(--panel) 6px)';track.append(fill);tracks.append(track);}
   const value=element('div','availability-value',(a.estimated?'≈':'')+pct(a.probability));value.dataset.available=a.probability===null?'unknown':a.probability;value.append(element('small','',pct(best)));item.append(name,tracks,value);$('availability-chart').append(item);
  }
  $('availability-method').textContent=n+' 张 · '+modeLabel();
@@ -51,13 +51,13 @@ function renderTrend(){
  const x=k=>left+(k-8)/5*w,y=p=>top+(1-p)*h;
  for(const p of [0,.25,.5,.75,1]){svg.append(svgEl('line',{x1:left,y1:y(p),x2:width-right,y2:y(p),class:'grid'}),svgEl('text',{x:left-8,y:y(p)+4,'text-anchor':'end'},100*p+'%'));}
  for(let k=8;k<=13;k++)svg.append(svgEl('text',{x:x(k),y:height-7,'text-anchor':'middle'},k+' 张'));
- svg.append(svgEl('line',{x1:x(n),x2:x(n),y1:top,y2:top+h,stroke:'#acbba0','stroke-dasharray':'3 4'}));
+ svg.append(svgEl('line',{x1:x(n),x2:x(n),y1:top,y2:top+h,stroke:'var(--line)','stroke-dasharray':'3 4'}));
  const base=exactMode(0).rows.map(r=>sfAvailable(r)),current=exactMode(level).rows.map(r=>sfAvailable(r));
- const series=[{label:'无逢人配',color:'#899185',values:base}];
- if(level!==0)series.push({label:'随机牌池 · ♥'+rankLabel(level),color:'#184838',values:current});
- if(level===2)series.push({label:'已持有 ♥2 · 条件概率',color:'#b18b30',values:DATA.wild_present_straight_flush.map(r=>r.numerator/r.denominator)});
+ const series=[{label:'无逢人配',color:'var(--muted)',values:base}];
+ if(level!==0)series.push({label:'随机牌池 · ♥'+rankLabel(level),color:'var(--leaf)',values:current});
+ if(level===2)series.push({label:'已持有 ♥2 · 条件概率',color:'var(--gold-text)',values:DATA.wild_present_straight_flush.map(r=>r.numerator/r.denominator)});
  $('trend-legend').replaceChildren();
- for(const s of series){svg.append(svgEl('polyline',{points:s.values.map((p,i)=>x(i+8)+','+y(p)).join(' '),class:'series',stroke:s.color}));s.values.forEach((p,i)=>{const dot=svgEl('circle',{cx:x(i+8),cy:y(p),r:i+8===n?4.5:3,fill:i+8===n?s.color:'#f4f1e8',stroke:s.color,class:'dot'});dot.append(svgEl('title',{},s.label+'，'+(i+8)+' 张：'+pct(p)));svg.append(dot);});const legend=element('span',''),line=element('i','');line.style.setProperty('--color',s.color);legend.append(line,document.createTextNode(s.label));$('trend-legend').append(legend);}
+ for(const s of series){svg.append(svgEl('polyline',{points:s.values.map((p,i)=>x(i+8)+','+y(p)).join(' '),class:'series',stroke:s.color}));s.values.forEach((p,i)=>{const dot=svgEl('circle',{cx:x(i+8),cy:y(p),r:i+8===n?4.5:3,fill:i+8===n?s.color:'var(--panel)',stroke:s.color,class:'dot'});dot.append(svgEl('title',{},s.label+'，'+(i+8)+' 张：'+pct(p)));svg.append(dot);});const legend=element('span',''),line=element('i','');line.style.setProperty('--color',s.color);legend.append(line,document.createTextNode(s.label));$('trend-legend').append(legend);}
  $('conditional-title').textContent=level===2?n+' 张，而且已持有 ♥2':level===0?'普通牌对照':'本级数的随机持有概率';
  if(level===2){const c=DATA.wild_present_straight_flush.find(r=>r.n===n);$('conditional-value').textContent=pct(c.numerator/c.denominator);$('conditional-note').textContent='此时能出同花顺的概率。条件是已经拿到逢人配；不要把它当作随机牌池的无条件概率。';}
  else if(level===0){$('conditional-value').textContent=pct(base[n-8]);$('conditional-note').textContent=n+' 张全部按普通牌时，能出同花顺的概率。♥级牌不使用逢人配能力。';}
@@ -80,7 +80,6 @@ function render(){
  renderHighest();renderAvailable();renderTrend();renderTables();
  window.gkProbabilityState={level,n,ranking};
 }
-if(location.protocol==='file:')$('simulator-link').href='../2026-10-13-gk-v032/index.html?version=0.3.2';
 // Re-measure the chart when its section becomes visible.
 $('trend-svg').closest('details')?.addEventListener('toggle',e=>{if(e.target.open)renderTrend();});
 let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(renderTrend,80);});
