@@ -83,7 +83,13 @@ separate from the on/off control.
 
 **AI opponent.** Keep built-in difficulty choices and Arena AI in the same selector.
 Selecting Arena reveals its policy selector and leaderboard link inside the same
-setting. Use the shared `.sz-control-child`: a quiet table-colored surface, inset
-content and a left guide line. Align it below the parent control on desktop and
+setting. Use the shared `.sz-control-child`: an unfilled surface, 24 px indent
+and a short elbow connector. Keep the 14 px label and Elo in the strong ink
+color; leave 10 px between the header, select and metadata/link row. Align it below the parent control on desktop and
 mobile; never give it a separate settings divider. Hide the whole child group
 for built-in opponents, retaining the selected policy when switching back.
+
+Show current ladder Elo in each policy option and beside the selected policy
+label, with reference/provisional context below. Read the published leaderboard
+and match its recorded manifest; changed or unscored policies are unrated.
+Unavailable scores must never prevent policy selection or play.

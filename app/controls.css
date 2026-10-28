@@ -18,12 +18,15 @@
 :root body :is(#settings-modal select,select.sz-select-control,#replay-controls .replay-chapter select):disabled{color:var(--muted);background-color:var(--table);opacity:.55;cursor:default}
 :root body .ds-select select.sz-select-control{padding-left:40px}
 /* Dependent choices stay inside their parent setting, with a quiet branch guide. */
-:root body .sz-control-child{display:grid;gap:8px;min-width:0;padding:12px 12px 12px 16px;border-inline-start:2px solid var(--line);border-radius:0 var(--r) var(--r) 0;background:var(--table)}
+:root body .sz-control-child{position:relative;display:grid;gap:10px;min-width:0;padding:0 0 0 24px}
+:root body .sz-control-child::before{content:'';position:absolute;left:5px;top:-12px;width:9px;height:24px;border-left:1.5px solid var(--muted);border-bottom:1.5px solid var(--muted);border-bottom-left-radius:6px;pointer-events:none}
 :root body .sz-control-child[hidden]{display:none}
 :root body .sz-control-child-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;min-width:0}
-:root body .sz-control-child-head label{margin:0;color:var(--ink);font-size:13px;font-weight:500;line-height:1.5}
+:root body .sz-control-child-head label{margin:0;color:var(--ink);font-size:14px;font-weight:600;line-height:1.5}
 :root body .sz-control-child :is(a,small){margin:0;color:var(--muted);font-size:12px;font-weight:400;line-height:1.5}
-:root body .sz-control-child a{text-underline-offset:3px}
+:root body .sz-control-child a{color:var(--ink);font-size:13px;text-underline-offset:3px;white-space:nowrap}
+:root body .sz-control-child-rating{color:var(--ink);font-size:14px;font-weight:600;line-height:1.5;font-variant-numeric:tabular-nums}
+:root body .sz-control-child-foot{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:6px 12px}
 /* One arrow, with the same box and right inset, for expandable rows. */
 :root body :is(#settings-modal details,.sz-disclosure)>summary{display:flex;align-items:center;justify-content:space-between;gap:16px;list-style:none;min-height:48px;padding:12px 0;box-sizing:border-box;cursor:pointer}
 :root body :is(#settings-modal details,.sz-disclosure)>summary::-webkit-details-marker{display:none}

@@ -11,7 +11,7 @@
 :root body #settings-modal .policy-field>label{font:inherit;color:inherit;margin:0}
 :root body #settings-modal #arena-policy-status{color:var(--muted)}
 :root body #settings-modal .policy-field>small{grid-column:2;font-size:12px;font-weight:400;line-height:1.5}
-:root body #settings-modal .policy-field>.sz-control-child{grid-column:2;margin-top:6px}
+:root body #settings-modal .policy-field>.sz-control-child{grid-column:2;margin-top:14px}
 :root body #settings-modal .sz-motion-setting{margin:0;padding:0 0 16px;min-width:0}
 :root body #settings-modal .sz-motion-setting label{padding-bottom:0}
 :root body #settings-modal .sz-motion-setting p{margin:6px 0 0 auto;width:320px;max-width:100%;font-size:12px;line-height:1.5}
