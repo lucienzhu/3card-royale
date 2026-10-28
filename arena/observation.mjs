@@ -59,6 +59,7 @@ function boardZone(zone,ids){
 function renderBoard(){
   const o=sample.observation,aside=el('aside','obs-board');aside.setAttribute('aria-label',t('与编码对应的当前局面','Current position matching the encoding'));
   const header=el('div','obs-board-title');header.append(el('strong','',t('当前局面','Current position')),el('span','',t(`第 ${o.game} 局 · 第 ${o.round} 轮`,`Game ${o.game} · Round ${o.round}`)));aside.append(header);
+  const inspection=el('div','obs-board-inspection');inspection.setAttribute('role','status');inspection.setAttribute('aria-live','polite');aside.append(inspection);
   const levels=el('div','obs-board-levels');levels.append(flower(true),el('span','',t(`对手 ${ranks[o.levels[0]-2]}`,`Rival ${ranks[o.levels[0]-2]}`)),el('span','obs-level-line'),flower(),el('span','',t(`你 ${ranks[o.levels[1]-2]}`,`You ${ranks[o.levels[1]-2]}`)));aside.append(levels);
   const rival=el('div','obs-player-label');rival.append(flower(true),el('strong','',t('对手','Rival')),el('span','',t(`${o.enemy_wounds.length} 伤`,`${o.enemy_wounds.length} wounds`)));aside.append(rival);
   const hidden=el('div','obs-hidden');hidden.dataset.target='blind';hidden.setAttribute('role','img');hidden.setAttribute('aria-label',t(`对手 ${o.enemy_hand_count} 张暗牌`,`Rival: ${o.enemy_hand_count} hidden cards`));
@@ -67,7 +68,7 @@ function renderBoard(){
   const deck=el('div','obs-deck');deck.dataset.target='deck';deck.append(el('span','',t('牌堆','Deck')),back(),el('strong','',String(o.deck_count)));center.append(deck,boardZone(4,o.active[1]?.cards||[]));aside.append(center,boardZone(3,o.discard));
   const status=el('div','obs-board-status');status.append(el('strong','',t('你换牌','Your swap')),el('span','',t(`还可换 ${o.pending.remaining} 次`,` ${o.pending.remaining} chances left`)));aside.append(status);
   const own=el('div','obs-player-label');own.append(flower(),el('strong','',t('你','You')),el('span','',t(`${o.wounds.length} 伤`,`${o.wounds.length} wounds`)),el('b','obs-wild-label',t('花牌 ','Wild ')+ranks[o.flower_level-2]+'♥'));aside.append(own,boardZone(1,o.wounds),boardZone(0,o.hand));
-  aside.append(el('p','obs-board-help',t('点牌区名称，对照编码方格。','Select a zone label to match its grid.')));
+  const key=el('p','obs-board-key');key.append(el('span','obs-source-key',t('来源','Source')),el('span','obs-target-key',t('目标','Target')),el('span','',t('动作预览','Action preview')));aside.append(key);
   return aside;
 }
 function targetName(a){
@@ -97,13 +98,15 @@ function groupExplanation(key){
   }[key];
 }
 function maskSlot(value,index){
-  const slot=el('span','obs-mask-slot');slot.append(bit(value,index,'action_mask'),el('small','',`[${index}]`));return slot;
+  const slot=el(value?'button':'span','obs-mask-slot');
+  if(value){slot.type='button';slot.dataset.action=index;slot.setAttribute('aria-label',t('候选','Candidate')+` [${index}]: `+actionName(sample.observation.legal_actions[index]));slot.setAttribute('aria-pressed',String(index===selected));}
+  slot.append(bit(value,index,'action_mask'),el('small','',`[${index}]`));return slot;
 }
 function updateMaskExamples(group){
   const indices=groupIndices(group.dataset.group),current=indices.indexOf(selected);
   // Show at most three real indices per group, including the inspected candidate.
   // Groups are interleaved in the candidate table, not contiguous index ranges.
-  const positions=[...new Set([0,current>=0?current:Math.min(1,indices.length-1),indices.length-1])].sort((a,b)=>a-b);
+  const positions=[...new Set([0,current>0&&current<indices.length-1?current:Math.min(1,indices.length-1),indices.length-1])].sort((a,b)=>a-b);
   const preview=group.querySelector('.obs-mask-sample');preview.replaceChildren();
   positions.forEach((position,k)=>{
     if(k&&position>positions[k-1]+1)preview.append(el('span','obs-mask-ellipsis','…'));
@@ -115,13 +118,13 @@ function updateMaskExamples(group){
 function renderActions(){
   const actions=el('section','obs-actions');actions.append(heading(t('合法动作','Legal actions'),'512 · action_mask'));
   const count=el('p','obs-action-count');count.append(el('strong','',String(sample.candidateCount)),document.createTextNode(t(' 个合法候选 / 512 个槽位',' legal candidates / 512 slots')));actions.append(count);
-  actions.append(el('p','obs-note',t('本例换牌：6 手牌 + 3 伤牌。点击动作分类查看，方格仅举例。','Swap turn: 6 hand cards + 3 wounds. Select a group; bits are examples.')));
+  actions.append(el('p','obs-note',t('本例换牌：6 手牌 + 3 伤牌。点分类或编号，对照牌面。','Swap turn: 6 hand cards + 3 wounds. Select a group or a numbered bit.')));
   const groups=el('div','obs-action-groups');
   actionGroups.forEach(([key,zh,en])=>{
-    const indices=groupIndices(key),b=el('button');b.type='button';b.dataset.action=indices[0];b.dataset.group=key;
+    const indices=groupIndices(key),group=el('div','obs-action-group'),b=el('button','obs-group-button');group.dataset.group=key;b.type='button';b.dataset.action=indices[0];
     const title=el('span','obs-group-title');title.append(el('strong','',t(zh,en)),el('span','obs-group-count',String(indices.length)));
-    const preview=el('span','obs-mask-sample');preview.setAttribute('aria-hidden','true');
-    b.append(title,el('span','obs-group-explanation',groupExplanation(key)),preview);groups.append(b);
+    const preview=el('div','obs-mask-sample');
+    b.append(title,el('span','obs-group-explanation',groupExplanation(key)));group.append(b,preview);groups.append(group);
   });actions.append(groups);
   const padding=el('div','obs-mask-padding'),paddingText=el('div');
   paddingText.append(el('strong','',t(`其余 ${512-sample.candidateCount} 个空槽`,`${512-sample.candidateCount} padding slots`)),el('p','obs-note',t('0：没有动作，选最高分前屏蔽。','0: no action; masked before selecting the top score.')));
@@ -148,7 +151,11 @@ const extraFeatures=[
 function updateAction(){
   const a=selectedAction(),o=sample.observation,detail=host.querySelector('.obs-action-detail');if(!detail)return;
   host.querySelector('#obs-candidate').value=selected;
-  host.querySelectorAll('[data-group]').forEach(n=>{n.setAttribute('aria-pressed',String(n.dataset.group===actionGroup(a)));updateMaskExamples(n);});
+  const focusedExample=document.activeElement?.matches('.obs-mask-slot[data-action]')?document.activeElement.dataset.action:null;
+  host.querySelectorAll('[data-group]').forEach(n=>{const active=n.dataset.group===actionGroup(a);n.classList.toggle('is-active',active);n.querySelector('.obs-group-button').setAttribute('aria-pressed',String(active));updateMaskExamples(n);});
+  if(focusedExample!==null)host.querySelector(`.obs-mask-slot[data-action="${focusedExample}"]`)?.focus({preventScroll:true});
+  const inspection=host.querySelector('.obs-board-inspection');inspection.dataset.actionIndex=selected;
+  inspection.replaceChildren(el('span','',t('候选','Candidate')+` [${selected}]`),el('strong','',actionName(a)));
   host.querySelectorAll('.is-source,.is-target').forEach(n=>n.classList.remove('is-source','is-target'));
   detail.replaceChildren(el('strong','',`[${selected}] ${actionName(a)}`));
   const highlight=(zone,id,cls)=>{host.querySelectorAll(`.obs-playing-card[data-board-zone="${zone}"][data-card="${id}"],.obs-zone[data-zone="${zone}"] .obs-bit[data-index="${zone*52+id}"]`).forEach(n=>n.classList.add(cls));};
