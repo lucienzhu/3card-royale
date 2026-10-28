@@ -1,0 +1,7 @@
+/* Alternating page bands. Paint beyond the content column without clipping
+   sticky children, focus rings or creating horizontal scroll. */
+:root{--section-tint:#E2ECE5}
+:root[data-sz-theme=dark]{--section-tint:#112A1F}
+.section-band{position:relative;isolation:isolate}
+.section-band::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:var(--section-tint);box-shadow:0 0 0 100vmax var(--section-tint);clip-path:inset(0 -100vmax)}
+@media print{.section-band::before{display:none}}
