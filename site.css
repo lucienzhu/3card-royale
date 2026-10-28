@@ -71,3 +71,13 @@ body.site-lab>header:not(.site-header){display:none}body.site-lab .site-header{m
 .site-rule-chapter>h2{margin-top:0}
 .site-rule-chapter>:last-child{margin-bottom:0}
 @media(max-width:700px){.site-rule-chapter{padding:12px 0}}
+
+/* Identity shares the homepage skyline artwork, composed around the centered mark. */
+.site-identity-hero{position:relative;isolation:isolate}
+.site-identity-hero>:not(.site-hero-city){position:relative;z-index:1}
+.site-identity-hero>.site-hero-city{inset:0 -28px;justify-content:center;opacity:.38;mask-image:linear-gradient(to bottom,transparent 5%,#000 65%,#000 85%,transparent)}
+.site-identity-hero>.site-hero-city>.fc-bloom-svg{width:100%;max-width:1000px;margin:0;mask-image:none}
+.site-identity-actions .site-button{background:var(--paper)}
+html[data-sz-theme=dark] .site-identity-hero>.site-hero-city{opacity:.44}
+@media(max-width:700px){.site-identity-hero>.site-hero-city{inset:0 -20px}.site-identity-hero>.site-hero-city>.fc-bloom-svg{width:100%;max-width:none}}
+@media(max-width:360px){.site-identity-hero>.site-hero-city{inset-inline:-16px}}
