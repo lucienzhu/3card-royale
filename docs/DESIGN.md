@@ -82,5 +82,8 @@ radius tokens, a 44 px minimum height, and no link underline. Keep the action
 separate from the on/off control.
 
 **AI opponent.** Keep built-in difficulty choices and Arena AI in the same selector.
-Selecting Arena reveals a second selector for its registered policy; keep the
-leaderboard link visible beside the main selector for discovery.
+Selecting Arena reveals its policy selector and leaderboard link inside the same
+setting. Use the shared `.sz-control-child`: a quiet table-colored surface, inset
+content and a left guide line. Align it below the parent control on desktop and
+mobile; never give it a separate settings divider. Hide the whole child group
+for built-in opponents, retaining the selected policy when switching back.

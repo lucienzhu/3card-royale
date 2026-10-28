@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>深圳花牌 · Design System</title><link rel="icon" href="brand-mark.svg" type="image/svg+xml">
-<link rel="stylesheet" href="app/game.css?ui=sz-system-sync1"><link rel="stylesheet" href="app/typography.css?ui=sz-system-sync1"><link rel="stylesheet" href="app/piles.css?ui=sz-system-sync1"><link rel="stylesheet" href="app/quiet-bloom.css?ui=sz-system-sync1"><link rel="stylesheet" href="app/table-identity.css?ui=sz-system-sync1"><link rel="stylesheet" href="app/share-card.css?ui=sz-system-sync1"><link rel="stylesheet" href="app/tokens.css?ui=sz-system-sync1"><link rel="stylesheet" href="app/design-system.css?ui=shared-controls1"><link rel="stylesheet" href="app/controls.css?v=shared-controls1">
+<link rel="stylesheet" href="app/game.css?ui=sz-system-sync1"><link rel="stylesheet" href="app/typography.css?ui=sz-system-sync1"><link rel="stylesheet" href="app/piles.css?ui=sz-system-sync1"><link rel="stylesheet" href="app/quiet-bloom.css?ui=sz-system-sync1"><link rel="stylesheet" href="app/table-identity.css?ui=sz-system-sync1"><link rel="stylesheet" href="app/share-card.css?ui=sz-system-sync1"><link rel="stylesheet" href="app/tokens.css?ui=sz-system-sync1"><link rel="stylesheet" href="app/design-system.css?ui=arena-child1"><link rel="stylesheet" href="app/controls.css?v=arena-child1">
 </head>
 <body class="table-identity-layout ds-page">
 <main class="ds-wrap">
@@ -19,9 +19,13 @@
  <label><span data-i="controlDisabled">禁用</span><select class="sz-select-control" disabled><option data-i="followSystem">跟随系统</option></select></label>
 </div>
 <details class="sz-disclosure ds-form-disclosure"><summary data-i="controlDetails">高级选项</summary><p data-i="controlNote">44 px · 键盘与手机原生选择</p></details>
+<div class="ds-dependent-control">
+ <label for="ds-opponent" data-i="opponent">AI 对手</label><select class="sz-select-control" id="ds-opponent"><option value="code">Code AI</option><option value="arena" selected>Arena AI</option></select>
+ <div class="sz-control-child" id="ds-arena-field" role="group" aria-labelledby="ds-arena-label"><div class="sz-control-child-head"><label id="ds-arena-label" for="ds-arena-policy" data-i="arenaPolicy">天梯策略</label><a href="arena.html" data-i="leaderboard">查看天梯 ↗</a></div><select class="sz-select-control" id="ds-arena-policy"><option>NN · 512 → 256</option><option>Code AI</option></select><small data-i="arenaStatus">对手行动时加载</small></div>
+</div>
 </section>
 <section><h2 data-i="shares">04 · 结算画面</h2><p class="ds-note" data-i="resultNote">单局轻结算；整场全屏开花。</p><div class="ds-posters" id="ds-posters"></div><button class="primary" id="ds-open-share" type="button" data-i="openShare">打开回顾与分享</button></section>
 <footer><p data-i="footer">当前组件来源：tokens.css · card-face.js · mark.js · share-card.js。历史方案保留在 design-lab。</p></footer>
 </main>
-<script src="gamecore.js?ui=sz-system-sync1"></script><script src="app/mark.js?ui=sz-system-sync1"></script><script src="app/card-face.js?ui=sz-system-sync1"></script><script src="app/bloom-assets.js?ui=sz-system-sync1-cards"></script><script src="app/share-assets.js?ui=sz-system-sync1"></script><script src="app/finale.js?ui=sz-system-sync1"></script><script src="app/bloom.js?ui=sz-system-sync1"></script><script src="app/share-card.js?ui=3card-address1"></script><script src="app/design-system.js?ui=shared-controls1"></script>
+<script src="gamecore.js?ui=sz-system-sync1"></script><script src="app/mark.js?ui=sz-system-sync1"></script><script src="app/card-face.js?ui=sz-system-sync1"></script><script src="app/bloom-assets.js?ui=sz-system-sync1-cards"></script><script src="app/share-assets.js?ui=sz-system-sync1"></script><script src="app/finale.js?ui=sz-system-sync1"></script><script src="app/bloom.js?ui=sz-system-sync1"></script><script src="app/share-card.js?ui=3card-address1"></script><script src="app/design-system.js?ui=arena-child1"></script>
 </body></html>
