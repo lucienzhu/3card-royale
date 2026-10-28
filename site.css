@@ -1,4 +1,4 @@
-/* Page sections are separated by headings and whitespace. Keep borders inside components. */
+/* Page sections use headings, whitespace and alternating shared section surfaces. */
 /* Shenzhen Flower Cards, design system v3: the red flower on green grounds — 绿牌 (EV-plate pale green) by day, 主板 (motherboard deep green) by night — and one gold card. */
 @font-face{font-family:"SZ Rank";src:url("assets/fonts/archivo-rank.woff2") format("woff2");font-weight:800;font-style:normal;font-display:swap}
 html:root,html[data-sz-theme=light]{color-scheme:light;--paper:#EDF4EF;--panel:#F7FBF8;--ink:#10231B;--muted:#4F665A;--line:#C3D4C9;--table:#E2ECE5;--accent:#B2365A;--red:#C5416B;--red-text:#B2365A;--red-tint:#F6E0E7;--gold:#D6A41C;--gold-text:#866300;--gold-tint:#F1EAD0;--gold-base:#ECCE80;--gold-edge:#A17C35;--gold-center:#F2CD5D;--leaf:#16765F;--mint:#16765F;--card-face:#FFFEFA;--card-ink:#10231B;--card-edge:#CBD9D0;--rank-font:"SZ Rank",Arial,Helvetica,sans-serif;--sz-brand-red:#C5416B;--sz-brand-gold:#F2CD5D;--sz-logo-paper:#ECCE80;--sz-logo-petal:#C5416B;--sz-logo-center:#F2CD5D;--sz-logo-edge:#A17C35;--sz-paper:var(--paper);--sz-ink:var(--ink);--sz-table:var(--table);--sz-flower:var(--accent);--sz-flower-deep:var(--accent);font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',Arial,sans-serif}
@@ -63,3 +63,11 @@ body.site-lab>header:not(.site-header){display:none}body.site-lab .site-header{m
 
 /* Arena introduction shares the learning steps, with room after the play path. */
 #arena .site-steps{margin-top:28px}
+
+/* Full-width rule chapters keep the original reading measure inside each band. */
+.site-rules-body{max-width:none}
+.site-rule-chapter{padding:32px 0;display:flow-root}
+.site-rule-chapter>*{max-width:72ch}
+.site-rule-chapter>h2{margin-top:0}
+.site-rule-chapter>:last-child{margin-bottom:0}
+@media(max-width:700px){.site-rule-chapter{padding:28px 0}}

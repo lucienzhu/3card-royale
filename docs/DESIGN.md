@@ -45,7 +45,7 @@ UI copy leads with one current action or result. Remove repeated explanations an
 
 ## Current components · 2026-10-28
 
-**Page sections.** Separate sections with headings and whitespace, without decorative horizontal dividers. Apply this to About, Brand, Rules, hand research, Arena and the live component page in both languages, themes and screen sizes. Preserve the responsive section padding. Borders inside cards, controls, tables and resource lists still identify their content. Implement this in the shared `site.css`, with matching layouts in `rl.css`, `app/probability.css` and `app/design-system.css`; avoid page-specific divider overrides.
+**Page sections.** Alternate the page background and a quiet green band, with headings and whitespace instead of decorative horizontal dividers. Use the shared `app/section-surfaces.css` and explicit `.section-band` on every other major section: light `#EDF4EF` / `#E2ECE5`, dark `#0C2118` / `#112A1F`. Bands extend to the viewport edges while content keeps its aligned reading width and responsive padding. About, Brand, Rules, hand research, Arena and the live component page use the same pattern in both languages and on desktop/mobile. Nested cards and tables keep their own borders; do not alternate nested components or clip sticky content.
 
 The [live component page](../design-system.html?lang=en) loads the production card styles, current flower and canonical mark, and renders all three share layouts with the production PNG renderer from a seeded real game. It replaces dated design-lab pages as the current reference.
 
