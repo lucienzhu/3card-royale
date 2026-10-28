@@ -9,7 +9,12 @@ if(!file||!/^([a-f0-9]{40}|local)$/.test(expectedCommit))throw Error('Expected r
 if((await fs.stat(file)).size>12_000_000)throw Error('Oversized rating artifact');
 const bundle=JSON.parse(await fs.readFile(file)),ctx=await context(),destination='arena/results/leaderboard.json';
 let previous=null;try{previous=JSON.parse(await fs.readFile(destination));}catch(e){if(e.code!=='ENOENT')throw e;}
-const board=mergeLeaderboard(previous,bundle,ctx,{expectedCommit,runUrl});
+const storedResults=[];
+for(const row of previous?.leaderboard||[]){
+ if(row.reference||bundle.targets?.includes(row.id)||!ctx.manifests.has(row.id))continue;
+ storedResults.push(JSON.parse(await fs.readFile(path.join('arena/results/reference-elo-v1',row.id+'.json'))));
+}
+const board=mergeLeaderboard(previous,bundle,ctx,{expectedCommit,runUrl,storedResults});
 if(!bundle.targets.length){console.log('No ratings to publish');process.exit(0);}
 await fs.mkdir('arena/results/reference-elo-v1',{recursive:true});
 for(const entry of bundle.results){
