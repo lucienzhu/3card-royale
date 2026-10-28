@@ -28,11 +28,3 @@ function paint(){
 async function readJSON(path){const response=await fetch(new URL(path,import.meta.url),{cache:'no-cache'});if(!response.ok)throw Error('Arena data unavailable');return response.json();}
 try{[entries,data,authors]=await Promise.all([catalog(),readJSON('./results/leaderboard.json'),readJSON('../policies/registry.json').then(registryAuthors)]);paint();}catch(e){error=e;paint();}
 let language=document.documentElement.lang;new MutationObserver(()=>{if(language!==document.documentElement.lang){language=document.documentElement.lang;paint();}}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
-
-// Keep links into the former RL page usable, including collapsed results.
-function revealResearchAnchor(){
-  let id;try{id=decodeURIComponent(location.hash.slice(1));}catch{return;}
-  const target=document.getElementById(id),details=target?.closest('details');
-  if(details){details.open=true;requestAnimationFrame(()=>target.scrollIntoView());}
-}
-addEventListener('hashchange',revealResearchAnchor);revealResearchAnchor();

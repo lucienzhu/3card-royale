@@ -9,6 +9,7 @@ for(const [width,height] of [[1440,1000],[1280,800],[1280,720],[1280,600],[768,1
  const p=await browser.newPage({viewport:{width,height}});p.on('pageerror',e=>errors.push(e.message));
  await p.addInitScript(theme=>localStorage.setItem('sz_visual_theme_v1',theme),theme);
  await p.goto(base+'arena.html?lang='+lang,{waitUntil:'networkidle'});
+ await p.locator('#encoding>summary').click();
  await p.locator('.obs-layout').waitFor();
  assert.equal(await p.locator('.obs-zone').count(),6);
  const actual=await p.locator('.obs-zones .obs-card-grid .obs-bit, .obs-phases .obs-bit').allTextContents();
@@ -144,6 +145,6 @@ for(const [width,height] of [[1440,1000],[1280,800],[1280,720],[1280,600],[768,1
  await p.close();
 }
 // Failed data loading leaves readable static contract, without a partially painted board.
-const p=await browser.newPage();await p.route('**/observation-example.json*',route=>route.abort());await p.goto(base+'arena.html?lang=en',{waitUntil:'networkidle'});assert(await p.locator('#arena-observation .rl-spaces').isVisible());await p.close();
+const p=await browser.newPage();await p.route('**/observation-example.json*',route=>route.abort());await p.goto(base+'arena.html?lang=en',{waitUntil:'networkidle'});await p.locator('#encoding>summary').click();assert(await p.locator('#arena-observation .rl-spaces').isVisible());await p.close();
 assert.deepEqual(errors,[]);console.log('Arena explorer: 32 viewport/language/theme combinations; bounded sticky board across laptop heights; numbered candidate pointer/keyboard controls; all 74 action cells mapped by source/target; card selection, target clicks and separate card-match bits; unchanged legal mask of 74 ones and 438 zeros; all 74 actions, 336 state values and 72 candidate features; board highlights, language switches and load fallback passed.');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});

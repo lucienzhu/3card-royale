@@ -81,5 +81,7 @@ function render(){
  window.gkProbabilityState={level,n,ranking};
 }
 if(location.protocol==='file:')$('simulator-link').href='../2026-10-13-gk-v032/index.html?version=0.3.2';
+// Re-measure the chart when its section becomes visible.
+$('trend-svg').closest('details')?.addEventListener('toggle',e=>{if(e.target.open)renderTrend();});
 let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(renderTrend,80);});
 render();

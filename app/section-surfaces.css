@@ -5,3 +5,17 @@
 .section-band{position:relative;isolation:isolate}
 .section-band::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:var(--section-tint);box-shadow:0 0 0 100vmax var(--section-tint);clip-path:inset(0 -100vmax)}
 @media print{.section-band::before{display:none}}
+
+/* One short summary; complete detail on request. No section-divider borders. */
+.site-disclosure{border:0;margin:0;min-width:0}
+.site-disclosure>summary{display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:48px;padding:14px 0;cursor:pointer;list-style:none;font-weight:650;color:var(--ink)}
+.site-disclosure>summary::-webkit-details-marker{display:none}
+.site-disclosure>summary::after{content:'+';flex:none;color:var(--red-text,var(--red));font-size:24px;font-weight:400;line-height:1}
+.site-disclosure[open]>summary::after{content:'−'}
+.site-disclosure>summary:focus-visible{outline:2px solid var(--red);outline-offset:5px;border-radius:4px}
+.site-disclosure>summary h2{font-size:clamp(18px,2vw,24px);line-height:1.4;margin:0}
+.site-disclosure-body{padding:16px 0 24px;min-width:0}
+.site-disclosure-compact{margin-top:16px;font-size:14px}
+.site-rule-chapter .site-disclosure-body>*{max-width:72ch}
+.site-rule-chapter .site-disclosure-body>:last-child{margin-bottom:0}
+@media print{.site-disclosure>summary::after{display:none}}

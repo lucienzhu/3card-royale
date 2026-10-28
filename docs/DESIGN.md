@@ -47,6 +47,8 @@ UI copy leads with one current action or result. Remove repeated explanations an
 
 **Page sections.** Alternate the page background and a quiet green band, with headings and whitespace instead of decorative horizontal dividers. Use the shared `app/section-surfaces.css` and explicit `.section-band` on every other major section: light `#EDF4EF` / `#E2ECE5`, dark `#0C2118` / `#112A1F`. Bands extend to the viewport edges while content keeps its aligned reading width and responsive padding. About, Brand, Rules, hand research, Arena and the live component page use the same pattern in both languages and on desktop/mobile. Nested cards and tables keep their own borders; do not alternate nested components or clip sticky content.
 
+**Copy and detail.** Keep one idea per section: a short heading, essential facts and a direct action. Remove repeated descriptions. Full rule chapters, research methods and the Arena encoding explorer use named, keyboard-accessible disclosures; deep links open the relevant content, and printing includes it all. Preserve complete rules, statistical context and accessible labels. Apply the same hierarchy in Chinese and English. Shared behavior lives in `app/site-disclosures.js`.
+
 The [live component page](../design-system.html?lang=en) loads the production card styles, current flower and canonical mark, and renders all three share layouts with the production PNG renderer from a seeded real game. It replaces dated design-lab pages as the current reference.
 
 Gallery language and theme selectors share a 44px control, token-based surfaces, leading icons and a visible focus ring. Native selection keeps keyboard and mobile pickers available. Chapter 04 groups result conventions and share previews.
