@@ -10,7 +10,7 @@
   const en=()=>window.GKLocale?.language==='en';
   function paint() {
     document.getElementById('policy-label').textContent=en()?'AI opponent':'AI 对手';
-    for(const option of select.options)option.textContent=({easy:en()?'Easy · Easy AI':'简单 · Easy AI',nn:en()?'Medium · NN AI':'中等 · NN AI',code:en()?'Hard · Code AI':'困难 · Code AI',godlike:en()?'Godlike · Sees your hand':'超凡 · Godlike AI（明牌）',arena:en()?'Arena AI · Community policies':'Arena AI · 天梯策略'})[option.value];
+    for(const option of select.options)option.textContent=({easy:en()?'Easy · Easy AI':'简单 · Easy AI',nn:en()?'Medium · NN AI':'中等 · NN AI',code:en()?'Hard · Code AI':'困难 · Code AI',godlike:en()?'Godlike · Sees your hand':'超凡 · Godlike AI（明牌）',arena:en()?'Arena AI · Community policies':'竞技场 AI · 天梯策略'})[option.value];
     const unsupported=window.gkGame && window.gkGame.version!=='1.0.0';
     status.textContent=unsupported?(en()?'Historical rules use their original Code AI.':'历史规则使用原版 Code AI。'):selected==='godlike'?(godlikeFailed?(en()?'Godlike unavailable · using Hard Code AI':'Godlike 暂不可用 · 使用困难 Code AI'):(en()?'Sees your hand · No card memory':'可看你的手牌 · 不记牌')):selected!=='nn'?'':
       state==='loading'?(en()?'Loading NN AI…':'正在加载 NN AI…'):

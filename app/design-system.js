@@ -17,6 +17,7 @@ let urls=[];
 function render(){
  document.documentElement.lang=lang;document.documentElement.dataset.szTheme=theme;
  document.querySelectorAll('[data-i]').forEach(el=>{el.textContent=copy[el.dataset.i][lang==='en'?1:0];});
+ $('ds-opponent').querySelector('[value=arena]').textContent=t('竞技场 AI','Arena AI');
  $('ds-theme').options[0].textContent=t('日间','Light');$('ds-theme').options[1].textContent=t('夜间','Dark');
  $('ds-language').value=lang;$('ds-theme').value=theme;$('ds-spec').href='docs/DESIGN'+(lang==='en'?'':'.zh-CN')+'.md';
  document.querySelectorAll('a[href^="index.html"],a[href^="brand.html"],a[href^="arena.html"]').forEach(a=>{a.href=a.pathname.split('/').pop()+'?lang='+lang;});
