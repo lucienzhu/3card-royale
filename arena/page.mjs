@@ -16,7 +16,7 @@ function paint(){
     const small=document.createElement('small');small.textContent=`${m.type==='onnx'?'NN':'JS'} · `;
     const author=document.createElement('a'),handle=authors.get(m.id);if(!handle)throw Error('Missing policy author');
     author.className='arena-author';author.href=`https://github.com/${handle}`;author.textContent=`@${handle}`;small.append(author);name.append(small);
-    cell(row,current?String(r.elo):'—');cell(row,current&&r.games?(100*r.wins/r.games).toFixed(1)+'%':'—');cell(row,current&&!r.reference?String(r.games):'—');cell(row,current&&Number.isFinite(r.latencyP95Ms)?r.latencyP95Ms.toFixed(1)+' ms':'—');
+    cell(row,current?String(r.elo):'—');cell(row,current&&r.games?(100*r.wins/r.games).toFixed(1)+'%':'—');cell(row,current&&r.games>0?String(r.games):'—');cell(row,current&&Number.isFinite(r.latencyP95Ms)?r.latencyP95Ms.toFixed(1)+' ms':'—');
     if(current&&r.reference){const label=document.createElement('small');label.textContent=t('固定基准','Fixed reference');name.append(label);}
     if(!current||r.provisional){const label=document.createElement('small');label.textContent=current?t('暂定','Provisional'):t('待评估','Unrated');name.append(label);}
     const action=cell(row,'');const a=document.createElement('a');a.className='arena-play';a.href=`index.html?lang=${en()?'en':'zh-CN'}&policy=${encodeURIComponent(m.id)}`;a.textContent=t('挑战 ↗','Play ↗');a.setAttribute('aria-label',t('挑战 ','Play ')+m.name);action.append(a);body.append(row);

@@ -31,6 +31,30 @@ assert.throws(()=>mergeLeaderboard(null,{...bundle,rated:false},fixture,{expecte
 assert.throws(()=>mergeLeaderboard(null,{...bundle,results:[{...bundle.results[0],rating:{...rating,elo:9999}}]},fixture,{expectedCommit:'local'}));
 assert.throws(()=>mergeLeaderboard({...board,panelSha256:'stale'},bundle,fixture,{expectedCommit:'local'}));
 assert.deepEqual(mergeLeaderboard(board,bundle,fixture,{expectedCommit:'local'}),board);
-const idle=mergeLeaderboard(board,{...bundle,targets:[],results:[]},fixture,{expectedCommit:'local'});assert.deepEqual(idle.leaderboard,board.leaderboard);
+const storedFixture={...bundle.results[0],panelSha256:fixture.panelSha256,sourceCommit:'local'};
+const idle=mergeLeaderboard(board,{...bundle,targets:[],results:[]},fixture,{expectedCommit:'local',storedResults:[storedFixture]});assert.deepEqual(idle.leaderboard,board.leaderboard);
 const incomplete=structuredClone(bundle);incomplete.results[0].matches[0].report.records.pop();assert.throws(()=>mergeLeaderboard(board,incomplete,fixture,{expectedCommit:'local'}));
+// Backfill and later partial publications use the same raw CI matches for both seats.
+const previous=JSON.parse(await fs.readFile(new URL('../../arena/results/leaderboard.json',import.meta.url)));
+const saved=await Promise.all(previous.leaderboard.filter(r=>!r.reference).map(r=>fs.readFile(new URL(`../../arena/results/reference-elo-v1/${r.id}.json`,import.meta.url)).then(JSON.parse)));
+const empty={schema:1,method:ctx.panel.id,panelSha256:ctx.panelSha256,sourceCommit:'local',rated:true,createdAt:previous.createdAt,targets:[],results:[]};
+const backfilled=mergeLeaderboard(previous,empty,ctx,{expectedCommit:'local',storedResults:saved});
+for(const row of backfilled.leaderboard.filter(r=>r.reference)){
+ const reports=saved.map(e=>e.matches.find(m=>m.opponent===row.id).report),records=reports.flatMap(r=>r.records),timings=reports.map(r=>r.leaderboard.find(s=>s.id===row.id));
+ assert.equal(row.elo,ctx.panel.opponents.find(p=>p.id===row.id).elo);
+ assert.equal(row.games,records.length);assert.equal(row.wins,records.filter(r=>r.winner===row.id).length);assert.equal(row.losses,row.games-row.wins);
+ assert.equal(row.latencyP95Ms,Math.max(...timings.map(r=>r.latencyP95Ms)));assert.equal(row.decisions,timings.reduce((n,r)=>n+r.decisions,0));
+ assert.deepEqual(row.opponents.map(o=>o.id),saved.map(e=>e.id).sort());
+}
+const entrantGames=backfilled.leaderboard.filter(r=>!r.reference).reduce((n,r)=>n+r.games,0);
+assert.equal(backfilled.leaderboard.filter(r=>r.reference).reduce((n,r)=>n+r.games,0),entrantGames);
+assert.equal(backfilled.leaderboard.reduce((n,r)=>n+r.wins,0),entrantGames);
+assert.equal(backfilled.leaderboard.reduce((n,r)=>n+r.losses,0),entrantGames);
+const rerated={...empty,targets:[saved[0].id],results:[saved[0]]};
+const again=mergeLeaderboard(backfilled,rerated,ctx,{expectedCommit:'local',storedResults:saved});
+assert.deepEqual(again.leaderboard.filter(r=>r.reference),backfilled.leaderboard.filter(r=>r.reference),'rerating replaces games instead of adding them twice');
+assert.throws(()=>mergeLeaderboard(previous,empty,ctx,{expectedCommit:'local'}),/Missing or stale/);
+const stale=structuredClone(saved);stale[0].panelSha256='stale';assert.throws(()=>mergeLeaderboard(previous,empty,ctx,{expectedCommit:'local',storedResults:stale}),/Missing or stale/);
+const tampered=structuredClone(saved);tampered[0].matches[0].report.records[0].winner='unknown';assert.throws(()=>mergeLeaderboard(previous,empty,ctx,{expectedCommit:'local',storedResults:tampered}));
+const noTiming=structuredClone(saved);noTiming[0].matches[0].report.leaderboard.find(r=>r.id===noTiming[0].matches[0].opponent).latencyP95Ms=null;assert.throws(()=>mergeLeaderboard(previous,empty,ctx,{expectedCommit:'local',storedResults:noTiming}),/Missing reference timing/);
 console.log('Reference Arena: fixed 60-game cost, target caps, immutable IDs, receipt gate, balanced matches and publication integrity passed.');

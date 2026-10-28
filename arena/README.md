@@ -88,8 +88,16 @@ The fixed panel is in [reference-panel.json](reference-panel.json):
 | Easy 64 | 1387 |
 
 These coordinates come from the saved [400-game calibration](benchmarks/linux-2026-10-26/quick-rating/rating.json),
-not 60 new games by each reference. The webpage labels them **Fixed reference** and
-shows no new game count or win rate for them. Calibration itself is a small sample.
+not new Elo estimates for each reference. The webpage labels them **Fixed reference**.
+Their win rate and game count aggregate the other side of the current entrants'
+rated matches; latency is the maximum of their recorded opponent-batch p95 values.
+These statistics come from the same saved CI reports, without extra matches.
+Entrants face the three fixed references; references face the current entrants, so
+their win rates cover different opponent pools. Calibration itself is a small sample.
+
+Each publication rebuilds reference statistics from the current entrants' reports.
+Validation games and superseded evaluations are excluded. The headline game count
+counts each rated game once, even though it contributes statistics to both players.
 
 For entrant rating R and reference rating B:
 
