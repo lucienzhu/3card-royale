@@ -18,7 +18,7 @@ for(const [width,height] of [[1440,1000],[1280,800],[1280,720],[1280,600],[768,1
  assert.equal(await p.locator('.obs-hidden .obs-back').count(),o.enemy_hand_count);
  assert.equal(await p.locator('.obs-mask').count(),0);
  assert.deepEqual((await p.locator('.obs-group-count').allTextContents()).map(Number),[9,9,18,36,1,1]);
- assert((await p.locator('.obs-action-groups .obs-bit').count())<=14);
+ assert.equal(await p.locator('.obs-action-groups .obs-bit').count(),74);
  assert.deepEqual(await p.locator('.obs-mask-padding .obs-bit').evaluateAll(ns=>ns.map(n=>[Number(n.dataset.index),Number(n.textContent)])),[[74,0],[75,0],[511,0]]);
  assert((await p.locator('.obs-mask-padding').innerText()).includes('438'));
  const previews=await p.locator('[data-group]').evaluateAll(ns=>ns.map(n=>({key:n.dataset.group,indices:[...n.querySelectorAll('.obs-bit')].map(b=>Number(b.dataset.index))})));
@@ -28,12 +28,11 @@ for(const [width,height] of [[1440,1000],[1280,800],[1280,720],[1280,600],[768,1
  }
  // Every grouped index maps to 1; padding covers the remaining 0s. No omitted legal indices.
  assert.deepEqual(await p.locator('.obs-mask-range code').allTextContents(),['action_mask[0–73] = 1','action_mask[74–511] = 0']);
- const mappings=await p.locator('[data-group]').evaluateAll(ns=>ns.map(n=>({key:n.dataset.group,text:n.querySelector('.obs-mask-indices code').textContent})));
+ const mappings=await p.locator('[data-group]').evaluateAll(ns=>ns.map(n=>({key:n.dataset.group,indices:[...n.querySelectorAll('.obs-mask-slot')].map(b=>Number(b.dataset.action))})));
  const mask=new Array(512).fill(0);
- for(const {key,text} of mappings){
-  const indices=text.slice(1,-1).split(', ').flatMap(range=>{const [first,last=first]=range.split('–').map(Number);return Array.from({length:last-first+1},(_,i)=>first+i);});
+ for(const {key,indices} of mappings){
   const expected=o.legal_actions.flatMap((a,i)=>(a.type!=='swap'?a.type:['deck','blind'].includes(a.target.zone)?a.target.zone:a.target.who===o.player?'own':'rival')===key?[i]:[]);
-  assert.deepEqual(indices,expected,'complete exact mask mapping for '+key);
+  assert.deepEqual(indices.slice().sort((a,b)=>a-b),expected,'complete exact mask mapping for '+key);
   for(const i of indices){assert.equal(mask[i],0,'each legal slot belongs to one group');mask[i]=1;}
  }
  assert.deepEqual(mask,Array.from({length:512},(_,i)=>+(i<o.legal_actions.length)));
@@ -44,8 +43,8 @@ for(const [width,height] of [[1440,1000],[1280,800],[1280,720],[1280,600],[768,1
    await p.locator(`[data-group="${group}"] .obs-group-button`).click();
    assert.equal(await p.locator(`[data-group="${group}"] .obs-group-button`).getAttribute('aria-pressed'),'true');
  }
- // Each displayed sample is a real control, not a shortcut to the group's first action.
- const examples=await p.locator('.obs-mask-slot[data-action]').evaluateAll(ns=>ns.map(n=>n.dataset.action));
+ // Every candidate is exposed; pointer/keyboard controls select the real index.
+ const examples=width===1440&&lang==='en'&&theme==='light'?Array.from({length:74},(_,i)=>String(i)):['0','7','62','1','63','2','65','4','71','72','73'];
  for(const index of examples){
    const button=p.locator(`.obs-mask-slot[data-action="${index}"]`);await button.click();
    assert.equal(await p.locator('#obs-candidate').inputValue(),index);
@@ -53,6 +52,38 @@ for(const [width,height] of [[1440,1000],[1280,800],[1280,720],[1280,600],[768,1
    assert.equal(await p.locator('.obs-action-groups .is-inspected').getAttribute('data-index'),index);
    assert.equal(await p.locator(`.obs-mask-slot[data-action="${index}"]`).evaluate(n=>document.activeElement===n),true);
  }
+ // Picking an actual source card changes card-match bits, never the legal mask.
+ const sources=width===1440&&lang==='en'&&theme==='light'
+   ?['hand','wounds'].flatMap(zone=>o[zone].map((_,index)=>({zone,index})))
+   :[{zone:'hand',index:0},{zone:'wounds',index:2}];
+ for(const source of sources){
+  const card=p.locator(`.obs-board [data-source-zone="${source.zone}"][data-source-index="${source.index}"]`);
+  await card.click();assert.equal(await card.getAttribute('aria-pressed'),'true');
+  const slots=await p.locator('.obs-action-group .obs-mask-slot').evaluateAll(ns=>ns.map(n=>({index:Number(n.dataset.action),mask:Number(n.dataset.maskValue),value:Number(n.querySelector('.obs-bit').textContent)})));
+  assert.equal(slots.length,74);
+  for(const slot of slots){const a=o.legal_actions[slot.index];assert.equal(slot.mask,1);assert.equal(slot.value,Number(a.type==='swap'&&a.source.zone===source.zone&&a.source.index===source.index));}
+  assert.equal(await p.locator('.obs-action-group .obs-mask-slot .is-set').count(),source.zone==='hand'?7:10);
+  // Target selection keeps the source, including individual rival wound cards.
+  for(const target of [{selector:'.obs-board [data-target="deck"]',zone:'deck'},{selector:'.obs-board [data-target="blind"]',zone:'blind'},{selector:'.obs-board [data-rival-wound="1"]',zone:'wounds',index:1}]){
+   await p.locator(target.selector).click();const a=o.legal_actions[Number(await p.locator('#obs-candidate').inputValue())];
+   assert.deepEqual(a.source,source);assert.equal(a.target.zone,target.zone);
+   if(target.index!==undefined){assert.equal(a.target.index,target.index);assert.notEqual(a.target.who,o.player);}
+  }
+  await p.locator('[data-clear-source]').click();
+  assert.equal(await p.locator('.obs-action-group .obs-mask-slot .is-set').count(),74);
+ }
+ // Toggle source off; legal values restore and keyboard card activation works.
+ const firstCard=p.locator('.obs-board [data-source-zone="hand"][data-source-index="0"]');
+ await firstCard.focus();await firstCard.press('Enter');assert.equal(await firstCard.getAttribute('aria-pressed'),'true');
+ await firstCard.click();assert.equal(await firstCard.getAttribute('aria-pressed'),'false');
+ assert.equal(await p.locator('.obs-action-group .obs-mask-slot .is-set').count(),74);
+ // A 0 in card-match view is still a legal, clickable candidate. Inspecting it changes source.
+ await firstCard.click();await p.locator('.obs-mask-slot[data-action="62"]').click();
+ assert.equal(await p.locator('.obs-board [data-source-zone="wounds"][data-source-index="2"]').getAttribute('aria-pressed'),'true');
+ assert.equal(await p.locator('.obs-mask-slot[data-action="62"]').getAttribute('data-display-value'),'1');
+ await p.locator('.obs-mask-slot[data-action="72"]').click();
+ assert.equal(await p.locator('.obs-action-group .obs-mask-slot .is-set').count(),74);
+ assert.equal(await p.locator('.obs-zones .obs-card-grid .obs-bit').evaluateAll(ns=>ns.map(n=>Number(n.textContent)).join(',')),sample.state.slice(0,312).join(','),'inspection never mutates the position');
  // Keyboard activation selects the actual numbered candidate as well.
  const lastExample=p.locator('[data-group="rival"] .obs-mask-slot').last();
  const keyboardIndex=await lastExample.getAttribute('data-action');await lastExample.focus();await lastExample.press('Enter');
@@ -114,5 +145,5 @@ for(const [width,height] of [[1440,1000],[1280,800],[1280,720],[1280,600],[768,1
 }
 // Failed data loading leaves readable static contract, without a partially painted board.
 const p=await browser.newPage();await p.route('**/observation-example.json*',route=>route.abort());await p.goto(base+'arena.html?lang=en',{waitUntil:'networkidle'});assert(await p.locator('#arena-observation .rl-spaces').isVisible());await p.close();
-assert.deepEqual(errors,[]);console.log('Arena explorer: 32 viewport/language/theme combinations; bounded sticky board across laptop heights; numbered candidate pointer/keyboard controls; six action groups with complete exact mask indices, 74 ones and 438 zeros; all 74 actions, 336 state values and 72 candidate features; board highlights, language switches and load fallback passed.');
+assert.deepEqual(errors,[]);console.log('Arena explorer: 32 viewport/language/theme combinations; bounded sticky board across laptop heights; numbered candidate pointer/keyboard controls; all 74 action cells mapped by source/target; card selection, target clicks and separate card-match bits; unchanged legal mask of 74 ones and 438 zeros; all 74 actions, 336 state values and 72 candidate features; board highlights, language switches and load fallback passed.');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});

@@ -33,13 +33,19 @@ function el(tag,cls,text){const node=document.createElement(tag);if(cls)node.cla
 function bit(value,index,label){const node=el('span','obs-bit'+(value?' is-set':''),String(value));node.dataset.index=index;node.title=`${label} · [${index}] = ${value}`;return node;}
 function heading(title,detail){const h=el('div','obs-heading');h.append(el('h3','',title),el('span','obs-code',detail));return h;}
 function legend(on,off){const p=el('p','obs-legend');p.append(el('span','obs-legend-on','1 · '+on),el('span','','0 · '+off));return p;}
-let sample,selected=0,activeZone=null;
+let sample,selected=0,activeZone=null,sourceFilter=null;
 const cardName=id=>ranks[id%13]+suits[Math.floor(id/13)];
 const selectedAction=()=>sample.observation.legal_actions[selected];
 function card(id,zone){
-  const node=el('span','sc-card obs-playing-card');node.dataset.card=id;
+  const interactive=zone===0||zone===1||zone===2;
+  const node=el(interactive?'button':'span','sc-card obs-playing-card');node.dataset.card=id;
   if(zone!==undefined)node.dataset.boardZone=zone;
-  node.setAttribute('role','img');node.setAttribute('aria-label',cardName(id));
+  if(interactive){
+    node.type='button';
+    if(zone<2){node.dataset.sourceZone=zone===0?'hand':'wounds';node.dataset.sourceIndex=sample.observation[node.dataset.sourceZone].indexOf(id);}
+    else node.dataset.rivalWound=sample.observation.enemy_wounds.indexOf(id);
+  }else node.setAttribute('role','img');
+  node.setAttribute('aria-label',cardName(id));
   const suit=Math.floor(id/13),rank=ranks[id%13];node.classList.toggle('red',suit===1||suit===3);
   if(id===13+sample.observation.flower_level-2)node.classList.add('wild');
   node.append(el('b',rank==='10'?'ten':'',rank));
@@ -62,13 +68,14 @@ function renderBoard(){
   const inspection=el('div','obs-board-inspection');inspection.setAttribute('role','status');inspection.setAttribute('aria-live','polite');aside.append(inspection);
   const levels=el('div','obs-board-levels');levels.append(flower(true),el('span','',t(`对手 ${ranks[o.levels[0]-2]}`,`Rival ${ranks[o.levels[0]-2]}`)),el('span','obs-level-line'),flower(),el('span','',t(`你 ${ranks[o.levels[1]-2]}`,`You ${ranks[o.levels[1]-2]}`)));aside.append(levels);
   const rival=el('div','obs-player-label');rival.append(flower(true),el('strong','',t('对手','Rival')),el('span','',t(`${o.enemy_wounds.length} 伤`,`${o.enemy_wounds.length} wounds`)));aside.append(rival);
-  const hidden=el('div','obs-hidden');hidden.dataset.target='blind';hidden.setAttribute('role','img');hidden.setAttribute('aria-label',t(`对手 ${o.enemy_hand_count} 张暗牌`,`Rival: ${o.enemy_hand_count} hidden cards`));
+  const hidden=el('button','obs-hidden');hidden.type='button';hidden.dataset.target='blind';hidden.setAttribute('aria-label',t(`盲换对手 ${o.enemy_hand_count} 张暗牌`,`Swap with the rival’s ${o.enemy_hand_count} hidden cards`));
   for(let i=0;i<o.enemy_hand_count;i++)hidden.append(back());aside.append(hidden,boardZone(2,o.enemy_wounds));
   const center=el('div','obs-board-center');center.append(boardZone(5,o.active[0]?.cards||[]));
-  const deck=el('div','obs-deck');deck.dataset.target='deck';deck.append(el('span','',t('牌堆','Deck')),back(),el('strong','',String(o.deck_count)));center.append(deck,boardZone(4,o.active[1]?.cards||[]));aside.append(center,boardZone(3,o.discard));
+  const deck=el('button','obs-deck');deck.type='button';deck.dataset.target='deck';deck.setAttribute('aria-label',t('换牌堆','Swap with deck'));deck.append(el('span','',t('牌堆','Deck')),back(),el('strong','',String(o.deck_count)));center.append(deck,boardZone(4,o.active[1]?.cards||[]));aside.append(center,boardZone(3,o.discard));
   const status=el('div','obs-board-status');status.append(el('strong','',t('你换牌','Your swap')),el('span','',t(`还可换 ${o.pending.remaining} 次`,` ${o.pending.remaining} chances left`)));aside.append(status);
   const own=el('div','obs-player-label');own.append(flower(),el('strong','',t('你','You')),el('span','',t(`${o.wounds.length} 伤`,`${o.wounds.length} wounds`)),el('b','obs-wild-label',t('花牌 ','Wild ')+ranks[o.flower_level-2]+'♥'));aside.append(own,boardZone(1,o.wounds),boardZone(0,o.hand));
   const key=el('p','obs-board-key');key.append(el('span','obs-source-key',t('来源','Source')),el('span','obs-target-key',t('目标','Target')),el('span','',t('动作预览','Action preview')));aside.append(key);
+  const hint=el('p','obs-board-hint',t('点自己的牌，查看关联动作；再点牌堆或对手牌预览。','Pick your card to see matching actions; then pick a deck or rival target.'));aside.append(hint);
   return aside;
 }
 function targetName(a){
@@ -86,14 +93,12 @@ function actionName(a){
 function actionGroup(a){if(a.type!=='swap')return a.type;if(a.target.zone==='deck'||a.target.zone==='blind')return a.target.zone;return a.target.who===sample.player?'own':'rival';}
 const actionGroups=[['deck','换牌堆','Deck'],['blind','盲换对手','Blind rival'],['rival','换对手伤牌','Rival wounds'],['own','手牌 ⇄ 伤牌','Hand ⇄ wounds'],['skip_swap','跳过本次','Skip one'],['stop_swaps','结束换牌','End swaps']];
 function groupIndices(key){return sample.observation.legal_actions.flatMap((a,i)=>actionGroup(a)===key?[i]:[]);}
-function indexRanges(indices){
-  const ranges=[];
-  for(let i=0;i<indices.length;i++){
-    const first=indices[i];let last=first;
-    while(i+1<indices.length&&indices[i+1]===last+1)last=indices[++i];
-    ranges.push(first===last?String(first):`${first}–${last}`);
-  }
-  return ranges;
+const matchesSource=(a,source)=>a.type==='swap'&&a.source.zone===source.zone&&a.source.index===source.index;
+function sourceLabel(zone,index){
+  const id=sample.observation[zone][index],b=el('button','obs-source-label',cardName(id));
+  b.type='button';b.dataset.sourceZone=zone;b.dataset.sourceIndex=index;
+  b.classList.toggle('is-red',Math.floor(id/13)===1||Math.floor(id/13)===3);
+  b.setAttribute('aria-label',(zone==='hand'?t('手牌 ','Hand '):t('伤牌 ','Wound '))+cardName(id));return b;
 }
 function groupExplanation(key){
   const o=sample.observation,h=o.hand.length,w=o.wounds.length,n=h+w;
@@ -108,42 +113,77 @@ function groupExplanation(key){
 }
 function maskSlot(value,index){
   const slot=el(value?'button':'span','obs-mask-slot');
-  if(value){slot.type='button';slot.dataset.action=index;slot.setAttribute('aria-label',t('候选','Candidate')+` [${index}]: `+actionName(sample.observation.legal_actions[index]));slot.setAttribute('aria-pressed',String(index===selected));}
+  if(value){slot.type='button';slot.dataset.action=index;slot.dataset.maskValue=1;slot.setAttribute('aria-label',t('候选','Candidate')+` [${index}]: `+actionName(sample.observation.legal_actions[index]));slot.setAttribute('aria-pressed',String(index===selected));}
   slot.append(bit(value,index,'action_mask'),el('small','',`[${index}]`));return slot;
 }
-function updateMaskExamples(group){
-  const indices=groupIndices(group.dataset.group),current=indices.indexOf(selected);
-  // Show at most three real indices per group, including the inspected candidate.
-  // Groups are interleaved in the candidate table, not contiguous index ranges.
-  const positions=[...new Set([0,current>0&&current<indices.length-1?current:Math.min(1,indices.length-1),indices.length-1])].sort((a,b)=>a-b);
-  const preview=group.querySelector('.obs-mask-sample');preview.replaceChildren();
-  positions.forEach((position,k)=>{
-    if(k&&position>positions[k-1]+1)preview.append(el('span','obs-mask-ellipsis','…'));
-    const index=indices[position],slot=maskSlot(1,index);
-    slot.querySelector('.obs-bit').classList.toggle('is-inspected',index===selected);preview.append(slot);
+function actionMatrix(key,zone){
+  const o=sample.observation,targets=key==='rival'?o.enemy_wounds:o[zone==='hand'?'wounds':'hand'];
+  const table=el('table','obs-action-matrix');
+  table.append(el('caption','',key==='rival'?(zone==='hand'?t('手牌 → 对手伤牌','Hand → rival wounds'):t('伤牌 → 对手伤牌','Wounds → rival wounds')):(zone==='hand'?t('手牌 → 自己伤牌','Hand → own wounds'):t('伤牌 → 自己手牌','Wounds → own hand'))));
+  const head=el('thead'),row=el('tr');row.append(el('th','obs-axis',t('来源↓ / 目标→','From↓ / To→')));
+  targets.forEach(id=>{const cell=el('th','obs-target-label',cardName(id));cell.scope='col';cell.classList.toggle('is-red',[1,3].includes(Math.floor(id/13)));row.append(cell);});head.append(row);table.append(head);
+  const body=el('tbody');o[zone].forEach((id,sourceIndex)=>{
+    const row=el('tr'),label=el('th');label.scope='row';label.append(sourceLabel(zone,sourceIndex));row.append(label);
+    targets.forEach((_,targetIndex)=>{
+      const index=o.legal_actions.findIndex(a=>actionGroup(a)===key&&matchesSource(a,{zone,index:sourceIndex})&&a.target.index===targetIndex);
+      const cell=el('td');cell.append(maskSlot(1,index));row.append(cell);
+    });body.append(row);
+  });table.append(body);return table;
+}
+function renderGroupValues(key){
+  const values=el('div','obs-group-values');
+  if(key==='rival'||key==='own'){
+    for(const zone of ['hand','wounds'])values.append(actionMatrix(key,zone));
+  }else if(key==='deck'||key==='blind'){
+    for(const zone of ['hand','wounds']){
+      values.append(el('p','obs-rack-title',zone==='hand'?t('手牌','Hand'):t('伤牌','Wounds')));
+      const rack=el('div','obs-source-slots');
+      groupIndices(key).filter(i=>sample.observation.legal_actions[i].source.zone===zone).forEach(i=>{
+        const cell=el('div'),a=sample.observation.legal_actions[i];cell.append(sourceLabel(zone,a.source.index),maskSlot(1,i));rack.append(cell);
+      });values.append(rack);
+    }
+  }else values.append(maskSlot(1,groupIndices(key)[0]));
+  return values;
+}
+function updateMaskValues(){
+  const actions=sample.observation.legal_actions,filter=host.querySelector('.obs-card-filter');
+  const description=filter.querySelector('[role="status"]');
+  const label=sourceFilter?(sourceFilter.zone==='hand'?t('手牌 ','Hand '):t('伤牌 ','Wound '))+cardName(sample.observation[sourceFilter.zone][sourceFilter.index]):'';
+  description.textContent=sourceFilter?t(`选牌关联 · ${label} · 1 对应 / 0 不对应（仍合法）`,`Card match · ${label} · 1 matches / 0 other (still legal)`):t('action_mask · 1 合法 / 0 空槽。点自己的牌查看关联。','action_mask · 1 legal / 0 padding. Pick your card to see matches.');
+  filter.querySelector('button').hidden=!sourceFilter;filter.classList.toggle('is-filtering',!!sourceFilter);
+  host.querySelectorAll('.obs-action-group').forEach(group=>{
+    const indices=groupIndices(group.dataset.group),active=group.dataset.group===actionGroup(selectedAction());
+    group.classList.toggle('is-active',active);group.querySelector('.obs-group-button').setAttribute('aria-pressed',String(active));
+    group.querySelector('.obs-group-mode').textContent=sourceFilter?t(`选牌关联 · ${label}`,`Card match · ${label}`):'action_mask';
+    group.querySelector('.obs-group-count').textContent=sourceFilter?`${indices.filter(i=>matchesSource(actions[i],sourceFilter)).length} / ${indices.length}`:String(indices.length);
+    group.querySelectorAll('.obs-mask-slot').forEach(slot=>{
+      const index=Number(slot.dataset.action),value=sourceFilter?Number(matchesSource(actions[index],sourceFilter)):1,b=slot.querySelector('.obs-bit');
+      b.textContent=value;b.classList.toggle('is-set',!!value);b.classList.toggle('is-inspected',index===selected);
+      b.title=sourceFilter?`card_match[${index}] = ${value}; action_mask[${index}] = 1`:`action_mask[${index}] = 1`;
+      slot.dataset.displayValue=value;slot.setAttribute('aria-pressed',String(index===selected));
+      slot.setAttribute('aria-label',`[${index}] ${actionName(actions[index])} · action_mask = 1`+(sourceFilter?` · ${t('选牌关联','card match')} = ${value}`:''));
+    });
   });
+  host.querySelectorAll('[data-source-zone]').forEach(n=>n.setAttribute('aria-pressed',String(!!sourceFilter&&n.dataset.sourceZone===sourceFilter.zone&&Number(n.dataset.sourceIndex)===sourceFilter.index)));
 }
 
 function renderActions(){
   const actions=el('section','obs-actions');actions.append(heading(t('合法动作','Legal actions'),'512 · action_mask'));
   const count=el('p','obs-action-count');count.append(el('strong','',String(sample.candidateCount)),document.createTextNode(t(' 个合法候选 / 512 个槽位',' legal candidates / 512 slots')));actions.append(count);
-  actions.append(el('p','obs-note',t('本例换牌：6 手牌 + 3 伤牌。点分类或编号，对照牌面。','Swap turn: 6 hand cards + 3 wounds. Select a group or a numbered bit.')));
+  actions.append(el('p','obs-note',t('6 手牌 + 3 伤牌。每格对应一个动作，编号与左侧牌面联动。','6 hand cards + 3 wounds. Each cell is an action linked to the board.')));
   const overview=el('div','obs-mask-overview');
   for(const [value,first,last,zh,en] of [[1,0,sample.candidateCount-1,'可选候选','Legal candidates'],[0,sample.candidateCount,511,'空槽 · 不参与选择','Padding · excluded']]){
     const range=el('div','obs-mask-range');range.dataset.maskValue=value;
     range.append(el('code','',`action_mask[${first}–${last}] = ${value}`),el('span','',t(zh,en)));overview.append(range);
   }
-  actions.append(overview,el('p','obs-mask-key',t(`${sample.candidateCount} 个合法候选同时为 1，不是 one-hot。粉框只表示正在查看。`,`All ${sample.candidateCount} legal candidates are 1 at once, not one-hot. Pink only marks the preview.`)));
+  actions.append(overview);
+  const filter=el('div','obs-card-filter'),description=el('p');description.setAttribute('role','status');description.setAttribute('aria-live','polite');
+  const reset=el('button','',t('显示合法 mask','Show legal mask'));reset.type='button';reset.dataset.clearSource='';filter.append(description,reset);actions.append(filter);
   const groups=el('div','obs-action-groups');
   actionGroups.forEach(([key,zh,en])=>{
     const indices=groupIndices(key),group=el('div','obs-action-group'),b=el('button','obs-group-button');group.dataset.group=key;b.type='button';b.dataset.action=indices[0];
     const title=el('span','obs-group-title');title.append(el('strong','',t(zh,en)),el('span','obs-group-count',String(indices.length)));
-    const preview=el('div','obs-mask-sample');
-    const mapping=el('div','obs-mask-indices');
-    const code=el('code','','[');
-    indexRanges(indices).forEach((range,i)=>{if(i)code.append(', ');code.append(el('span','',range));});code.append(']');
-    mapping.append(el('span','',t('以下索引均为 1','These indices are all 1')),code);
-    b.append(title,el('span','obs-group-explanation',groupExplanation(key)));group.append(b,mapping,preview);groups.append(group);
+    b.append(title,el('span','obs-group-explanation',groupExplanation(key)),el('span','obs-group-mode'));group.append(b,renderGroupValues(key));groups.append(group);
   });actions.append(groups);
   const padding=el('div','obs-mask-padding'),paddingText=el('div');
   paddingText.append(el('strong','',t(`其余 ${512-sample.candidateCount} 个空槽`,`${512-sample.candidateCount} padding slots`)),el('p','obs-note',t('这些位置没有对应动作，不参与选择。','No actions occupy these slots; exclude them from selection.')));
@@ -170,9 +210,7 @@ const extraFeatures=[
 function updateAction(){
   const a=selectedAction(),o=sample.observation,detail=host.querySelector('.obs-action-detail');if(!detail)return;
   host.querySelector('#obs-candidate').value=selected;
-  const focusedExample=document.activeElement?.matches('.obs-mask-slot[data-action]')?document.activeElement.dataset.action:null;
-  host.querySelectorAll('[data-group]').forEach(n=>{const active=n.dataset.group===actionGroup(a);n.classList.toggle('is-active',active);n.querySelector('.obs-group-button').setAttribute('aria-pressed',String(active));updateMaskExamples(n);});
-  if(focusedExample!==null)host.querySelector(`.obs-mask-slot[data-action="${focusedExample}"]`)?.focus({preventScroll:true});
+  updateMaskValues();
   const inspection=host.querySelector('.obs-board-inspection');inspection.dataset.actionIndex=selected;
   inspection.replaceChildren(el('span','',t('候选','Candidate')+` [${selected}]`),el('strong','',actionName(a)));
   host.querySelectorAll('.is-source,.is-target').forEach(n=>n.classList.remove('is-source','is-target'));
@@ -248,12 +286,40 @@ function paint(){
 
 }
 if(host){
+  function inspect(index){
+    selected=index;
+    if(sourceFilter)sourceFilter=selectedAction().type==='swap'?{...selectedAction().source}:null;
+    updateAction();
+  }
+  function revealActions(){
+    const actions=host.querySelector('.obs-actions'),rect=actions.getBoundingClientRect();
+    if(rect.top>=innerHeight||rect.bottom<=0)actions.scrollIntoView({block:'start',behavior:'instant'});
+  }
   host.addEventListener('click',event=>{
-    const action=event.target.closest('[data-action]'),zone=event.target.closest('[data-zone-link]');
-    if(action){selected=Number(action.dataset.action);updateAction();}
+    const action=event.target.closest('[data-action]'),zone=event.target.closest('[data-zone-link]'),source=event.target.closest('[data-source-zone]'),target=event.target.closest('button[data-target],button[data-rival-wound]');
+    if(event.target.closest('[data-clear-source]')){sourceFilter=null;updateAction();}
+    if(source){
+      const next={zone:source.dataset.sourceZone,index:Number(source.dataset.sourceIndex)};
+      if(sourceFilter?.zone===next.zone&&sourceFilter.index===next.index)sourceFilter=null;
+      else{
+        sourceFilter=next;const choices=sample.observation.legal_actions;
+        const sameGroup=choices.findIndex(a=>matchesSource(a,next)&&actionGroup(a)===actionGroup(selectedAction()));
+        selected=sameGroup>=0?sameGroup:choices.findIndex(a=>matchesSource(a,next));
+      }
+      updateAction();if(source.closest('.obs-board'))revealActions();
+    }
+    if(target){
+      const current=sourceFilter||(selectedAction().source?{...selectedAction().source}:{zone:'hand',index:0});
+      const index=sample.observation.legal_actions.findIndex(a=>matchesSource(a,current)&&(target.dataset.target?a.target.zone===target.dataset.target:a.target.who!==sample.player&&a.target.zone==='wounds'&&a.target.index===Number(target.dataset.rivalWound)));
+      if(index>=0){sourceFilter=current;inspect(index);revealActions();}
+    }
+    if(action){
+      const matching=sourceFilter&&action.classList.contains('obs-group-button')?groupIndices(action.closest('[data-group]').dataset.group).find(i=>matchesSource(sample.observation.legal_actions[i],sourceFilter)):undefined;
+      inspect(matching??Number(action.dataset.action));
+    }
     if(zone){const next=Number(zone.dataset.zoneLink);activeZone=activeZone===next?null:next;updateZone();}
   });
-  host.addEventListener('change',event=>{if(event.target.id==='obs-candidate'){selected=Number(event.target.value);updateAction();}});
+  host.addEventListener('change',event=>{if(event.target.id==='obs-candidate')inspect(Number(event.target.value));});
   try{
     const response=await fetch(new URL('./observation-example.json?v=2',import.meta.url));
     if(!response.ok)throw Error('Observation example unavailable');sample=await response.json();paint();
