@@ -1,3 +1,5 @@
+import '../app/card-face.js';
+import '../app/mark.js';
 // The same saved observation used by the blog. Values are checked against sdk/features.js.
 const host=document.getElementById('arena-observation');
 const en=()=>document.documentElement.lang==='en';
@@ -31,10 +33,121 @@ function el(tag,cls,text){const node=document.createElement(tag);if(cls)node.cla
 function bit(value,index,label){const node=el('span','obs-bit'+(value?' is-set':''),String(value));node.dataset.index=index;node.title=`${label} · [${index}] = ${value}`;return node;}
 function heading(title,detail){const h=el('div','obs-heading');h.append(el('h3','',title),el('span','obs-code',detail));return h;}
 function legend(on,off){const p=el('p','obs-legend');p.append(el('span','obs-legend-on','1 · '+on),el('span','','0 · '+off));return p;}
-let sample;
+let sample,selected=0,activeZone=null;
+const cardName=id=>ranks[id%13]+suits[Math.floor(id/13)];
+const selectedAction=()=>sample.observation.legal_actions[selected];
+function card(id,zone){
+  const node=el('span','sc-card obs-playing-card');node.dataset.card=id;
+  if(zone!==undefined)node.dataset.boardZone=zone;
+  node.setAttribute('role','img');node.setAttribute('aria-label',cardName(id));
+  const suit=Math.floor(id/13),rank=ranks[id%13];node.classList.toggle('red',suit===1||suit===3);
+  if(id===13+sample.observation.flower_level-2)node.classList.add('wild');
+  node.append(el('b',rank==='10'?'ten':'',rank));
+  for(const cls of ['obs-small-suit','sc-center']){const shape=el('span',cls);shape.innerHTML=window.SZSuit.svg(suit);node.append(shape);}
+  return node;
+}
+function flower(rival=false){const n=el('span','obs-flower'+(rival?' rival':''));n.innerHTML=window.SZFlowerMark;n.setAttribute('aria-hidden','true');return n;}
+function back(){const n=el('span','obs-back');n.setAttribute('aria-hidden','true');n.append(flower());return n;}
+function boardZone(zone,ids){
+  const section=el('section','obs-board-zone');section.dataset.boardZone=zone;
+  const label=el('button','obs-zone-link',`${zone+1} · ${t(...zones[zone])}`);label.type='button';label.dataset.zoneLink=zone;label.setAttribute('aria-pressed',String(activeZone===zone));
+  section.append(label);const row=el('div','obs-card-row');
+  ids.forEach(id=>row.append(card(id,zone)));
+  if(!ids.length)row.append(el('span','obs-empty','—'));
+  section.append(row);return section;
+}
+function renderBoard(){
+  const o=sample.observation,aside=el('aside','obs-board');aside.setAttribute('aria-label',t('与编码对应的当前局面','Current position matching the encoding'));
+  const header=el('div','obs-board-title');header.append(el('strong','',t('当前局面','Current position')),el('span','',t(`第 ${o.game} 局 · 第 ${o.round} 轮`,`Game ${o.game} · Round ${o.round}`)));aside.append(header);
+  const levels=el('div','obs-board-levels');levels.append(flower(true),el('span','',t(`对手 ${ranks[o.levels[0]-2]}`,`Rival ${ranks[o.levels[0]-2]}`)),el('span','obs-level-line'),flower(),el('span','',t(`你 ${ranks[o.levels[1]-2]}`,`You ${ranks[o.levels[1]-2]}`)));aside.append(levels);
+  const rival=el('div','obs-player-label');rival.append(flower(true),el('strong','',t('对手','Rival')),el('span','',t(`${o.enemy_wounds.length} 伤`,`${o.enemy_wounds.length} wounds`)));aside.append(rival);
+  const hidden=el('div','obs-hidden');hidden.dataset.target='blind';hidden.setAttribute('role','img');hidden.setAttribute('aria-label',t(`对手 ${o.enemy_hand_count} 张暗牌`,`Rival: ${o.enemy_hand_count} hidden cards`));
+  for(let i=0;i<o.enemy_hand_count;i++)hidden.append(back());aside.append(hidden,boardZone(2,o.enemy_wounds));
+  const center=el('div','obs-board-center');center.append(boardZone(5,o.active[0]?.cards||[]));
+  const deck=el('div','obs-deck');deck.dataset.target='deck';deck.append(el('span','',t('牌堆','Deck')),back(),el('strong','',String(o.deck_count)));center.append(deck,boardZone(4,o.active[1]?.cards||[]));aside.append(center,boardZone(3,o.discard));
+  const status=el('div','obs-board-status');status.append(el('strong','',t('你换牌','Your swap')),el('span','',t(`还可换 ${o.pending.remaining} 次`,` ${o.pending.remaining} chances left`)));aside.append(status);
+  const own=el('div','obs-player-label');own.append(flower(),el('strong','',t('你','You')),el('span','',t(`${o.wounds.length} 伤`,`${o.wounds.length} wounds`)),el('b','obs-wild-label',t('花牌 ','Wild ')+ranks[o.flower_level-2]+'♥'));aside.append(own,boardZone(1,o.wounds),boardZone(0,o.hand));
+  aside.append(el('p','obs-board-help',t('点牌区名称，对照编码方格。','Select a zone label to match its grid.')));
+  return aside;
+}
+function targetName(a){
+  const o=sample.observation,z=a.target;
+  if(z.zone==='deck')return t('牌堆','Deck');
+  if(z.zone==='blind')return t('对手暗牌（随机）','Rival hand (random)');
+  return (z.who===o.player?t('你的','Your '):t('对手','Rival '))+(z.zone==='hand'?t('手牌 ','hand '):t('伤牌 ','wound '))+cardName(z.who===o.player?o[z.zone][z.index]:o.enemy_wounds[z.index]);
+}
+function actionName(a){
+  if(a.type==='skip_swap')return t('跳过本次，保留下一次','Skip this chance; keep the next');
+  if(a.type==='stop_swaps')return t('结束换牌，放弃剩余机会','End swaps; forgo remaining chances');
+  const c=sample.observation[a.source.zone][a.source.index];
+  return (a.source.zone==='hand'?t('手牌 ','Hand '):t('伤牌 ','Wound '))+cardName(c)+' → '+targetName(a);
+}
+function actionGroup(a){if(a.type!=='swap')return a.type;if(a.target.zone==='deck'||a.target.zone==='blind')return a.target.zone;return a.target.who===sample.player?'own':'rival';}
+const actionGroups=[['deck','换牌堆','Deck'],['blind','盲换对手','Blind rival'],['rival','换对手伤牌','Rival wounds'],['own','手牌 ⇄ 伤牌','Hand ⇄ wounds'],['skip_swap','跳过本次','Skip one'],['stop_swaps','结束换牌','End swaps']];
+function renderActions(){
+  const actions=el('section','obs-actions');actions.append(heading(t('合法动作','Legal actions'),'512 · action_mask'));
+  const count=el('p','obs-action-count');count.append(el('strong','',String(sample.candidateCount)),document.createTextNode(t(' 个合法候选 / 512 个槽位',' legal candidates / 512 slots')));actions.append(count);
+  actions.append(el('p','obs-note',t('本例处于换牌阶段：72 种换牌 + 跳过本次 + 结束换牌。','This is a swap turn: 72 swaps + skip this chance + end swaps.')));
+  const groups=el('div','obs-action-groups');
+  actionGroups.forEach(([key,zh,en])=>{const matching=sample.observation.legal_actions.map((a,i)=>({a,i})).filter(({a})=>actionGroup(a)===key);const b=el('button','',t(zh,en)+' · '+matching.length);b.type='button';b.dataset.action=matching[0].i;b.dataset.group=key;groups.append(b);});actions.append(groups);
+  const controls=el('div','obs-action-controls'),label=el('label','',t('查看候选','Inspect candidate')),select=el('select','sz-select-control');select.id='obs-candidate';label.htmlFor=select.id;
+  sample.observation.legal_actions.forEach((a,i)=>{const option=el('option','',`[${i}] ${actionName(a)}`);option.value=i;select.append(option);});select.value=selected;
+  controls.append(label,select);actions.append(controls,el('div','obs-action-detail'));
+  const mask=el('div','obs-mask');mask.setAttribute('role','img');mask.setAttribute('aria-label',t('前 74 槽有效，其余为填充；粉色框是当前查看的候选。','The first 74 slots are valid; the rest are padding. Pink outlines the inspected candidate.'));
+  for(let i=0;i<512;i++)mask.append(bit(+(i<sample.candidateCount),i,'action_mask'));
+  actions.append(mask,legend(t('可选','legal'),t('空槽','padding')),el('p','obs-note',t('候选序号只对当前局面有效。模型逐个评分，屏蔽空槽后选最高分。','Indices belong to this position only. Score each candidate, mask padding, then choose the highest.')));
+  const countDetails=el('details','obs-action-counting');countDetails.append(el('summary','',t('74 个候选是怎样来的？','Where do the 74 candidates come from?')),el('p','obs-note',t('6 张手牌 + 3 张伤牌，共 9 个来源。每个可换牌堆、对手暗牌或 2 张对手伤牌：9 × 4 = 36。自己的手牌与伤牌按两个来源方向列出：6 × 3 × 2 = 36。再加跳过与结束，共 74。','6 hand cards + 3 wound cards give 9 sources. Each can target the deck, a blind rival card or either of 2 rival wounds: 9 × 4 = 36. Own hand–wound exchanges are listed in both source directions: 6 × 3 × 2 = 36. Add skip and end: 74.')));actions.append(countDetails);
+  const details=el('details','obs-action-encoding');details.append(el('summary','',t('展开这个候选的 72 维编码','Expand this candidate’s 72 features')),el('div','obs-action-features'));actions.append(details);
+  const rules=el('details','obs-action-rules');rules.append(el('summary','',t('其他阶段有哪些动作？','What is legal in other phases?')));
+  const list=el('dl');
+  for(const [zh,en,zhText,enText] of [
+    ['进攻 / 防守','Attack / defend','从手牌与公开伤牌选合法组合；通常 3 张，4 / 5 张须成炸。防守不要求压过进攻。','Choose a legal combination from your hand and wounds: normally 3 cards; 4 / 5 must form a bomb. A defense need not beat the attack.'],
+    ['换牌','Swap','用一张手牌或伤牌，换牌堆、对手暗牌或伤牌，或自己的另一牌区；每次也可跳过。','Exchange a hand or wound card with the deck, a rival hand or wound card, or your other rack. Each chance may be skipped.'],
+    ['结算 / 小局结束','Resolved / game over','继续攻防 / 下一局。整场结束没有候选。','Advance / next game. A finished match has no candidates.']
+  ]){list.append(el('dt','',t(zh,en)),el('dd','',t(zhText,enText)));}rules.append(list);actions.append(rules);return actions;
+}
+const extraFeatures=[
+ ['手牌来源','Hand source'],['伤牌来源','Wound source'],['来源索引 / 11；跳过标志','Source index / 11; skip flag'],
+ ['目标：牌堆','Target: deck'],['目标：盲换','Target: blind'],['目标：自己','Target: own'],['目标：对手','Target: rival'],
+ ['目标点数 / 14','Target rank / 14'],['目标花色 / 3','Target suit / 3'],['目标牌 ID / 51','Target card ID / 51'],
+ ['分数 / 7','Score / 7'],['牌型 / 7','Hand kind / 7'],['主点数 / 14','Top rank / 14'],['出牌数 / 5','Play size / 5'],['自己的 A 局','Own Ace challenge']
+];
+function updateAction(){
+  const a=selectedAction(),o=sample.observation,detail=host.querySelector('.obs-action-detail');if(!detail)return;
+  host.querySelector('#obs-candidate').value=selected;
+  host.querySelectorAll('[data-group]').forEach(n=>n.setAttribute('aria-pressed',String(n.dataset.group===actionGroup(a))));
+  host.querySelectorAll('.obs-mask .obs-bit').forEach((n,i)=>n.classList.toggle('is-inspected',i===selected));
+  host.querySelectorAll('.is-source,.is-target').forEach(n=>n.classList.remove('is-source','is-target'));
+  detail.replaceChildren(el('strong','',`[${selected}] ${actionName(a)}`));
+  const highlight=(zone,id,cls)=>{host.querySelectorAll(`.obs-playing-card[data-board-zone="${zone}"][data-card="${id}"],.obs-zone[data-zone="${zone}"] .obs-bit[data-index="${zone*52+id}"]`).forEach(n=>n.classList.add(cls));};
+  if(a.type==='swap'){
+    const id=o[a.source.zone][a.source.index],zone=a.source.zone==='hand'?0:1;
+    highlight(zone,id,'is-source');const route=el('div','obs-action-route');route.append(card(id),el('span','','→'));
+    const z=a.target;
+    if(z.zone==='deck'||z.zone==='blind'){host.querySelector(`[data-target="${z.zone}"]`).classList.add('is-target');route.append(back());}
+    else{const own=z.who===o.player,c=own?o[z.zone][z.index]:o.enemy_wounds[z.index];highlight(own?(z.zone==='hand'?0:1):2,c,'is-target');route.append(card(c));}
+    detail.append(route,el('p','obs-note',z.zone==='blind'?t('换回的暗牌由规则随机抽取，候选不指定也看不到那张牌。','The rules choose a random rival card; the candidate neither selects nor reveals it.'):z.zone==='deck'?t('从牌堆补一张，模型不知道会抽到什么。','Draw a replacement from the deck; the model cannot see which card comes next.'):t('绿色框是来源，粉色框是目标。','Green outlines the source; pink outlines the target.')));
+  }else detail.append(el('p','obs-note',a.type==='skip_swap'?t('本次不换，剩余机会从 2 变为 1。','Do not swap now; chances decrease from 2 to 1.'):t('不再换牌，直接结束这次换牌阶段。','Forgo both remaining chances and end this swap phase.')));
+  const features=host.querySelector('.obs-action-features'),f=sample.candidates[selected];features.replaceChildren();
+  features.append(heading(t('出牌 / 换出牌','Played / outgoing cards'),'[0–51] · 52'));
+  features.append(cardGrid(f.slice(0,52),0,t('出牌或换出的来源牌','Played cards or the outgoing source card')));
+  features.append(heading(t('动作类型','Action type'),'[52–56] · 5'));
+  const types=el('div','obs-candidate-types');[['出牌','Play'],['换牌','Swap'],['结束 / 跳过','End / skip'],['继续','Advance'],['下一局','Next game']].forEach((names,i)=>{const n=el('div');n.append(el('span','',t(...names)),bit(f[52+i],52+i,t(...names)));types.append(n);});features.append(types);
+  features.append(el('p','obs-note',t('跳过与结束共用类型位 [54]；[59] = 1 区分跳过。','Skip and end share type bit [54]; [59] = 1 distinguishes skip.')));
+  const table=el('table','obs-extra-table');const cap=el('caption','',t('其余 15 维 · 不适用的字段为 0','Remaining 15 features · unused fields are 0'));table.append(cap);
+  extraFeatures.forEach((names,i)=>{const row=el('tr');row.append(el('td','obs-code',`[${57+i}]`),el('th','',t(...names)),el('td','',number(f[57+i])));table.append(row);});features.append(table);
+}
+function updateZone(){host.querySelectorAll('[data-board-zone],.obs-zone[data-zone]').forEach(n=>n.classList.toggle('is-zone-linked',activeZone!==null&&Number(n.dataset.boardZone??n.dataset.zone)===activeZone));host.querySelectorAll('[data-zone-link]').forEach(n=>n.setAttribute('aria-pressed',String(Number(n.dataset.zoneLink)===activeZone)));}
+function cardGrid(values,offset,label){
+  const grid=el('div','obs-card-grid');grid.setAttribute('role','img');
+  const present=[];values.forEach((n,c)=>{if(n)present.push(cardName(c));});grid.setAttribute('aria-label',label+': '+(present.join(', ')||t('空','empty')));
+  grid.append(el('span','obs-rank',''));ranks.forEach(rank=>grid.append(el('span','obs-rank',rank)));
+  suits.forEach((suit,s)=>{grid.append(el('span','obs-suit'+(s===1||s===3?' is-red':''),suit));ranks.forEach((rank,r)=>{const i=s*13+r;grid.append(bit(values[i],offset+i,suit+rank));});});return grid;
+}
+
 function paint(){
   if(!sample||!host)return;
-  const opened=host.querySelector('details')?.open||false;
+  const openDetails=[...host.querySelectorAll('details[open]')].map(n=>n.className);
   const view=el('div','obs-view');
   const top=el('div','obs-intro');
   top.append(el('h3','obs-total','336'),el('div','',t('当前可见状态','Current visible state')),
@@ -45,17 +158,8 @@ function paint(){
   zones.forEach((names,zone)=>{
     const group=el('section','obs-zone');group.dataset.zone=zone;
     const count=sample.state.slice(zone*52,(zone+1)*52).reduce((sum,n)=>sum+n,0);
-    group.append(heading(t(...names),`${count} / 52`));
-    const grid=el('div','obs-card-grid');grid.setAttribute('role','img');
-    const present=[];
-    sample.state.slice(zone*52,(zone+1)*52).forEach((n,c)=>{if(n)present.push(suits[Math.floor(c/13)]+ranks[c%13]);});
-    grid.setAttribute('aria-label',t(...names)+': '+(present.join(', ')||t('空','empty')));
-    grid.append(el('span','obs-rank',''));
-    ranks.forEach(rank=>grid.append(el('span','obs-rank',rank)));
-    suits.forEach((suit,s)=>{
-      grid.append(el('span','obs-suit'+(s===1||s===3?' is-red':''),suit));
-      ranks.forEach((rank,r)=>{const i=zone*52+s*13+r;grid.append(bit(sample.state[i],i,suit+rank));});
-    });
+    const h=heading('',`${count} / 52`),link=el('button','obs-zone-link',`${zone+1} · ${t(...names)}`);link.type='button';link.dataset.zoneLink=zone;h.querySelector('h3').append(link);group.append(h);
+    const grid=cardGrid(sample.state.slice(zone*52,(zone+1)*52),zone*52,t(...names));
     group.append(grid);cards.append(group);
   });
   view.append(cards,legend(t('有牌','present'),t('无牌','absent')));
@@ -66,7 +170,7 @@ function paint(){
     const index=312+i,entry=el('div','obs-phase-entry');
     entry.append(el('span','obs-phase-label',t(...names)),bit(sample.state[index],index,t(...names)),el('small','obs-code',`[${index}]`));phasesGrid.append(entry);
   });phase.append(phasesGrid);view.append(phase);
-  const details=el('details','obs-meta');details.open=opened;
+  const details=el('details','obs-meta');details.open=openDetails.includes('obs-meta');
   const summary=el('summary','');summary.append(el('span','',t('其余 18 项状态','Other 18 state features')),el('span','obs-meta-hint',t('原值 → 入模值','Raw → encoded')));details.append(summary);
   const table=el('table','obs-meta-table');
   table.append(el('caption','obs-note',t('序号从 0 起；入模值最多显示 6 位小数。','Zero-based indices; encoded values rounded to 6 decimals.')));
@@ -81,18 +185,19 @@ function paint(){
     row.append(el('td','obs-index',String(318+i)),label,el('td','',String(sample.rawMeta[i])),encoded);body.append(row);
   });table.append(body);details.append(table);view.append(details);
   view.append(el('p','obs-note',t('不含对手暗牌、牌堆顺序或历史序列。','No rival hand, deck order or history sequence.')));
-  const actions=el('section','obs-actions');
-  actions.append(heading(t('合法动作','Legal actions'),'512 · action_mask'));
-  const count=el('p','obs-action-count');count.append(el('strong','',String(sample.candidateCount)),document.createTextNode(t(' 个合法候选 / 512 个槽位',' legal candidates / 512 slots')));actions.append(count);
-  const mask=el('div','obs-mask');mask.setAttribute('role','img');mask.setAttribute('aria-label',t('动作掩码：前 74 个为 1，其余 438 个为 0。','Action mask: the first 74 values are 1; the remaining 438 are 0.'));
-  for(let i=0;i<512;i++)mask.append(bit(+(i<sample.candidateCount),i,'action_mask'));
-  actions.append(mask,legend(t('可选','legal'),t('空槽','padding')),
-    el('p','obs-note',t('每个候选 72 维。动作是本次候选表的索引，每次决策重新生成。','Each candidate has 72 features. Actions index the current candidate list, rebuilt at each decision.')));
-  view.append(actions);host.replaceChildren(view);
+  view.append(renderActions());
+  const layout=el('div','obs-layout');layout.append(renderBoard(),view);host.replaceChildren(layout);openDetails.forEach(cls=>{const node=host.querySelector('details.'+cls);if(node)node.open=true;});updateAction();updateZone();
+
 }
 if(host){
+  host.addEventListener('click',event=>{
+    const action=event.target.closest('[data-action]'),zone=event.target.closest('[data-zone-link]');
+    if(action){selected=Number(action.dataset.action);updateAction();}
+    if(zone){const next=Number(zone.dataset.zoneLink);activeZone=activeZone===next?null:next;updateZone();}
+  });
+  host.addEventListener('change',event=>{if(event.target.id==='obs-candidate'){selected=Number(event.target.value);updateAction();}});
   try{
-    const response=await fetch(new URL('./observation-example.json',import.meta.url));
+    const response=await fetch(new URL('./observation-example.json?v=2',import.meta.url));
     if(!response.ok)throw Error('Observation example unavailable');sample=await response.json();paint();
     let language=document.documentElement.lang;
     new MutationObserver(()=>{if(language!==document.documentElement.lang){language=document.documentElement.lang;paint();}}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
