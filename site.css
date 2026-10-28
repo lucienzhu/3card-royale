@@ -66,8 +66,8 @@ body.site-lab>header:not(.site-header){display:none}body.site-lab .site-header{m
 
 /* Full-width rule chapters keep the original reading measure inside each band. */
 .site-rules-body{max-width:none}
-.site-rule-chapter{padding:32px 0;display:flow-root}
-.site-rule-chapter>*{max-width:72ch}
+.site-rule-chapter{padding:16px 0;display:flow-root}
+.site-rule-chapter>.site-disclosure{max-width:none}
 .site-rule-chapter>h2{margin-top:0}
 .site-rule-chapter>:last-child{margin-bottom:0}
-@media(max-width:700px){.site-rule-chapter{padding:28px 0}}
+@media(max-width:700px){.site-rule-chapter{padding:12px 0}}
