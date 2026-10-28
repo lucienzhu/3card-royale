@@ -43,7 +43,9 @@ Single-game results remain a compact panel. A red/gold flower identifies the win
 
 UI copy leads with one current action or result. Remove repeated explanations and interface narration. Tutorials retain cause, valid targets and essential rules. Keep full rules in the rulebook and a three-line overview on the home page. Update both languages; retain complete accessible labels.
 
-## Current components · 2026-10-23
+## Current components · 2026-10-28
+
+**Page sections.** Separate sections with headings and whitespace, without decorative horizontal dividers. Apply this to About, Brand, Rules, hand research, Arena and the live component page in both languages, themes and screen sizes. Preserve the responsive section padding. Borders inside cards, controls, tables and resource lists still identify their content. Implement this in the shared `site.css`, with matching layouts in `rl.css`, `app/probability.css` and `app/design-system.css`; avoid page-specific divider overrides.
 
 The [live component page](../design-system.html?lang=en) loads the production card styles, current flower and canonical mark, and renders all three share layouts with the production PNG renderer from a seeded real game. It replaces dated design-lab pages as the current reference.
 
