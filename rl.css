@@ -24,7 +24,6 @@
 .rl-download:hover{color:var(--accent)}
 .rl-version{display:block;font-size:10px;color:var(--muted);margin-top:8px;overflow-wrap:anywhere}
 .rl-page .site-section{padding:52px 0}
-.rl-hero+.site-section{border-top:1px solid var(--line)}
 .rl-link{font-size:13px;color:var(--muted);white-space:nowrap}
 .rl-spaces{display:grid;grid-template-columns:1fr 1fr;gap:64px}
 .rl-spaces article{min-width:0}
@@ -68,7 +67,7 @@
 .rl-data b{color:var(--ink);font-size:25px;font-weight:650;font-variant-numeric:tabular-nums}
 .rl-split{font-size:12px;color:var(--muted);line-height:1.9;margin:0}
 .rl-split strong{font-size:14px;color:var(--ink);font-weight:500}
-.rl-play{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:40px 0;border-bottom:1px solid var(--line)}
+.rl-play{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:40px 0;}
 .rl-play h2{font-size:24px;margin:0 0 12px}
 .rl-play p{font-size:14px;margin:0 0 4px}
 .rl-play small{font-size:12px;color:var(--muted)}
