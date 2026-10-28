@@ -1,18 +1,18 @@
 .arena-hero{padding:40px 0 22px;max-width:760px}.arena-hero h1{font-size:clamp(44px,6vw,72px);line-height:1;letter-spacing:-.055em;margin:14px 0 18px}.arena-hero .site-lead{font-size:clamp(22px,3vw,32px)}.arena-hero p{color:var(--muted)}.arena-hero .site-button{margin-top:18px}.arena-table-scroll{overflow-x:auto}.arena-table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;text-align:left}.arena-table th,.arena-table td{padding:22px 12px;border-bottom:1px solid var(--line);white-space:nowrap}.arena-table th{font-size:12px;color:var(--muted);font-weight:500}.arena-table td:first-child{color:var(--muted)}.arena-table td:nth-child(3){font-size:26px;font-weight:700;letter-spacing:-.04em}.arena-table small{display:block;color:var(--muted);font-size:11px;margin-top:5px}.arena-table a{color:inherit}.arena-table .arena-play{display:inline-flex;border:1px solid var(--line);border-radius:8px;padding:9px 16px;text-decoration:none;font-size:13px}.arena-table .arena-play:hover{background:var(--panel)}.arena-formats{display:grid;grid-template-columns:1fr 1fr;gap:24px}.arena-formats article{padding:28px;border:1px solid var(--line);border-radius:16px}.arena-formats h3{margin-top:0}.arena-formats p{color:var(--muted)}.arena-formats code{font-size:12px;overflow-wrap:anywhere}.arena-flow{padding:24px 0;font-size:clamp(16px,2vw,24px);font-weight:600}.arena-sr{position:absolute;clip:rect(0,0,0,0);width:1px;height:1px;overflow:hidden}.arena-table-scroll:focus-visible{outline:2px solid var(--accent)}
 @media(max-width:700px){.arena-hero{padding:40px 0}.arena-table th,.arena-table td{padding:16px 10px}.arena-table td:nth-child(3){font-size:22px}.arena-formats{grid-template-columns:1fr;gap:12px}.arena-formats article{padding:22px}.arena-table th:first-child,.arena-table td:first-child{display:none}}
 
-.arena-page .site-section{padding:42px 0}.arena-page .site-section-head{margin-bottom:24px}
+/* Separate major sections with space; retain borders within their content. */
+.arena-page .site-section{padding:42px 0;border:0}.arena-page .site-section-head{margin-bottom:24px}
 @media(max-width:700px){.arena-table-scroll{overflow:visible}.arena-table thead{position:absolute;clip:rect(0,0,0,0);width:1px;height:1px;overflow:hidden}.arena-table,.arena-table tbody{display:block}.arena-table tr{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:18px 8px;padding:20px 0;border-bottom:1px solid var(--line)}.arena-table td{padding:0;border:0;white-space:normal}.arena-table td:nth-child(2){grid-column:1/4;grid-row:1}.arena-table td:nth-child(7){grid-column:4;grid-row:1;justify-self:end;align-self:center}.arena-table td:nth-child(3){grid-column:1;grid-row:2;font-size:18px}.arena-table td:nth-child(4){grid-column:2;grid-row:2}.arena-table td:nth-child(5){grid-column:3;grid-row:2}.arena-table td:nth-child(6){grid-column:4;grid-row:2}.arena-table td[data-label]::before{content:attr(data-label);display:block;color:var(--muted);font-size:10px;font-weight:400;letter-spacing:0;margin-bottom:4px}.arena-table .arena-play{padding:8px 12px}.arena-hero{padding:30px 0 16px}.arena-hero .site-kicker{margin-bottom:12px}.arena-page .site-section{padding:32px 0}.arena-page .site-section-head{gap:12px}.arena-page .site-section-head h2{font-size:26px}}
 /* One destination for playing, researching and submitting policies. */
-.arena-sections{display:flex;flex-wrap:wrap;gap:12px 28px;padding:22px 0;border-bottom:1px solid var(--line)}
+.arena-sections{display:flex;flex-wrap:wrap;gap:12px 28px;padding:22px 0}
 .arena-sections a{text-decoration:none;font-size:14px;font-weight:600;padding:6px 0;color:var(--muted)}
 .arena-sections a:hover,.arena-sections a:focus-visible{color:var(--accent);text-decoration:underline;text-underline-offset:6px}
 .arena-page [id]{scroll-margin-top:28px}
-.arena-page #ladder{border-bottom:0}
 .arena-research .rl-hero{padding:48px 0;gap:48px}
 .arena-research .rl-hero>div>h2{font-size:clamp(28px,3.2vw,42px);margin:0 0 20px;max-width:13em;text-wrap:balance}
 .arena-research .rl-baseline{padding:24px}
-.arena-history{border-top:1px solid var(--line);padding:24px 0}
+.arena-history{padding:24px 0}
 .arena-history>summary{display:flex;align-items:center;justify-content:space-between;gap:24px;font-size:17px;font-weight:600;cursor:pointer;list-style:none;padding:12px 0}
 .arena-history>summary::-webkit-details-marker{display:none}
 .arena-history>summary>span:last-child{font-size:24px;color:var(--accent);transition:transform .15s}
