@@ -26,6 +26,17 @@ for(const [width,height] of [[1440,1000],[1280,800],[1280,720],[1280,600],[768,1
    const a=o.legal_actions[i],actual=a.type!=='swap'?a.type:['deck','blind'].includes(a.target.zone)?a.target.zone:a.target.who===o.player?'own':'rival';
    assert.equal(actual,key,'sample bits must belong to the displayed group');
  }
+ // Every grouped index maps to 1; padding covers the remaining 0s. No omitted legal indices.
+ assert.deepEqual(await p.locator('.obs-mask-range code').allTextContents(),['action_mask[0–73] = 1','action_mask[74–511] = 0']);
+ const mappings=await p.locator('[data-group]').evaluateAll(ns=>ns.map(n=>({key:n.dataset.group,text:n.querySelector('.obs-mask-indices code').textContent})));
+ const mask=new Array(512).fill(0);
+ for(const {key,text} of mappings){
+  const indices=text.slice(1,-1).split(', ').flatMap(range=>{const [first,last=first]=range.split('–').map(Number);return Array.from({length:last-first+1},(_,i)=>first+i);});
+  const expected=o.legal_actions.flatMap((a,i)=>(a.type!=='swap'?a.type:['deck','blind'].includes(a.target.zone)?a.target.zone:a.target.who===o.player?'own':'rival')===key?[i]:[]);
+  assert.deepEqual(indices,expected,'complete exact mask mapping for '+key);
+  for(const i of indices){assert.equal(mask[i],0,'each legal slot belongs to one group');mask[i]=1;}
+ }
+ assert.deepEqual(mask,Array.from({length:512},(_,i)=>+(i<o.legal_actions.length)));
  assert.equal(await p.locator('#obs-candidate option').count(),74);
  await p.locator('.obs-meta summary').click();
  assert.equal(await p.locator('.obs-meta-table tbody tr').count(),18);
@@ -59,6 +70,8 @@ for(const [width,height] of [[1440,1000],[1280,800],[1280,720],[1280,600],[768,1
   await p.locator('#obs-candidate').selectOption(String(i));
   assert.equal(await p.locator('.obs-action-groups .is-inspected').getAttribute('data-index'),String(i));
   assert.equal(await p.locator('.obs-board-inspection').getAttribute('data-action-index'),String(i));
+  assert.equal(await p.locator('.obs-selected-mask').textContent(),`action_mask[${i}] = 1`);
+  assert.deepEqual(await p.locator('.obs-mask-range code').allTextContents(),['action_mask[0–73] = 1','action_mask[74–511] = 0'],'inspection must not change mask values');
   assert.equal(await p.locator('.obs-board-inspection strong').textContent(),(await p.locator('.obs-action-detail>strong').textContent()).replace(/^\[\d+\] /,''));
   const f=sample.candidates[i],a=o.legal_actions[i];
   assert.deepEqual((await p.locator('.obs-action-features .obs-bit').allTextContents()).map(Number),f.slice(0,57));
@@ -101,5 +114,5 @@ for(const [width,height] of [[1440,1000],[1280,800],[1280,720],[1280,600],[768,1
 }
 // Failed data loading leaves readable static contract, without a partially painted board.
 const p=await browser.newPage();await p.route('**/observation-example.json*',route=>route.abort());await p.goto(base+'arena.html?lang=en',{waitUntil:'networkidle'});assert(await p.locator('#arena-observation .rl-spaces').isVisible());await p.close();
-assert.deepEqual(errors,[]);console.log('Arena explorer: 32 viewport/language/theme combinations; bounded sticky board across laptop heights; numbered candidate pointer/keyboard controls; six action groups and compact mask examples; all 74 actions, 336 state values and 72 candidate features; board highlights, language switches and load fallback passed.');
+assert.deepEqual(errors,[]);console.log('Arena explorer: 32 viewport/language/theme combinations; bounded sticky board across laptop heights; numbered candidate pointer/keyboard controls; six action groups with complete exact mask indices, 74 ones and 438 zeros; all 74 actions, 336 state values and 72 candidate features; board highlights, language switches and load fallback passed.');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});

@@ -86,6 +86,15 @@ function actionName(a){
 function actionGroup(a){if(a.type!=='swap')return a.type;if(a.target.zone==='deck'||a.target.zone==='blind')return a.target.zone;return a.target.who===sample.player?'own':'rival';}
 const actionGroups=[['deck','换牌堆','Deck'],['blind','盲换对手','Blind rival'],['rival','换对手伤牌','Rival wounds'],['own','手牌 ⇄ 伤牌','Hand ⇄ wounds'],['skip_swap','跳过本次','Skip one'],['stop_swaps','结束换牌','End swaps']];
 function groupIndices(key){return sample.observation.legal_actions.flatMap((a,i)=>actionGroup(a)===key?[i]:[]);}
+function indexRanges(indices){
+  const ranges=[];
+  for(let i=0;i<indices.length;i++){
+    const first=indices[i];let last=first;
+    while(i+1<indices.length&&indices[i+1]===last+1)last=indices[++i];
+    ranges.push(first===last?String(first):`${first}–${last}`);
+  }
+  return ranges;
+}
 function groupExplanation(key){
   const o=sample.observation,h=o.hand.length,w=o.wounds.length,n=h+w;
   return {
@@ -119,17 +128,27 @@ function renderActions(){
   const actions=el('section','obs-actions');actions.append(heading(t('合法动作','Legal actions'),'512 · action_mask'));
   const count=el('p','obs-action-count');count.append(el('strong','',String(sample.candidateCount)),document.createTextNode(t(' 个合法候选 / 512 个槽位',' legal candidates / 512 slots')));actions.append(count);
   actions.append(el('p','obs-note',t('本例换牌：6 手牌 + 3 伤牌。点分类或编号，对照牌面。','Swap turn: 6 hand cards + 3 wounds. Select a group or a numbered bit.')));
+  const overview=el('div','obs-mask-overview');
+  for(const [value,first,last,zh,en] of [[1,0,sample.candidateCount-1,'可选候选','Legal candidates'],[0,sample.candidateCount,511,'空槽 · 不参与选择','Padding · excluded']]){
+    const range=el('div','obs-mask-range');range.dataset.maskValue=value;
+    range.append(el('code','',`action_mask[${first}–${last}] = ${value}`),el('span','',t(zh,en)));overview.append(range);
+  }
+  actions.append(overview,el('p','obs-mask-key',t(`${sample.candidateCount} 个合法候选同时为 1，不是 one-hot。粉框只表示正在查看。`,`All ${sample.candidateCount} legal candidates are 1 at once, not one-hot. Pink only marks the preview.`)));
   const groups=el('div','obs-action-groups');
   actionGroups.forEach(([key,zh,en])=>{
     const indices=groupIndices(key),group=el('div','obs-action-group'),b=el('button','obs-group-button');group.dataset.group=key;b.type='button';b.dataset.action=indices[0];
     const title=el('span','obs-group-title');title.append(el('strong','',t(zh,en)),el('span','obs-group-count',String(indices.length)));
     const preview=el('div','obs-mask-sample');
-    b.append(title,el('span','obs-group-explanation',groupExplanation(key)));group.append(b,preview);groups.append(group);
+    const mapping=el('div','obs-mask-indices');
+    const code=el('code','','[');
+    indexRanges(indices).forEach((range,i)=>{if(i)code.append(', ');code.append(el('span','',range));});code.append(']');
+    mapping.append(el('span','',t('以下索引均为 1','These indices are all 1')),code);
+    b.append(title,el('span','obs-group-explanation',groupExplanation(key)));group.append(b,mapping,preview);groups.append(group);
   });actions.append(groups);
   const padding=el('div','obs-mask-padding'),paddingText=el('div');
-  paddingText.append(el('strong','',t(`其余 ${512-sample.candidateCount} 个空槽`,`${512-sample.candidateCount} padding slots`)),el('p','obs-note',t('0：没有动作，选最高分前屏蔽。','0: no action; masked before selecting the top score.')));
+  paddingText.append(el('strong','',t(`其余 ${512-sample.candidateCount} 个空槽`,`${512-sample.candidateCount} padding slots`)),el('p','obs-note',t('这些位置没有对应动作，不参与选择。','No actions occupy these slots; exclude them from selection.')));
   const zeros=el('div','obs-mask-sample');zeros.setAttribute('aria-hidden','true');zeros.append(maskSlot(0,sample.candidateCount),maskSlot(0,sample.candidateCount+1),el('span','obs-mask-ellipsis','…'),maskSlot(0,511));
-  padding.append(paddingText,zeros);actions.append(padding,el('p','obs-mask-key',t('1 = 可选 · 序号仅对当前局面有效','1 = legal · indices belong to this position only')));
+  padding.append(paddingText,zeros);actions.append(padding,el('p','obs-mask-key',t('索引从 0 开始，每个索引对应一个完整动作，不是一张牌；下次决策会重新生成。','Indices start at 0. Each identifies a complete action, not a card; they are rebuilt at the next decision.')));
   const controls=el('div','obs-action-controls'),label=el('label','',t('查看候选','Inspect candidate')),select=el('select','sz-select-control');select.id='obs-candidate';label.htmlFor=select.id;
   sample.observation.legal_actions.forEach((a,i)=>{const option=el('option','',`[${i}] ${actionName(a)}`);option.value=i;select.append(option);});select.value=selected;
   controls.append(label,select);actions.append(controls,el('div','obs-action-detail'));
@@ -157,7 +176,7 @@ function updateAction(){
   const inspection=host.querySelector('.obs-board-inspection');inspection.dataset.actionIndex=selected;
   inspection.replaceChildren(el('span','',t('候选','Candidate')+` [${selected}]`),el('strong','',actionName(a)));
   host.querySelectorAll('.is-source,.is-target').forEach(n=>n.classList.remove('is-source','is-target'));
-  detail.replaceChildren(el('strong','',`[${selected}] ${actionName(a)}`));
+  detail.replaceChildren(el('code','obs-selected-mask',`action_mask[${selected}] = 1`),el('strong','',`[${selected}] ${actionName(a)}`));
   const highlight=(zone,id,cls)=>{host.querySelectorAll(`.obs-playing-card[data-board-zone="${zone}"][data-card="${id}"],.obs-zone[data-zone="${zone}"] .obs-bit[data-index="${zone*52+id}"]`).forEach(n=>n.classList.add(cls));};
   if(a.type==='swap'){
     const id=o[a.source.zone][a.source.index],zone=a.source.zone==='hand'?0:1;
