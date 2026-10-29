@@ -5,8 +5,8 @@ for (const file of ['../../app/theme-tokens.js', 'marks.js']) vm.runInNewContext
 const lab = context.window.SZHeartLab;
 fs.mkdirSync(path.join(__dirname, 'assets'), { recursive: true });
 for (const variant of lab.variants) {
-  for (const [suffix, options] of [['flower', {}], ['card', {card: true}], ['mono', {mono: true}]]) {
+  for (const [suffix, options] of [['flower', {}], ['card', {card: true}], ['mono', {mono: true}], ['center-flower', {stamen: 'center'}], ['center-card', {stamen: 'center', card: true}]]) {
     fs.writeFileSync(path.join(__dirname, 'assets', `${variant.id}-${suffix}.svg`), lab.svg(variant.id, { ...options, label: variant.name }) + '\n');
   }
 }
-console.log(`Exported ${lab.variants.length * 3} SVG assets.`);
+console.log(`Exported ${lab.variants.length * 5} SVG assets.`);

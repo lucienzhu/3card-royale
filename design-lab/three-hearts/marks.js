@@ -41,18 +41,20 @@
   ];
   const fallback = { red: '#C5416B', gold: '#F2CD5D', goldBase: '#ECCE80', goldEdge: '#A17C35' };
   const palette = () => root.SZThemeTokens?.brand || fallback;
-  function petals(id, { mono = false, rival = false, split = false } = {}) {
+  function petals(id, { mono = false, rival = false, split = false, stamen = 'petals' } = {}) {
     const v = variants.find(v => v.id === id) || variants[0], p = palette();
     const shapes = [0, 120, 240].map(angle => {
       const [x, y] = v.center;
       const core = `M${x} ${y-1.85} L${x+1.85} ${y} L${x} ${y+1.85} L${x-1.85} ${y} Z`;
-      return `<g transform="rotate(${angle} 32 36)"><g transform="translate(0 -${v.spread + (split ? 7 : 0)}) rotate(${v.rotation} 32 29)"><path d="${v.path}" fill="${mono ? 'currentColor' : rival ? '#D6A41C' : p.red}"/>${mono ? '' : `<path d="${core}" fill="${rival ? p.goldBase : p.gold}"/>`}</g></g>`;
+      return `<g transform="rotate(${angle} 32 36)"><g transform="translate(0 -${v.spread + (split ? 7 : 0)}) rotate(${v.rotation} 32 29)"><path d="${v.path}" fill="${mono ? 'currentColor' : rival ? '#D6A41C' : p.red}"/>${mono || stamen === 'center' ? '' : `<path d="${core}" fill="${rival ? p.goldBase : p.gold}"/>`}</g></g>`;
     }).join('');
-    return `<g transform="translate(32 36) scale(${v.scale}) translate(-32 -36)">${shapes}</g>`;
+    // One central core has approximately the same gold area as three petal cores.
+    const center = !mono && stamen === 'center' ? `<path d="M32 32.8 L35.2 36 L32 39.2 L28.8 36 Z" fill="${rival ? p.goldBase : p.gold}"/>` : '';
+    return `<g transform="translate(32 36) scale(${v.scale}) translate(-32 -36)">${shapes}${center}</g>`;
   }
-  function svg(id, { card = false, mono = false, rival = false, split = false, label = '' } = {}) {
+  function svg(id, { card = false, mono = false, rival = false, split = false, stamen = 'petals', label = '' } = {}) {
     const p = palette();
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${split ? '-6 -6 76 76' : '0 0 64 64'}" fill="none" ${label ? `role="img" aria-label="${label}"` : 'aria-hidden="true"'}>${card ? `<rect x="9" y="3" width="46" height="58" rx="7" fill="${mono ? 'none' : p.goldBase}" stroke="${mono ? 'currentColor' : p.goldEdge}" stroke-width="2"/>` : ''}${petals(id, { mono, rival, split })}</svg>`;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${split ? '-6 -6 76 76' : '0 0 64 64'}" fill="none" ${label ? `role="img" aria-label="${label}"` : 'aria-hidden="true"'}>${card ? `<rect x="9" y="3" width="46" height="58" rx="7" fill="${mono ? 'none' : p.goldBase}" stroke="${mono ? 'currentColor' : p.goldEdge}" stroke-width="2"/>` : ''}${petals(id, { mono, rival, split, stamen })}</svg>`;
   }
   root.SZHeartLab = { variants, petals, svg };
 })(typeof window === 'undefined' ? globalThis : window);
