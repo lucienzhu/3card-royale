@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>金花蕊 · 96 组对照</title>
+  <link rel="icon" href="assets/bloom-center-card.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="center-study.css">
+  <script src="marks.js"></script><script src="center-study.js" defer></script>
+</head>
+<body>
+<header><a href="index.html?mark=bloom&core=center&theme=light">← 标志实验</a><button id="theme" aria-pressed="false">深色</button></header>
+<main>
+  <div class="intro"><span class="eyebrow">HEARTS & BOUGAINVILLEA</span><h1>金花蕊，96 组。</h1><p>只变旋转、大小与位置。点一组，放大看留白。</p></div>
+  <section class="inspection" aria-label="放大比较">
+    <figure><div id="baseline"></div><figcaption>原版 · 0° / 100% / 1.8</figcaption></figure>
+    <figure><div id="selected"></div><figcaption id="selection-label"></figcaption></figure>
+    <figure class="detail"><div id="detail"></div><figcaption>中心留白 · 放大</figcaption></figure>
+    <div class="review-tools"><div id="sizes" aria-label="实际小尺寸"></div><div class="actions"><a id="apply">放回预览 →</a><a id="download" download>SVG ↓</a></div></div>
+  </section>
+  <nav class="quick-picks" aria-label="对照捷径"><button data-pick="0,100,1.8">原版</button><button data-pick="30,100,1.8">只转 30°</button><button data-pick="20,90,2.4">略小、靠近</button><button data-pick="30,90,3">更紧凑</button></nav>
+  <p class="legend">大小以原版为 100%；内移数值越大，三枚金蕊越靠近。六瓣轮廓每 60° 重复。</p>
+  <div id="matrix"></div>
+</main>
+</body>
+</html>

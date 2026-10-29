@@ -4,6 +4,7 @@
   const params = new URLSearchParams(location.search);
   const requested = params.get('mark');
   let selected = lab.variants.some(v => v.id === requested) ? requested : 'bloom';
+  const centers = lab.centerOptions(Object.fromEntries(['angle', 'size', 'inset'].map(key => [key, params.get(key)])));
   let dark = params.get('theme') === 'dark', split = false;
   let stamen = params.get('core') === 'petals' ? 'petals' : 'center';
   $('variants').innerHTML = lab.variants.map(v => `<button class="variant" data-variant="${v.id}" aria-pressed="false"><span class="mark"></span><span><span class="number">${v.number}</span><strong>${v.name}</strong><p>${v.note}</p></span></button>`).join('');
@@ -16,7 +17,7 @@
     $('comparison-label').textContent = stamen === 'center' ? '红桃 · 花心居中' : '红桃 · 每瓣一蕊';
     $('stamen-note').textContent = variant.name + ' · 同一轮廓';
     $('petal-core-mark').innerHTML = lab.svg(selected, {stamen:'petals'});
-    $('center-core-mark').innerHTML = lab.svg(selected, {stamen:'center'});
+    $('center-core-mark').innerHTML = lab.svg(selected, {stamen:'center', centers});
     document.querySelectorAll('[data-stamen]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.stamen === stamen)));
     const colors = SZThemeTokens[dark ? 'dark' : 'light'];
     document.documentElement.dataset.szTheme = dark ? 'dark' : 'light';
@@ -24,17 +25,17 @@
     document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
     $('theme').textContent = dark ? '日间' : '夜间';
     $('theme').setAttribute('aria-pressed', String(dark));
-    $('hero-mark').innerHTML = lab.svg(selected, { split, stamen, label: variant.name });
+    $('hero-mark').innerHTML = lab.svg(selected, { split, stamen, centers, label: variant.name });
     $('split').setAttribute('aria-pressed', String(split));
     $('split').textContent = split ? '合成一朵花 ↙' : '拆开看三颗心 ↗';
     document.querySelectorAll('.variant').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.variant === selected)));
-    document.querySelectorAll('.variant .mark').forEach(el => { el.innerHTML = lab.svg(el.closest('[data-variant]').dataset.variant, {stamen}); });
+    document.querySelectorAll('.variant .mark').forEach(el => { el.innerHTML = lab.svg(el.closest('[data-variant]').dataset.variant, {stamen, centers}); });
     $('chosen-name').textContent = variant.name;
     document.querySelectorAll('[data-mark]').forEach(el => {
       const type = el.dataset.mark;
       el.innerHTML = type === 'back'
-        ? `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 100" aria-hidden="true"><rect x="1" y="1" width="68" height="98" rx="8" fill="#ECCE80" stroke="#A17C35" stroke-width="1.3"/><rect x="4.5" y="4.5" width="61" height="91" rx="5" fill="none" stroke="#A17C35" stroke-opacity=".55"/><g transform="translate(13 28) scale(.69)">${lab.petals(selected, {stamen})}</g></svg>`
-        : lab.svg(selected, { stamen, card: type === 'card', rival: type === 'rival', mono: type === 'mono' });
+        ? `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 100" aria-hidden="true"><rect x="1" y="1" width="68" height="98" rx="8" fill="#ECCE80" stroke="#A17C35" stroke-width="1.3"/><rect x="4.5" y="4.5" width="61" height="91" rx="5" fill="none" stroke="#A17C35" stroke-opacity=".55"/><g transform="translate(13 28) scale(.69)">${lab.petals(selected, {stamen, centers})}</g></svg>`
+        : lab.svg(selected, { stamen, centers, card: type === 'card', rival: type === 'rival', mono: type === 'mono' });
     });
     // Keep a fixed production reference beside the experiment, including the official palette.
     $('original-mark').innerHTML = SZFlowerMark.replace(/var\(--sz-logo-petal,[^)]+\)/g, SZThemeTokens.brand.red).replace(/var\(--sz-logo-center,[^)]+\)/g, SZThemeTokens.brand.gold);
@@ -42,6 +43,15 @@
     const suffix = stamen === 'center' ? '-center' : '';
     $('download-flower').href = `assets/${selected}${suffix}-flower.svg`;
     $('download-card').href = `assets/${selected}${suffix}-card.svg`;
+    $('download-flower').download = `${selected}${suffix}-flower.svg`;
+    $('download-card').download = `${selected}${suffix}-card.svg`;
+    // Downloads must match the current parameter study rather than its default asset.
+    if (stamen === 'center') {
+      for (const [id, card] of [['download-flower', false], ['download-card', true]]) {
+        $(id).href = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(lab.svg(selected, {stamen, centers, card, label:variant.name}));
+        $(id).download = `${selected}-${centers.angle}-${centers.size}-${centers.inset}${card ? '-card' : ''}.svg`;
+      }
+    }
     const url = new URL(location.href); url.searchParams.set('mark', selected); url.searchParams.set('theme', dark ? 'dark' : 'light'); url.searchParams.set('core', stamen);
     history.replaceState(null, '', url);
   }

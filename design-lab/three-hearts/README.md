@@ -8,7 +8,17 @@ Three identical hearts rotated by 120°, in the existing red, gold and circuit-b
 - **02 / 三心相聚**: inward points, a more literal three-heart symbol.
 - **03 / 旋心**: outward hearts with a local rotation.
 
-Each gold center uses the earlier heart-arc junction as its anchor, shifted 1.8 units inward for a closer cluster. These positions stay fixed through the inner-contour refinement. Each shares its heart’s rotation and spacing, including the separated construction view. The centered stamen keeps its outward lobes and replaces its inward scallops with a continuous rounded arc, simplifying the negative space between the three centers. It uses 2.25× the original size (90% of the preceding 2.5× study), with gaps between the three centers and overlap onto the red petals. All three use a single flat gold fill (#F2CD5D). The comparison toggle retains the original stamen size and position on each heart.
+Each gold center uses the earlier heart-arc junction as its anchor, shifted 1.8 units inward for a closer cluster. The complete original six-lobed silhouette is restored; the experiment that smoothed only its inward half was rejected. The default is 2.25× the original production stamen size, with 0° local rotation and a single flat gold fill (#F2CD5D). Each center shares its heart’s rotation and spacing, including the separated construction view. `core=petals` retains the original dispersed centers.
+
+## Center parameter study
+
+Open `design-lab/three-hearts/center-study.html` to compare **96 combinations** on the outward-heart silhouette:
+
+- Rotation: 0°, 10°, 20°, 30°, 40°, 50° (one 60° period of the six-lobed flower).
+- Size: 80%, 90%, 100%, 110% of the current 2.25× baseline.
+- Inward offset: 1.2, 1.8, 2.4, 3 SVG units from the heart-arc anchor.
+
+Select a tile to compare it with the baseline, inspect the center gap, and check 16–48 px sizes on light or dark backgrounds. “放回预览” carries the exact parameters into the application preview; SVG downloads use the same parameters. Query fields are `angle`, `size`, and `inset`. The defaults in the main preview stay at 0° / 100% / 1.8. The denser combinations intentionally expose where the separate centers become too crowded.
 
 Background references: [NParks — Bougainvillea cultivars](https://biodiversitysg.nparks.gov.sg/our-biodiversity/flowering-plants/shrubs-herbaceous-plants/bougainvillea-cultivars/) and [NParks — Bougainvillea glabra](https://www.nparks.gov.sg/florafaunaweb/flora/1/3/1335).
 
