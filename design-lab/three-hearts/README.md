@@ -8,7 +8,7 @@ Three identical hearts rotated by 120°, in the existing red, gold and circuit-b
 - **02 / 三心相聚**: inward points, a more literal three-heart symbol.
 - **03 / 旋心**: outward hearts with a local rotation.
 
-Each gold center now sits exactly at the junction of its heart’s two lobe arcs. It shares the heart’s rotation and spacing, including the separated construction view. The original stamen silhouette is enlarged to 2.5× size, with gaps between the three centers and overlap onto the red petals. All three use a single flat gold fill (#F2CD5D). The comparison toggle retains the original stamen size and position on each heart.
+Each gold center sits near the junction of its heart’s two lobe arcs, shifted 0.8 units inward for a closer cluster. It shares the heart’s rotation and spacing, including the separated construction view. The original stamen silhouette is enlarged to 2.5× size, with gaps between the three centers and overlap onto the red petals. All three use a single flat gold fill (#F2CD5D). The comparison toggle retains the original stamen size and position on each heart.
 
 Background references: [NParks — Bougainvillea cultivars](https://biodiversitysg.nparks.gov.sg/our-biodiversity/flowering-plants/shrubs-herbaceous-plants/bougainvillea-cultivars/) and [NParks — Bougainvillea glabra](https://www.nparks.gov.sg/florafaunaweb/flora/1/3/1335).
 

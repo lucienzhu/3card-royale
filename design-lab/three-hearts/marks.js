@@ -36,7 +36,7 @@
   function flowerCenter(v, split) {
     const [x, y] = v.arcJoin;
     return '<g data-flower-center="bougainvillea">' +
-      [0, 120, 240].map(angle => `<g transform="${heartTransform(v, angle, split)}">${goldStamen(x,y,2.5)}</g>`).join('') + '</g>';
+      [0, 120, 240].map(angle => `<g transform="${heartTransform(v, angle, split)}">${goldStamen(x,y + .8,2.5)}</g>`).join('') + '</g>';
   }
   function petals(id, { mono = false, rival = false, split = false, stamen = 'petals' } = {}) {
     const v = variants.find(v => v.id === id) || variants[0], p = palette();
@@ -44,7 +44,7 @@
       const [x, y] = v.center;
       return `<g transform="${heartTransform(v, angle, split)}"><path d="${v.path}" fill="${mono ? 'currentColor' : rival ? '#D6A41C' : p.red}"/>${mono || stamen === 'center' ? '' : goldStamen(x, y)}</g>`;
     }).join('');
-    // Anchor each stamen to its heart's arc junction, above all three petals.
+    // Bring the arc-anchored stamens slightly inward, above all three petals.
     const center = !mono && stamen === 'center' ? flowerCenter(v, split) : '';
     return `<g transform="translate(32 36) scale(${v.scale}) translate(-32 -36)">${shapes}${center}</g>`;
   }
