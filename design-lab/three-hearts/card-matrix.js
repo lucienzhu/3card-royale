@@ -3,7 +3,7 @@
   'use strict';
   const lab = window.SZHeartLab, params = new URLSearchParams(location.search);
   const centers = lab.centerOptions({angle:params.get('angle') ?? 30,size:params.get('size') ?? 100,inset:params.get('inset') ?? 1.8});
-  const scales = [70,80,90,100];
+  const scales = [70,80,90,100,110,120];
   const tones = [
     {id:'gold',code:'A',name:'原版金底',note:'原样配色',fill:'#ECCE80',edge:'#A17C35',keyline:false},
     {id:'gold-outline',code:'B',name:'金底 · 红描边',note:'金蕊加细红边',fill:'#ECCE80',edge:'#A17C35',keyline:true},
