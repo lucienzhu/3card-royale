@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>三颗红心 · 深圳花牌标志探索</title>
+  <title>扑克牌与花 · 深圳花牌标志探索</title>
   <link rel="icon" href="assets/bloom-card.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../../app/tokens.css">
   <link rel="stylesheet" href="style.css">
@@ -19,10 +19,10 @@
   </header>
   <main>
     <section class="intro">
-      <div class="intro-copy"><span class="eyebrow">THREE HEARTS, ONE FLOWER</span><h1>三颗红心。<br>一朵三角梅。</h1><p>沿着扑克牌的红心，试一朵更锋利的花。</p><div class="version">分支实验 · 未替换正式标志</div></div>
+      <div class="intro-copy"><span class="eyebrow" id="hero-eyebrow">THREE HEARTS, ONE FLOWER</span><h1 id="hero-title">三颗红心。<br>一朵三角梅。</h1><p id="hero-note">沿着扑克牌的红心，试一朵更锋利的花。</p><div class="version">分支实验 · 未替换正式标志</div></div>
       <div class="hero-art"><div class="hero-mark" id="hero-mark"></div><button id="split" aria-pressed="false">拆开看三颗心 ↗</button></div>
     </section>
-    <section class="directions" aria-label="选择标志方案"><div id="variants" class="variant-grid"></div></section>
+    <section class="directions" aria-label="选择标志方案"><div id="families" class="family-switch" aria-label="花色轮廓"><button data-family="heart" aria-pressed="true">♥ 红心</button><button data-family="spade" aria-pressed="false">♠ 黑桃</button></div><div id="variants" class="variant-grid"></div></section>
     <section class="application">
       <div class="section-title"><h2 id="chosen-name">向外开花</h2><span>放回牌桌里看</span></div>
       <div class="application-grid">
@@ -45,11 +45,11 @@
         </article>
         <article class="compare-panel">
           <div class="panel-label">04 / 轮廓对照</div>
-          <div class="comparison"><figure><div id="original-mark"></div><figcaption>现在</figcaption></figure><span class="arrow">→</span><figure><span data-mark="flower"></span><figcaption>三颗心</figcaption></figure></div>
+          <div class="comparison"><figure><div id="original-mark"></div><figcaption>现在</figcaption></figure><figure id="heart-reference"><div id="heart-mark"></div><figcaption>红心版</figcaption></figure><figure><span data-mark="flower"></span><figcaption id="comparison-label">三颗心</figcaption></figure></div>
         </article>
       </div>
     </section>
-    <section class="construction"><div><span class="eyebrow">ONE HEART × THREE</span><h2>同一个轮廓，旋转三次。</h2><p>平涂红花 · 金蕊 · 金底牌</p></div><div id="single-heart" aria-label="单颗红心轮廓"></div><span class="times">× 3</span><div data-mark="flower"></div></section>
+    <section class="construction"><div><span class="eyebrow" id="construction-label">ONE HEART × THREE</span><h2>同一个轮廓，旋转三次。</h2><p>平涂红花 · 金蕊 · 金底牌</p></div><div id="single-heart" aria-label="单个花色轮廓"></div><span class="times">× 3</span><div data-mark="flower"></div></section>
     <footer><span>SHENZHEN FLOWER CARDS / MARK STUDY</span><div><a id="download-flower" download>下载花形 SVG ↓</a><a id="download-card" download>下载金牌 SVG ↓</a></div></footer>
   </main>
 </body>

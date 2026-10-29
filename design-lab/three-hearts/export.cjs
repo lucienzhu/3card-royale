@@ -9,4 +9,4 @@ for (const variant of lab.variants) {
     fs.writeFileSync(path.join(__dirname, 'assets', `${variant.id}-${suffix}.svg`), lab.svg(variant.id, { ...options, label: variant.name }) + '\n');
   }
 }
-console.log('Exported 9 SVG assets.');
+console.log(`Exported ${lab.variants.length * 3} SVG assets.`);
