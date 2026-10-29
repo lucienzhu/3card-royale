@@ -4,7 +4,7 @@
 
 Three identical hearts rotated by 120°, in the existing red, gold and circuit-board palette. The flat gold card frame remains unchanged.
 
-- **01 / 向外开花**: outward points and a shallow, continuous inner arc. The central negative space is a soft triangle, without the previous pointed notches.
+- **01 / 向外开花**: outward points with the original heart-shaped notch restored. The red petal path stays fixed throughout the center parameter study.
 - **02 / 三心相聚**: inward points, a more literal three-heart symbol.
 - **03 / 旋心**: outward hearts with a local rotation.
 
