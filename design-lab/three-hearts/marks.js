@@ -32,7 +32,7 @@
   }
   function flowerCenter() {
     return '<g data-flower-center="bougainvillea">' +
-      [[32, 32.3], [28.8, 37.85], [35.2, 37.85]].map(([x,y]) => goldStamen(x,y,1.9)).join('') + '</g>';
+      [[32, 31.1], [27.76, 38.45], [36.24, 38.45]].map(([x,y]) => goldStamen(x,y,1.9)).join('') + '</g>';
   }
   function petals(id, { mono = false, rival = false, split = false, stamen = 'petals' } = {}) {
     const v = variants.find(v => v.id === id) || variants[0], p = palette();
