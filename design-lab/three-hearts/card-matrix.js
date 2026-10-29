@@ -4,6 +4,7 @@
   const lab = window.SZHeartLab, params = new URLSearchParams(location.search);
   const centers = lab.centerOptions({angle:params.get('angle') ?? 30,size:params.get('size') ?? 100,inset:params.get('inset') ?? 1.8});
   const scales = [70,80,90,100,110,120];
+  const columnLabel = scale => scale > 100 ? `原版花心 ${scale}%` : `整花 ${scale}%`;
   const tones = [
     {id:'gold',code:'A',name:'原版金底',note:'原样配色',fill:'#ECCE80',edge:'#A17C35',keyline:false},
     {id:'gold-outline',code:'B',name:'金底 · 红描边',note:'金蕊加细红边',fill:'#ECCE80',edge:'#A17C35',keyline:true},
@@ -26,7 +27,7 @@
   }
   applyTheme();
   document.getElementById('theme').addEventListener('click',()=>{dark=!dark;applyTheme();});
-  document.getElementById('center-note').textContent = `整朵花缩放 · 金蕊固定 ${centers.angle}° / ${centers.size}% / ${centers.inset}`;
+  document.getElementById('center-note').textContent = `末两列只放大原版花心 · 红桃版固定 ${centers.angle}° / ${centers.size}% / ${centers.inset}`;
   let original;
   try {
     const response = await fetch('../../brand-mark.svg');
@@ -40,21 +41,26 @@
   }
   function card(kind,tone,scale) {
     let flower = kind === 'original' ? original : lab.petals('bloom',{stamen:'center',centers,keyline:tone.keyline});
+    // The added columns enlarge each original gold center about its own anchor.
+    // Petals, center positions and the heart reference stay at their 100% size.
+    if (kind === 'original' && scale > 100) flower = flower.replaceAll('fill="#F2CD5D"',`fill="#F2CD5D" transform="translate(32 30.5) scale(${scale/100}) translate(-32 -30.5)"`);
     if (kind === 'original' && tone.keyline) flower = flower.replaceAll('fill="#F2CD5D"','fill="#F2CD5D" stroke="#C5416B" stroke-width=".65" stroke-linejoin="round" paint-order="stroke fill"');
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" aria-hidden="true"><rect x="9" y="3" width="46" height="58" rx="7" fill="${tone.fill}" stroke="${tone.edge}" stroke-width="2"/><g transform="translate(32 32) scale(${scale/100}) translate(-32 -32)">${flower}</g></svg>`;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" aria-hidden="true"><rect x="9" y="3" width="46" height="58" rx="7" fill="${tone.fill}" stroke="${tone.edge}" stroke-width="2"/><g transform="translate(32 32) scale(${Math.min(scale,100)/100}) translate(-32 -32)">${flower}</g></svg>`;
   }
   const matrix = document.getElementById('matrix');
-  matrix.insertAdjacentHTML('beforeend',`<thead><tr><th scope="col">牌底 ↓ / 花大小 →</th>${scales.map(scale=>`<th scope="col">${scale}%<span class="column-caption">原版 / 红桃版</span></th>`).join('')}</tr></thead><tbody>${tones.map(tone=>`<tr><th scope="row"><span class="row-code">${tone.code}</span><span class="row-name">${tone.name}</span><span class="row-note">${tone.note}</span><span class="swatches" aria-hidden="true"><i style="background:${tone.fill}"></i><i style="background:#C5416B"></i><i style="background:#F2CD5D"></i></span></th>${scales.map((scale,i)=>`<td><button type="button" class="pair-button" data-tone="${tone.id}" data-scale="${scale}" aria-label="${tone.code}${i+1} · ${tone.name} · ${scale}% · 放大对照" aria-haspopup="dialog"><span class="cell-code">${tone.code}${i+1}</span><span class="flower-pair"><span>${card('original',tone,scale)}<small>原版</small></span><span>${card('heart',tone,scale)}<small>红桃</small></span></span></button></td>`).join('')}</tr>`).join('')}</tbody>`);
+  matrix.insertAdjacentHTML('beforeend',`<thead><tr><th scope="col">牌底 ↓ / 大小 →</th>${scales.map(scale=>`<th scope="col">${columnLabel(scale)}<span class="column-caption">${scale>100?'花瓣不变 / 红桃不变':'原版 / 红桃版'}</span></th>`).join('')}</tr></thead><tbody>${tones.map(tone=>`<tr><th scope="row"><span class="row-code">${tone.code}</span><span class="row-name">${tone.name}</span><span class="row-note">${tone.note}</span><span class="swatches" aria-hidden="true"><i style="background:${tone.fill}"></i><i style="background:#C5416B"></i><i style="background:#F2CD5D"></i></span></th>${scales.map((scale,i)=>`<td><button type="button" class="pair-button" data-tone="${tone.id}" data-scale="${scale}" aria-label="${tone.code}${i+1} · ${tone.name} · ${columnLabel(scale)} · 放大对照" aria-haspopup="dialog"><span class="cell-code">${tone.code}${i+1}</span><span class="flower-pair"><span>${card('original',tone,scale)}<small>原版</small></span><span>${card('heart',tone,scale)}<small>红桃</small></span></span></button></td>`).join('')}</tr>`).join('')}</tbody>`);
   function select(tone,scale,open) {
     const code = `${tone.code}${scales.indexOf(scale)+1}`;
     matrix.querySelectorAll('.pair-button').forEach(button=>button.setAttribute('aria-current',String(button.dataset.tone===tone.id && Number(button.dataset.scale)===scale)));
-    document.getElementById('inspection-title').textContent = `${code} · ${tone.name} · ${scale}%`;
-    document.getElementById('inspection-pair').innerHTML = ['original','heart'].map(kind=>`<figure>${card(kind,tone,scale)}<figcaption>${kind==='original'?'原版花形':'红桃花形'}</figcaption></figure>`).join('');
+    document.getElementById('inspection-title').textContent = `${code} · ${tone.name} · ${columnLabel(scale)}`;
+    document.getElementById('inspection-pair').innerHTML = ['original','heart'].map(kind=>`<figure>${card(kind,tone,scale)}<figcaption>${kind==='original'?(scale>100?`原版 · 花心 ${scale}%`:'原版花形'):(scale>100?'红桃 · 原尺寸对照':'红桃花形')}</figcaption></figure>`).join('');
     document.getElementById('small-pair').innerHTML = ['original','heart'].map(kind=>`<div class="small-sizes">${[24,32,48].map(size=>`<span><span style="width:${size}px">${card(kind,tone,scale)}</span><small>${size}px</small></span>`).join('')}</div>`).join('');
     for (const kind of ['original','heart']) {
       const link = document.getElementById(`download-${kind}`);
       link.href = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(card(kind,tone,scale))}`;
-      link.download = `${kind}-${tone.id}-${scale}-center-${centers.angle}-${centers.size}-${centers.inset}.svg`;
+      link.download = kind === 'original'
+        ? `original-${tone.id}-flower-${Math.min(scale,100)}-centers-${scale>100?scale:100}.svg`
+        : `heart-${tone.id}-flower-${Math.min(scale,100)}-center-${centers.angle}-${centers.size}-${centers.inset}.svg`;
     }
     const url = new URL(location.href); url.searchParams.set('tone',tone.id); url.searchParams.set('scale',scale); history.replaceState(null,'',url);
     if (open) dialog.showModal();
