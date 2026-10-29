@@ -11,7 +11,7 @@
     const variant = lab.variants.find(v => v.id === selected);
     $('hero-eyebrow').textContent = 'HEARTS & BOUGAINVILLEA';
     $('hero-title').innerHTML = '三颗红心。<br>花开在中间。';
-    $('hero-note').textContent = '红桃轮廓不变，中央是一簇三角梅小花。';
+    $('hero-note').textContent = '红桃轮廓，三枚纯金色花蕊。';
     $('construction-label').textContent = 'ONE HEART × THREE';
     $('comparison-label').textContent = stamen === 'center' ? '红桃 · 花心居中' : '红桃 · 每瓣一蕊';
     $('stamen-note').textContent = variant.name + ' · 同一轮廓';

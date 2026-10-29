@@ -8,9 +8,9 @@ Three identical hearts rotated by 120°, in the existing red, gold and circuit-b
 - **02 / 三心相聚**: inward points, a more literal three-heart symbol.
 - **03 / 旋心**: outward hearts with a local rotation.
 
-The default center is a cluster of three small flowers: short tubes, cream-colored lobed mouths and gold throats. It takes its form from bougainvillea's small tubular true flowers, surrounded by colored bracts. The comparison toggle retains the earlier three dispersed gold marks.
+The default center groups three copies of the original logo’s small stamen silhouette. All three use a single flat gold fill (#F2CD5D), with no outlines, tubes, rings or shading. The comparison toggle uses the same silhouette and color on each heart, so only the placement changes.
 
-Botanical references: [NParks — Bougainvillea cultivars](https://biodiversitysg.nparks.gov.sg/our-biodiversity/flowering-plants/shrubs-herbaceous-plants/bougainvillea-cultivars/) and [NParks — Bougainvillea glabra](https://www.nparks.gov.sg/florafaunaweb/flora/1/3/1335).
+Background references: [NParks — Bougainvillea cultivars](https://biodiversitysg.nparks.gov.sg/our-biodiversity/flowering-plants/shrubs-herbaceous-plants/bougainvillea-cultivars/) and [NParks — Bougainvillea glabra](https://www.nparks.gov.sg/florafaunaweb/flora/1/3/1335).
 
 Open `design-lab/three-hearts/index.html?mark=bloom&core=center&theme=light` from the local HTTP server. Compare the wordmark, card backs, player colors, monochrome silhouette and 16–48 px sizes. The top button separates the hearts to show construction. `core=petals` restores the earlier dispersed centers; old spade URLs fall back to the first heart variant.
 
