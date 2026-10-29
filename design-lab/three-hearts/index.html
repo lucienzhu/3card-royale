@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN" data-sz-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>三颗红心 · 深圳花牌标志探索</title>
+  <link rel="icon" href="assets/bloom-card.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../app/tokens.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="../../app/theme-tokens.js"></script>
+  <script src="../../app/mark.js"></script>
+  <script src="marks.js"></script>
+  <script src="preview.js" defer></script>
+</head>
+<body>
+  <header class="lab-header">
+    <a href="../../brand.html" class="home"><img src="../../brand-mark.svg" alt="现有标志">深圳花牌 <span>形态实验 / 01</span></a>
+    <button id="theme" aria-pressed="false">夜间</button>
+  </header>
+  <main>
+    <section class="intro">
+      <div class="intro-copy"><span class="eyebrow">THREE HEARTS, ONE FLOWER</span><h1>三颗红心。<br>一朵三角梅。</h1><p>沿着扑克牌的红心，试一朵更锋利的花。</p><div class="version">分支实验 · 未替换正式标志</div></div>
+      <div class="hero-art"><div class="hero-mark" id="hero-mark"></div><button id="split" aria-pressed="false">拆开看三颗心 ↗</button></div>
+    </section>
+    <section class="directions" aria-label="选择标志方案"><div id="variants" class="variant-grid"></div></section>
+    <section class="application">
+      <div class="section-title"><h2 id="chosen-name">向外开花</h2><span>放回牌桌里看</span></div>
+      <div class="application-grid">
+        <article class="wordmark-panel">
+          <div class="panel-label">01 / 字标组合</div>
+          <div class="lockup"><span data-mark="card"></span><div><strong>深圳花牌</strong><small>3Card Royale</small></div></div>
+          <p>一副牌，两个人，三张牌，打出花。</p>
+          <div class="lockup en"><span data-mark="card"></span><div><strong>3Card Royale</strong><small>Shenzhen Flower Cards</small></div></div>
+        </article>
+        <article class="table-panel">
+          <div class="panel-label">02 / 牌背与玩家</div>
+          <div class="player rival"><span data-mark="rival"></span>对手</div>
+          <div class="hand-backs"><span data-mark="back"></span><span data-mark="back"></span><span data-mark="back"></span></div>
+          <div class="player"><span data-mark="flower"></span>你 <span class="wild">花牌 A ♥</span></div>
+        </article>
+        <article class="scale-panel">
+          <div class="panel-label">03 / 实际尺寸</div>
+          <div class="scales"><div><span data-mark="flower" style="width:16px"></span><small>16 px</small></div><div><span data-mark="flower" style="width:24px"></span><small>24 px</small></div><div><span data-mark="flower" style="width:32px"></span><small>32 px</small></div><div><span data-mark="flower" style="width:48px"></span><small>48 px</small></div></div>
+          <div class="mono-row"><span data-mark="mono"></span><span data-mark="mono"></span><span data-mark="rival"></span></div>
+        </article>
+        <article class="compare-panel">
+          <div class="panel-label">04 / 轮廓对照</div>
+          <div class="comparison"><figure><div id="original-mark"></div><figcaption>现在</figcaption></figure><span class="arrow">→</span><figure><span data-mark="flower"></span><figcaption>三颗心</figcaption></figure></div>
+        </article>
+      </div>
+    </section>
+    <section class="construction"><div><span class="eyebrow">ONE HEART × THREE</span><h2>同一个轮廓，旋转三次。</h2><p>平涂红花 · 金蕊 · 金底牌</p></div><div id="single-heart" aria-label="单颗红心轮廓"></div><span class="times">× 3</span><div data-mark="flower"></div></section>
+    <footer><span>SHENZHEN FLOWER CARDS / MARK STUDY</span><div><a id="download-flower" download>下载花形 SVG ↓</a><a id="download-card" download>下载金牌 SVG ↓</a></div></footer>
+  </main>
+</body>
+</html>
