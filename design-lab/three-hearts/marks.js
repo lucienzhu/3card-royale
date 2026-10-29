@@ -4,8 +4,8 @@
   const variants = [
     {
       id: 'bloom', family: 'heart', number: '01', name: '向外开花', en: 'Hearts in bloom',
-      note: '外轮廓更尖，内侧留出心形凹口。',
-      path: 'M32 11 L41.4 24.2 C45.5 30 41.4 36 36.5 34.6 Q33.6 33.8 32 31 Q30.4 33.8 27.5 34.6 C22.6 36 18.5 30 22.6 24.2 Z',
+      note: '心尖向外，内弧浅而圆润。',
+      path: 'M32 11 L41.4 24.2 C45.5 30 41.4 36 36.5 34.6 C33.5 33.7 30.5 33.7 27.5 34.6 C22.6 36 18.5 30 22.6 24.2 Z',
       center: [32, 27.2], arcJoin: [32, 31], rotation: 0, spread: 3, scale: .89,
     },
     {
@@ -34,6 +34,7 @@
     return `rotate(${angle} 32 36) translate(0 -${v.spread + (split ? 7 : 0)}) rotate(${v.rotation} 32 29)`;
   }
   function flowerCenter(v, split) {
+    // Preserve the approved center anchors when refining the petal's inner curve.
     const [x, y] = v.arcJoin;
     return '<g data-flower-center="bougainvillea">' +
       [0, 120, 240].map(angle => `<g transform="${heartTransform(v, angle, split)}">${goldStamen(x,y + 1.8,2.25)}</g>`).join('') + '</g>';
