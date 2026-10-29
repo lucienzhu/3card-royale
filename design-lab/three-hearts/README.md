@@ -1,20 +1,19 @@
-# Hearts & spades / 红心与黑桃
+# Hearts & bougainvillea / 红桃与三角梅
 
 2026-10-29 · `codex/logo-three-hearts` · design exploration
 
-Three identical suit contours rotated by 120°, using the current red, gold and circuit-board palette. The flat gold card frame stays the same. Spades explore the silhouette while retaining the red flower color.
+Three identical hearts rotated by 120°, in the existing red, gold and circuit-board palette. The flat gold card frame and the three heart silhouettes remain unchanged.
 
-- **01 / 向外开花**: outward points, inward heart notches. Closest to the current three-point flower, with a sharper silhouette.
-- **02 / 三心相聚**: inward points. A more literal three-heart symbol.
-- **03 / 旋心**: outward hearts with a local rotation. A more energetic, asymmetric petal contour within threefold symmetry.
-- **04 / 桃瓣**: complete spade silhouettes, with broad stems meeting in the center.
-- **05 / 锐桃**: sharp spade points and thin stems forming a shared flower center.
-- **06 / 旋桃**: rotated spades with separated stems, giving a turning silhouette.
+- **01 / 向外开花**: outward points, inward heart notches.
+- **02 / 三心相聚**: inward points, a more literal three-heart symbol.
+- **03 / 旋心**: outward hearts with a local rotation.
 
-Open `design-lab/three-hearts/index.html?mark=spade-cut&core=center` from the repository's local HTTP server. Switch between heart and spade families, then select a mark and compare the lockup, card backs, player colors, monochrome silhouette and 16–48 px sizes. The top button separates the petals for inspection; it is a construction view, not a final logo variant.
+The default center is a cluster of three small flowers: short tubes, cream-colored lobed mouths and gold throats. It takes its form from bougainvillea's small tubular true flowers, surrounded by colored bracts. The comparison toggle retains the earlier three dispersed gold marks.
 
-The stamen comparison keeps the petal geometry identical: **每瓣一蕊** places three gold diamonds on the petals; **花蕊居中** replaces them with one diamond at their common center, keeping approximately the same total gold area. Selecting either updates all application previews and SVG download links. The `core` query parameter preserves the choice.
+Botanical references: [NParks — Bougainvillea cultivars](https://biodiversitysg.nparks.gov.sg/our-biodiversity/flowering-plants/shrubs-herbaceous-plants/bougainvillea-cultivars/) and [NParks — Bougainvillea glabra](https://www.nparks.gov.sg/florafaunaweb/flora/1/3/1335).
 
-`marks.js` is the source for all experiment vectors. Run `node design-lab/three-hearts/export.cjs` to regenerate the thirty standalone SVGs in `assets/`: flower, card, monochrome, centered-stamen flower and centered-stamen card for each of the six contours.
+Open `design-lab/three-hearts/index.html?mark=bloom&core=center&theme=light` from the local HTTP server. Compare the wordmark, card backs, player colors, monochrome silhouette and 16–48 px sizes. The top button separates the hearts to show construction. `core=petals` restores the earlier dispersed centers; old spade URLs fall back to the first heart variant.
+
+`marks.js` is the vector source. Run `node design-lab/three-hearts/export.cjs` to regenerate the fifteen SVGs in `assets/`: flower, card, monochrome, centered-flower and centered-flower card for each heart silhouette. Spade studies are no longer included in this preview; their previous versions remain in Git history.
 
 Production logos and shared components are unchanged. This branch is for visual review before any coordinated brand migration.

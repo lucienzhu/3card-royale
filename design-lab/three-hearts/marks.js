@@ -1,4 +1,4 @@
-/* Experimental suit family. Each flower repeats one heart or spade contour. */
+/* Experimental heart family. Three identical hearts surround a bougainvillea flower center. */
 (function (root) {
   'use strict';
   const variants = [
@@ -20,27 +20,20 @@
       path: 'M32 10 L41 23 C45.4 29.2 42.2 35.2 37.1 34.1 Q34.1 33.5 32 30.5 Q29.9 33.5 26.9 34.1 C21.8 35.2 18.6 29.2 23 23 Z',
       center: [32, 26.5], rotation: 24, spread: 2, scale: .93,
     },
-    {
-      id: 'spade-bloom', family: 'spade', number: '04', name: '桃瓣', en: 'Spade petals',
-      note: '完整黑桃轮廓，短柄向心。',
-      path: 'M32 10 C29 15 20.5 21 21 26.5 C21.5 32.5 28 33 30.5 28.7 C30.5 32 29 34.8 27.8 38.4 L36.2 38.4 C35 34.8 33.5 32 33.5 28.7 C36 33 42.5 32.5 43 26.5 C43.5 21 35 15 32 10 Z',
-      center: [32, 24], rotation: 0, spread: 2, scale: .91,
-    },
-    {
-      id: 'spade-cut', family: 'spade', number: '05', name: '锐桃', en: 'Sharp spades',
-      note: '尖顶、直侧边，三根细柄汇成花心。',
-      path: 'M32 9 L41 22.5 C45 28 41 33.5 36.5 31.5 C34.6 30.7 33.7 29.3 33 28 L33 39 L31 39 L31 28 C30.3 29.3 29.4 30.7 27.5 31.5 C23 33.5 19 28 23 22.5 Z',
-      center: [32, 23.5], rotation: 0, spread: 3, scale: .89,
-    },
-    {
-      id: 'spade-spin', family: 'spade', number: '06', name: '旋桃', en: 'Turning spades',
-      note: '黑桃微转，短柄衔接成旋转的花心。',
-      path: 'M32 9 L41 22.5 C45 28 41 33.5 36.5 31.5 C34.6 30.7 33.7 29.3 33 28 L33 38 L31 38 L31 28 C30.3 29.3 29.4 30.7 27.5 31.5 C23 33.5 19 28 23 22.5 Z',
-      center: [32, 23.5], rotation: 22, spread: 3, scale: .89,
-    },
+
   ];
   const fallback = { red: '#C5416B', gold: '#F2CD5D', goldBase: '#ECCE80', goldEdge: '#A17C35' };
   const palette = () => root.SZThemeTokens?.brand || fallback;
+  function flowerCenter(rival = false) {
+    const p = palette();
+    const tube = rival ? '#A17C35' : '#B2365A';
+    const rim = rival ? '#FFF8E3' : '#FFF3CE';
+    const flowers = [[32, 32.25, 0], [28.9, 36.9, -18], [35.1, 36.9, 18]];
+    // A gently scalloped, five-lobed mouth seen from above, with a gold throat.
+    const mouth = 'M0 -2.15 C.65 -2.45 1.05 -1.72 1.02 -1.4 C1.88 -1.6 2.55 -.65 1.85 -.06 C2.65 .8 1.75 1.8 .95 1.4 C.8 2.55 -.8 2.55 -.95 1.4 C-1.75 1.8 -2.65 .8 -1.85 -.06 C-2.55 -.65 -1.88 -1.6 -1.02 -1.4 C-1.05 -1.72 -.65 -2.45 0 -2.15Z';
+    const tubes = '<path d="M32 39.5 Q31.6 36.1 32 32.25 M32 39.5 Q29.6 39.1 28.9 36.9 M32 39.5 Q34.4 39.1 35.1 36.9" fill="none" stroke="'+tube+'" stroke-width=".85" stroke-linecap="round"/>';
+    return '<g data-flower-center="bougainvillea">'+tubes+flowers.map(([x,y,a])=>`<g transform="translate(${x} ${y}) rotate(${a})"><path d="${mouth}" fill="${rim}" stroke="${p.goldEdge}" stroke-width=".25"/><circle r=".75" fill="${p.gold}"/><circle r=".25" fill="${p.goldEdge}"/></g>`).join('')+'</g>';
+  }
   function petals(id, { mono = false, rival = false, split = false, stamen = 'petals' } = {}) {
     const v = variants.find(v => v.id === id) || variants[0], p = palette();
     const shapes = [0, 120, 240].map(angle => {
@@ -48,8 +41,9 @@
       const core = `M${x} ${y-1.85} L${x+1.85} ${y} L${x} ${y+1.85} L${x-1.85} ${y} Z`;
       return `<g transform="rotate(${angle} 32 36)"><g transform="translate(0 -${v.spread + (split ? 7 : 0)}) rotate(${v.rotation} 32 29)"><path d="${v.path}" fill="${mono ? 'currentColor' : rival ? '#D6A41C' : p.red}"/>${mono || stamen === 'center' ? '' : `<path d="${core}" fill="${rival ? p.goldBase : p.gold}"/>`}</g></g>`;
     }).join('');
-    // One central core has approximately the same gold area as three petal cores.
-    const center = !mono && stamen === 'center' ? `<path d="M32 32.8 L35.2 36 L32 39.2 L28.8 36 Z" fill="${rival ? p.goldBase : p.gold}"/>` : '';
+    // Bougainvillea has small tubular true flowers inside the colored bracts.
+    // Keep these at the shared center, not attached to the individual hearts.
+    const center = !mono && stamen === 'center' ? flowerCenter(rival) : '';
     return `<g transform="translate(32 36) scale(${v.scale}) translate(-32 -36)">${shapes}${center}</g>`;
   }
   function svg(id, { card = false, mono = false, rival = false, split = false, stamen = 'petals', label = '' } = {}) {

@@ -2,25 +2,18 @@
   'use strict';
   const $ = id => document.getElementById(id), lab = window.SZHeartLab;
   const params = new URLSearchParams(location.search);
-  let selected = lab.variants.some(v => v.id === params.get('mark')) ? params.get('mark') : 'bloom';
+  const requested = params.get('mark');
+  let selected = lab.variants.some(v => v.id === requested) ? requested : 'bloom';
   let dark = params.get('theme') === 'dark', split = false;
-  let stamen = params.get('core') === 'center' ? 'center' : 'petals';
-  let lastFamily = '';
+  let stamen = params.get('core') === 'petals' ? 'petals' : 'center';
+  $('variants').innerHTML = lab.variants.map(v => `<button class="variant" data-variant="${v.id}" aria-pressed="false"><span class="mark"></span><span><span class="number">${v.number}</span><strong>${v.name}</strong><p>${v.note}</p></span></button>`).join('');
   function render() {
     const variant = lab.variants.find(v => v.id === selected);
-    const spade = variant.family === 'spade';
-    if (lastFamily !== variant.family) {
-      $('variants').innerHTML = lab.variants.filter(v => v.family === variant.family).map(v => `<button class="variant" data-variant="${v.id}" aria-pressed="false"><span class="mark">${lab.svg(v.id)}</span><span><span class="number">${v.number}</span><strong>${v.name}</strong><p>${v.note}</p></span></button>`).join('');
-      lastFamily = variant.family;
-    }
-    document.querySelectorAll('[data-family]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.family === variant.family)));
-    $('hero-eyebrow').textContent = spade ? 'THREE SPADES, ONE FLOWER' : 'THREE HEARTS, ONE FLOWER';
-    $('hero-title').innerHTML = spade ? '三枚黑桃。<br>一朵三角梅。' : '三颗红心。<br>一朵三角梅。';
-    $('hero-note').textContent = spade ? '借黑桃的尖顶与短柄，保留红花与金蕊。' : '沿着扑克牌的红心，试一朵更锋利的花。';
-    $('construction-label').textContent = spade ? 'ONE SPADE × THREE' : 'ONE HEART × THREE';
-    $('comparison-label').textContent = spade ? variant.name : '三颗心';
-    $('heart-reference').hidden = !spade;
-    $('heart-mark').innerHTML = lab.svg('bloom', {stamen});
+    $('hero-eyebrow').textContent = 'HEARTS & BOUGAINVILLEA';
+    $('hero-title').innerHTML = '三颗红心。<br>花开在中间。';
+    $('hero-note').textContent = '红桃轮廓不变，中央是一簇三角梅小花。';
+    $('construction-label').textContent = 'ONE HEART × THREE';
+    $('comparison-label').textContent = stamen === 'center' ? '红桃 · 花心居中' : '红桃 · 每瓣一蕊';
     $('stamen-note').textContent = variant.name + ' · 同一轮廓';
     $('petal-core-mark').innerHTML = lab.svg(selected, {stamen:'petals'});
     $('center-core-mark').innerHTML = lab.svg(selected, {stamen:'center'});
@@ -33,7 +26,7 @@
     $('theme').setAttribute('aria-pressed', String(dark));
     $('hero-mark').innerHTML = lab.svg(selected, { split, stamen, label: variant.name });
     $('split').setAttribute('aria-pressed', String(split));
-    $('split').textContent = split ? '合成一朵花 ↙' : spade ? '拆开看三枚黑桃 ↗' : '拆开看三颗心 ↗';
+    $('split').textContent = split ? '合成一朵花 ↙' : '拆开看三颗心 ↗';
     document.querySelectorAll('.variant').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.variant === selected)));
     document.querySelectorAll('.variant .mark').forEach(el => { el.innerHTML = lab.svg(el.closest('[data-variant]').dataset.variant, {stamen}); });
     $('chosen-name').textContent = variant.name;
@@ -52,7 +45,6 @@
     const url = new URL(location.href); url.searchParams.set('mark', selected); url.searchParams.set('theme', dark ? 'dark' : 'light'); url.searchParams.set('core', stamen);
     history.replaceState(null, '', url);
   }
-  $('families').addEventListener('click', event => { const button = event.target.closest('[data-family]'); if (!button) return; selected = button.dataset.family === 'spade' ? 'spade-cut' : 'bloom'; split = false; render(); });
   $('variants').addEventListener('click', event => { const button = event.target.closest('[data-variant]'); if (!button) return; selected = button.dataset.variant; split = false; render(); });
   $('stamen-options').addEventListener('click', event => { const button = event.target.closest('[data-stamen]'); if (!button) return; stamen = button.dataset.stamen; render(); });
   $('theme').onclick = () => { dark = !dark; render(); };
