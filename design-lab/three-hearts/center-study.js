@@ -24,6 +24,7 @@
     document.querySelectorAll('[data-params],[data-pick]').forEach(button => button.setAttribute('aria-pressed', String((button.dataset.params || button.dataset.pick) === key(chosen))));
     const params = new URLSearchParams({...chosen, theme:dark ? 'dark' : 'light'});
     $('apply').href = `index.html?mark=bloom&core=center&${params}`;
+    $('card-compare').href = `index.html?mark=bloom&core=center&cardTone=gold-outline&${params}#card-study`;
     $('download').href = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(lab.svg('bloom',{stamen:'center',centers:chosen,label:'Hearts in bloom'}));
     $('download').download = `bloom-center-${chosen.angle}-${chosen.size}-${chosen.inset}.svg`;
     history.replaceState(null,'',`?${params}`);

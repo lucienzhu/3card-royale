@@ -2,7 +2,7 @@
 
 2026-10-29 · `codex/logo-three-hearts` · design exploration
 
-Three identical hearts rotated by 120°, in the existing red, gold and circuit-board palette. The flat gold card frame remains unchanged.
+Three identical hearts rotated by 120°, in the existing red, gold and circuit-board palette. The production card frame stays unchanged; the experiment also compares card backgrounds for the centered stamens.
 
 - **01 / 向外开花**: outward points with the original heart-shaped notch restored. The red petal path stays fixed throughout the center parameter study.
 - **02 / 三心相聚**: inward points, a more literal three-heart symbol.
@@ -19,6 +19,21 @@ Open `design-lab/three-hearts/center-study.html` to compare **96 combinations** 
 - Inward offset: 1.2, 1.8, 2.4, 3 SVG units from the heart-arc anchor.
 
 Select a tile to compare it with the baseline, inspect the center gap, and check 16–48 px sizes on light or dark backgrounds. “放回预览” carries the exact parameters into the application preview; SVG downloads use the same parameters. Query fields are `angle`, `size`, and `inset`. The defaults in the main preview stay at 0° / 100% / 1.8. The denser combinations intentionally expose where the separate centers become too crowded.
+
+## Card-background contrast study
+
+The centered gold flowers blend into the gold card at small sizes. The main preview now compares four treatments, while keeping the red heart paths, center positions and gold fill fixed:
+
+- `cardTone=gold`: original gold card, reference.
+- `cardTone=gold-outline`: original gold card with a thin red keyline around each center. The keyline is painted behind the fill, preserving the gold silhouette.
+- `cardTone=ivory`: pale ivory card with the original gold border.
+- `cardTone=circuit`: circuit-board green card with the original gold border.
+
+Select a treatment to update both wordmarks, card backs and the card SVG download. Standalone flowers are unchanged. Each comparison includes 24 / 32 / 48 px icons. The center study's “牌底对照” link carries its exact parameters into this comparison. For the user's current selection, open:
+
+`index.html?mark=bloom&core=center&angle=30&size=100&inset=1.8&cardTone=gold-outline&theme=light#card-study`
+
+Checked at 390 px and 1440 px viewport widths, in light and dark themes. No production asset or component is replaced.
 
 Background references: [NParks — Bougainvillea cultivars](https://biodiversitysg.nparks.gov.sg/our-biodiversity/flowering-plants/shrubs-herbaceous-plants/bougainvillea-cultivars/) and [NParks — Bougainvillea glabra](https://www.nparks.gov.sg/florafaunaweb/flora/1/3/1335).
 
