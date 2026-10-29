@@ -36,7 +36,7 @@
   function flowerCenter(v, split) {
     const [x, y] = v.arcJoin;
     return '<g data-flower-center="bougainvillea">' +
-      [0, 120, 240].map(angle => `<g transform="${heartTransform(v, angle, split)}">${goldStamen(x,y,1.9)}</g>`).join('') + '</g>';
+      [0, 120, 240].map(angle => `<g transform="${heartTransform(v, angle, split)}">${goldStamen(x,y,2.5)}</g>`).join('') + '</g>';
   }
   function petals(id, { mono = false, rival = false, split = false, stamen = 'petals' } = {}) {
     const v = variants.find(v => v.id === id) || variants[0], p = palette();
