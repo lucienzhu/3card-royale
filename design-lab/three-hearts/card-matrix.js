@@ -3,7 +3,7 @@
   'use strict';
   const lab = window.SZHeartLab, params = new URLSearchParams(location.search);
   const centers = lab.centerOptions({angle:params.get('angle') ?? 30,size:params.get('size') ?? 100,inset:params.get('inset') ?? 1.8});
-  const scales = [70,80,90,100,110,120];
+  const scales = [70,80,90,100,110,120,130,140];
   const columnLabel = scale => scale > 100 ? `原版花心 ${scale}%` : `整花 ${scale}%`;
   const tones = [
     {id:'gold',code:'A',name:'原版金底',note:'原样配色',fill:'#ECCE80',edge:'#A17C35',keyline:false},
@@ -27,7 +27,7 @@
   }
   applyTheme();
   document.getElementById('theme').addEventListener('click',()=>{dark=!dark;applyTheme();});
-  document.getElementById('center-note').textContent = `末两列只放大原版花心 · 红桃版固定 ${centers.angle}° / ${centers.size}% / ${centers.inset}`;
+  document.getElementById('center-note').textContent = `末四列只放大原版花心 · 红桃版固定 ${centers.angle}° / ${centers.size}% / ${centers.inset}`;
   let original;
   try {
     const response = await fetch('../../brand-mark.svg');
