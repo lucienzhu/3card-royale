@@ -42,3 +42,16 @@ Open `design-lab/three-hearts/index.html?mark=bloom&core=center&theme=light` fro
 `marks.js` is the vector source. Run `node design-lab/three-hearts/export.cjs` to regenerate the fifteen SVGs in `assets/`: flower, card, monochrome, centered-flower and centered-flower card for each heart silhouette. Spade studies are no longer included in this preview; their previous versions remain in Git history.
 
 Production logos and shared components are unchanged. This branch is for visual review before any coordinated brand migration.
+
+
+## Original / heart card matrix
+
+`card-matrix.html?angle=30&size=100&inset=1.8&theme=light` compares **40 cards**:
+
+- Rows: original gold, gold with red center keylines, ivory, pale green, circuit-board green.
+- Columns: 70%, 80%, 90%, 100% of each flower's current whole-mark size. The card frame is constant.
+- Each cell: original production flower on the left, experimental outward hearts on the right.
+
+The original is read directly from `brand-mark.svg`; A4's left card reproduces the production geometry and colors at 100%. All centers use the same flat gold. Experimental center parameters stay at 30° / 100% / 1.8 by default and are preserved by links from the center study and main preview. The original flower retains its original petal and center geometry; only the outer scale and row treatment change. No red petal paths are edited.
+
+Click a cell for larger side-by-side marks, actual 24/32/48 px checks and matching SVG downloads. Light/dark toggles change the surrounding page, not the card palettes. On narrow screens the matrix scrolls horizontally with row labels pinned. Each cell has a stable A1–E4 code for feedback.

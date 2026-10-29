@@ -12,6 +12,7 @@
   function render() {
     const variant = lab.variants.find(v => v.id === selected);
     const treatment = lab.cardStyle(cardTone);
+    $('card-matrix-link').href = `card-matrix.html?${new URLSearchParams({...centers,cardTone,theme:dark?'dark':'light'})}`;
     $('card-options').innerHTML = lab.cardStyles.map(style => `<button class="card-option" data-card-tone="${style.id}" aria-pressed="${style.id === cardTone}"><span class="card-option-art">${lab.svg(selected,{stamen,centers,card:true,cardTone:style.id})}</span><strong>${style.name}</strong><span class="card-option-note">${style.note}</span><span class="card-option-sizes">${[24,32,48].map(size => `<span style="width:${size}px">${lab.svg(selected,{stamen,centers,card:true,cardTone:style.id})}</span>`).join('')}</span></button>`).join('');
     $('hero-eyebrow').textContent = 'HEARTS & BOUGAINVILLEA';
     $('hero-title').innerHTML = '三颗红心。<br>花开在中间。';
