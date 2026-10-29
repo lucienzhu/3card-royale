@@ -6,19 +6,19 @@
       id: 'bloom', family: 'heart', number: '01', name: '向外开花', en: 'Hearts in bloom',
       note: '外轮廓更尖，内侧留出心形凹口。',
       path: 'M32 11 L41.4 24.2 C45.5 30 41.4 36 36.5 34.6 Q33.6 33.8 32 31 Q30.4 33.8 27.5 34.6 C22.6 36 18.5 30 22.6 24.2 Z',
-      center: [32, 27.2], rotation: 0, spread: 3, scale: .89,
+      center: [32, 27.2], arcJoin: [32, 31], rotation: 0, spread: 3, scale: .89,
     },
     {
       id: 'gather', family: 'heart', number: '02', name: '三心相聚', en: 'Three of hearts',
       note: '心尖朝内，保留更直接的红心识别。',
       path: 'M32 34 L22.5 24 C17.5 18.5 21 11.2 27 13 Q30 13.8 32 17 Q34 13.8 37 13 C43 11.2 46.5 18.5 41.5 24 Z',
-      center: [32, 24], rotation: 0, spread: 0, scale: 1,
+      center: [32, 24], arcJoin: [32, 17], rotation: 0, spread: 0, scale: 1,
     },
     {
       id: 'spin', family: 'heart', number: '03', name: '旋心', en: 'Hearts in motion',
       note: '三颗心同向偏转，轮廓更有动势。',
       path: 'M32 10 L41 23 C45.4 29.2 42.2 35.2 37.1 34.1 Q34.1 33.5 32 30.5 Q29.9 33.5 26.9 34.1 C21.8 35.2 18.6 29.2 23 23 Z',
-      center: [32, 26.5], rotation: 24, spread: 2, scale: .93,
+      center: [32, 26.5], arcJoin: [32, 30.5], rotation: 24, spread: 2, scale: .93,
     },
 
   ];
@@ -30,18 +30,22 @@
     const transform = scale === 1 ? `translate(${x - 32} ${y - 30.5})` : `translate(${x} ${y}) scale(${scale}) translate(-32 -30.5)`;
     return `<path d="${stamenPath}" transform="${transform}" fill="${palette().gold}"/>`;
   }
-  function flowerCenter() {
+  function heartTransform(v, angle, split) {
+    return `rotate(${angle} 32 36) translate(0 -${v.spread + (split ? 7 : 0)}) rotate(${v.rotation} 32 29)`;
+  }
+  function flowerCenter(v, split) {
+    const [x, y] = v.arcJoin;
     return '<g data-flower-center="bougainvillea">' +
-      [[32, 31.1], [27.76, 38.45], [36.24, 38.45]].map(([x,y]) => goldStamen(x,y,1.9)).join('') + '</g>';
+      [0, 120, 240].map(angle => `<g transform="${heartTransform(v, angle, split)}">${goldStamen(x,y,1.9)}</g>`).join('') + '</g>';
   }
   function petals(id, { mono = false, rival = false, split = false, stamen = 'petals' } = {}) {
     const v = variants.find(v => v.id === id) || variants[0], p = palette();
     const shapes = [0, 120, 240].map(angle => {
       const [x, y] = v.center;
-      return `<g transform="rotate(${angle} 32 36)"><g transform="translate(0 -${v.spread + (split ? 7 : 0)}) rotate(${v.rotation} 32 29)"><path d="${v.path}" fill="${mono ? 'currentColor' : rival ? '#D6A41C' : p.red}"/>${mono || stamen === 'center' ? '' : goldStamen(x, y)}</g></g>`;
+      return `<g transform="${heartTransform(v, angle, split)}"><path d="${v.path}" fill="${mono ? 'currentColor' : rival ? '#D6A41C' : p.red}"/>${mono || stamen === 'center' ? '' : goldStamen(x, y)}</g>`;
     }).join('');
-    // Three flat stamens grouped at the shared center.
-    const center = !mono && stamen === 'center' ? flowerCenter() : '';
+    // Anchor each stamen to its heart's arc junction, above all three petals.
+    const center = !mono && stamen === 'center' ? flowerCenter(v, split) : '';
     return `<g transform="translate(32 36) scale(${v.scale}) translate(-32 -36)">${shapes}${center}</g>`;
   }
   function svg(id, { card = false, mono = false, rival = false, split = false, stamen = 'petals', label = '' } = {}) {
