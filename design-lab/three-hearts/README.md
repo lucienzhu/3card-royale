@@ -56,3 +56,9 @@ Production logos and shared components are unchanged. This branch is for visual 
 The original is read directly from `brand-mark.svg`; A4's left card reproduces the production geometry and colors at 100%. All centers use the same flat gold. Experimental center parameters stay at 30° / 100% / 1.8 by default and are preserved by links from the center study and main preview. The original flower retains its production paths. The last ten columns scale only the three gold centers; their positions do not move. No red petal paths are edited.
 
 Click a cell for larger side-by-side marks, actual 24/32/48 px checks and matching SVG downloads. Light/dark toggles change the surrounding page, not the card palettes. On narrow screens the matrix scrolls horizontally with row labels pinned. Each cell has a stable A1–E14 code for feedback.
+
+## Selected combination · 2026-10-30
+
+The original flower at **80% overall size**, with the gold centers kept at the **actual 130% size** of the matrix reference. Preview at `card-matrix.html#selected-preview`; download `assets/original-flower-80-centers-130.svg`.
+
+The flower and its center positions scale by 0.8 about (32, 32). Each gold center scales locally by 1.625 about (32, 30.5), giving 0.8 × 1.625 = 1.3 relative to the production center. Petal paths, card frame, and colors remain the original ones. This is still an experimental asset; production files are unchanged.
