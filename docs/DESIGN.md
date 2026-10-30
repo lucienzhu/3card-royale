@@ -4,7 +4,9 @@
 
 One card, one flower, two players; the ground is Shenzhen's green, the flower its red. The bougainvillea mark ties a game made in Shenzhen to an ordinary deck: three identical bracts rotated by 120°, each with a small golden centre. The mark is a flat gold card, with no metallic light and no texture. The card back is that same card, and the flower card is that card with an index.
 
-The brand source is `brand-mark.svg`. After editing it, run `node scripts/sync-brand.cjs` to refresh the table header, dark-mode download and embedded PNG asset. `node scripts/check.cjs` verifies that these copies match.
+The brand source is `brand-mark.svg`. The approved 2026-10-30 proportions retain the original petal paths at 80% overall size, with gold centers at 130% of their original absolute size. The card frame and all colors stay unchanged. Centers scale locally by 1.625 inside the 0.8 flower group; do not shrink the 130% centers a second time.
+
+After editing the source, run `node scripts/sync-brand.cjs` to refresh shared navigation, the table flower, Identity samples, monochrome/dark downloads and embedded PNG assets. `node scripts/check.cjs` verifies that these copies match. The design-lab matrix keeps a frozen original reference.
 
 | Name | Role | Value |
 | --- | --- | --- |

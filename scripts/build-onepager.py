@@ -131,19 +131,26 @@ def mark_drawing():
     def visit(el):
         tag = el.tag.split('}')[-1]
         if tag == 'path':
-            return SvgPath(el.attrib['d'], fillColor=HexColor(el.attrib['fill']), strokeColor=None)
-        if tag == 'rect':
+            g=Group(SvgPath(el.attrib['d'], fillColor=HexColor(el.attrib['fill']), strokeColor=None))
+        elif tag == 'rect':
             a=el.attrib
-            return Rect(*[float(a[k]) for k in ('x','y','width','height')], rx=float(a.get('rx',0)), ry=float(a.get('rx',0)), fillColor=HexColor(a['fill']), strokeColor=HexColor(a['stroke']), strokeWidth=float(a['stroke-width']))
-        g=Group()
-        for child in el:
-            g.add(visit(child))
+            g=Group(Rect(*[float(a[k]) for k in ('x','y','width','height')], rx=float(a.get('rx',0)), ry=float(a.get('rx',0)), fillColor=HexColor(a['fill']), strokeColor=HexColor(a['stroke']), strokeWidth=float(a['stroke-width'])))
+        else:
+            g=Group()
+            for child in el:
+                g.add(visit(child))
         transform=el.attrib.get('transform','')
         if transform:
-            match=re.fullmatch(r'rotate\(([-\d.]+) ([-\d.]+) ([-\d.]+)\)',transform)
-            if not match: raise ValueError('Unsupported canonical mark transform: '+transform)
-            angle,cx,cy=map(float,match.groups())
-            g.translate(cx,cy); g.rotate(angle); g.translate(-cx,-cy)
+            transforms=re.findall(r'(rotate|translate|scale)\(([^)]+)\)',transform)
+            if re.sub(r'(rotate|translate|scale)\([^)]+\)', '', transform).strip():
+                raise ValueError('Unsupported canonical mark transform: '+transform)
+            for operation,values in transforms:
+                args=list(map(float,re.split(r'[ ,]+',values.strip())))
+                if operation=='translate': g.translate(args[0],args[1] if len(args)>1 else 0)
+                elif operation=='scale': g.scale(args[0],args[1] if len(args)>1 else args[0])
+                else:
+                    angle,cx,cy=args
+                    g.translate(cx,cy); g.rotate(angle); g.translate(-cx,-cy)
         return g
     art=visit(ET.parse(ROOT/'brand-mark.svg').getroot())
     art.translate(0,64); art.scale(1,-1)

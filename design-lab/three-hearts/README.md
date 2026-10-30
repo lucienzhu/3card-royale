@@ -33,7 +33,7 @@ Select a treatment to update both wordmarks, card backs and the card SVG downloa
 
 `index.html?mark=bloom&core=center&angle=30&size=100&inset=1.8&cardTone=gold-outline&theme=light#card-study`
 
-Checked at 390 px and 1440 px viewport widths, in light and dark themes. No production asset or component is replaced.
+The background study was checked at 390 px and 1440 px in light and dark themes. Those heart variants remain experimental; the approved original-flower selection is recorded below.
 
 Background references: [NParks — Bougainvillea cultivars](https://biodiversitysg.nparks.gov.sg/our-biodiversity/flowering-plants/shrubs-herbaceous-plants/bougainvillea-cultivars/) and [NParks — Bougainvillea glabra](https://www.nparks.gov.sg/florafaunaweb/flora/1/3/1335).
 
@@ -41,7 +41,7 @@ Open `design-lab/three-hearts/index.html?mark=bloom&core=center&theme=light` fro
 
 `marks.js` is the vector source. Run `node design-lab/three-hearts/export.cjs` to regenerate the fifteen SVGs in `assets/`: flower, card, monochrome, centered-flower and centered-flower card for each heart silhouette. Spade studies are no longer included in this preview; their previous versions remain in Git history.
 
-Production logos and shared components are unchanged. This branch is for visual review before any coordinated brand migration.
+The heart variants remain experiments. On 2026-10-30 the original flower at 80% with 130% gold centers was approved and promoted to the shared logo source; colors are unchanged.
 
 
 ## Original / heart card matrix
@@ -53,7 +53,7 @@ Production logos and shared components are unchanged. This branch is for visual 
 - Last ten columns: only the original gold centers grow from 110% to 200% in 10% increments, around their existing local anchor (32, 30.5). Original petals and the heart reference both stay at 100%; the card frame is constant.
 - Each cell: original production flower on the left, experimental outward hearts on the right.
 
-The original is read directly from `brand-mark.svg`; A4's left card reproduces the production geometry and colors at 100%. All centers use the same flat gold. Experimental center parameters stay at 30° / 100% / 1.8 by default and are preserved by links from the center study and main preview. The original flower retains its production paths. The last ten columns scale only the three gold centers; their positions do not move. No red petal paths are edited.
+The original is read from the frozen `assets/original-reference.svg`; A4's left card retains the pre-selection geometry and colors at 100%. All centers use the same flat gold. Experimental center parameters stay at 30° / 100% / 1.8 by default and are preserved by links from the center study and main preview. The original flower retains its production paths. The last ten columns scale only the three gold centers; their positions do not move. No red petal paths are edited.
 
 Click a cell for larger side-by-side marks, actual 24/32/48 px checks and matching SVG downloads. Light/dark toggles change the surrounding page, not the card palettes. On narrow screens the matrix scrolls horizontally with row labels pinned. Each cell has a stable A1–E14 code for feedback.
 
@@ -61,4 +61,4 @@ Click a cell for larger side-by-side marks, actual 24/32/48 px checks and matchi
 
 The original flower at **80% overall size**, with the gold centers kept at the **actual 130% size** of the matrix reference. Preview at `card-matrix.html#selected-preview`; download `assets/original-flower-80-centers-130.svg`.
 
-The flower and its center positions scale by 0.8 about (32, 32). Each gold center scales locally by 1.625 about (32, 30.5), giving 0.8 × 1.625 = 1.3 relative to the production center. Petal paths, card frame, and colors remain the original ones. This is still an experimental asset; production files are unchanged.
+The flower and its center positions scale by 0.8 about (32, 32). Each gold center scales locally by 1.625 about (32, 30.5), giving 0.8 × 1.625 = 1.3 relative to the original center. Petal paths, card frame, and colors remain the original ones. This is the approved final logo, synchronized to `brand-mark.svg` and the shared components.

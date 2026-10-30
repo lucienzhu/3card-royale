@@ -30,7 +30,7 @@
   document.getElementById('center-note').textContent = `110–200% 只放大原版花心 · 红桃版固定 ${centers.angle}° / ${centers.size}% / ${centers.inset}`;
   let original;
   try {
-    const response = await fetch('../../brand-mark.svg');
+    const response = await fetch('assets/original-reference.svg');
     if (!response.ok) throw new Error('Production mark unavailable');
     const source = new DOMParser().parseFromString(await response.text(),'image/svg+xml').documentElement;
     if (source.localName !== 'svg') throw new Error('Invalid production mark');
