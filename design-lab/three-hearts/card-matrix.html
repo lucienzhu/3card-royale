@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>牌底 × 花形 × 大小 · 深圳花牌</title>
+  <link rel="icon" href="assets/original-reference.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="card-matrix.css">
+  <script src="../../app/theme-tokens.js"></script>
+  <script src="marks.js"></script>
+  <script src="card-matrix.js" defer></script>
+</head>
+<body>
+  <header>
+    <a id="back" href="index.html?mark=bloom&amp;core=center">← 红桃实验</a>
+    <button id="theme" type="button" aria-pressed="false">夜间</button>
+  </header>
+  <main>
+    <div class="matrix-intro">
+      <div><span class="eyebrow">CARD / COLOR / SCALE</span><h1>放在一起看。</h1><p>每格左边是原版，右边是红桃版。点击放大。</p></div>
+      <figure class="production"><img src="assets/original-reference.svg" alt="原版金底花牌标志"><figcaption>原版参考<br><span>金底 · 100%</span></figcaption></figure>
+    </div>
+    <section id="selected-preview" class="selected-preview" aria-labelledby="selected-title">
+      <div class="selected-copy"><span class="eyebrow">SELECTED COMBINATION</span><h2 id="selected-title">花形 80% · 花心 130%</h2><p>原版花形，金底。花心保持 130% 那一列的实际大小。</p><a href="assets/original-flower-80-centers-130.svg" download>下载 SVG ↓</a></div>
+      <div class="selected-art">
+        <figure class="selected-reference"><img src="assets/original-reference.svg" alt="原版花形和花心均为 100%"><figcaption>原版 · 100% / 100%</figcaption></figure>
+        <figure class="selected-mark"><img src="assets/original-flower-80-centers-130.svg" alt="选定组合：花形 80%，金花心 130%"><figcaption>选定 · 80% / 130%</figcaption></figure>
+      </div>
+    </section>
+    <div class="matrix-key"><span>5 种配色 · 4 档整花大小 + 10 档原版花心</span><span id="center-note">110–200% 只放大原版花心</span></div>
+    <p class="scroll-hint">左右滑动比较尺寸 →</p>
+    <div class="matrix-scroll" role="region" aria-label="花牌配色与尺寸对照矩阵" tabindex="0">
+      <table id="matrix"><caption>纵向看配色；前四列缩放整花，110–200% 只放大原版花心。每格：原版 / 红桃版。</caption></table>
+    </div>
+    <p id="load-error" hidden>暂时无法加载原版，请刷新重试。</p>
+    <footer>原版花心 110–200%，每档增加 10%，花瓣与红桃版保持原尺寸。所有花心统一金色，牌框不变。</footer>
+  </main>
+  <dialog id="inspection" aria-labelledby="inspection-title">
+    <div class="dialog-heading"><h2 id="inspection-title"></h2><button id="close" type="button" aria-label="关闭放大">×</button></div>
+    <div id="inspection-pair" class="inspection-pair"></div>
+    <div id="small-pair" class="small-pair"></div>
+    <div class="downloads"><a id="download-original" download>原版 SVG ↓</a><a id="download-heart" download>红桃 SVG ↓</a></div>
+  </dialog>
+</body>
+</html>
