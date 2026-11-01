@@ -4,8 +4,8 @@ import '../sdk/actions.js';
 const A=globalThis.RoyaleActions;
 // Each tab renders its board, state and actions from the same observation.
 const host=document.getElementById('arena-observation');
-const en=()=>document.documentElement.lang==='en';
-const t=(zh,english)=>en()?english:zh;
+const en=()=>document.documentElement.lang!=='zh-CN';
+const t=(zh,english)=>window.SZI18n.pair(zh,english,document.documentElement.lang);
 const ranks=['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
 const suits=['♠','♥','♣','♦'];
 const zones=[['你的手牌','Your hand'],['你的伤牌','Your wounds'],['对手伤牌','Rival wounds'],['弃牌','Discards'],['你的已出牌','Your played cards'],['对手已出牌','Rival played cards']];

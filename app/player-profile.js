@@ -1,6 +1,6 @@
 /* Local display name only. Does not alter players, deals, RNG, replays or shared URLs. */
 (()=>{'use strict';
- const KEY='sz-player-name-v1',t=(zh,en)=>window.GKLocale?.language==='en'?en:zh;
+ const KEY='sz-player-name-v1',t=(zh,en)=>window.SZI18n.pair(zh,en,window.GKLocale?.language||document.documentElement.lang);
  function normalize(value){const clean=String(value||'').replace(/[\u0000-\u001f\u007f\u202a-\u202e\u2066-\u2069]/g,'').replace(/\s+/g,' ').trim();const parts=typeof Intl.Segmenter==='function'?[...new Intl.Segmenter(undefined,{granularity:'grapheme'}).segment(clean)].map(x=>x.segment):Array.from(clean);return parts.slice(0,16).join('');}
  let name='';try{name=normalize(localStorage.getItem(KEY));}catch(_){}
  let dialog,button,lastLang='',replay=false;

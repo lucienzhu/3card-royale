@@ -3,8 +3,8 @@
  const root=document.documentElement,key='sz_visual_theme_v1',media=matchMedia('(prefers-color-scheme: dark)');
  const tokens=window.SZThemeTokens;
  let preference=root.dataset.szThemePreference||'system',lastLanguage='';
- const english=()=>root.lang==='en'||window.GKLocale?.language==='en';
- const t=(zh,en)=>english()?en:zh;
+ const english=()=>root.lang!=='zh-CN'||window.GKLocale?.language!=='zh-CN';
+ const t=(zh,en)=>window.SZI18n.pair(zh,en,document.documentElement.lang);
  function render(){
   lastLanguage=root.lang;
   const mode=preference==='system'?(media.matches?'dark':'light'):preference,palette=tokens[mode];

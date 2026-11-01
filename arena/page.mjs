@@ -1,7 +1,7 @@
 import {catalog} from '../policies/catalog.mjs';
 import {registryAuthors} from '../policies/authors.mjs';
 let data,entries,authors,error;
-const en=()=>document.documentElement.lang==='en',t=(zh,english)=>en()?english:zh;
+const en=()=>document.documentElement.lang!=='zh-CN',t=(zh,english)=>window.SZI18n.pair(zh,english,document.documentElement.lang);
 const policyName=m=>({
   'nn-256-v1':t('整手评分 · 256 → 128','Whole-move scoring · 256 → 128'),
   'nn-512-v1':t('整手评分 · 512 → 256','Whole-move scoring · 512 → 256'),
@@ -24,7 +24,7 @@ function paint(){
     cell(row,current?String(r.elo):'—');cell(row,current&&r.games?(100*r.wins/r.games).toFixed(1)+'%':'—');cell(row,current&&r.games>0?String(r.games):'—');cell(row,current&&Number.isFinite(r.latencyP95Ms)?r.latencyP95Ms.toFixed(1)+' ms':'—');
     if(current&&r.reference){const label=document.createElement('small');label.textContent=t('固定基准','Fixed reference');name.append(label);}
     if(!current||r.provisional){const label=document.createElement('small');label.textContent=current?t('暂定','Provisional'):t('待评估','Unrated');name.append(label);}
-    const action=cell(row,'');const a=document.createElement('a');a.className='arena-play';a.href=`index.html?lang=${en()?'en':'zh-CN'}&policy=${encodeURIComponent(m.id)}`;a.textContent=t('挑战 ↗','Play ↗');a.setAttribute('aria-label',t('挑战 ','Play ')+policyName(m));action.append(a);body.append(row);
+    const action=cell(row,'');const a=document.createElement('a');a.className='arena-play';a.href=`index.html?lang=${document.documentElement.lang}&policy=${encodeURIComponent(m.id)}`;a.textContent=t('挑战 ↗','Play ↗');a.setAttribute('aria-label',t('挑战 ','Play ')+policyName(m));action.append(a);body.append(row);
   });
   const games=ranked.filter(r=>!r.reference).reduce((n,r)=>n+(r.games||0),0);
   document.getElementById('arena-summary').textContent=t(`${entries.length} 个策略 · ${games.toLocaleString()} 评分局`,`${entries.length} policies · ${games.toLocaleString()} rated games`);

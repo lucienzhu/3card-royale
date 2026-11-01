@@ -27,7 +27,7 @@ function project(results,snapshot,first=0){
  return {entries,current};
 }
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
-const en=()=>root.GKLocale?.language==='en',tr=(a,b)=>en()?b:a,who=n=>n===0?tr('你','You'):tr('对手','Rival'),assets=()=>root.SZBloomAssets;
+const en=()=>root.GKLocale?.language==='en',tr=(a,b)=>root.SZI18n?.pair(a,b,root.GKLocale?.language||root.document?.documentElement.lang)??(en()?b:a),who=n=>n===0?tr('你','You'):tr('对手','Rival'),assets=()=>root.SZBloomAssets;
 function flower(n,faded=false){return `<svg class="${faded?'fc-faded-flower':'fc-player-flower'} ${n===1&&!faded?'fc-gold-flower':''}" viewBox="0 0 64 72" aria-hidden="true">${assets().flower}</svg>`;}
 const pass='<svg class="fc-vine-pass" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.5"/><path d="M6 10L8.6 12.6L14 7"/></svg>';
 function axis(model,item=model.current){
@@ -75,7 +75,7 @@ function startFinale(host,play){
 const colorCity=(svg,winner)=>winner===1?svg.replace(/fill="#(D83B74|DEB04A)"/g,(_,c)=>'fill="#'+(c==='D83B74'?'DEB04A':'D83B74')+'"'):svg;
 function facts(results,winner){const wins=[0,0];results.forEach(r=>wins[r.winner]++);const rounds=results.reduce((n,r)=>n+(Number(r.rounds)||0),0),b=v=>'<b>'+v+'</b>';return en()?[b(results.length)+' games',b(wins[0])+' : '+b(wins[1])+' you : rival',b(rounds)+' rounds']:['共 '+b(results.length)+' 局','你 '+b(wins[0])+' : '+b(wins[1])+' 对手',b(rounds)+' 轮攻防'];}
 function renderResult(host,results,snapshot,first=0,play=true){
- stop();const model=project(results,snapshot,first),winner=model.current.winner;resultContext={host,results,snapshot,first,winner,seed:finaleSeed(results),model};host.hidden=false;host.className='sz-bloom';host.dataset.noI18n='';host.dataset.winner=owner(winner);host.lang=en()?'en':'zh-CN';
+ stop();const model=project(results,snapshot,first),winner=model.current.winner;resultContext={host,results,snapshot,first,winner,seed:finaleSeed(results),model};host.hidden=false;host.className='sz-bloom';host.dataset.noI18n='';host.dataset.winner=owner(winner);host.lang=root.GKLocale?.language||root.document.documentElement.lang;
  const playerName=winner===0?(root.SZPlayer?.get()||''):'';host.classList.toggle('has-player-name',!!playerName);
  const subject=playerName?escape(playerName)+tr('，你',', you’re'):winner===0?tr('你，','You,'):tr('对手，','Your rival,');
  const moving=play&&!root.matchMedia?.('(prefers-reduced-motion: reduce)').matches;

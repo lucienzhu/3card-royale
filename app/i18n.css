@@ -1,0 +1,8 @@
+/* Shared five-language control; the native picker supports keyboard and mobile. */
+.site-language-select{font:inherit;font-size:14px;color:var(--sc-text,var(--ink,#17382f));background:transparent;border:1px solid var(--sc-line,var(--line,#b9cdc2));border-radius:10px;min-height:44px;max-width:128px;padding:8px 28px 8px 12px;cursor:pointer;appearance:auto}
+.site-language-select:focus-visible{outline:2px solid #c5416b;outline-offset:3px}
+.site-language-select option{background:var(--sc-bg,var(--bg,#edf4ef));color:var(--sc-text,var(--ink,#17382f))}
+html:root:lang(ja){font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif}
+html:root:lang(ko){font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;word-break:keep-all}
+:lang(es) .site-hero h1,:lang(es) .site-heading h1{overflow-wrap:normal}
+@media(max-width:600px){.site-language-select{font-size:13px;max-width:108px;padding:8px}.site-tools{gap:8px}}

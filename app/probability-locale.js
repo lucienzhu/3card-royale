@@ -1,8 +1,8 @@
 'use strict';
 // Display-only localization. Game state, historical traces, card IDs and saves stay canonical.
 const GKLocale=(()=>{
- const SUPPORTED=['zh-CN','en'],KEY='gk_ui_language',HAN=/[\u3400-\u9fff]/;
- const normalize=v=>/^zh(?:-|$)/i.test(v||'')?'zh-CN':/^en(?:-|$)/i.test(v||'')?'en':null;
+ const SUPPORTED=Object.keys(window.SZI18n.locales),KEY='gk_ui_language',HAN=/[\u3400-\u9fff]/;
+ const normalize=window.SZI18n.normalize;
  let language;
  try{language=normalize(new URL(location.href).searchParams.get('lang'))||normalize(localStorage.getItem(KEY));}catch(_){}
  language=language||normalize(navigator.language)||'en';
@@ -406,8 +406,7 @@ A23、QKA 可以组成顺子，KA2 不可以。同组三张不能复制完全相
  phrases.splice(0,phrases.length,...Object.entries(en).sort((a,b)=>b[0].length-a[0].length));
  // These inline phrases precede bold text without a source-space in Chinese.
  en['先看']='Explore ';en['，再看']=', then ';
- function text(source){
-  if(language==='zh-CN')return String(source).replace(/深圳花牌|深圳花牌/g,'深圳花牌');
+ function englishText(source){
   const s=String(source),trim=s.trim();if(!HAN.test(s))return trim==='3CARD ROYALE'?s.replace(trim,'SHENZHEN FLOWER CARDS'):s;
   if(en[trim]!==undefined)return s.replace(trim,en[trim]);
   const rules=[
@@ -418,22 +417,22 @@ A23、QKA 可以组成顺子，KA2 不可以。同组三张不能复制完全相
    [/^程序回放 · 第 (\d+) 局$/,(_,g)=>`Replay · Game ${g}`],
    [/^本场 (\d+) 局 · 共 (\d+) 轮$/,(_,g,r)=>`${g} games · ${r} rounds`],
    [/^净胜 (\d+) 伤 · 第 (\d+) 轮结束$/,(_,d,r)=>`Damage gap ${d} · ${r} rounds`],
-   [/^(你|对手|A|B) · (\w+) 级$/,(_,w,l)=>`${text(w)} · Lv ${l}`],
-   [/^(你|对手|A|B)领先 (\d+) 级$/,(_,w,n)=>`${text(w)} leads by ${n}`],
+   [/^(你|对手|A|B) · (\w+) 级$/,(_,w,l)=>`${englishText(w)} · Lv ${l}`],
+   [/^(你|对手|A|B)领先 (\d+) 级$/,(_,w,n)=>`${englishText(w)} leads by ${n}`],
    [/^防守反击 · 剩余 (\d+) 次$/,(_,n)=>`Counterplay · ${n} left`],
    [/^冲A：失败 (\d+) 次(，成功)?$/,(_,n,win)=>`A attempts: ${n} failed${win?', succeeded':''}`],
-   [/^(你|对手)冲A还剩 (\d+) 次。$/,(_,w,n)=>`${text(w)} has ${n} A attempts left.`],
-   [/^(你|对手)冲A三次未果：A → 2；(你|对手)保留当前等级。$/,(_,w,keep)=>`${text(w)}: three failed A attempts. A → 2. ${text(keep)}: level retained.`],
-   [/^(你|对手|A|B)升了 (\d+) 级$/,(_,w,n)=>`${text(w)} gained ${n} levels`],
-   [/^(你|对手|A|B)升到 A$/,(_,w)=>`${text(w)} reached A`],
-   [/^(你|对手|A|B)的级数$/,(_,w)=>`${text(w)}’s level`],
-   [/^(你|对手|A|B)的 A 级决胜局$/,(_,w)=>`${text(w)}’s A-level game`],
-   [/^(你|对手|A|B)(进攻|防守)中…$/,(_,w,a)=>`${text(w)} is ${a==='进攻'?'attacking':'defending'}…`],
-   [/^(你|对手|A|B)进攻$/,(_,w)=>`${text(w)} attacks`],
-   [/^(你|对手|A|B)换牌 (\d+)\/(\d+)$/,(_,w,n,c)=>`${text(w)} refreshed ${n}/${c}`],
-   [/^(你|对手|A|B)交换 (\d+)\/(\d+)$/,(_,w,n,c)=>`${text(w)} exchanged ${n}/${c}`],
-   [/^(你|对手|A|B)(翻开|扣回) (\d+) 张$/,(_,w,a,n)=>`${text(w)} ${a==='翻开'?'revealed':'hid'} ${n}`],
-   [/^下一局由(你|对手)先攻。$/,(_,w)=>`${text(w)} attacks first next game.`],
+   [/^(你|对手)冲A还剩 (\d+) 次。$/,(_,w,n)=>`${englishText(w)} has ${n} A attempts left.`],
+   [/^(你|对手)冲A三次未果：A → 2；(你|对手)保留当前等级。$/,(_,w,keep)=>`${englishText(w)}: three failed A attempts. A → 2. ${englishText(keep)}: level retained.`],
+   [/^(你|对手|A|B)升了 (\d+) 级$/,(_,w,n)=>`${englishText(w)} gained ${n} levels`],
+   [/^(你|对手|A|B)升到 A$/,(_,w)=>`${englishText(w)} reached A`],
+   [/^(你|对手|A|B)的级数$/,(_,w)=>`${englishText(w)}’s level`],
+   [/^(你|对手|A|B)的 A 级决胜局$/,(_,w)=>`${englishText(w)}’s A-level game`],
+   [/^(你|对手|A|B)(进攻|防守)中…$/,(_,w,a)=>`${englishText(w)} is ${a==='进攻'?'attacking':'defending'}…`],
+   [/^(你|对手|A|B)进攻$/,(_,w)=>`${englishText(w)} attacks`],
+   [/^(你|对手|A|B)换牌 (\d+)\/(\d+)$/,(_,w,n,c)=>`${englishText(w)} refreshed ${n}/${c}`],
+   [/^(你|对手|A|B)交换 (\d+)\/(\d+)$/,(_,w,n,c)=>`${englishText(w)} exchanged ${n}/${c}`],
+   [/^(你|对手|A|B)(翻开|扣回) (\d+) 张$/,(_,w,a,n)=>`${englishText(w)} ${a==='翻开'?'revealed':'hid'} ${n}`],
+   [/^下一局由(你|对手)先攻。$/,(_,w)=>`${englishText(w)} attacks first next game.`],
    [/^(\d+) 伤即败$/,(_,n)=>`Lose at ${n} wounds`],
    [/^伤势 (\d+) \/ (\d+)$/,(_,n,c)=>`Damage ${n} / ${c}`],
    [/^\/ (\d+) 伤$/,(_,n)=>`/ ${n}`],
@@ -461,12 +460,12 @@ A23、QKA 可以组成顺子，KA2 不可以。同组三张不能复制完全相
    [/^(.*?) · 固定种子 (\d+) · (\d+) 局 \/ (\d+) 轮。双方手牌公开用于复盘，扣牌仍隐藏。策略用于检查执行，不代表最优打法。$/,(_,v,seed,g,r)=>`${v} · Replay seed ${seed} · ${g} games / ${r} rounds. Both hands are public for review; face-down wounds stay hidden. The heuristic checks execution and is not optimal play.`],
    [/^(\d+) 张时，持有 ♥(\w+)$/,(_,n,r)=>`${n} cards, holding ♥${r}`],
    [/^规则 (.*?) · 指纹 (.*)$/,(_,v,h)=>`Rules ${v} · hash ${h}`],
-   [/^牌堆剩余 (\d+) 张，弃牌 (\d+) 张(?:；(.*))?$/,(_,s,d,n)=>`Deck ${s} cards; discard ${d}${n?'; '+text(n):''}`],
-   [/^牌堆 (\d+) · 弃牌 (\d+)(?: · (.*))?$/,(_,s,d,n)=>`Deck ${s} · Discard ${d}${n?' · '+text(n):''}`],
+   [/^牌堆剩余 (\d+) 张，弃牌 (\d+) 张(?:；(.*))?$/,(_,s,d,n)=>`Deck ${s} cards; discard ${d}${n?'; '+englishText(n):''}`],
+   [/^牌堆 (\d+) · 弃牌 (\d+)(?: · (.*))?$/,(_,s,d,n)=>`Deck ${s} · Discard ${d}${n?' · '+englishText(n):''}`],
   ];
   for(const [re,fn]of rules)if(re.test(trim))return s.replace(trim,trim.replace(re,fn));
   let out=s;for(const [zh,eng]of phrases)out=out.split(zh).join(eng);
-  out=out.replace(/(你|对手)/g,w=>text(w)).replace(/第 (\d+) 局/g,'Game $1').replace(/第 (\d+) 轮/g,'Round $1')
+  out=out.replace(/(你|对手)/g,w=>englishText(w)).replace(/第 (\d+) 局/g,'Game $1').replace(/第 (\d+) 轮/g,'Round $1')
    .replace(/(\d+) 张/g,'$1 cards').replace(/(\d+) 次/g,'$1 times').replace(/(\d+) 分/g,'$1 pts').replace(/(\d+) 级/g,'$1 levels')
    .replace(/\b(\d+) 伤/g,'$1 damage').replace(/，/g,', ').replace(/。/g,'. ').replace(/；/g,'; ').replace(/：/g,': ')
    .replace(/([\d/ ]) 明 \/ ([\d/ ]+) 暗/g,'$1 face up / $2 face down');
@@ -474,23 +473,25 @@ A23、QKA 可以组成顺子，KA2 不可以。同组三张不能复制完全相
   if(HAN.test(out))missing.add(trim);
   return out;
  }
+ function text(source){return language==='zh-CN'?String(source).replace(/金花大乱斗|金花拳/g,'深圳花牌'):window.SZI18n.translate(englishText(source),language);}
+
  function nodeText(n){const current=n.nodeValue,prior=sources.get(n),source=prior&&prior.display===current?prior.source:current,display=text(source);sources.set(n,{source,display});if(current!==display)n.nodeValue=display;}
  function elementAttributes(el){
   if(el.closest('[data-no-i18n],script,style'))return;
   let map=attributes.get(el);if(!map){map={};attributes.set(el,map);}
-  for(const attr of ['aria-label','title','placeholder',...(el.tagName==='META'?['content']:[])])if(el.hasAttribute(attr)){
+  for(const attr of ['aria-label','title','placeholder',...(el.matches('meta[name="description"],meta[property="og:title"],meta[property="og:description"],meta[name="twitter:title"],meta[name="twitter:description"]')?['content']:[])])if(el.hasAttribute(attr)){
    const current=el.getAttribute(attr),prior=map[attr],source=prior&&prior.display===current?prior.source:current,display=text(source);map[attr]={source,display};if(current!==display)el.setAttribute(attr,display);
   }
  }
  function apply(){
-  observer?.disconnect();document.documentElement.lang=language;
+  observer?.disconnect();if(document.documentElement.lang!==language)document.documentElement.lang=language;
   if(phrasesDirty){phrases.splice(0,phrases.length,...Object.entries(en).sort((a,b)=>b[0].length-a[0].length));phrasesDirty=false;}
-  const walker=document.createTreeWalker(document,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentElement&&!n.parentElement.closest('script,style,[data-no-i18n]')?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT});
+  const walker=document.createTreeWalker(document,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentElement&&!n.parentElement.closest('script,style,code,pre,[data-no-i18n],[data-language-select],[data-site-language]')?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT});
   while(walker.nextNode())nodeText(walker.currentNode);
   for(const el of document.querySelectorAll('[aria-label],[title],[placeholder],meta[content]'))elementAttributes(el);
   for(const select of document.querySelectorAll('[data-language-select]'))select.value=language;
-  for(const a of document.querySelectorAll('a[href]')){const url=new URL(a.getAttribute('href'),location.href);if(url.origin===location.origin&&/\/(?:index|probability)\.html$/.test(url.pathname)){url.searchParams.set('lang',language);if(a.href!==url.href)a.href=url.href;}}
-  document.querySelector('meta[property="og:locale"]')?.setAttribute('content',language==='en'?'en_US':'zh_CN');
+  for(const a of document.querySelectorAll('a[href]')){const url=new URL(a.getAttribute('href'),location.href);if(url.origin===location.origin&&/\/(?:index|probability|about|brand|arena|rules|design-system)\.html$/.test(url.pathname)){url.searchParams.set('lang',language);if(a.href!==url.href)a.href=url.href;}}
+  document.querySelector('meta[property="og:locale"]')?.setAttribute('content',({'zh-CN':'zh_CN',en:'en_US',ja:'ja_JP',ko:'ko_KR',es:'es_ES'})[language]);
   observer?.observe(document.documentElement,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['aria-label','title','placeholder','content']});
  }
  function schedule(){if(!queued){queued=true;queueMicrotask(()=>{queued=false;apply();});}}

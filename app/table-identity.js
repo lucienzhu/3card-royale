@@ -61,7 +61,7 @@
   topline.hidden = true;
 
   function labelColors() {
-    const en = document.documentElement.lang.startsWith('en');
+    const en = document.documentElement.lang !== 'zh-CN';
     for (const [mark, color] of marks) {
       const label = en ? (color === 'gold' ? 'Gold flower' : 'Red flower') : (color === 'gold' ? '金花' : '红花');
       if (mark.getAttribute('aria-label') !== label) mark.setAttribute('aria-label', label);

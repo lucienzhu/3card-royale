@@ -6,7 +6,7 @@
   const requested=new URLSearchParams(location.search).get('policy');
   let selected=requested||'code-table-v1',client=null,gameRef=null,gameNumber=null,loaded=null,entries=[],failed='',revision=0,ratings=null,ratingsUnavailable=false;
   try{if(!requested)selected=localStorage.getItem(key)||selected;}catch{}
-  const en=()=>window.GKLocale?.language==='en';
+  const en=()=>window.GKLocale?.language!=='zh-CN';
   function rating(id){
     const manifest=entries.find(e=>e.manifest.id===id)?.manifest,recorded=ratings?.policies?.find(p=>p?.id===id),row=ratings?.leaderboard?.find(r=>r?.id===id);
     // Match the ladder's manifest check: a new artifact must not inherit an old score.
@@ -16,7 +16,7 @@
     field.hidden=window.SZPolicy?.selected!=='arena';
     document.getElementById('arena-policy-label').textContent=en()?'Arena policy':'天梯策略';
     document.getElementById('arena-link').textContent=en()?'Leaderboard ↗':'查看天梯 ↗';
-    document.getElementById('arena-link').href='arena.html?lang='+(en()?'en':'zh-CN');
+    document.getElementById('arena-link').href='arena.html?lang='+document.documentElement.lang;
     const row=rating(selected),unrated=ratingsUnavailable?(en()?'Elo unavailable':'Elo 暂不可用'):ratings?(en()?'Unrated':'待评估'):'Elo —';
     elo.textContent=row?`Elo ${row.elo}`:unrated;
     elo.title=row?(row.reference?(en()?'Fixed reference':'固定基准'):row.provisional?(en()?'Provisional':'暂定'):'') :'';
@@ -25,6 +25,10 @@
     status.textContent=failed?(en()?'Policy unavailable · using Easy AI':'策略暂不可用 · 使用 Easy AI'):loaded?(en()?'Ready · runs on this device':'已就绪 · 本机运行'):(en()?"Loads on opponent’s turn":'对手行动时加载');
     // Before loading, the rating context is more useful than a runtime detail.
     if(!failed&&!loaded&&row)status.textContent=row.reference?(en()?'Fixed reference':'固定基准'):(row.provisional?(en()?'Provisional · ':'暂定 · '):'')+row.games+(en()?' games':' 局');
+    for(const el of [document.getElementById('arena-policy-label'),document.getElementById('arena-link'),status])el.textContent=window.SZI18n?.translate(el.textContent,document.documentElement.lang)??el.textContent;
+    elo.textContent=window.SZI18n?.translate(elo.textContent,document.documentElement.lang)??elo.textContent;
+    elo.title=window.SZI18n?.translate(elo.title,document.documentElement.lang)??elo.title;
+    elo.setAttribute('aria-label',[elo.textContent,elo.title].filter(Boolean).join(' · '));
   }
   // Scores are optional metadata; a failed request must never disable a playable policy.
   fetch(new URL('../arena/results/leaderboard.json',root),{cache:'no-cache'}).then(response=>{if(!response.ok)throw Error('Ratings unavailable');return response.json();}).then(data=>{

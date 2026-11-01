@@ -1,8 +1,8 @@
 /* The circuit-board table is an Easter egg: one switch in settings, off by default. It has its own preference key and never reads or writes game saves. */
 (()=>{'use strict';
  const root=document.documentElement,key='sz_board_egg_v1';
- const english=()=>root.lang==='en'||window.GKLocale?.language==='en';
- const t=(zh,en)=>english()?en:zh;
+ const english=()=>root.lang!=='zh-CN'||window.GKLocale?.language!=='zh-CN';
+ const t=(zh,en)=>window.SZI18n.pair(zh,en,document.documentElement.lang);
  let on=root.dataset.szChips==='1',lastLanguage='';
  function apply(){if(on)root.dataset.szChips='1';else delete root.dataset.szChips;window.SZChips?.redraw();}
  function render(){lastLanguage=root.lang;apply();
