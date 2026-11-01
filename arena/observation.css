@@ -60,6 +60,7 @@
 
 /* The board and tensors read from one observation; only inspection changes. */
 .obs-layout{display:grid;grid-template-columns:330px minmax(0,1fr);gap:28px;align-items:start}
+.obs-spaces,.obs-observation{min-width:0}
 .obs-board{padding:20px 18px 14px;background:var(--table);border:1px solid var(--line);border-radius:16px;min-width:0;font-variant-numeric:tabular-nums}
 .obs-board-title{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px}
 .obs-board-title strong{font-size:15px}.obs-board-title>span{font-size:10px;color:var(--muted)}
@@ -128,11 +129,11 @@
 .obs-playing-card.is-source{transform:translateY(-3px)}
 @media(max-width:600px){.obs-example-tabs{width:100%}.obs-example-tab{flex:1;min-width:0;padding:12px 8px}.obs-encoded-tokens{gap:4px}.obs-encoded-token small{font-size:9px}.obs-encoded-token b{font-size:17px}}
 
-/* Prepared examples: observation above, action below. */
+/* One board beside both spaces: observation above, action below. */
 .obs-observation>.obs-heading,.obs-actions>.obs-heading{margin-bottom:24px}
 .obs-observation>.obs-heading h3,.obs-actions>.obs-heading h3{font-size:22px;letter-spacing:-.02em}
 .obs-actions{margin:36px 0 0;padding:28px;border:0;border-radius:16px}
-.obs-action-layout{display:grid;grid-template-columns:minmax(200px,.65fr) minmax(0,1fr);gap:32px;align-items:start}
+.obs-action-layout{display:grid;grid-template-columns:1fr;gap:24px;align-items:start}
 .obs-action-example{padding:20px;background:var(--table);border-radius:12px;text-align:center}
 .obs-example-label{font-size:12px;font-weight:600;color:var(--muted);margin:0 0 20px}
 .obs-action-example .obs-card-row{gap:10px}
@@ -144,6 +145,12 @@
 .obs-semantic{margin-bottom:0}
 .obs-representation{min-width:0}
 .obs-hidden .obs-back+.obs-back{margin-left:-8px}
+@media(min-width:601px){
+ .obs-action-example{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 24px;text-align:left}
+ .obs-action-example .obs-card-row{grid-column:1;grid-row:1 / 3}
+ .obs-action-example .obs-example-label{grid-column:2;align-self:end;margin:0}
+ .obs-action-example .obs-note{grid-column:2;align-self:start;margin:0}
+}
 @media(max-width:600px){
  .obs-actions{padding:20px 16px;margin-top:28px}
  .obs-action-layout{grid-template-columns:1fr;gap:24px}

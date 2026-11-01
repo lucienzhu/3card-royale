@@ -43,10 +43,16 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
     const layout=await page.evaluate(()=>{
      const rect=s=>document.querySelector(s).getBoundingClientRect();
      return {observationBottom:rect('.obs-observation').bottom,actionTop:rect('.obs-actions').top,
+      observationLeft:rect('.obs-observation').left,observationRight:rect('.obs-observation').right,
+      actionLeft:rect('.obs-actions').left,actionRight:rect('.obs-actions').right,
+      boardRight:rect('.obs-board').right,boardIsShared:document.querySelector('.obs-board').parentElement===document.querySelector('.obs-spaces').parentElement,
       tabs:rect('.obs-example-tabs').width,container:rect('#arena-observation').width,
       widths:[...document.querySelectorAll('.obs-example-tab')].map(n=>n.getBoundingClientRect().width)};
     });
     assert(layout.actionTop>=layout.observationBottom,'Action Space follows the entire Observation Space');
+    assert(layout.boardIsShared,'one board accompanies both spaces');
+    assert(Math.abs(layout.observationLeft-layout.actionLeft)<1&&Math.abs(layout.observationRight-layout.actionRight)<1,'both spaces share a column');
+    if(width>1100)assert(layout.boardRight<layout.actionLeft,'board stays to the left of both spaces');
     assert(Math.abs(layout.tabs-layout.container)<1,'tabs span full width');
     assert(Math.max(...layout.widths)-Math.min(...layout.widths)<1,'tabs are equal width');
     await page.locator('.obs-meta>summary').click();
@@ -116,7 +122,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
    const p95=a=>a.sort((x,y)=>x-y)[Math.floor(a.length*.95)];
    return {browser:navigator.userAgent,model:ready.version,games:8,decisions,nnDecisions:latency.length,workerRoundTripP95Ms:p95(latency),inferenceP95Ms:p95(inference),arenaPlugin:true,scoringParity};
   });
-  assert.deepEqual(errors,[]);report.ui={languages:['zh-CN','en'],widths:[390,1440],examples:3,presetActions:true,stackedSpaces:true};
+  assert.deepEqual(errors,[]);report.ui={languages:['zh-CN','en'],widths:[390,1440],examples:3,presetActions:true,stackedSpaces:true,sharedBoard:true};
   fs.writeFileSync(process.env.REPORT_PATH||'/private/tmp/structured-browser.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

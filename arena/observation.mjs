@@ -203,8 +203,10 @@ function paint(){
   });table.append(body);details.append(table);view.append(details);
   view.append(el('p','obs-note',t('不含对手暗牌、牌堆顺序或历史序列。','No rival hand, deck order or history sequence.')));
 
-  const layout=el('div','obs-layout');layout.append(renderBoard(),view);observation.append(layout);
-  const panel=el('div','obs-example-panel');panel.id='obs-example-panel';panel.setAttribute('role','tabpanel');panel.setAttribute('aria-labelledby',`obs-tab-${exampleIndex}`);panel.append(observation,renderActions());
+  observation.append(view);
+  const spaces=el('div','obs-spaces');spaces.append(observation,renderActions());
+  const layout=el('div','obs-layout');layout.append(renderBoard(),spaces);
+  const panel=el('div','obs-example-panel');panel.id='obs-example-panel';panel.setAttribute('role','tabpanel');panel.setAttribute('aria-labelledby',`obs-tab-${exampleIndex}`);panel.append(layout);
   host.replaceChildren(renderExamples(),panel);openDetails.forEach(cls=>{const node=host.querySelector('details.'+cls);if(node)node.open=true;});updateAction();updateZone();
 
 }
