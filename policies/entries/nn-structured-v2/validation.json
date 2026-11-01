@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "policyId": "nn-structured-v2",
+  "manifestSha256": "4d4a816660c48de37f85884c16aa06131c0cf1c1a86f96ff11c60123387e9973",
+  "panelSha256": "197c97f1aaa89f81b70fa287f3e96b3ca9501a317458e38fcf76f5493f4cec81",
+  "games": 4,
+  "seedStart": 88000000,
+  "records": [
+    {
+      "pair": "code-table-v1/nn-structured-v2",
+      "left": "code-table-v1",
+      "right": "nn-structured-v2",
+      "seed": 88000000,
+      "leftSeat": 0,
+      "first": 0,
+      "winner": "nn-structured-v2",
+      "status": "complete",
+      "decisions": 18,
+      "finalStateSha256": "1cdfd9157e7b8c8a21e909b771fd740b022832b52cb7e2b81880c901d91693e2"
+    },
+    {
+      "pair": "code-table-v1/nn-structured-v2",
+      "left": "code-table-v1",
+      "right": "nn-structured-v2",
+      "seed": 88000000,
+      "leftSeat": 1,
+      "first": 0,
+      "winner": "code-table-v1",
+      "status": "complete",
+      "decisions": 21,
+      "finalStateSha256": "7a2ff0d327ebc6900b3f6ccd55ddbac0a3b0923ae001b38efd26352d8447b3b7"
+    },
+    {
+      "pair": "code-table-v1/nn-structured-v2",
+      "left": "code-table-v1",
+      "right": "nn-structured-v2",
+      "seed": 88000001,
+      "leftSeat": 0,
+      "first": 1,
+      "winner": "nn-structured-v2",
+      "status": "complete",
+      "decisions": 16,
+      "finalStateSha256": "c0c0cb6e308140f6cf483ad5c8c2e41bc7e808a39a701a89bd7baf6fb0d60825"
+    },
+    {
+      "pair": "code-table-v1/nn-structured-v2",
+      "left": "code-table-v1",
+      "right": "nn-structured-v2",
+      "seed": 88000001,
+      "leftSeat": 1,
+      "first": 1,
+      "winner": "code-table-v1",
+      "status": "complete",
+      "decisions": 29,
+      "finalStateSha256": "364fcbf22d7b9f663e7e8fdf77c13b014e8bf4b2463156812072e0378f823bc3"
+    }
+  ]
+}

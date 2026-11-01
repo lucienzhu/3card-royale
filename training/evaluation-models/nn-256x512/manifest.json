@@ -1,0 +1,18 @@
+{
+  "api": "royale-policy-v1",
+  "id": "nn-256x512",
+  "name": "Whole-move scoring · 256 → 512",
+  "author": "lucienzhu",
+  "license": "MIT",
+  "type": "onnx",
+  "rules": "1.0.0",
+  "episode": "game",
+  "information": "public",
+  "memory": "none",
+  "artifact": {
+    "file": "policy.onnx",
+    "bytes": 948695,
+    "sha256": "8e08cd9bea3c2f43cd72094e62504c7f6799649fa6eb31e1a60bbc964c6ce135"
+  },
+  "features": "gym-v1"
+}

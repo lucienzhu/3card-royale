@@ -1,0 +1,28 @@
+{
+  "schema": "actions-v2",
+  "method": "behavioral-cloning / autoregressive teacher forcing",
+  "hidden": [
+    256,
+    128
+  ],
+  "state": 336,
+  "prefix": 396,
+  "output": 65,
+  "max_tokens": 6,
+  "parameters": 228929,
+  "bytes": 916663,
+  "sha256": "16e452b48837e6fa681216c13279bbe500997c97b86f56efa19e449b1699baf3",
+  "best_epoch": 16,
+  "val_loss": 0.2636603142534257,
+  "test": {
+    "loss": 0.26631455352515626,
+    "token_accuracy": 0.9044182151686737
+  },
+  "onnx_max_abs_error": 1.1444091796875e-05,
+  "dataset_sha256": "a7d4da6f5c218c9cfb00c39240cd6bd6578ec13e90caf7174b00a8f29c524315",
+  "python": "3.9.6",
+  "torch": "2.8.0",
+  "numpy": "2.0.2",
+  "seed": 20261101,
+  "epochs": 40
+}

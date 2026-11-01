@@ -1,0 +1,18 @@
+{
+  "api": "royale-policy-v1",
+  "id": "nn-64",
+  "name": "Whole-move scoring · 64 → 32",
+  "author": "lucienzhu",
+  "license": "MIT",
+  "type": "onnx",
+  "rules": "1.0.0",
+  "episode": "game",
+  "information": "public",
+  "memory": "none",
+  "artifact": {
+    "file": "policy.onnx",
+    "bytes": 114638,
+    "sha256": "141eca4d43e847dd65b7b642d09aaec1750d1441e165c4abfd52e1d4e08fd3ea"
+  },
+  "features": "gym-v1"
+}

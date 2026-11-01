@@ -1,15 +1,18 @@
 export const API = 'royale-policy-v1';
+export const STRUCTURED_API = 'royale-policy-v2';
 export const MAX_BYTES = 5_000_000;
 export const ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 export function validateManifest(m) {
-  if (!m || m.api !== API || typeof m.id !== 'string' || !ID.test(m.id) || !['javascript','onnx'].includes(m.type)) throw Error('Unsupported policy manifest');
+  if (!m || ![API,STRUCTURED_API].includes(m.api) || typeof m.id !== 'string' || !ID.test(m.id) || !['javascript','onnx'].includes(m.type)) throw Error('Unsupported policy manifest');
   if (m.rules !== '1.0.0' || m.episode !== 'game' || m.information !== 'public') throw Error('Only standard public-information small games enter this ladder');
   if (typeof m.name !== 'string' || !m.name.length || m.name.length > 80 || typeof m.author !== 'string' || !m.author.length || typeof m.license !== 'string' || !m.license) throw Error('Missing policy identity / license');
   if (!['none','episode'].includes(m.memory)) throw Error('Declare memory: none or episode');
   const a = m.artifact;
   if (!a || !/^[a-zA-Z0-9][a-zA-Z0-9._-]*\.(mjs|onnx)$/.test(a.file) || !/^[a-f0-9]{64}$/.test(a.sha256) || !Number.isInteger(a.bytes) || a.bytes < 1 || a.bytes > MAX_BYTES) throw Error('Invalid policy artifact');
   if (!a.file.endsWith(m.type === 'onnx' ? '.onnx' : '.mjs')) throw Error('Artifact type mismatch');
-  if (m.type === 'onnx' && (m.features !== 'gym-v1' || m.memory !== 'none')) throw Error('ONNX requires the stateless gym-v1 contract');
+  if (m.api === STRUCTURED_API && m.actions !== 'actions-v2') throw Error('Declare actions-v2');
+  const profiles = m.api === STRUCTURED_API ? ['structured-v2','scoring-v2'] : ['gym-v1'];
+  if (m.type === 'onnx' && (!profiles.includes(m.features) || m.memory !== 'none')) throw Error('ONNX feature contract mismatch');
   return m;
 }
 export function validateIndex(index, count) {

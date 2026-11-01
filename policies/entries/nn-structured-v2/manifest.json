@@ -1,0 +1,19 @@
+{
+  "id": "nn-structured-v2",
+  "name": "NN \u00b7 Structured 256 \u2192 128",
+  "api": "royale-policy-v2",
+  "type": "onnx",
+  "author": "@lucienzhu",
+  "license": "MIT",
+  "rules": "1.0.0",
+  "episode": "game",
+  "information": "public",
+  "memory": "none",
+  "features": "structured-v2",
+  "actions": "actions-v2",
+  "artifact": {
+    "file": "policy.onnx",
+    "bytes": 916663,
+    "sha256": "16e452b48837e6fa681216c13279bbe500997c97b86f56efa19e449b1699baf3"
+  }
+}

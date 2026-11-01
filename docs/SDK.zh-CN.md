@@ -1,5 +1,12 @@
 # 可移植核心与接入
 
+## 当前分支：结构化动作 v2
+
+新策略使用 `royale-policy-v2` / `actions-v2`：固定牌 ID，完整动作统一校验、执行一次。纯代码、整手评分和逐步生成都使用这个边界。ONNX 单独声明特征接口：`scoring-v2`（状态 + 完整候选 → 动作分数）或 `structured-v2`（状态 + 前缀 → token 分数）。模型形式不改变动作协议。
+
+[动作定义与迁移](../docs/ACTIONS.md) · [JS 模板](../policies/templates/structured-policy.mjs) · [训练与实测](../training/structured/README.md)。旧 `royale-policy-v1` 继续加载，旧基准权重和 Elo 保持固定。以下原 v1 接口说明保留用于兼容。
+
+
 **策略名称：** SDK Code AI 是固定的训练／评估基线。网页困难档已修复调用回归，恢复原牌桌 Code AI（`code-table-v1`），会保留下一手组合、评估换牌收益并盲换对手手牌。旧 NN 数据仍以 SDK 基线为对手。[当前难度结果](DIFFICULTY.zh-CN.md)。
 
 [English](SDK.md) · [RL环境](RL.zh-CN.md) · [规则](RULES.zh-CN.md)

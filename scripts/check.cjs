@@ -34,6 +34,8 @@ require('../tests/skip-swaps.cjs');
 require('../tests/nn-policy.cjs');
 
 require('../tests/rl-page.cjs');
+require('../tests/neural-evaluation.cjs');
+require('../tests/complete-benchmark.cjs');
 
 require('../tests/arena-observation.cjs');
 
@@ -48,3 +50,6 @@ require('../tests/onboarding.cjs');
 require('../tests/guided-flow.cjs');
 
 require('../tests/godlike-policy.cjs');
+
+require('../tests/structured-actions.cjs');
+require('../tests/structured-match.cjs');

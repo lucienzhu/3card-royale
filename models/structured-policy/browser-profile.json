@@ -1,0 +1,33 @@
+{
+  "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+  "model": "structured-256-v2",
+  "games": 8,
+  "decisions": 129,
+  "nnDecisions": 59,
+  "workerRoundTripP95Ms": 0.6999999955296516,
+  "inferenceP95Ms": 0.3999999985098839,
+  "arenaPlugin": true,
+  "ui": {
+    "languages": [
+      "zh-CN",
+      "en"
+    ],
+    "widths": [
+      390,
+      1440
+    ],
+    "examples": 3,
+    "playLengths": [
+      3,
+      4,
+      5
+    ]
+  },
+  "recordedAt": "2026-11-01",
+  "environment": {
+    "hardware": "Apple M1",
+    "runner": "Node 22.14.0 / Playwright / headless Chrome 156",
+    "runtime": "ONNX Runtime Web 1.30.0 / single-thread WASM",
+    "scope": "Local desktop smoke run; excludes model load; not a phone benchmark"
+  }
+}

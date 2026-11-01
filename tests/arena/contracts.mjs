@@ -11,6 +11,7 @@ import {loadPolicy,sha256} from '../../policies/runtime.mjs';
 import {PolicyClient} from '../../policies/client.mjs';
 import {sdk,core,code} from '../../policies/dependencies.mjs';
 import {ratings} from '../../arena/elo.mjs';
+import {context,digest} from '../../arena/reference.mjs';
 import testBrowser from './browser.cjs';
 await testBrowser();
 const root=new URL('../../',import.meta.url),entries=await catalog();
@@ -31,6 +32,28 @@ try {
  await fs.writeFile(path.join(temp,'policy.mjs'),artifact);
  await fs.writeFile(path.join(temp,'manifest.json'),JSON.stringify({...base,type:'javascript',artifact:{file:'policy.mjs',bytes:artifact.length,sha256:'0'.repeat(64)}}));
  await assert.rejects(loadPolicy(new URL('file://'+temp+'/manifest.json')),/integrity/);
+ // v2 code plugins return semantic objects and receive fixed IDs, never mutable host state.
+ const artifactV2=`export function createPolicy({actions}){return {act(o){
+   if(o.action_schema!=='actions-v2'||!Object.isFrozen(o.hand))throw Error('bad observation');
+   return actions.build(o).rows[0].action;
+ }}}`;
+ await fs.writeFile(path.join(temp,'policy.mjs'),artifactV2);
+ await fs.writeFile(path.join(temp,'manifest.json'),JSON.stringify({...base,api:'royale-policy-v2',actions:'actions-v2',type:'javascript',artifact:{file:'policy.mjs',bytes:Buffer.byteLength(artifactV2),sha256:await sha256(new TextEncoder().encode(artifactV2))}}));
+ const structured=await loadPolicy(new URL('file://'+temp+'/manifest.json'));
+ const sg=new sdk.Game(31,0);let structuredDecisions=0;
+ while(!['game_over','match_over'].includes(sg.g.phase)){
+   if(sg.actor===null){sg.step(sg.legalActions()[0]);continue;}
+   const observation=sg.observation(sg.actor),before=JSON.stringify(observation);
+   const index=await structured.act(observation);assert.equal(index,0);assert.equal(JSON.stringify(observation),before);
+   sg.step(observation.legal_actions[index]);assert(++structuredDecisions<4096);
+ }
+ await structured.dispose();
+ const invalidArtifact=`export function createPolicy(){return {act(){return 0}}}`;
+ await fs.writeFile(path.join(temp,'policy.mjs'),invalidArtifact);
+ await fs.writeFile(path.join(temp,'manifest.json'),JSON.stringify({...base,api:'royale-policy-v2',actions:'actions-v2',type:'javascript',artifact:{file:'policy.mjs',bytes:Buffer.byteLength(invalidArtifact),sha256:await sha256(new TextEncoder().encode(invalidArtifact))}}));
+ const invalidV2=await loadPolicy(new URL('file://'+temp+'/manifest.json'));
+ await assert.rejects(invalidV2.act(new sdk.Game(7,0).observation(0)));await invalidV2.dispose();
+ console.log('Arena v2 JS: complete semantic-action game, frozen observation, candidate-index rejection.');
  const phases=new Set();let parity=0;
  const plugins=await Promise.all(entries.map(e=>loadPolicy(e.url)));
  try {
@@ -76,7 +99,7 @@ try {
  const report=JSON.parse(await fs.readFile(new URL('arena/results/season-1.json',root)));
  assert.equal(report.records.length,2000);assert(report.leaderboard.every(r=>r.games===800));
  const recalculated=ratings(report.records,report.policies.map(p=>p.id));for(const r of report.leaderboard){const x=recalculated.find(x=>x.id===r.id);for(const k of ['elo','games','wins','losses','provisional'])assert.equal(r[k],x[k]);}
- for(const [file,hash]of Object.entries(report.sourceSha256))assert.equal(await sha256(await fs.readFile(new URL(file,root))),hash,`Regenerate evaluation after changing ${file}`);
+ const ctx=await context();assert(ctx.sources.some(s=>digest(s)===digest(report.sourceSha256))); // Historical evidence retains its original hashes.
  for(const m of report.policies)assert.deepEqual(entries.find(e=>e.manifest.id===m.id)?.manifest,m);
  const output=path.join(temp,'smoke.json');execFileSync(process.execPath,['arena/evaluate.mjs','--games','4','--policies',report.policies.map(p=>p.id).join(','),'--output',output],{cwd:root,stdio:'pipe'});
  const smoke=JSON.parse(await fs.readFile(output));assert.equal(smoke.records.length,40);

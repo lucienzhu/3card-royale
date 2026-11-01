@@ -40,7 +40,7 @@ try {
       if((i+1)%20===0)console.log(`${pair}: ${i+1}/${games}`);
     }
   }
-  const sourceFiles=['gamecore.js','sdk/index.js','sdk/features.js','sdk/policy.js','sdk/easy-policy.js','policies/contract.mjs','policies/runtime.mjs','policies/client.mjs','policies/worker.mjs','policies/dependencies.mjs','policies/catalog.mjs','arena/evaluate.mjs','arena/elo.mjs'];
+  const sourceFiles=['gamecore.js','sdk/index.js','sdk/features.js','sdk/actions.js','sdk/scoring.js','sdk/policy.js','sdk/easy-policy.js','policies/contract.mjs','policies/runtime.mjs','policies/client.mjs','policies/worker.mjs','policies/dependencies.mjs','policies/catalog.mjs','arena/evaluate.mjs','arena/elo.mjs'];
   const hashes={};for(const file of sourceFiles)hashes[file]=await sha256(await fs.readFile(new URL('../'+file,import.meta.url)));
   const rows=ratings(records,entries.map(e=>e.manifest.id));
   for(const row of rows){const v=latencies[row.id].sort((a,b)=>a-b);row.latencyP95Ms=Number(v[Math.min(v.length-1,Math.floor(v.length*.95))].toFixed(3));row.decisions=v.length;}

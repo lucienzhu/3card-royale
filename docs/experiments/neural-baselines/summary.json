@@ -1,0 +1,540 @@
+{
+  "schema": 1,
+  "createdAt": "2026-11-01T14:06:10.712Z",
+  "focalPolicies": [
+    "nn-256-v1",
+    "nn-structured-v2"
+  ],
+  "protocol": {
+    "rules": "1.0.0",
+    "episode": "game",
+    "information": "public",
+    "gamesPerPair": 1000,
+    "seedStart": 91000000,
+    "seedCount": 500,
+    "pairedSeats": true,
+    "balancedFirst": true,
+    "levels": [
+      2,
+      2
+    ],
+    "coverage": "Every pair containing either focal policy; mutual matchup counted once",
+    "latency": "Complete Worker decision; encoding and all inference calls included; model load excluded. Maximum opponent-batch p95 is not pooled p95. Not a mobile benchmark.",
+    "rating": "Independent evaluation; official reference Elo is calculated separately"
+  },
+  "totalGames": 11000,
+  "completed": 11000,
+  "invalidActions": 0,
+  "truncated": 0,
+  "sourceSha256": {
+    "gamecore.js": "beb6ec6666d58424b80e6e7d7cfc2f6801a7d0a77c34791df745612494392981",
+    "sdk/index.js": "e9f2b4e1d9de59d0786dca5ac4b47580d3c6456f812c4f532b6af33f438de717",
+    "sdk/features.js": "043b0a66e0e0dbe877760ffa51515d5b1178e0e53e479d5d49028762e4479562",
+    "sdk/actions.js": "a9c96be6fb0c4d6f1f657e1948415c56a277cc5138a444d2da8690a6b72a3d7e",
+    "sdk/scoring.js": "b772ab371c60f353829dbf7d9aef8a37ba9eac2de98baf2ddf4a5c4fc55e1d52",
+    "sdk/policy.js": "18d660f922a46cf66c238794c65bcca7373d3bbfbf53748ade6ab107e85bbe3e",
+    "sdk/easy-policy.js": "1af6b4fb4aa6003f513419821bc16bf45a09169433037eee55cce0dd44af7ae2",
+    "policies/contract.mjs": "c67c3ff03f4d0acaf088460b9dd9ae93865fbdbdf372c4a0b9788534f6b3b614",
+    "policies/runtime.mjs": "08feab2634d92ec544a12620e2a4884ea0275d189f90ca555819a0b16e2a90d7",
+    "policies/client.mjs": "44d6b09ef10b9c3c56d09719ac2b8b4aba8b54ebb615f1cb445e2e48bd4913b1",
+    "policies/worker.mjs": "67c9a2c9b9818f874ec3e3d254b7aba0eb897116fd7fccc55e8ad4cacef2f263",
+    "policies/dependencies.mjs": "cc0c0187a6cc0db3cd705f802f2378e32550895817c66a58513298ca1675fad6",
+    "policies/catalog.mjs": "ce4f3a24ef9d1f939adc435e48c6c37f06e6a817f66011dd2c9facb4ec01806f",
+    "arena/evaluate.mjs": "36c758c4b22770fb95d192585ca2b34a8d9126253eef35993f831c314f965917",
+    "arena/elo.mjs": "45316930c3f5cf374b85bf8f19e86ad257379b58848003bb770f70b8485f54e5"
+  },
+  "policies": [
+    {
+      "api": "royale-policy-v1",
+      "id": "code-table-v1",
+      "name": "Code AI",
+      "author": "3Card Royale",
+      "license": "MIT",
+      "type": "javascript",
+      "rules": "1.0.0",
+      "episode": "game",
+      "information": "public",
+      "memory": "none",
+      "artifact": {
+        "file": "policy.mjs",
+        "bytes": 1533,
+        "sha256": "fe07b4669f18a59fa4cc28fe9c7fa4c4814c67fd0608262582a45a3085b81ff6"
+      }
+    },
+    {
+      "api": "royale-policy-v1",
+      "id": "easy-v2",
+      "name": "Easy · 64",
+      "author": "3Card Royale",
+      "license": "MIT",
+      "type": "javascript",
+      "rules": "1.0.0",
+      "episode": "game",
+      "information": "public",
+      "memory": "none",
+      "artifact": {
+        "file": "policy.mjs",
+        "bytes": 199,
+        "sha256": "e7d082e63ebd817e5e0c9b078c073b492e453af4e19b49b518fa2744c16d78e7"
+      }
+    },
+    {
+      "api": "royale-policy-v1",
+      "id": "nn-256-v1",
+      "name": "NN · 256 → 128",
+      "author": "3Card Royale",
+      "license": "MIT",
+      "type": "onnx",
+      "rules": "1.0.0",
+      "episode": "game",
+      "information": "public",
+      "memory": "none",
+      "artifact": {
+        "file": "policy.onnx",
+        "bytes": 552407,
+        "sha256": "5b98061d4188c116080eb6784c6378536a89e0b3c1db333df88217379e4dde13"
+      },
+      "features": "gym-v1"
+    },
+    {
+      "api": "royale-policy-v1",
+      "id": "nn-512-v1",
+      "name": "NN · 512 → 256",
+      "author": "lucienzhu",
+      "license": "MIT",
+      "type": "onnx",
+      "rules": "1.0.0",
+      "episode": "game",
+      "information": "public",
+      "memory": "none",
+      "artifact": {
+        "file": "policy.onnx",
+        "bytes": 1365463,
+        "sha256": "6ecafc81a29aefcff3cb9922f9070db42dc84b81fe7c937fc08de1354b7d10de"
+      },
+      "features": "gym-v1"
+    },
+    {
+      "id": "nn-structured-v2",
+      "name": "NN · Structured 256 → 128",
+      "api": "royale-policy-v2",
+      "type": "onnx",
+      "author": "@lucienzhu",
+      "license": "MIT",
+      "rules": "1.0.0",
+      "episode": "game",
+      "information": "public",
+      "memory": "none",
+      "features": "structured-v2",
+      "actions": "actions-v2",
+      "artifact": {
+        "file": "policy.onnx",
+        "bytes": 916663,
+        "sha256": "16e452b48837e6fa681216c13279bbe500997c97b86f56efa19e449b1699baf3"
+      }
+    },
+    {
+      "api": "royale-policy-v1",
+      "id": "random-v1",
+      "name": "Random",
+      "author": "3Card Royale",
+      "license": "MIT",
+      "type": "javascript",
+      "rules": "1.0.0",
+      "episode": "game",
+      "information": "public",
+      "memory": "none",
+      "artifact": {
+        "file": "policy.mjs",
+        "bytes": 131,
+        "sha256": "f5ffd15a37eef8ab1d24c86844c6b35afada12ab9074e421656b6a9189f62d0c"
+      }
+    },
+    {
+      "api": "royale-policy-v1",
+      "id": "sdk-code-v1",
+      "name": "SDK Code AI",
+      "author": "3Card Royale",
+      "license": "MIT",
+      "type": "javascript",
+      "rules": "1.0.0",
+      "episode": "game",
+      "information": "public",
+      "memory": "none",
+      "artifact": {
+        "file": "policy.mjs",
+        "bytes": 199,
+        "sha256": "1af7c73dcaf625eefbfdeec7e1a85c25ac6a8395d123eb5accff42051bca3f4b"
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "nn-256-v1",
+      "games": 6000,
+      "maxDecisionP95Ms": 1.289,
+      "decisions": 68163
+    },
+    {
+      "id": "nn-structured-v2",
+      "games": 6000,
+      "maxDecisionP95Ms": 0.958,
+      "decisions": 62427
+    }
+  ],
+  "elapsedMs": 187504,
+  "matches": [
+    {
+      "file": "code-table-v1--nn-256-v1.json",
+      "sha256": "35294a16a03efb385fb7592471304c7f8b16cfdb9fafd41fa3a0f5ed6bc4a6bd",
+      "policies": [
+        {
+          "id": "code-table-v1",
+          "wins": 574,
+          "losses": 426,
+          "games": 1000,
+          "winRate": 0.574,
+          "decisionP95Ms": 1.521,
+          "decisions": 11942
+        },
+        {
+          "id": "nn-256-v1",
+          "wins": 426,
+          "losses": 574,
+          "games": 1000,
+          "winRate": 0.426,
+          "decisionP95Ms": 1.273,
+          "decisions": 11625
+        }
+      ],
+      "runtime": {
+        "node": "v22.14.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1",
+        "backend": "ONNX Runtime Web / single-thread WASM",
+        "elapsedMs": 19525
+      }
+    },
+    {
+      "file": "code-table-v1--nn-structured-v2.json",
+      "sha256": "d8facd84b5ed6394d1deac0e2ad308e9e9c1c1c8d237db9219d1584f6ae3d3c7",
+      "policies": [
+        {
+          "id": "code-table-v1",
+          "wins": 761,
+          "losses": 239,
+          "games": 1000,
+          "winRate": 0.761,
+          "decisionP95Ms": 1.532,
+          "decisions": 11261
+        },
+        {
+          "id": "nn-structured-v2",
+          "wins": 239,
+          "losses": 761,
+          "games": 1000,
+          "winRate": 0.239,
+          "decisionP95Ms": 0.822,
+          "decisions": 10147
+        }
+      ],
+      "runtime": {
+        "node": "v22.14.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1",
+        "backend": "ONNX Runtime Web / single-thread WASM",
+        "elapsedMs": 16226
+      }
+    },
+    {
+      "file": "easy-v2--nn-256-v1.json",
+      "sha256": "bf80c74e2daf29ebe89389ab84b03bf99d82afe851a5d1cba959636d984b3919",
+      "policies": [
+        {
+          "id": "easy-v2",
+          "wins": 441,
+          "losses": 559,
+          "games": 1000,
+          "winRate": 0.441,
+          "decisionP95Ms": 0.553,
+          "decisions": 13146
+        },
+        {
+          "id": "nn-256-v1",
+          "wins": 559,
+          "losses": 441,
+          "games": 1000,
+          "winRate": 0.559,
+          "decisionP95Ms": 1.275,
+          "decisions": 13283
+        }
+      ],
+      "runtime": {
+        "node": "v22.14.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1",
+        "backend": "ONNX Runtime Web / single-thread WASM",
+        "elapsedMs": 19990
+      }
+    },
+    {
+      "file": "easy-v2--nn-structured-v2.json",
+      "sha256": "5f7755179cf8aa655ecf14a666cd8fc9710393efc2578698342e77f532579efd",
+      "policies": [
+        {
+          "id": "easy-v2",
+          "wins": 634,
+          "losses": 366,
+          "games": 1000,
+          "winRate": 0.634,
+          "decisionP95Ms": 0.511,
+          "decisions": 12287
+        },
+        {
+          "id": "nn-structured-v2",
+          "wins": 366,
+          "losses": 634,
+          "games": 1000,
+          "winRate": 0.366,
+          "decisionP95Ms": 0.816,
+          "decisions": 11610
+        }
+      ],
+      "runtime": {
+        "node": "v22.14.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1",
+        "backend": "ONNX Runtime Web / single-thread WASM",
+        "elapsedMs": 16121
+      }
+    },
+    {
+      "file": "nn-256-v1--nn-512-v1.json",
+      "sha256": "2e164463473cc2614791307e6efd4d95a624005ad3926269073b2f6f1013762f",
+      "policies": [
+        {
+          "id": "nn-256-v1",
+          "wins": 505,
+          "losses": 495,
+          "games": 1000,
+          "winRate": 0.505,
+          "decisionP95Ms": 1.289,
+          "decisions": 11451
+        },
+        {
+          "id": "nn-512-v1",
+          "wins": 495,
+          "losses": 505,
+          "games": 1000,
+          "winRate": 0.495,
+          "decisionP95Ms": 2.687,
+          "decisions": 11430
+        }
+      ],
+      "runtime": {
+        "node": "v22.14.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1",
+        "backend": "ONNX Runtime Web / single-thread WASM",
+        "elapsedMs": 25870
+      }
+    },
+    {
+      "file": "nn-256-v1--nn-structured-v2.json",
+      "sha256": "6f237a07cbceac360e73f1ef85b6f460b3cfdd712693e74c64ced617aed0ab27",
+      "policies": [
+        {
+          "id": "nn-256-v1",
+          "wins": 712,
+          "losses": 288,
+          "games": 1000,
+          "winRate": 0.712,
+          "decisionP95Ms": 1.117,
+          "decisions": 11158
+        },
+        {
+          "id": "nn-structured-v2",
+          "wins": 288,
+          "losses": 712,
+          "games": 1000,
+          "winRate": 0.288,
+          "decisionP95Ms": 0.821,
+          "decisions": 10340
+        }
+      ],
+      "runtime": {
+        "node": "v22.14.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1",
+        "backend": "ONNX Runtime Web / single-thread WASM",
+        "elapsedMs": 17257
+      }
+    },
+    {
+      "file": "nn-256-v1--random-v1.json",
+      "sha256": "d25080fa1121d279e92f9e074f7e388b239da121f19b3d16eddc15e2361853aa",
+      "policies": [
+        {
+          "id": "nn-256-v1",
+          "wins": 1000,
+          "losses": 0,
+          "games": 1000,
+          "winRate": 1,
+          "decisionP95Ms": 0.458,
+          "decisions": 8671
+        },
+        {
+          "id": "random-v1",
+          "wins": 0,
+          "losses": 1000,
+          "games": 1000,
+          "winRate": 0,
+          "decisionP95Ms": 0.218,
+          "decisions": 4421
+        }
+      ],
+      "runtime": {
+        "node": "v22.14.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1",
+        "backend": "ONNX Runtime Web / single-thread WASM",
+        "elapsedMs": 6071
+      }
+    },
+    {
+      "file": "nn-256-v1--sdk-code-v1.json",
+      "sha256": "13921309cea7235a1e605cd4e5185cd1ee165b8636e42d4f580cb6755c807844",
+      "policies": [
+        {
+          "id": "nn-256-v1",
+          "wins": 455,
+          "losses": 545,
+          "games": 1000,
+          "winRate": 0.455,
+          "decisionP95Ms": 1.285,
+          "decisions": 11975
+        },
+        {
+          "id": "sdk-code-v1",
+          "wins": 545,
+          "losses": 455,
+          "games": 1000,
+          "winRate": 0.545,
+          "decisionP95Ms": 0.645,
+          "decisions": 12115
+        }
+      ],
+      "runtime": {
+        "node": "v22.14.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1",
+        "backend": "ONNX Runtime Web / single-thread WASM",
+        "elapsedMs": 17917
+      }
+    },
+    {
+      "file": "nn-512-v1--nn-structured-v2.json",
+      "sha256": "88ca446555a9b82b2e400ea5d1e39d955e93a47f7a2328188e2636b66b9c55c3",
+      "policies": [
+        {
+          "id": "nn-512-v1",
+          "wins": 702,
+          "losses": 298,
+          "games": 1000,
+          "winRate": 0.702,
+          "decisionP95Ms": 2.181,
+          "decisions": 11301
+        },
+        {
+          "id": "nn-structured-v2",
+          "wins": 298,
+          "losses": 702,
+          "games": 1000,
+          "winRate": 0.298,
+          "decisionP95Ms": 0.825,
+          "decisions": 10499
+        }
+      ],
+      "runtime": {
+        "node": "v22.14.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1",
+        "backend": "ONNX Runtime Web / single-thread WASM",
+        "elapsedMs": 22863
+      }
+    },
+    {
+      "file": "nn-structured-v2--random-v1.json",
+      "sha256": "7121d3946893a754425e6466f91d0a248a82470d97c2ea28dbfb3de4c7276f3b",
+      "policies": [
+        {
+          "id": "nn-structured-v2",
+          "wins": 997,
+          "losses": 3,
+          "games": 1000,
+          "winRate": 0.997,
+          "decisionP95Ms": 0.407,
+          "decisions": 9137
+        },
+        {
+          "id": "random-v1",
+          "wins": 3,
+          "losses": 997,
+          "games": 1000,
+          "winRate": 0.003,
+          "decisionP95Ms": 0.221,
+          "decisions": 4972
+        }
+      ],
+      "runtime": {
+        "node": "v22.14.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1",
+        "backend": "ONNX Runtime Web / single-thread WASM",
+        "elapsedMs": 6954
+      }
+    },
+    {
+      "file": "nn-structured-v2--sdk-code-v1.json",
+      "sha256": "dc3d4b60979c8e36cd1f345edc330f63b581986a3ac534e11870c61b9526c0b8",
+      "policies": [
+        {
+          "id": "nn-structured-v2",
+          "wins": 266,
+          "losses": 734,
+          "games": 1000,
+          "winRate": 0.266,
+          "decisionP95Ms": 0.958,
+          "decisions": 10694
+        },
+        {
+          "id": "sdk-code-v1",
+          "wins": 734,
+          "losses": 266,
+          "games": 1000,
+          "winRate": 0.734,
+          "decisionP95Ms": 0.68,
+          "decisions": 11659
+        }
+      ],
+      "runtime": {
+        "node": "v22.14.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1",
+        "backend": "ONNX Runtime Web / single-thread WASM",
+        "elapsedMs": 18023
+      }
+    }
+  ]
+}
