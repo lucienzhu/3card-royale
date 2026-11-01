@@ -1,112 +1,64 @@
 # 深圳花牌 · 3Card Royale
 
-**动作空间迁移分支：**[固定语义动作、Gym v1 与模型实测](docs/ACTIONS.md) · [gametest](docs/GAMETEST.md)。支持 3／4／5 张出牌，旧策略保持兼容。
-
-[**AI Arena · 策略插件与 Elo 天梯 ↗**](https://lucienzhu.github.io/3card-royale/arena.html?lang=zh-CN) · [提交策略](policies/README.zh-CN.md)
-
 **简体中文** · [English](README.md)
 
-[**发布 v1.1.0 · AI Arena**](docs/releases/v1.1.0.md) · [v1.0.0 审计](docs/releases/v1.0.0.md)
+![深圳花牌](assets/repository-cover.svg)
 
-![深圳花牌 · 一副牌，两个人，从2打到A](assets/repository-cover.svg)
+**一副牌，两个人，三张牌，打出花。**
 
-**一副普通扑克，两个人，从 2 打到 A。**
+深圳花牌（3Card Royale，aka Shenzhen Flower Cards）是一款来自深圳的双人扑克牌游戏。组合牌型，把伤牌变成选择，从 2 打到 A。一副普通 52 张扑克牌就能玩，也可以在浏览器里挑战 AI。
 
-**深圳花牌（3Card Royale，aka Shenzhen Flower Cards）**，来自深圳的开放扑克玩法：八张手牌选三张，伤牌也能出，防守成功换机会。四炸6分，四张自然同点牌加花牌组成罕见的五炸7分。
+[**开始玩 ↗**](https://lucienzhu.github.io/3card-royale/?lang=zh-CN) · [怎么玩](https://lucienzhu.github.io/3card-royale/about.html?lang=zh-CN) · [视觉](https://lucienzhu.github.io/3card-royale/brand.html?lang=zh-CN) · [AI 竞技场](https://lucienzhu.github.io/3card-royale/arena.html?lang=zh-CN)
 
-[**开始试玩 ↗**](https://lucienzhu.github.io/3card-royale/?lang=zh-CN) · [学会怎么玩](https://lucienzhu.github.io/3card-royale/about.html?lang=zh-CN) · [完整规则](docs/RULES.zh-CN.md) · [视觉识别](https://lucienzhu.github.io/3card-royale/brand.html?lang=zh-CN)
+## 玩法
 
-在线是与电脑对战的试玩版；线下双人只需一副52张普通扑克。无需注册，无下注、无现金兑换。
+1. 八张手牌起步，从手牌与公开伤牌中选三张出牌；四张、五张须组成炸弹。
+2. 进攻赢了打伤害，防守赢了获得换牌机会，每次都可以放弃。完全相同则无效果。
+3. 交换攻守；双方各进攻一次后，保留余牌，补手牌到八张。
 
+五伤输局。赢家按最终伤牌差升级。到 A 后，赢下自己打级的 A 局，才赢下整场。打出伤牌后会补回，不能借此回血。每局双方共用一张红桃花牌。
 
-在线试玩的菜单会显示整场种子和本小局发牌种子。新场默认随机，也可选择固定整场种子；同规则、同先攻设置和同操作可重现整场。整场种子不变，各小局接续同一随机流，不会每局重新使用同一副牌序。
+[标准规则 1.0.0](docs/RULES.zh-CN.md) · [打印规则](https://lucienzhu.github.io/3card-royale/about.html?lang=zh-CN#learn)
 
-## 一轮怎么玩
+试玩包含一次进攻与防守练习、首局提示、划牌选择、回放和 PNG 分享。单局回顾与整场开花采用不同结算画面；种子与记录支持复现对局。
 
-1. 从手牌与自己的公开伤牌中选三张；四炸出四张，五炸出五张。
-2. 进攻赢，造成伤害；防守赢，获得换牌机会；完全同型同点无事发生。
-3. 中途交换攻防不补手牌，双方各进攻一次后，保留余牌、补到八张。
+## AI 与研究
 
-达到五伤输小局，赢家按完整终局伤势差升级并在下局先攻。先升到A，再赢下自己打级的A局（本局共用♥A），才赢整场。个人为A时赢下对手的10局，只取得下局打自己A的资格；输掉也不记闯关失败。
+在 **设置 → 偏好 → AI 对手** 中选择。新玩家默认 Easy；NN AI 在本地 Worker 中运行自回归模型，竞技场 AI 还可加载整手评分模型。Godlike 能看见对手当前手牌，不参加公开信息天梯。
 
-## 不一样的地方
+纯代码、整手评分、自回归共用**同一动作协议**：固定实体牌 ID、完整语义动作，以及可选的六 token 序列。GameCore 校验后一次执行完整动作；模型结构由策略自行选择。
 
-- **伤牌也能出。** 用后原位补新牌，伤势不变；受伤同时增加可用的牌。
-- **防守打的是机会。** 用自己的手牌或伤牌，换对手的牌、自己的另一牌区，或弃旧摸新。
-- **双方共用花牌。** 红桃百搭牌跟随上一局赢家升级后的等级，整小局固定。
+| 模型 | 隐藏层 | 参数 | ONNX | 对 Code AI 胜率 |
+| --- | --- | ---: | ---: | ---: |
+| 整手评分 | 256 → 128 | 137,729 | 0.55 MB | 42.6% |
+| 自回归 | 256 → 128 | 228,929 | 0.92 MB | 23.9% |
+
+两者都以 SDK Code AI 为老师，分别使用一万局数据进行 PyTorch 模仿学习，记录 TensorBoard 曲线并导出 ONNX。SDK Code AI 是冻结训练教师，网页 Code AI 是困难对手。表中每组 1,000 小局，使用相同种子、交换座位并平衡先攻。当前模型尚未通过奖励训练；难度名称不等于实测棋力排序。
+
+- [动作协议与 Gym](docs/ACTIONS.md) · [RL 环境](docs/RL.zh-CN.md)
+- [模型与证据](docs/MODEL.zh-CN.md) · [完整评测](docs/experiments/complete-baseline/README.md)
+- 训练：[整手评分](training/README.md) · [自回归](training/structured/README.md)
+- [提交 JS 或 ONNX 策略](policies/README.md) · [评分方法](arena/README.md)
+
+竞技场策略记录 GitHub 作者与固定文件校验值。本地验证和 PR CI 检查能否合法对战；发布时对待评分策略运行三组固定对手，自动更新天梯和网页。每个新提交需要 60 评分小局及四局验证。
 
 ## 本地运行
 
-纯静态项目，无构建步骤与运行时依赖。用任意静态HTTP服务打开，例如：
+网站为静态文件，已包含推理运行时。
 
 ```sh
 python3 -m http.server 8000 --bind 127.0.0.1
 # 打开 http://127.0.0.1:8000/about.html?lang=zh-CN
+npm ci
+npm test
 ```
 
-安装Node.js后，可运行项目检查：
+SDK 包含 JavaScript/TypeScript、Python、Rust 和 C++17；Gym 支持小局和整场任务。参见 [SDK 安装](docs/SDK.md)、[参与开发](docs/CONTRIBUTING.md)和[对局验证](docs/GAMETEST.md)。
 
-```sh
-node scripts/check.cjs
-```
+## 设计与许可
 
-## 文档与参与
+三角梅、红花与电路板绿构成深圳花牌的视觉。原版三瓣花、金底牌与玩家标识在游戏、网站和导出图片中共用标准素材。
 
-| 内容 | 入口 |
-| --- | --- |
-| 规则 | [1.0.0完整规则](docs/RULES.zh-CN.md) |
-| 贡献 | [本地开发、目录、反馈与翻译](docs/CONTRIBUTING.zh-CN.md) |
-| 设计 | [设计规范](docs/DESIGN.zh-CN.md) · [当前组件](https://lucienzhu.github.io/3card-royale/design-system.html?lang=zh-CN) |
-| 反馈 | [提交试玩记录或Bug](https://github.com/lucienzhu/3card-royale/issues/new/choose) |
-| 研究 | [历史三张牌概率研究](https://lucienzhu.github.io/3card-royale/probability.html?lang=zh-CN) |
+[设计规范](docs/DESIGN.zh-CN.md) · [组件](https://lucienzhu.github.io/3card-royale/design-system.html?lang=zh-CN) · [反馈](https://github.com/lucienzhu/3card-royale/issues/new/choose)
 
-**当前状态：**试玩规则1.0.0，继续收集真人反馈。模拟不等于平衡性证明，也不等于流行度。旧规则仍能从游戏菜单选择，已有版本标签不移动。
-
-## 许可
-
-代码、规则说明和原创视觉采用[MIT许可](LICENSE)，保留版权与许可声明。欢迎试玩、改编、翻译和实现；变体请注明规则差异，不冒充原项目维护者。
-
-## 用它做自己的游戏
-
-SDK 0.2.0／规则1.0.0：JavaScript＋TypeScript类型、Python／Rust／C++17原生核心，共用卡牌编号、动作与JSON状态。提供只看可见信息的基础策略和可选Gymnasium环境。
-
-- [移植核心与示例](docs/SDK.zh-CN.md)
-- [RL环境、掩码与观察](docs/RL.zh-CN.md)
-- [C++源码与CMake](cpp/README.zh-CN.md) · [Python源码](python/threecard_royale/) · [Rust源码](rust/) · [JavaScript接口](sdk/)
-
-`python -m pip install -e './python[gym]'`后运行`python examples/train_random.py`；Rust用`cargo build --manifest-path rust/Cargo.toml --locked`。目前按仓库源码交付，尚未上传软件包注册库。
-
-## 小 Tips：名字的由来
-
-**三张牌是内核，三角梅是深圳的花。**「花牌」连起花札、炸金花、掼蛋与《小丑牌》（Balatro）的玩法灵感：组合、公开牌取舍、换牌与成长。目标是用一副普通扑克，把两个人的1v1做得尽可能好玩，随时随地愿意再来一局。实体牌仍是52张，不含大小王。
-
-标准1.0增加五炸7分：四张自然同点牌＋本局共用花牌。见[完整标准规则](docs/RULES.zh-CN.md)。合法动作包含五张出牌；`wild.as`只表示虚拟牌面，五炸可引用已存在的同点代表牌，实体ID仍不重复。Gym分数／类别特征改按7归一，出牌数按5归一。
-
-## 一程花事
-
-红金单藤根据真实小局结算显示进度，点藤可逐局回顾。打自己的A并获胜，深圳地标之间绽放赢家颜色的三角梅；重看开花只重播画面，不改变对局、牌序、种子或存档。
-
-单局胜利保留紧凑结算面板，整场结束进入全屏：赢家最后一手的前三张牌翻出金色牌背，绽放后飘落城中。整场 PNG 与动画共用花丛构图，自己红花、对手金花；减少动态效果时直接呈现完成画面。
-
-## PNG结算卡
-
-小局或整场结算后，可点“分享卡片”预览并保存 PNG；支持的设备也可调起系统分享，只发送这张 PNG，不夹带文字；不能分享图片的设备改为分享游戏链接。发给微信好友请点“复制图片”，再到对话里粘贴：iPhone 的系统分享把图片当作文件交给微信，微信的“发送给朋友”不会弹出好友列表。单局结束可点“回顾与分享”切换三套 PNG：“本局回顾”按时间记录全部攻防，生成可滚动浏览的完整长图；“决胜现场”展示最后双方出牌与公开伤牌，强调终局伤牌差；“高光一手”可选最大伤害或最大牌型。本局回顾每次攻防一行两列，左进攻、右防守，花标识跟随玩家身份；决胜现场与高光一手保持金花对手在上、红花玩家在下，高光牌型原位放大。“决胜现场”“高光一手”和整场海报为 1080×1440，本局回顾按记录延长。预览后保存、复制或分享当前这张。三、四、五张出牌均完整展示，并标出伤牌来源和花牌替代；整场分享保留开花构图。图片在本机根据公开结算生成；生成和保存不改变对局，也不会自动上传或发送。
-
-换牌机会现在可以逐次跳过：有两次机会时，跳过第一次后仍能使用第二次；跳过不摸牌、不弃牌，也不改变伤势。实际牌桌、教学和四种语言内核保持一致。本局回顾每次攻防留出独立间距，品牌 logo 与名称统一在分享 PNG 右上角。
-
-## AI 对手
-
-选择 **Arena AI** 后，可在下方挑选已发布的 JS 或 NN 策略；旁边可直接查看天梯。
-
-设置 → 偏好 → AI 对手可选 **简单 / 中等 / 困难 / 超凡**。前三档对应 Easy AI / NN AI / Code AI。
-超凡 Godlike 可看当前手牌、不记已出牌；对困难档 1,000 局胜率 **65.0%**。
-Easy 最多比较 **64** 个出牌候选，换牌只从牌堆抽取。每组 1,000 局，对恢复后的牌桌 Code AI 胜率 **31.5%**，对 NN AI **44.1%**。
-困难档恢复原牌桌策略，包括盲换手牌与保留下一手组合。训练和旧模型统计仍使用固定的 SDK Code AI 基线。
-[策略与实测胜率](docs/DIFFICULTY.zh-CN.md)。用 10,000 局 Code AI 对战训练单次观察的
-MLP，以 PyTorch 训练并导出 ONNX，在浏览器 Web Worker 中推理。上线使用 256/128
-隐藏层模型，ONNX 为 0.55 MB；独立缓存的 WASM 运行时约 14 MB。新玩家默认简单，已有偏好保留。
-
-[AI Arena 与 RL](arena.html#research) · [模型与 RL 接入](docs/MODEL.zh-CN.md) · [训练与复现](training/README.md) · [实验指标、曲线与 TensorBoard](docs/experiments/nn-policy-v1/README.md)
-
-安装锁定的训练依赖后，运行 `python training/reproduce.py` 即可生成数据并复现 256 模型。
-数据压缩后仍为 112.5 MB，不进 Git；固定种子、校验值与最佳 ONNX 已纳入版本控制。
+产品版本 1.1 与标准规则 1.0.0 分别管理。代码、规则和原创视觉素材使用 [MIT 许可](LICENSE)。

@@ -1,6 +1,6 @@
-# Structured actions v2 · gametest
+# Unified action protocol · gametest
 
-Recorded 2026-11-01 on the `unify-action-space` branch. Rules remain Standard
+Checked 2026-11-02 on the `unify-action-space` branch. Rules remain Standard
 1.0.0. GameCore receives one complete move; token selection is not a game turn.
 
 ## Coverage and evidence
@@ -14,16 +14,16 @@ Recorded 2026-11-01 on the `unify-action-space` branch. Rules remain Standard
 | Python / Gym | 21 tests including legacy coverage, JS encoding fixtures, v1 Gym checker for game/match, invalid-action rollback, structured and whole-move scoring Gym games, and adapter parity |
 | Model-independent protocol | The same legacy NN weights through `scoring-v2`: 70 decisions identical to the legacy loader, covering attack, defense and swaps; semantic actions also tested for 3/4/5-card plays, every swap route and reordered candidates |
 | Legacy policy replay | 2,000 historical games; identical final-state hashes, keeping frozen Elo references valid |
-| New NN evaluation | 3,000 games over three policy pairings, all completed with legal actions |
-| Browser | Chrome 156: 8 games, 129 decisions; built-in v2 and Arena v2 loaders; 17 whole-move scoring fixtures identical to the legacy loader; Chinese/English at 390 and 1440 px |
-| Interactive explorer | Attack, defense and swap examples; 3/4/5-card selection, conditional masks, undo, semantic output and horizontal-overflow checks |
+| Policy evaluation | Complete 19,000-game benchmark and 11,000-game neural matchup suite; 4,000 games overlap. All completed with legal actions |
+| Browser | Chrome 156: 8 games, 129 decisions; built-in autoregressive and Arena loaders; 17 whole-move scoring fixtures identical to the legacy loader; Chinese/English at 390 and 1440 px |
+| Explorer | Three preset attack, defense and swap tabs; shared board, observation and action sections; conditional masks and semantic output; no horizontal overflow |
 | ONNX parity | 2,048 held-out token targets; PyTorch and ONNX masked choices all agree |
 | Data reproduction smoke | Regenerated first 10 games: all 238 decision records identical to the saved training dataset |
 
 The browser run is a desktop smoke test, including mobile-sized layouts. It does
 not establish iPhone/Android runtime performance. Its 59 NN decisions measured
-0.7 ms Worker round-trip p95, excluding model loading. The larger Node evaluation
-measured 0.691 ms whole-decision p95 across 20,487 v2 decisions. Both are local
+0.7 ms Worker round-trip p95, excluding model loading. The complete baseline evaluation
+measured 0.873 ms maximum opponent-batch whole-decision p95 for the autoregressive policy. Both are local
 Apple M1 measurements. No mobile latency claim is made.
 
 ## Run the checks
@@ -74,13 +74,15 @@ node arena/evaluate.mjs --games 200 --seed-start 86000000 \
 
 ## Saved reports
 
-- [Browser smoke measurements](../models/structured-policy/browser-profile.json)
+- [Final browser audit](experiments/release-audit-2026-11-02/browser.json)
+- [Complete benchmark](experiments/complete-baseline/README.md)
+- [Matched neural suite](experiments/neural-baselines/README.md)
 - [New policy evaluation and per-game records](../models/structured-policy/evaluation.json)
 - [Legacy replay audit](../arena/legacy-v2-replay.json)
 - [Arena submission receipt](../policies/entries/nn-structured-v2/validation.json)
 - [Training/export evidence](../models/structured-policy/training.json)
 
 The new checkpoint is a weaker baseline: 23.9% versus browser Hard Code AI,
-compared with 42.6% for the legacy NN on these same new seeds. Passing gametest
-establishes legal play and compatibility, not improved playing strength. Official
-Elo is still pending release evaluation; historical results are unchanged.
+compared with 42.6% for the whole-move scorer on these same new seeds. Passing gametest
+establishes legal play and compatibility, not improved playing strength. Arena has rated the autoregressive entry at provisional Elo 1237 (14/60 wins);
+the scorer remains the fixed 1440 reference. Their opponent panels differ.

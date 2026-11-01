@@ -1,0 +1,42 @@
+
+> 3card-royale@1.1.0 test
+> node scripts/check.cjs && node tests/scoring-actions.mjs && node tests/arena/contracts.mjs && node tests/arena/rating.mjs && node tests/arena/reference.mjs && node tests/arena/release.mjs
+
+OK: design palettes, current VI labels, canonical logo, embedded rules and inline scripts.
+OK: 133 JavaScript files, 218 local HTML references, card examples, exact tie and a saved-game round trip.
+OK: match seeds, 18 distinct game deals, 492 deterministic decisions, exact deal reconstruction and save restoration.
+{"ace_reset_followed_by_own_ace_win":"passed","cases":48,"versions":["1.0.0","0.3.8"],"both_players":true,"odd_even_rounds":true,"save_restore":true}
+{"status":"passed","matches":10,"states":4494,"winners":[6,4],"real_ace_failures":19,"real_resets":4,"own_ace_nonowner_win_does_not_pass":true,"third_loss_resets_epoch":true,"does_not_mutate_game":true}
+{"finale":"passed","burst_flowers":127,"deterministic":true,"egret_poses":5,"identity_colours":true,"winning_plays":[3,4,5],"real_and_restored_winners":2,"face_flip_bloom":true,"scattered_landings":78,"landing_viewports":3,"vine_sweep":true,"reduced_motion":true}
+{"single_game_hands":"passed","cases":24,"physical_wildcards":true,"wound_origins":true,"rank_tiebreak":true,"no_hidden_cards":true}
+{"share_card":"passed","share_payload":"png_alone_or_link_alone","copy_image":"png","render_cases":16,"width":1080,"height":1440,"results_unchanged":true,"self_contained_svg":true}
+{"share_stories":"passed","variants":12,"real_game_combats":13,"distinct_highlights":true,"chronological_recap":true,"game_scoped":true,"hidden_wounds_redacted":true}
+{"skip_swaps":"passed","players":2,"sequences":["skip→swap","swap→skip","skip→skip"],"rng_unchanged":true,"save_restore":true,"no_draw_or_discard":true}
+NN: 12 Python/JS feature + teacher parity cases; 55584 values; legal selection + non-finite rejection.
+NN: model checksum and 5 MB budget passed (552407 bytes).
+RL page: all 19 measured cells, 10 latencies, artifacts and bilingual copy agree with retained reports; one evaluation table, additional reports in methods.
+Neural evaluation: 11,000 complete games, all opponents, paired seats, source/artifact/report hashes and latency summaries verified.
+Complete benchmark: 19,000 games, all 19 pairs, model/source hashes, latency and 4,000 identical cross-runner games verified.
+Arena diagram: all 336 values, 18 raw fields and all 74 candidate encodings match the saved observation and current encoder.
+Easy: deterministic public-only decisions, danger guard, legal swaps; 257 decisions across 20 complete JS games.
+OK: onboarding first/repeat visits, opt-out, manual viewing, storage recovery and table pause/resume.
+Guided flow: 8-card attack/defense practice, 2/1 damage, isolated RNG, first-game hints and guarded automatic transitions.
+Godlike: read boundary, forgotten-card hypotheses, lethal play/defense, bombs and 26 legal swaps (18 blind) across 16 complete games.
+Godlike: full legal self-play games at every flower rank, 2 through A.
+{"states":1081,"prefixes":235110,"phases":["attack","defend","refresh","resolved"],"lengths":[3,4,5],"routes":["deck","blind","rival_wounds","own_wounds","own_hand"]}
+{"structured_full_matches":8,"completed_games":90,"decisions":3124,"ace_reset_sequences":8,"atomic_restore_parity":true}
+Godlike Worker: allowlisted payload only, illegal results rejected, canceled searches ignored, retry works.
+NN: canceled and stale inference discarded; active result applied once.
+Godlike: opt-in preference, explicit privilege notice, isolated route, visible Hard fallback, legacy rules and changed-selection lifecycle.
+Replay motion: dialog coordinates, cleanup, public/private hands, preferences and seek lifecycle passed.
+Hard Code: 2550 decisions (572 swaps, 262 blind), 100 complete games exactly match the original table policy.
+NN: failed load falls back with backoff, manual retry recovers, legacy rules retained, locale repaint loop prevented.
+Scoring actions: 3/4/5 plays, all swaps, permutation/feature parity; 70 ONNX decisions unchanged under actions-v2.
+Arena: browser route, legal apply, Easy fallback, legacy rules and reload-safe preference URLs.
+Arena v2 JS: complete semantic-action game, frozen observation, candidate-index rejection.
+Arena: manifest / integrity, public observations, 7 JS/ONNX plugins, 89 Hard/SDK decisions, seeded reset.
+Arena: Worker timeout, cancellation, stale errors, illegal action and registry-only loading.
+Arena: paired Elo, source hashes, and all 40 replayed games match the published report.
+Batch Elo: paired validation, finite boundary scores, anchor, shrinkage, order independence and 400-game fixture passed.
+Reference Arena: fixed 60-game cost, target caps, immutable IDs, receipt gate, balanced matches and publication integrity passed.
+Release Arena: pending-only selection, unchanged rating reuse, explicit rerating, fixed batch cap and validation-only CI passed.

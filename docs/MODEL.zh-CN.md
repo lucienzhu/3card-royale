@@ -37,6 +37,8 @@ Apple M1 / Node 22 / 单线程 WASM，包含编码和全部推理、不含首次
 
 [动作接口、Gym 与 RL](ACTIONS.md) · [自回归训练与复现](../training/structured/README.md)
 
+网页 **NN AI** 加载自回归检查点；整手评分模型可通过**竞技场 AI**选择。
+
 ## 整手评分 · 256 → 128
 
 [English](MODEL.md) · [RL 环境](RL.zh-CN.md) · [复现步骤](../training/README.md)
@@ -79,10 +81,10 @@ PPO 训练器和 critic 尚未实现。
 ## 评分张量 · Gym → Torch → ONNX → JS
 
 以下张量是评分模型的内部接口。竞技场适配器将选中的候选转换为统一结构化动作后执行。
-下方 Gym 示例直接使用候选索引适配器。
+下方 Gym 示例通过 `StructuredRoyaleEnv` 提交完整动作；候选序号只在评分模型内部使用。
 
-[Python 编码](../python/threecard_royale/gym_env.py)与
-[JS 编码](../sdk/features.js)共用 `gym-v1` 特征。
+[Python 编码](../python/threecard_royale/scoring.py)与
+[JS 编码](../sdk/scoring.js)共用 `gym-v1` 特征。
 
 | 张量 | 形状／类型 | 构成 |
 | --- | --- | --- |
@@ -90,7 +92,7 @@ PPO 训练器和 critic 尚未实现。
 | `candidates` | B × N × 72／float32 | 当前合法动作特征，保持 SDK 顺序 |
 | `logits` | B × N／float32 | 每个候选动作一个未归一化分数 |
 
-Gym 补齐到 512 行并提供 `action_mask`；JS 只传 N 个合法候选。ONNX 的 B、N 均可变。
+评分训练批次可以补齐候选行；本例推理只传 N 个合法候选。统一 Gym 使用 65 位条件 token mask，与候选补齐掩码不同。ONNX 的 B、N 均可变。
 批次补齐时，须在交叉熵、采样或 argmax **之前**屏蔽非法分数，ONNX 图本身不做掩码。
 选出的索引只能映射回这次观察的合法动作；下一状态的同一索引没有相同含义。
 没有合法动作时不要采样。
@@ -108,26 +110,25 @@ Gym 补齐到 512 行并提供 `action_mask`；JS 只传 N 个合法候选。ONN
 ```python
 import numpy as np
 import onnxruntime as ort
-from threecard_royale.gym_env import RoyaleEnv
+from threecard_royale.gym_structured import StructuredRoyaleEnv
 
 session = ort.InferenceSession(
     "models/nn-policy/policy-mlp-256-v1.onnx",
     providers=["CPUExecutionProvider"],
 )
-env = RoyaleEnv(episode="game", player=0)  # 对手：Code AI
+env = StructuredRoyaleEnv(episode="game", player=0)  # opponent: SDK Code AI
 try:
     obs, info = env.reset(seed=42)
     done = info["reset_terminal"] or info["reset_truncated"]
     while not done:
-        legal = np.flatnonzero(obs["action_mask"])
-        assert legal.size > 0
-        state = np.concatenate([obs["cards"].ravel(), obs["meta"]])
+        features = env.scoring_observation()
+        assert len(features["actions"]) > 0
         logits = session.run(["logits"], {
-            "state": state.astype(np.float32)[None, :],
-            "candidates": obs["candidates"][legal][None, :, :],
+            "state": features["state"][None, :],
+            "candidates": features["candidates"][None, :, :],
         })[0][0]
         assert np.isfinite(logits).all()
-        action = int(legal[logits.argmax()])
+        action = features["tokens"][int(logits.argmax())]
         obs, reward, terminated, truncated, info = env.step(action)
         assert not info["invalid_action"]
         done = terminated or truncated
@@ -140,7 +141,7 @@ finally:
 
 ## 复现与 TensorBoard
 
-[固定配方](../training/recipe-256.json)重新生成 Code AI 自对弈数据，核对 100 个分片，
+[固定配方](../training/recipe-256.json)重新生成 SDK Code AI 自对弈数据，核对 100 个分片，
 训练 256/128，再导出和评估最佳检查点。训练／验证／测试按整局划分为
 8,000／1,000／1,000 局，同一局的双方不会分到不同集合。
 实际 tar.gz 为 112,497,347 字节，所以数据和 `.pt` 重新生成；Git 保存代码、

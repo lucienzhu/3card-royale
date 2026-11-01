@@ -11,6 +11,11 @@ python -m venv .venv
 pip install -r training/structured/requirements.txt
 python training/structured/train.py --epochs 40
 tensorboard --logdir artifacts/structured-v2/tensorboard
+```
+
+The following evaluates the **checked-in** `nn-256-v1` and `nn-structured-v2` entries, not the checkpoint just trained:
+
+```sh
 node training/evaluate-baselines.mjs --games 1000 --seed-start 91000000 \
   --output artifacts/neural-baselines
 ```
@@ -48,7 +53,7 @@ on the same seeds. Its 19,000 games include 4,000 reproduced games from this sui
 
 Maximum opponent-batch whole Worker decision p95 for the autoregressive policy is **0.958 ms** across 62,427 decisions on Apple M1 / Node 22 / single-thread WASM. Includes encoding and all autoregressive calls; excludes initial model load. It is not a browser/mobile benchmark.
 
-Checked-in artifacts are in `models/structured-policy/`; the identical ONNX is in `policies/entries/nn-structured-v2/` for Arena integrity checks. Local `.pt`, data and TensorBoard files stay under ignored `artifacts/`. After deliberately replacing a checkpoint, update both artifacts, byte/hash manifests, receipts and evaluation; published policy IDs must be immutable.
+Checked-in artifacts are in `models/structured-policy/`; the identical ONNX is in `policies/entries/nn-structured-v2/` for Arena integrity checks. Local `.pt`, data and TensorBoard files stay under ignored `artifacts/`. To evaluate newly trained weights, create a new immutable policy entry, declare its profile and file hashes, register it, and generate its local validation receipt. Then evaluate that ID as described in the [submission guide](../../policies/README.md). Never overwrite a rated entry; changing the built-in model additionally requires an explicit deployment-manifest update.
 
 ## Game and browser checks
 

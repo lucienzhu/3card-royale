@@ -47,6 +47,8 @@ includes all neural architectures, code policies, raw reports and timing scopes.
 
 [Action contract, Gym and RL](ACTIONS.md) · [Autoregressive training](../training/structured/README.md)
 
+Browser **NN AI** loads the autoregressive checkpoint. The whole-move scorer is available through **Arena AI**.
+
 ## Whole-move scoring · 256 → 128
 
 [简体中文](MODEL.zh-CN.md) · [RL environment](RL.md) · [Reproduce](../training/README.md)
@@ -94,10 +96,10 @@ SDK Code AI. See [metrics and profiling limits](experiments/nn-policy-v1/README.
 
 The tensor interface below is internal to the scoring model. Its Arena adapter
 converts the selected candidate to the shared structured move before execution.
-The direct Gym example uses the candidate-index adapter.
+The Gym example submits the selected move through `StructuredRoyaleEnv`; the candidate index stays internal to the scorer.
 
-[Python encoding](../python/threecard_royale/gym_env.py) and
-[JS encoding](../sdk/features.js) use the same `gym-v1` features.
+[Python encoding](../python/threecard_royale/scoring.py) and
+[JS encoding](../sdk/scoring.js) use the same `gym-v1` features.
 
 | Tensor | Shape / dtype | Construction |
 | --- | --- | --- |
@@ -105,7 +107,8 @@ The direct Gym example uses the candidate-index adapter.
 | `candidates` | B × N × 72 / float32 | Current legal-action features, in SDK order |
 | `logits` | B × N / float32 | One unnormalized score for each candidate |
 
-Gym pads to 512 rows and supplies `action_mask`; JS passes only N legal rows.
+Scoring training batches may pad candidate rows; inference here passes only N legal rows.
+The unified Gym action mask has 65 conditional token entries; it is separate from candidate padding.
 B and N are dynamic in ONNX. For a padded batch, mask invalid logits **before**
 cross-entropy, sampling or argmax. The ONNX graph does not apply a mask itself.
 Map the chosen index back to that observation's legal actions; indices have no
@@ -125,26 +128,25 @@ then `.venv/bin/pip install --no-deps -e ./python`. Run this with that Python:
 ```python
 import numpy as np
 import onnxruntime as ort
-from threecard_royale.gym_env import RoyaleEnv
+from threecard_royale.gym_structured import StructuredRoyaleEnv
 
 session = ort.InferenceSession(
     "models/nn-policy/policy-mlp-256-v1.onnx",
     providers=["CPUExecutionProvider"],
 )
-env = RoyaleEnv(episode="game", player=0)  # rival: SDK Code AI
+env = StructuredRoyaleEnv(episode="game", player=0)  # opponent: SDK Code AI
 try:
     obs, info = env.reset(seed=42)
     done = info["reset_terminal"] or info["reset_truncated"]
     while not done:
-        legal = np.flatnonzero(obs["action_mask"])
-        assert legal.size > 0
-        state = np.concatenate([obs["cards"].ravel(), obs["meta"]])
+        features = env.scoring_observation()
+        assert len(features["actions"]) > 0
         logits = session.run(["logits"], {
-            "state": state.astype(np.float32)[None, :],
-            "candidates": obs["candidates"][legal][None, :, :],
+            "state": features["state"][None, :],
+            "candidates": features["candidates"][None, :, :],
         })[0][0]
         assert np.isfinite(logits).all()
-        action = int(legal[logits.argmax()])
+        action = features["tokens"][int(logits.argmax())]
         obs, reward, terminated, truncated, info = env.step(action)
         assert not info["invalid_action"]
         done = terminated or truncated

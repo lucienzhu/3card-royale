@@ -1,0 +1,25 @@
+{
+  "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+  "model": "structured-256-v2",
+  "games": 8,
+  "decisions": 129,
+  "nnDecisions": 59,
+  "workerRoundTripP95Ms": 0.7000000029802322,
+  "inferenceP95Ms": 0.4000000059604645,
+  "arenaPlugin": true,
+  "scoringParity": 17,
+  "ui": {
+    "languages": [
+      "zh-CN",
+      "en"
+    ],
+    "widths": [
+      390,
+      1440
+    ],
+    "examples": 3,
+    "presetActions": true,
+    "stackedSpaces": true,
+    "sharedBoard": true
+  }
+}

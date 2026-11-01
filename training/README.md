@@ -3,7 +3,7 @@
 Whole-move scoring and [autoregressive policies](structured/README.md) are separate
 Arena entries using the same action protocol. This recipe reproduces the scorer.
 
-Code AI in this training recipe means the **frozen SDK baseline**. Browser Hard uses the table policy. Compare current opponents with `python training/evaluate_table_policy.py --node node`; see [difficulty records](../docs/DIFFICULTY.md).
+Code AI in this training recipe means the **frozen SDK baseline**. Browser Hard uses the table policy. For the current comparison, use the [complete benchmark](../docs/experiments/complete-baseline/README.md); its seeds differ from this reproduction recipe.
 
 The scorer uses **256 → 128 → 1**: two ReLU hidden layers and a shared score for
 each legal action. The input is one public observation (336 values) plus one
@@ -39,7 +39,7 @@ the checked-in ONNX is the exact web artifact. Compare the generated report.
 
 The full 2026-10-24 rerun regenerated all 100 shards byte-for-byte and produced
 an identical ONNX SHA-256, the same epoch-5 checkpoint, 89.36% test agreement and
-462/1,000 evaluation wins. Evidence: [reproduction-256.json](../docs/experiments/nn-policy-v1/reproduction-256.json).
+462/1,000 evaluation wins on the recipe’s original seed cohort (not the current comparison cohort). Evidence: [reproduction-256.json](../docs/experiments/nn-policy-v1/reproduction-256.json).
 
 Use a fresh output directory for a rerun:
 
@@ -66,14 +66,9 @@ TensorBoard events, and the **reference scoring ONNX**:
 - Test action agreement: **89.36%**. Against SDK Code AI: **462/1,000** wins.
 - SHA-256: `5b98061d4188c116080eb6784c6378536a89e0b3c1db333df88217379e4dde13`.
 
-Reproduction does not overwrite the committed web model. Publish a deliberately
-selected rerun with:
+Reproduction does not overwrite the committed web model.
 
-```sh
-.venv/bin/python training/publish.py --root artifacts/nn-policy-256 --model 256
-node scripts/check.cjs
-.venv/bin/python -m unittest discover -s tests -p 'test_*.py'
-```
+Submit new weights under a new immutable policy ID; follow the [policy submission guide](../policies/README.md) and regenerate validation and rating evidence. Do not overwrite an evaluated entry.
 
 The five-size experiment remains in Git tag `nn-policy-experiments-20261024`.
 Its metrics and curves remain in `docs/experiments/nn-policy-v1/`; non-selected
@@ -90,20 +85,11 @@ it is a separate policy submission.
 
 Open `http://localhost:59140/?policy=nn-256-v1` to play the scorer, or select it
 under **Settings → AI opponent → Arena AI**. Inference runs in a Web Worker.
-See [opponents and fallback behavior](../docs/DIFFICULTY.md) and
-`evaluate_difficulties.py` for the paired Easy / NN / SDK evaluation.
+See [opponents and fallback behavior](../docs/DIFFICULTY.md). The
+[complete benchmark](../docs/experiments/complete-baseline/README.md) compares
+both neural architectures, Easy, Random and the code policies on one seed cohort.
+The recipe-specific results below are retained for exact reproduction.
 
-Easy uses 64 candidates (`easy-v2`). The same 500 paired evaluation seeds yield
-361/1,000 wins against SDK Code AI and 441/1,000 against the 256/128 scorer. NN vs SDK Code AI
-remains 462/1,000. These seeds were also used to compare 48 and 64; they are not
-an untouched test of the budget selection. The archived 48-candidate results
-remain in `docs/experiments/difficulty-v1/evaluation-48.json`.
-
-```sh
-python training/evaluate_difficulties.py --output artifacts/difficulties-64.json
-python training/evaluate_difficulties.py --easy-budget 48 --output artifacts/difficulties-48.json
-python training/calibrate_easy.py --output artifacts/easy-calibration.json
-```
 The model is 0.55 MB; the separately cached, vendored WASM runtime is about 14 MB.
 
 After training stops, open `http://localhost:59140/training/profile.html` and click
