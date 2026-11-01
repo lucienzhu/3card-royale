@@ -35,19 +35,14 @@ function el(tag,cls,text){const node=document.createElement(tag);if(cls)node.cla
 function bit(value,index,label){const node=el('span','obs-bit'+(value?' is-set':''),String(value));node.dataset.index=index;node.title=`${label} · [${index}] = ${value}`;return node;}
 function heading(title,detail){const h=el('div','obs-heading');h.append(el('h3','',title),el('span','obs-code',detail));return h;}
 function legend(on,off){const p=el('p','obs-legend');p.append(el('span','obs-legend-on','1 · '+on),el('span','','0 · '+off));return p;}
-let sample,examples,exampleIndex=0,prefix=[],selected=[],maskStep=0,activeZone=null;
+let sample,examples,exampleIndex=0,maskStep=0,activeZone=null;
 const isPlay=()=>['attack','defend'].includes(sample.observation.phase);
 const cardName=id=>ranks[id%13]+suits[Math.floor(id/13)];
 const grammar=()=>A.build(sample.observation);
 function card(id,zone){
-  const interactive=zone===0||zone===1||zone===2;
-  const node=el(interactive?'button':'span','sc-card obs-playing-card');node.dataset.card=id;
+  const node=el('span','sc-card obs-playing-card');node.dataset.card=id;
   if(zone!==undefined)node.dataset.boardZone=zone;
-  if(interactive){
-    node.type='button';
-    if(zone<2){node.dataset.sourceZone=zone===0?'hand':'wounds';node.dataset.sourceIndex=sample.observation[node.dataset.sourceZone].indexOf(id);}
-    else node.dataset.rivalWound=sample.observation.enemy_wounds.indexOf(id);
-  }else node.setAttribute('role','img');
+  node.setAttribute('role','img');
   node.setAttribute('aria-label',cardName(id));
   const suit=Math.floor(id/13),rank=ranks[id%13];node.classList.toggle('red',suit===1||suit===3);
   if(id===13+sample.observation.flower_level-2)node.classList.add('wild');
@@ -71,24 +66,21 @@ function renderBoard(){
   const inspection=el('div','obs-board-inspection');inspection.setAttribute('role','status');inspection.setAttribute('aria-live','polite');aside.append(inspection);
   const levels=el('div','obs-board-levels');levels.append(flower(true),el('span','',t(`对手 ${ranks[o.levels[1-o.player]-2]}`,`Rival ${ranks[o.levels[1-o.player]-2]}`)),el('span','obs-level-line'),flower(),el('span','',t(`你 ${ranks[o.levels[o.player]-2]}`,`You ${ranks[o.levels[o.player]-2]}`)));aside.append(levels);
   const rival=el('div','obs-player-label');rival.append(flower(true),el('strong','',t('对手','Rival')),el('span','',t(`${o.enemy_wounds.length} 伤`,`${o.enemy_wounds.length} wounds`)));aside.append(rival);
-  const hidden=el('button','obs-hidden');hidden.type='button';hidden.dataset.target='blind';hidden.setAttribute('aria-label',t(`盲换对手 ${o.enemy_hand_count} 张暗牌`,`Swap with the rival’s ${o.enemy_hand_count} hidden cards`));
+  const hidden=el('div','obs-hidden');hidden.dataset.target='blind';hidden.setAttribute('aria-label',t(`对手 ${o.enemy_hand_count} 张暗牌`,`${o.enemy_hand_count} hidden rival cards`));
   for(let i=0;i<o.enemy_hand_count;i++)hidden.append(back());aside.append(hidden,boardZone(2,o.enemy_wounds));
   const center=el('div','obs-board-center');center.append(boardZone(5,o.active[1-o.player]?.cards||[]));
-  const deck=el('button','obs-deck');deck.type='button';deck.dataset.target='deck';deck.setAttribute('aria-label',t('换牌堆','Swap with deck'));deck.append(el('span','',t('牌堆','Deck')),back(),el('strong','',String(o.deck_count)));center.append(deck,boardZone(4,o.active[o.player]?.cards||[]));aside.append(center,boardZone(3,o.discard));
-  const status=el('div','obs-board-status');status.append(el('strong','',t(...phases[['attack','defend','refresh','resolved','game_over','match_over'].indexOf(o.phase)])),el('span','',o.pending?t(`还可换 ${o.pending.remaining} 次`,`${o.pending.remaining} chances left`):t('选 3 / 4 / 5 张','Choose 3 / 4 / 5')));aside.append(status);
+  const deck=el('div','obs-deck');deck.dataset.target='deck';deck.setAttribute('aria-label',t('牌堆','Deck'));deck.append(el('span','',t('牌堆','Deck')),back(),el('strong','',String(o.deck_count)));center.append(deck,boardZone(4,o.active[o.player]?.cards||[]));aside.append(center,boardZone(3,o.discard));
+  const status=el('div','obs-board-status');status.append(el('strong','',t(...phases[['attack','defend','refresh','resolved','game_over','match_over'].indexOf(o.phase)])),el('span','',o.pending?t(`还可换 ${o.pending.remaining} 次`,`${o.pending.remaining} chances left`):t('3 / 4 / 5 张出牌','Play 3 / 4 / 5 cards')));aside.append(status);
   const own=el('div','obs-player-label');own.append(flower(),el('strong','',t('你','You')),el('span','',t(`${o.wounds.length} 伤`,`${o.wounds.length} wounds`)),el('b','obs-wild-label',t('花牌 ','Wild ')+ranks[o.flower_level-2]+'♥'));aside.append(own,boardZone(1,o.wounds),boardZone(0,o.hand));
-  const key=el('p','obs-board-key');key.append(el('span','obs-source-key',isPlay()?t('已选','Selected'):t('来源','Source')));if(!isPlay())key.append(el('span','obs-target-key',t('目标','Target')));aside.append(key);
-  const hint=el('p','obs-board-hint',isPlay()?t('点牌选择 / 取消 · 仅预览','Tap to select / deselect · preview only'):t('选操作 → 来源 → 目标 · 仅预览','Operation → source → target · preview only'));aside.append(hint);
+  const key=el('p','obs-board-key');key.append(el('span','obs-source-key',isPlay()?t('示例出牌','Example play'):t('来源','Source')));if(!isPlay())key.append(el('span','obs-target-key',t('目标','Target')));aside.append(key);
   return aside;
 }
 const tokenNames=['PLAY_3','PLAY_4','PLAY_5','SWAP','SKIP','STOP','ADVANCE','NEXT_GAME','DECK','BLIND','OWN_HAND','OWN_WOUNDS','RIVAL_WOUNDS'];
 const tokenLabel=id=>id<52?cardName(id):tokenNames[id-52];
-function addToken(id){if(grammar().next(prefix).mask[id]){prefix.push(id);updateAction();}}
-function tokenButton(id,mask,interactive=true){
- const button=el(interactive?'button':'div','obs-token'+(mask[id]?' is-legal':''));
- if(interactive){button.type='button';button.dataset.token=id;button.disabled=!mask[id];}
- button.dataset.maskToken=id;button.setAttribute('aria-label',`${tokenLabel(id)} [${id}] = ${mask[id]}`);
- button.append(el('span','',tokenLabel(id)),el('b','',String(mask[id])),el('small','',`[${id}]`));return button;
+function tokenCell(id,mask){
+ const cell=el('div','obs-token'+(mask[id]?' is-legal':''));cell.dataset.maskToken=id;
+ cell.setAttribute('aria-label',`${tokenLabel(id)} [${id}] = ${mask[id]}`);
+ cell.append(el('span','',tokenLabel(id)),el('b','',String(mask[id])),el('small','',`[${id}]`));return cell;
 }
 function renderExamples(){
  const tabs=el('div','obs-example-tabs');tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label',t('示例局面','Example position'));
@@ -98,98 +90,66 @@ function renderExamples(){
   b.setAttribute('role','tab');b.setAttribute('aria-selected',String(i===exampleIndex));b.setAttribute('aria-controls','obs-example-panel');b.tabIndex=i===exampleIndex?0:-1;tabs.append(b);
  });return tabs;
 }
+function actionTitle(){
+ const a=sample.action;
+ return a.type==='play'?a.cards.map(cardName).join(' · '):`${cardName(a.source)} ⇄ ${cardName(a.target.card)}`;
+}
 function renderActions(){
- const section=el('section','obs-actions');section.append(heading(t('动作空间','Action space'),'actions-v2'));
- if(isPlay()){
-  const result=el('div','obs-selection-result');result.setAttribute('role','status');result.setAttribute('aria-live','polite');section.append(result);
- }else section.append(el('p','obs-note',t('选操作 → 来源 → 目标','Operation → source → target')));
- const controls=el('div','obs-prefix-controls');for(const [id,zh,en] of [['undo','撤回一步','Undo'],['reset','重选','Reset']]){const b=el('button','',t(zh,en));b.type='button';b.dataset.prefixControl=id;controls.append(b);}section.append(controls);
- section.append(el('div','obs-representation'));
- const maskPanel=el(isPlay()?'details':'div',isPlay()?'obs-mask-details':'obs-mask-builder');
- if(isPlay()){
-  maskPanel.append(el('summary','',t('逐步 mask · 65','Step-by-step mask · 65')));
-  const label=el('label','obs-mask-label',t('检查哪一步','Inspect step'));
-  const select=el('select','sz-select-control');select.id='obs-mask-step';label.htmlFor=select.id;maskPanel.append(label,select);
- }
- const trail=el('div','obs-prefix');maskPanel.append(trail,el('p','obs-step-help'),el('div','obs-token-groups'));
- maskPanel.append(el('p','obs-note',t('1 = 此前缀下可选；0 = 不可选。牌 ID 固定，不是候选序号。','1 = allowed after this prefix; 0 = unavailable. Card IDs are fixed, not candidate indices.')));
+ const section=el('section','obs-actions');section.setAttribute('aria-labelledby','obs-action-title');
+ const h=heading(t('动作空间','Action Space'),'actions-v2');h.querySelector('h3').id='obs-action-title';section.append(h);
+ const layout=el('div','obs-action-layout'),example=el('div','obs-action-example');
+ example.append(el('p','obs-example-label',t('示例动作 · 合法','Example action · valid')));
+ const row=el('div','obs-card-row');
+ if(isPlay())sample.action.cards.forEach(id=>row.append(card(id)));
+ else row.append(card(sample.action.source),el('span','obs-swap-arrow','⇄'),card(sample.action.target.card));
+ example.append(row,el('p','obs-note',t(...sample.actionLabel)));
+ layout.append(example,el('div','obs-representation'));section.append(layout);
+ const maskPanel=el('details','obs-mask-details');
+ maskPanel.append(el('summary','',t('逐步 mask · 65','Step-by-step mask · 65')));
+ const label=el('label','obs-mask-label',t('检查哪一步','Inspect step'));
+ const select=el('select','sz-select-control');select.id='obs-mask-step';label.htmlFor=select.id;maskPanel.append(label,select);
+ maskPanel.append(el('div','obs-prefix'),el('p','obs-step-help'),el('div','obs-token-groups'));
+ maskPanel.append(el('p','obs-note',t('1 = 可选；0 = 不可选。牌 ID 固定。','1 = allowed; 0 = unavailable. Card IDs stay fixed.')));
  section.append(maskPanel);return section;
 }
-function selection(){
- const cards=[...selected].sort((a,b)=>a-b),g=grammar();
- const action=cards.length>=3?{type:'play',cards}:null,sequence=action?A.tokens(action):[];
- let valid=false;
- if(action){try{g.validate(action);valid=true;}catch{/* A complete attempted hand can be illegal. */}}
- const extensions=g.rows.filter(r=>r.action.type==='play'&&r.action.cards.length>cards.length&&cards.every(c=>r.action.cards.includes(c)));
- return {cards,action,sequence,valid,extensions};
-}
-function toggleCard(id){
- const own=[...sample.observation.hand,...sample.observation.wounds];if(!own.includes(id))return;
- if(selected.includes(id))selected=selected.filter(c=>c!==id);else if(selected.length<5)selected.push(id);else return;
- const {sequence}=selection(),g=grammar();maskStep=Math.max(0,sequence.length-1);
- // Default to the first rejected token, or the final selected card for a legal hand.
- for(let i=0;i<sequence.length;i++)if(!g.next(sequence.slice(0,i)).mask[sequence[i]]){maskStep=i;break;}
- updateAction();
-}
-function representation(sequence,action,valid){
+function representation(sequence,action){
  const box=host.querySelector('.obs-representation');box.replaceChildren();
- if(!action)return;
- box.append(el('h4','',valid?t('动作编码','Action encoding'):t('尝试编码 · 不可提交','Attempted encoding · invalid')));
+ box.append(el('h4','',t('动作编码','Action encoding')));
  const padded=[...sequence,...Array(A.LENGTH-sequence.length).fill(A.PAD)],row=el('div','obs-encoded-tokens');
  padded.forEach((id,i)=>{
   const cell=el('div','obs-encoded-token'+(id===A.PAD?' is-pad':''));cell.dataset.position=i;
   cell.append(el('small','',id===A.PAD?'PAD':tokenLabel(id)),el('b','',String(id)));row.append(cell);
  });box.append(row,el('code','obs-action-vector',JSON.stringify(padded)));
- box.append(el('p','obs-note',t('出牌按 ID 升序 · 65 = 补位','Plays sorted by card ID · 65 = padding')));
+ box.append(el('p','obs-note',isPlay()?t('出牌按 ID 升序 · 65 = 补位','Plays sorted by card ID · 65 = padding'):t('操作 → 来源 → 目标区 → 目标牌 · 65 = 补位','Operation → source → destination → target card · 65 = padding')));
  const json=JSON.stringify(action,null,2).replace(/\[\s+([\d,\s]+)\s+\]/g,(_,values)=>'['+values.trim().split(/,\s*/).join(', ')+']');
  box.append(el('pre','obs-semantic',json));
 }
-function drawMask(mask,interactive){
+function drawMask(mask){
  const groups=host.querySelector('.obs-token-groups');groups.replaceChildren();if(!mask)return;
  for(const [title,first,last] of [[t('操作','Operation'),52,59],[t('实体牌 · 固定 ID','Physical cards · fixed IDs'),0,51],[t('换牌目标','Swap destination'),60,64]]){
   const group=el('div','obs-token-group');group.append(el('h4','',title));const grid=el('div','obs-token-grid'+(first===0?' obs-card-tokens':''));
-  for(let id=first;id<=last;id++)grid.append(tokenButton(id,mask,interactive));group.append(grid);groups.append(group);
+  for(let id=first;id<=last;id++)grid.append(tokenCell(id,mask));group.append(grid);groups.append(group);
  }
 }
 function updateAction(){
- const section=host.querySelector('.obs-actions'),g=grammar();let sourceCards=[],targetCard,available=[],mask;
- if(isPlay()){
-  const {cards,action,sequence,valid,extensions}=selection();sourceCards=cards;available=[...new Set(extensions.flatMap(r=>r.action.cards))];
-  const status=section.querySelector('.obs-selection-result');status.dataset.validity=action?(valid?'valid':'invalid'):'incomplete';
-  const title=action?(valid?t(`合法 · ${cards.length} 张`,`Valid · ${cards.length} cards`):t(`不合法 · ${cards.length} 张`,`Invalid · ${cards.length} cards`)):t(`已选 ${cards.length} 张`,`Selected ${cards.length} cards`);
-  const reason=!action?(cards.length?t(`再选 ${3-cards.length} 张可组成一手。`,`Pick ${3-cards.length} more for a complete hand.`):t('点手牌或伤牌，选 3 / 4 / 5 张。','Pick 3, 4 or 5 hand or wound cards.')):valid?t('可提交 · 此处仅预览','Ready to submit · preview only'):t('4 / 5 张须成同点炸弹，可用花牌。','4 / 5 cards need a same-rank bomb; wilds allowed.');
-  status.replaceChildren(el('strong','',title),el('p','',reason));
-  if(action&&valid&&extensions.length)status.querySelector('p').textContent=t('可再选牌，试四炸 / 五炸。','Add cards to try a four- or five-card bomb.');
-  representation(sequence,action,valid);
-  const select=section.querySelector('#obs-mask-step');select.replaceChildren();
-  const steps=sequence.length+(valid?1:0)||1;
-  for(let i=0;i<steps;i++){const opt=el('option','',i===sequence.length&&valid?t('完成后 · 无下一 token','After completion · no next token'):sequence.length?t(`${i+1}. 选择 ${tokenLabel(sequence[i])} [${sequence[i]}]`,`Step ${i+1}: select ${tokenLabel(sequence[i])} [${sequence[i]}]`):t('起点 · 选择操作','Start · choose operation'));opt.value=i;select.append(opt);}
-  maskStep=Math.min(maskStep,steps-1);select.value=maskStep;
-  const inspected=sequence.slice(0,maskStep);let complete=false;
-  try{({mask,complete}=g.next(inspected));}catch{/* No conditional distribution exists after an illegal prefix. */}
-  section.querySelector('.obs-prefix').textContent=inspected.length?inspected.map(id=>`${tokenLabel(id)} [${id}]`).join(' → '):t('前缀：空','Prefix: empty');
-  section.querySelector('.obs-step-help').textContent=!mask?t('此前缀已被拒绝。回看更早的一步，找到 mask = 0 的 token。','This prefix was rejected. Inspect an earlier step to find the token whose mask is 0.'):complete?t('动作完整；下一 token 的 65 位 mask 全为 0。','Move complete: all 65 next-token mask values are 0.'):sequence.length?`action_mask[${sequence[maskStep]}] = ${mask[sequence[maskStep]]} · `+(mask[sequence[maskStep]]?t('此步可选','allowed at this step'):t('此步被拒绝','rejected at this step')):t('选满 3 / 4 / 5 张后，可逐步查看对应 mask。','Select 3, 4 or 5 cards to inspect each step’s mask.');
-  drawMask(mask,false);
-  host.querySelector('.obs-board-inspection').textContent=title+(cards.length?' · '+cards.map(cardName).join(' '):'');
-  section.querySelectorAll('[data-prefix-control]').forEach(b=>b.disabled=!selected.length);
- }else{
-  const next=g.next(prefix);mask=next.mask;const {complete}=next;
-  const trail=prefix.length?prefix.map(id=>`${tokenLabel(id)} [${id}]`).join(' → '):t('从操作开始','Start with an operation');
-  section.querySelector('.obs-prefix').textContent=trail;
-  section.querySelectorAll('[data-prefix-control]').forEach(b=>b.disabled=!prefix.length);
-  section.querySelector('.obs-step-help').textContent=complete?t('动作完整；下一 token 的 mask 全为 0。','Move complete; the next-token mask is all zeros.'):t(`下一步：${mask.reduce((a,b)=>a+b,0)} 个可选 token`,`Next: ${mask.reduce((a,b)=>a+b,0)} allowed tokens`);
-  drawMask(mask,true);representation(prefix,complete?g.resolve(prefix).action:null,complete);
-  host.querySelector('.obs-board-inspection').textContent=trail;
-  const swapping=prefix[0]===A.T.SWAP;targetCard=swapping?prefix[3]:undefined;sourceCards=swapping?prefix.slice(1,2):[];
+ const section=host.querySelector('.obs-actions'),g=grammar(),action=sample.action,sequence=A.tokens(action);
+ g.validate(action);
+ representation(sequence,action);
+ const select=section.querySelector('#obs-mask-step');select.replaceChildren();
+ for(let i=0;i<=sequence.length;i++){
+  const opt=el('option','',i===sequence.length?t('完成后 · 无下一 token','After completion · no next token'):t(`${i+1}. ${tokenLabel(sequence[i])} [${sequence[i]}]`,`Step ${i+1}: ${tokenLabel(sequence[i])} [${sequence[i]}]`));opt.value=i;select.append(opt);
  }
- host.querySelectorAll('button[data-card]').forEach(n=>{
-  const id=Number(n.dataset.card),own=Number(n.dataset.boardZone)<2;
-  n.disabled=isPlay()?(!own||(!selected.includes(id)&&selected.length>=5)):!mask[id];
-  n.classList.toggle('is-source',sourceCards.includes(id));n.classList.toggle('is-target',id===targetCard);
-  n.classList.toggle('is-available',isPlay()?own&&!selected.includes(id)&&available.includes(id):!!mask[id]);
-  n.setAttribute('aria-pressed',String(sourceCards.includes(id)||id===targetCard));
+ select.value=maskStep;
+ const inspected=sequence.slice(0,maskStep),{mask,complete}=g.next(inspected);
+ section.querySelector('.obs-prefix').textContent=inspected.length?inspected.map(id=>`${tokenLabel(id)} [${id}]`).join(' → '):t('前缀：空','Prefix: empty');
+ section.querySelector('.obs-step-help').textContent=complete?t('动作完整；下一 token 的 mask 全为 0。','Move complete: the next-token mask is all zeros.'):`action_mask[${sequence[maskStep]}] = ${mask[sequence[maskStep]]}`;
+ drawMask(mask);
+ host.querySelector('.obs-board-inspection').textContent=t('示例：','Example: ')+actionTitle();
+ const sourceCards=isPlay()?action.cards:[action.source],targetCard=action.target?.card;
+ host.querySelectorAll('.obs-board [data-card]').forEach(n=>{
+  n.classList.toggle('is-source',sourceCards.includes(Number(n.dataset.card)));
+  n.classList.toggle('is-target',Number(n.dataset.card)===targetCard);
  });
- host.querySelectorAll('button[data-target]').forEach(n=>{const id=n.dataset.target==='deck'?60:61;n.disabled=isPlay()||!mask[id];n.classList.toggle('is-available',!isPlay()&&!!mask[id]);n.classList.toggle('is-target',!isPlay()&&prefix.includes(id));});
  host.querySelectorAll('.obs-bit').forEach(n=>{const index=Number(n.dataset.index),present=index<312&&sample.state[index]===1;n.classList.toggle('is-source',present&&sourceCards.includes(index%52));n.classList.toggle('is-target',present&&index%52===targetCard);});
 }
 function updateZone(){host.querySelectorAll('[data-board-zone],.obs-zone[data-zone]').forEach(n=>n.classList.toggle('is-zone-linked',activeZone!==null&&Number(n.dataset.boardZone??n.dataset.zone)===activeZone));host.querySelectorAll('[data-zone-link]').forEach(n=>n.setAttribute('aria-pressed',String(Number(n.dataset.zoneLink)===activeZone)));}
@@ -203,12 +163,14 @@ function cardGrid(values,offset,label){
 function paint(){
   if(!sample||!host)return;
   const openDetails=[...host.querySelectorAll('details[open]')].map(n=>n.className);
+  const observation=el('section','obs-observation');observation.setAttribute('aria-labelledby','obs-observation-title');
+  const h=heading(t('观察空间','Observation Space'),'336 · state');h.querySelector('h3').id='obs-observation-title';observation.append(h);
   const view=el('div','obs-view');
   const top=el('div','obs-intro');
   top.append(el('h3','obs-total','336'),el('div','',t('当前可见状态','Current visible state')),
     el('code','','6 × 52 + 6 + 18'));
   const note=el('p','obs-note',t(...sample.name));
-  view.append(top,note,renderActions(),heading(t('六个牌区','Six card zones'),'312 · multi-hot'));
+  view.append(top,note,heading(t('六个牌区','Six card zones'),'312 · multi-hot'));
   const cards=el('div','obs-zones');
   zones.forEach((names,zone)=>{
     const group=el('section','obs-zone');group.dataset.zone=zone;
@@ -241,20 +203,18 @@ function paint(){
   });table.append(body);details.append(table);view.append(details);
   view.append(el('p','obs-note',t('不含对手暗牌、牌堆顺序或历史序列。','No rival hand, deck order or history sequence.')));
 
-  const layout=el('div','obs-layout');layout.id='obs-example-panel';layout.setAttribute('role','tabpanel');layout.setAttribute('aria-labelledby',`obs-tab-${exampleIndex}`);layout.append(renderBoard(),view);host.replaceChildren(renderExamples(),layout);openDetails.forEach(cls=>{const node=host.querySelector('details.'+cls);if(node)node.open=true;});updateAction();updateZone();
+  const layout=el('div','obs-layout');layout.append(renderBoard(),view);observation.append(layout);
+  const panel=el('div','obs-example-panel');panel.id='obs-example-panel';panel.setAttribute('role','tabpanel');panel.setAttribute('aria-labelledby',`obs-tab-${exampleIndex}`);panel.append(observation,renderActions());
+  host.replaceChildren(renderExamples(),panel);openDetails.forEach(cls=>{const node=host.querySelector('details.'+cls);if(node)node.open=true;});updateAction();updateZone();
 
 }
 function useExample(i){
- exampleIndex=i;prefix=[];selected=[];maskStep=0;activeZone=null;sample=examples[i];const o=sample.observation;sample.state=Array.from(A.state(o));
+ exampleIndex=i;activeZone=null;sample=examples[i];maskStep=A.tokens(sample.action).length-1;const o=sample.observation;sample.state=Array.from(A.state(o));
  sample.rawMeta=[...o.levels,o.flower_level,o.wounds.length,o.enemy_wounds.length,o.enemy_hand_count,o.deck_count,o.discard.length,...o.a_losses,+(o.first===o.player),+(o.attacker===o.player),o.battle_index,o.pending?.remaining||0,+(o.actor===o.player),o.round,o.game,0];paint();
 }
 if(host){
  host.addEventListener('click',event=>{
-  const token=event.target.closest('[data-token]'),control=event.target.closest('[data-prefix-control]'),card=event.target.closest('button[data-card]'),target=event.target.closest('button[data-target]'),zone=event.target.closest('[data-zone-link]');
-  if(token)addToken(Number(token.dataset.token));
-  if(card){if(isPlay())toggleCard(Number(card.dataset.card));else addToken(Number(card.dataset.card));}
-  if(target)addToken(target.dataset.target==='deck'?60:61);
-  if(control){if(isPlay()){if(control.dataset.prefixControl==='undo')selected.pop();else selected=[];maskStep=0;}else if(control.dataset.prefixControl==='undo')prefix.pop();else prefix=[];updateAction();}
+  const zone=event.target.closest('[data-zone-link]');
   const tab=event.target.closest('[data-example]');if(tab){useExample(Number(tab.dataset.example));host.querySelector(`#obs-tab-${exampleIndex}`).focus({preventScroll:true});}
   if(zone){const next=Number(zone.dataset.zoneLink);activeZone=activeZone===next?null:next;updateZone();}
  });

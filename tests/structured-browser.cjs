@@ -23,65 +23,49 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
    await page.waitForSelector('.obs-example-tab');
    assert.equal(await page.locator('.obs-example-tab').count(),3);
    const choose=async i=>page.locator(`[data-example="${i}"]`).click();
-   const pick=async ids=>{for(const id of ids)await page.locator(`.obs-board button[data-card="${id}"]`).click();};
-   const reset=()=>page.locator('[data-prefix-control="reset"]').click();
    const action=async()=>JSON.parse(await page.locator('.obs-semantic').textContent());
    const values=()=>page.locator('.obs-zones .obs-bit,.obs-phases .obs-bit').evaluateAll(ns=>ns.map(n=>Number(n.textContent)));
    const fixtures=require('../arena/structured-examples.json'),A=require('../sdk/actions.js');
    for(let i=0;i<3;i++){
     await choose(i);
+    const fixture=fixtures[i],sequence=A.tokens(fixture.action),g=A.build(fixture.observation);
+    g.validate(fixture.action);
     assert.equal(await page.locator(`[data-example="${i}"]`).getAttribute('aria-selected'),'true');
-    assert.deepEqual(await values(),Array.from(A.state(fixtures[i].observation)).slice(0,318));
+    assert.deepEqual(await values(),Array.from(A.state(fixture.observation)).slice(0,318));
+    assert.deepEqual(await action(),fixture.action,'preset action is immediately visible');
+    assert.deepEqual(JSON.parse(await page.locator('.obs-action-vector').textContent()),[...sequence,...Array(A.LENGTH-sequence.length).fill(A.PAD)]);
+    assert.equal(await page.locator('.obs-board button[data-card],[data-prefix-control],[data-token]').count(),0,'examples do not require action building');
     for(const [zone,key] of [[0,'hand'],[1,'wounds'],[2,'enemy_wounds'],[3,'discard']]){
-     assert.deepEqual(await page.locator(`.obs-board .obs-playing-card[data-board-zone="${zone}"]`).evaluateAll(ns=>ns.map(n=>Number(n.dataset.card))),fixtures[i].observation[key]);
+     assert.deepEqual(await page.locator(`.obs-board .obs-playing-card[data-board-zone="${zone}"]`).evaluateAll(ns=>ns.map(n=>Number(n.dataset.card))),fixture.observation[key]);
     }
-   }
-   await choose(0);const initial=await values();
-   await pick([31,5]);assert.equal(await page.locator('.obs-selection-result').getAttribute('data-validity'),'incomplete');
-   await pick([18]);assert.equal(await page.locator('.obs-selection-result').getAttribute('data-validity'),'valid');
-   assert.deepEqual(await action(),{type:'play',cards:[5,18,31]});
-   assert.equal(await page.locator('.obs-action-vector').textContent(),'[52,5,18,31,65,65]');
-   await pick([44]);assert.deepEqual(await action(),{type:'play',cards:[5,18,31,44]});
-   assert.equal(await page.locator('.obs-selection-result').getAttribute('data-validity'),'valid');
-   await pick([13]);assert.deepEqual(await action(),{type:'play',cards:[5,13,18,31,44]});
-   assert.equal(await page.locator('.obs-selection-result').getAttribute('data-validity'),'valid');
-   assert.equal(await page.locator('.obs-action-vector').textContent(),'[54,5,13,18,31,44]');
-   assert.equal(await page.locator('.obs-board button[data-card="1"]').isDisabled(),true,'max 5 cards');
-   await page.locator('.obs-mask-details>summary').click();
-   await page.selectOption('#obs-mask-step','5');
-   assert.equal(await page.locator('[data-mask-token="44"] b').textContent(),'1');
-   await page.selectOption('#obs-mask-step','6');
-   assert.equal(await page.locator('.obs-token.is-legal').count(),0,'completed action has no next token');
-   await reset();await pick([1,5,9,11]);
-   assert.equal(await page.locator('.obs-selection-result').getAttribute('data-validity'),'invalid');
-   assert.deepEqual(await action(),{type:'play',cards:[1,5,9,11]});
-   assert.equal(await page.locator('.obs-action-vector').textContent(),'[53,1,5,9,11,65]');
-   assert.equal(await page.locator('[data-mask-token="1"] b').textContent(),'0','invalid hand rejected at first card');
-   await pick([13]);assert.equal(await page.locator('.obs-selection-result').getAttribute('data-validity'),'invalid');
-   await reset();await pick([31,18,5]);
-   assert.equal(await page.locator('.obs-action-vector').textContent(),'[52,5,18,31,65,65]','permutations have one encoding');
-   await page.locator('[data-prefix-control="undo"]').click();
-   assert.equal(await page.locator('.obs-selection-result').getAttribute('data-validity'),'incomplete');
-   assert.deepEqual(await values(),initial,'preview never changes observation');
-   await choose(1);await pick(fixtures[1].observation.hand.slice(0,3));
-   assert.equal(await page.locator('.obs-selection-result').getAttribute('data-validity'),'valid');
-   await pick(fixtures[1].observation.hand.slice(3,4));
-   assert.equal(await page.locator('.obs-selection-result').getAttribute('data-validity'),'invalid');
-   for(const op of [55,56,57]){
-    await choose(2);await page.locator(`[data-token="${op}"]`).click();
-    let steps=0;
-    while((await page.locator('.obs-token.is-legal').count())>0){
-     assert(++steps<=6);const choice=page.locator('.obs-token.is-legal').first(),id=Number(await choice.getAttribute('data-token'));
-     const card=page.locator(`.obs-board button[data-card="${id}"]:enabled`).first();
-     if(id<52&&await card.count())await card.click();else await choice.click();
+    assert.deepEqual((await page.locator('.obs-board .is-source[data-card]').evaluateAll(ns=>ns.map(n=>Number(n.dataset.card)))).sort((a,b)=>a-b),fixture.action.cards||[fixture.action.source]);
+    assert.deepEqual(await page.locator('.obs-board .is-target[data-card]').evaluateAll(ns=>ns.map(n=>Number(n.dataset.card))),fixture.action.target?[fixture.action.target.card]:[]);
+    const layout=await page.evaluate(()=>{
+     const rect=s=>document.querySelector(s).getBoundingClientRect();
+     return {observationBottom:rect('.obs-observation').bottom,actionTop:rect('.obs-actions').top,
+      tabs:rect('.obs-example-tabs').width,container:rect('#arena-observation').width,
+      widths:[...document.querySelectorAll('.obs-example-tab')].map(n=>n.getBoundingClientRect().width)};
+    });
+    assert(layout.actionTop>=layout.observationBottom,'Action Space follows the entire Observation Space');
+    assert(Math.abs(layout.tabs-layout.container)<1,'tabs span full width');
+    assert(Math.max(...layout.widths)-Math.min(...layout.widths)<1,'tabs are equal width');
+    await page.locator('.obs-meta>summary').click();
+    const encoded=await page.locator('.obs-encoded').evaluateAll(ns=>ns.map(n=>Number(n.firstChild.textContent)));
+    assert.deepEqual(encoded,Array.from(A.state(fixture.observation)).slice(318).map(n=>Number(n.toFixed(6))));
+    await page.locator('.obs-meta>summary').click();
+    if(!await page.locator('.obs-mask-details').evaluate(n=>n.open))await page.locator('.obs-mask-details>summary').click();
+    for(let step=0;step<=sequence.length;step++){
+     await page.selectOption('#obs-mask-step',String(step));
+     const displayed=await page.locator('[data-mask-token]').evaluateAll(ns=>Object.fromEntries(ns.map(n=>[n.dataset.maskToken,Number(n.querySelector('b').textContent)])));
+     const expected=Array.from(g.next(sequence.slice(0,step)).mask);
+     assert.deepEqual(Array.from({length:A.VOCAB},(_,id)=>displayed[id]),expected);
+     assert.deepEqual(await action(),fixture.action,'mask inspection does not alter the example');
     }
-    assert(['swap','skip_swap','stop_swaps'].includes((await action()).type));
-    await page.locator('[data-prefix-control="undo"]').click();assert(await page.locator('.obs-token.is-legal').count()>0);
+    await page.locator('.obs-mask-details>summary').click();
+    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),`overflow ${lang} ${width} example ${i}`);
    }
    await page.locator('[data-example="2"]').focus();await page.keyboard.press('ArrowRight');
    assert.equal(await page.locator('[data-example="0"]').getAttribute('aria-selected'),'true');
-   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),`overflow ${lang} ${width}`);
-   await pick([31,18,5]);
    await page.locator('.obs-actions').scrollIntoViewIfNeeded();
    await page.screenshot({path:`/private/tmp/structured-${lang}-${width}.png`});
   }
@@ -132,7 +116,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
    const p95=a=>a.sort((x,y)=>x-y)[Math.floor(a.length*.95)];
    return {browser:navigator.userAgent,model:ready.version,games:8,decisions,nnDecisions:latency.length,workerRoundTripP95Ms:p95(latency),inferenceP95Ms:p95(inference),arenaPlugin:true,scoringParity};
   });
-  assert.deepEqual(errors,[]);report.ui={languages:['zh-CN','en'],widths:[390,1440],examples:3,playLengths:[3,4,5]};
+  assert.deepEqual(errors,[]);report.ui={languages:['zh-CN','en'],widths:[390,1440],examples:3,presetActions:true,stackedSpaces:true};
   fs.writeFileSync(process.env.REPORT_PATH||'/private/tmp/structured-browser.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
