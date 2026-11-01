@@ -57,24 +57,16 @@ assert(html.includes(current.parameters.toLocaleString('en-US')));
 assert(html.includes((current.bytes/1e6).toFixed(2)+' MB'));
 assert(html.includes('Epoch '+current.best_epoch));
 
-const matchup=(id,opponent)=>comparison.matches.find(m=>m.policies.some(p=>p.id===id)&&m.policies.some(p=>p.id===opponent));
-const matchupRows=[...html.matchAll(/<tr data-matchup="([^"]+)">([\s\S]*?)<\/tr>/g)];
-assert.equal(matchupRows.length,comparison.policies.length-2);
-for(const [_,opponent,row] of matchupRows){
- const cells=[...row.matchAll(/<td>([\s\S]*?)<\/td>/g)];assert.equal(cells.length,2);
- for(const [i,id] of comparison.focalPolicies.entries()){
-  const m=matchup(id,opponent),r=m.policies.find(p=>p.id===id),cell=cells[i][1];
-  assert(cell.includes((100*r.winRate).toFixed(1)+'%'),id+'/'+opponent+' matched rate');
-  assert(cell.includes(`${r.wins.toLocaleString('en-US')} / ${r.games.toLocaleString('en-US')}`),id+'/'+opponent+' matched count');
-  assert(cell.includes('docs/experiments/neural-baselines/'+m.file),id+'/'+opponent+' source');
- }
-}
-const mutual=matchup('nn-structured-v2','nn-256-v1').policies.find(p=>p.id==='nn-structured-v2');
-for(const text of copy.benchmarkHeadToHead)assert(text.includes(`${(100*mutual.winRate).toFixed(1)}% · ${mutual.wins} / 1,000`));
-assert(copy.matchupsCount.every(t=>t.includes(comparison.totalGames.toLocaleString('en-US'))));
+const evaluation=html.match(/<section[^>]*id="structured-results">([\s\S]*?)<\/section>/)[1];
+assert.equal((evaluation.match(/<table\b/g)||[]).length,1,'One public evaluation table');
+assert(!html.includes('rl-matchup')&&!html.includes('data-matchup'));
+const methods=evaluation.match(/<details([^>]*id="benchmark-method"[^>]*)>([\s\S]*?)<\/details>/);
+assert(methods&&!/\bopen\b/.test(methods[1]),'Methods are collapsed by default');
+assert(methods[2].includes('docs/experiments/neural-baselines/README.md'),'Additional opponents remain linked in methods');
+assert(copy.matchupsData.every(t=>t.includes(comparison.totalGames.toLocaleString('en-US'))));
 for(const m of html.matchAll(/data-sc="([^"]+)"/g)){
  if(['skip','name','tag','learn','identity','play','menu'].includes(m[1]))continue;
  assert(copy[m[1]]?.length===2,'Missing translation: '+m[1]);
 }
 assert(copy['rl-method'][0].includes('模仿学习')&&copy['rl-method'][1].toLowerCase().includes('imitation learning'));
-console.log('RL page: all 19 measured cells, 10 latencies, artifacts, matched opponents and bilingual copy agree with retained reports.');
+console.log('RL page: all 19 measured cells, 10 latencies, artifacts and bilingual copy agree with retained reports; one evaluation table, additional reports in methods.');
