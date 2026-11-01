@@ -1,0 +1,14 @@
+{
+  "width": 64,
+  "params": 28289,
+  "bytes": 114638,
+  "best_epoch": 10,
+  "val_loss": 0.3709219088153036,
+  "test": {
+    "loss": 0.3461874281897852,
+    "accuracy": 0.8887976860537836,
+    "accuracy_attack": 0.9765617038622236,
+    "accuracy_defend": 0.7678589626006318,
+    "accuracy_swap": 0.9434373950990265
+  }
+}

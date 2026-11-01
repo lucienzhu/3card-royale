@@ -1,0 +1,831 @@
+{
+  "schema": 1,
+  "createdAt": "2026-11-01T14:46:23.433Z",
+  "protocol": {
+    "rules": "1.0.0",
+    "episode": "game",
+    "gamesPerPair": 1000,
+    "seedStart": 91000000,
+    "seedCount": 500,
+    "pairedSeats": true,
+    "balancedFirst": true,
+    "levels": [
+      2,
+      2
+    ],
+    "maxDecisions": 4096,
+    "decisionTimeoutMs": 1000
+  },
+  "runtime": {
+    "node": "v22.14.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1",
+    "backend": "ONNX Runtime Web / single-thread WASM"
+  },
+  "sourceSha256": {
+    "gamecore.js": "beb6ec6666d58424b80e6e7d7cfc2f6801a7d0a77c34791df745612494392981",
+    "sdk/index.js": "e9f2b4e1d9de59d0786dca5ac4b47580d3c6456f812c4f532b6af33f438de717",
+    "sdk/features.js": "043b0a66e0e0dbe877760ffa51515d5b1178e0e53e479d5d49028762e4479562",
+    "sdk/actions.js": "a9c96be6fb0c4d6f1f657e1948415c56a277cc5138a444d2da8690a6b72a3d7e",
+    "sdk/scoring.js": "b772ab371c60f353829dbf7d9aef8a37ba9eac2de98baf2ddf4a5c4fc55e1d52",
+    "sdk/policy.js": "18d660f922a46cf66c238794c65bcca7373d3bbfbf53748ade6ab107e85bbe3e",
+    "sdk/easy-policy.js": "1af6b4fb4aa6003f513419821bc16bf45a09169433037eee55cce0dd44af7ae2",
+    "sdk/godlike-policy.js": "047f0f33bc45e85d1e79623732342abee16e65ad43e2e77989c40d6efb9e60db",
+    "policies/contract.mjs": "c67c3ff03f4d0acaf088460b9dd9ae93865fbdbdf372c4a0b9788534f6b3b614",
+    "policies/runtime.mjs": "08feab2634d92ec544a12620e2a4884ea0275d189f90ca555819a0b16e2a90d7",
+    "policies/client.mjs": "44d6b09ef10b9c3c56d09719ac2b8b4aba8b54ebb615f1cb445e2e48bd4913b1",
+    "policies/dependencies.mjs": "cc0c0187a6cc0db3cd705f802f2378e32550895817c66a58513298ca1675fad6",
+    "policies/catalog.mjs": "ce4f3a24ef9d1f939adc435e48c6c37f06e6a817f66011dd2c9facb4ec01806f",
+    "training/benchmark-worker.mjs": "a104b0f071f8d60ae6e69ce817c0eafb35272d3795d69f4d6d8182022345daca",
+    "training/evaluate-benchmark.mjs": "2b002691cea045fc672b8e6c005373cc3beb022c583c8350e75f5fe6b4ccd8b6"
+  },
+  "policies": [
+    {
+      "manifestPath": "policies/entries/random-v1/manifest.json",
+      "manifest": {
+        "api": "royale-policy-v1",
+        "id": "random-v1",
+        "name": "Random",
+        "author": "3Card Royale",
+        "license": "MIT",
+        "type": "javascript",
+        "rules": "1.0.0",
+        "episode": "game",
+        "information": "public",
+        "memory": "none",
+        "artifact": {
+          "file": "policy.mjs",
+          "bytes": 131,
+          "sha256": "f5ffd15a37eef8ab1d24c86844c6b35afada12ab9074e421656b6a9189f62d0c"
+        }
+      }
+    },
+    {
+      "manifestPath": "policies/entries/sdk-code-v1/manifest.json",
+      "manifest": {
+        "api": "royale-policy-v1",
+        "id": "sdk-code-v1",
+        "name": "SDK Code AI",
+        "author": "3Card Royale",
+        "license": "MIT",
+        "type": "javascript",
+        "rules": "1.0.0",
+        "episode": "game",
+        "information": "public",
+        "memory": "none",
+        "artifact": {
+          "file": "policy.mjs",
+          "bytes": 199,
+          "sha256": "1af7c73dcaf625eefbfdeec7e1a85c25ac6a8395d123eb5accff42051bca3f4b"
+        }
+      }
+    },
+    {
+      "manifestPath": "policies/entries/easy-v2/manifest.json",
+      "manifest": {
+        "api": "royale-policy-v1",
+        "id": "easy-v2",
+        "name": "Easy · 64",
+        "author": "3Card Royale",
+        "license": "MIT",
+        "type": "javascript",
+        "rules": "1.0.0",
+        "episode": "game",
+        "information": "public",
+        "memory": "none",
+        "artifact": {
+          "file": "policy.mjs",
+          "bytes": 199,
+          "sha256": "e7d082e63ebd817e5e0c9b078c073b492e453af4e19b49b518fa2744c16d78e7"
+        }
+      }
+    },
+    {
+      "manifestPath": "policies/entries/code-table-v1/manifest.json",
+      "manifest": {
+        "api": "royale-policy-v1",
+        "id": "code-table-v1",
+        "name": "Code AI",
+        "author": "3Card Royale",
+        "license": "MIT",
+        "type": "javascript",
+        "rules": "1.0.0",
+        "episode": "game",
+        "information": "public",
+        "memory": "none",
+        "artifact": {
+          "file": "policy.mjs",
+          "bytes": 1533,
+          "sha256": "fe07b4669f18a59fa4cc28fe9c7fa4c4814c67fd0608262582a45a3085b81ff6"
+        }
+      }
+    },
+    {
+      "manifestPath": "policies/entries/nn-256-v1/manifest.json",
+      "manifest": {
+        "api": "royale-policy-v1",
+        "id": "nn-256-v1",
+        "name": "NN · 256 → 128",
+        "author": "3Card Royale",
+        "license": "MIT",
+        "type": "onnx",
+        "rules": "1.0.0",
+        "episode": "game",
+        "information": "public",
+        "memory": "none",
+        "artifact": {
+          "file": "policy.onnx",
+          "bytes": 552407,
+          "sha256": "5b98061d4188c116080eb6784c6378536a89e0b3c1db333df88217379e4dde13"
+        },
+        "features": "gym-v1"
+      }
+    },
+    {
+      "manifestPath": "policies/entries/nn-512-v1/manifest.json",
+      "manifest": {
+        "api": "royale-policy-v1",
+        "id": "nn-512-v1",
+        "name": "NN · 512 → 256",
+        "author": "lucienzhu",
+        "license": "MIT",
+        "type": "onnx",
+        "rules": "1.0.0",
+        "episode": "game",
+        "information": "public",
+        "memory": "none",
+        "artifact": {
+          "file": "policy.onnx",
+          "bytes": 1365463,
+          "sha256": "6ecafc81a29aefcff3cb9922f9070db42dc84b81fe7c937fc08de1354b7d10de"
+        },
+        "features": "gym-v1"
+      }
+    },
+    {
+      "manifestPath": "policies/entries/nn-structured-v2/manifest.json",
+      "manifest": {
+        "id": "nn-structured-v2",
+        "name": "NN · Structured 256 → 128",
+        "api": "royale-policy-v2",
+        "type": "onnx",
+        "author": "@lucienzhu",
+        "license": "MIT",
+        "rules": "1.0.0",
+        "episode": "game",
+        "information": "public",
+        "memory": "none",
+        "features": "structured-v2",
+        "actions": "actions-v2",
+        "artifact": {
+          "file": "policy.onnx",
+          "bytes": 916663,
+          "sha256": "16e452b48837e6fa681216c13279bbe500997c97b86f56efa19e449b1699baf3"
+        }
+      }
+    },
+    {
+      "manifestPath": "training/evaluation-models/nn-64/manifest.json",
+      "manifest": {
+        "api": "royale-policy-v1",
+        "id": "nn-64",
+        "name": "Whole-move scoring · 64 → 32",
+        "author": "lucienzhu",
+        "license": "MIT",
+        "type": "onnx",
+        "rules": "1.0.0",
+        "episode": "game",
+        "information": "public",
+        "memory": "none",
+        "artifact": {
+          "file": "policy.onnx",
+          "bytes": 114638,
+          "sha256": "141eca4d43e847dd65b7b642d09aaec1750d1441e165c4abfd52e1d4e08fd3ea"
+        },
+        "features": "gym-v1"
+      }
+    },
+    {
+      "manifestPath": "training/evaluation-models/nn-128/manifest.json",
+      "manifest": {
+        "api": "royale-policy-v1",
+        "id": "nn-128",
+        "name": "Whole-move scoring · 128 → 64",
+        "author": "lucienzhu",
+        "license": "MIT",
+        "type": "onnx",
+        "rules": "1.0.0",
+        "episode": "game",
+        "information": "public",
+        "memory": "none",
+        "artifact": {
+          "file": "policy.onnx",
+          "bytes": 244180,
+          "sha256": "d6aa332dfa7132d65096b1655c05eeb7d29965aa34754ad43fe031af879f8204"
+        },
+        "features": "gym-v1"
+      }
+    },
+    {
+      "manifestPath": "training/evaluation-models/nn-256x512/manifest.json",
+      "manifest": {
+        "api": "royale-policy-v1",
+        "id": "nn-256x512",
+        "name": "Whole-move scoring · 256 → 512",
+        "author": "lucienzhu",
+        "license": "MIT",
+        "type": "onnx",
+        "rules": "1.0.0",
+        "episode": "game",
+        "information": "public",
+        "memory": "none",
+        "artifact": {
+          "file": "policy.onnx",
+          "bytes": 948695,
+          "sha256": "8e08cd9bea3c2f43cd72094e62504c7f6799649fa6eb31e1a60bbc964c6ce135"
+        },
+        "features": "gym-v1"
+      }
+    }
+  ],
+  "subjects": [
+    "random-v1",
+    "easy-v2",
+    "sdk-code-v1",
+    "nn-64",
+    "nn-128",
+    "nn-256-v1",
+    "nn-256x512",
+    "nn-512-v1",
+    "nn-structured-v2",
+    "godlike"
+  ],
+  "opponents": [
+    "code-table-v1",
+    "sdk-code-v1"
+  ],
+  "totalGames": 19000,
+  "completed": 19000,
+  "invalidActions": 0,
+  "truncated": 0,
+  "elapsedMs": 414366,
+  "latency": "Maximum opponent-batch p95 for complete Worker decisions; encoding and all inference included, initial loading and inter-thread messaging excluded. Not pooled p95; not a mobile benchmark.",
+  "models": [
+    {
+      "id": "random-v1",
+      "maxDecisionP95Ms": 0.214
+    },
+    {
+      "id": "easy-v2",
+      "maxDecisionP95Ms": 0.588
+    },
+    {
+      "id": "sdk-code-v1",
+      "maxDecisionP95Ms": 0.66
+    },
+    {
+      "id": "nn-64",
+      "maxDecisionP95Ms": 0.734
+    },
+    {
+      "id": "nn-128",
+      "maxDecisionP95Ms": 0.876
+    },
+    {
+      "id": "nn-256-v1",
+      "maxDecisionP95Ms": 1.322
+    },
+    {
+      "id": "nn-256x512",
+      "maxDecisionP95Ms": 2.536
+    },
+    {
+      "id": "nn-512-v1",
+      "maxDecisionP95Ms": 2.714
+    },
+    {
+      "id": "nn-structured-v2",
+      "maxDecisionP95Ms": 0.873
+    },
+    {
+      "id": "godlike",
+      "maxDecisionP95Ms": 18.119
+    }
+  ],
+  "matches": [
+    {
+      "file": "code-table-v1--random-v1.json",
+      "sha256": "43882e35b99c31bec7d617ef0483489a0ac49241f4b3eca080689eae4efb18c7",
+      "subject": "random-v1",
+      "opponent": "code-table-v1",
+      "information": "public",
+      "results": [
+        {
+          "id": "code-table-v1",
+          "games": 1000,
+          "wins": 1000,
+          "losses": 0,
+          "winRate": 1,
+          "decisions": 7909,
+          "decisionP95Ms": 0.365
+        },
+        {
+          "id": "random-v1",
+          "games": 1000,
+          "wins": 0,
+          "losses": 1000,
+          "winRate": 0,
+          "decisions": 3886,
+          "decisionP95Ms": 0.211
+        }
+      ]
+    },
+    {
+      "file": "random-v1--sdk-code-v1.json",
+      "sha256": "070d8041f596b79954fb1967782923222773dd2b36457f8c5b60ad7225adcc26",
+      "subject": "random-v1",
+      "opponent": "sdk-code-v1",
+      "information": "public",
+      "results": [
+        {
+          "id": "random-v1",
+          "games": 1000,
+          "wins": 0,
+          "losses": 1000,
+          "winRate": 0,
+          "decisions": 4332,
+          "decisionP95Ms": 0.214
+        },
+        {
+          "id": "sdk-code-v1",
+          "games": 1000,
+          "wins": 1000,
+          "losses": 0,
+          "winRate": 1,
+          "decisions": 8717,
+          "decisionP95Ms": 0.227
+        }
+      ]
+    },
+    {
+      "file": "code-table-v1--easy-v2.json",
+      "sha256": "4c4d31309107738071e9f170a395d461c3bf2ab820b6b33f6ded324b94281494",
+      "subject": "easy-v2",
+      "opponent": "code-table-v1",
+      "information": "public",
+      "results": [
+        {
+          "id": "code-table-v1",
+          "games": 1000,
+          "wins": 659,
+          "losses": 341,
+          "winRate": 0.659,
+          "decisions": 13383,
+          "decisionP95Ms": 2.219
+        },
+        {
+          "id": "easy-v2",
+          "games": 1000,
+          "wins": 341,
+          "losses": 659,
+          "winRate": 0.341,
+          "decisions": 12728,
+          "decisionP95Ms": 0.588
+        }
+      ]
+    },
+    {
+      "file": "easy-v2--sdk-code-v1.json",
+      "sha256": "2d8ef9674cef44e88b89660504fb5e99ccc66441004edb92ddc4b983fdb93398",
+      "subject": "easy-v2",
+      "opponent": "sdk-code-v1",
+      "information": "public",
+      "results": [
+        {
+          "id": "easy-v2",
+          "games": 1000,
+          "wins": 356,
+          "losses": 644,
+          "winRate": 0.356,
+          "decisions": 13639,
+          "decisionP95Ms": 0.567
+        },
+        {
+          "id": "sdk-code-v1",
+          "games": 1000,
+          "wins": 644,
+          "losses": 356,
+          "winRate": 0.644,
+          "decisions": 14054,
+          "decisionP95Ms": 0.641
+        }
+      ]
+    },
+    {
+      "file": "code-table-v1--sdk-code-v1.json",
+      "sha256": "41d13f545e43305390c5823247561dc651e82a236345dcfe6b4c710698833394",
+      "subject": "sdk-code-v1",
+      "opponent": "code-table-v1",
+      "information": "public",
+      "results": [
+        {
+          "id": "code-table-v1",
+          "games": 1000,
+          "wins": 520,
+          "losses": 480,
+          "winRate": 0.52,
+          "decisions": 12151,
+          "decisionP95Ms": 1.539
+        },
+        {
+          "id": "sdk-code-v1",
+          "games": 1000,
+          "wins": 480,
+          "losses": 520,
+          "winRate": 0.48,
+          "decisions": 12032,
+          "decisionP95Ms": 0.66
+        }
+      ]
+    },
+    {
+      "file": "code-table-v1--nn-64.json",
+      "sha256": "bb17a30acc919770f2b50a0db63ed4b27a374f38125e5db538cf11836f70ad0d",
+      "subject": "nn-64",
+      "opponent": "code-table-v1",
+      "information": "public",
+      "results": [
+        {
+          "id": "code-table-v1",
+          "games": 1000,
+          "wins": 581,
+          "losses": 419,
+          "winRate": 0.581,
+          "decisions": 12089,
+          "decisionP95Ms": 1.484
+        },
+        {
+          "id": "nn-64",
+          "games": 1000,
+          "wins": 419,
+          "losses": 581,
+          "winRate": 0.419,
+          "decisions": 11749,
+          "decisionP95Ms": 0.734
+        }
+      ]
+    },
+    {
+      "file": "nn-64--sdk-code-v1.json",
+      "sha256": "1679c96a9b9471eec47ba65bdedf9bca032e1f31cd6daed8292ae90ffeaf9100",
+      "subject": "nn-64",
+      "opponent": "sdk-code-v1",
+      "information": "public",
+      "results": [
+        {
+          "id": "nn-64",
+          "games": 1000,
+          "wins": 478,
+          "losses": 522,
+          "winRate": 0.478,
+          "decisions": 11935,
+          "decisionP95Ms": 0.725
+        },
+        {
+          "id": "sdk-code-v1",
+          "games": 1000,
+          "wins": 522,
+          "losses": 478,
+          "winRate": 0.522,
+          "decisions": 12107,
+          "decisionP95Ms": 0.646
+        }
+      ]
+    },
+    {
+      "file": "code-table-v1--nn-128.json",
+      "sha256": "6e9655449c991904717c66788d9c073a02c747b791b80ccbea9f7769fcb6ff48",
+      "subject": "nn-128",
+      "opponent": "code-table-v1",
+      "information": "public",
+      "results": [
+        {
+          "id": "code-table-v1",
+          "games": 1000,
+          "wins": 575,
+          "losses": 425,
+          "winRate": 0.575,
+          "decisions": 11867,
+          "decisionP95Ms": 1.562
+        },
+        {
+          "id": "nn-128",
+          "games": 1000,
+          "wins": 425,
+          "losses": 575,
+          "winRate": 0.425,
+          "decisions": 11531,
+          "decisionP95Ms": 0.876
+        }
+      ]
+    },
+    {
+      "file": "nn-128--sdk-code-v1.json",
+      "sha256": "2ce77178e303a32499d8222a768da659cf03555cac7e92f3773dea4f78a71d3a",
+      "subject": "nn-128",
+      "opponent": "sdk-code-v1",
+      "information": "public",
+      "results": [
+        {
+          "id": "nn-128",
+          "games": 1000,
+          "wins": 444,
+          "losses": 556,
+          "winRate": 0.444,
+          "decisions": 11718,
+          "decisionP95Ms": 0.869
+        },
+        {
+          "id": "sdk-code-v1",
+          "games": 1000,
+          "wins": 556,
+          "losses": 444,
+          "winRate": 0.556,
+          "decisions": 11875,
+          "decisionP95Ms": 0.648
+        }
+      ]
+    },
+    {
+      "file": "code-table-v1--nn-256-v1.json",
+      "sha256": "71c861850a45917d67bb1212e027ff1df792cd4563b40075d658bc6653d83b2d",
+      "subject": "nn-256-v1",
+      "opponent": "code-table-v1",
+      "information": "public",
+      "results": [
+        {
+          "id": "code-table-v1",
+          "games": 1000,
+          "wins": 574,
+          "losses": 426,
+          "winRate": 0.574,
+          "decisions": 11942,
+          "decisionP95Ms": 1.523
+        },
+        {
+          "id": "nn-256-v1",
+          "games": 1000,
+          "wins": 426,
+          "losses": 574,
+          "winRate": 0.426,
+          "decisions": 11625,
+          "decisionP95Ms": 1.306
+        }
+      ]
+    },
+    {
+      "file": "nn-256-v1--sdk-code-v1.json",
+      "sha256": "076939aa78796945d63a1c09dea9338e12e0bee5b56bc9dadc35db29bfa2d4fe",
+      "subject": "nn-256-v1",
+      "opponent": "sdk-code-v1",
+      "information": "public",
+      "results": [
+        {
+          "id": "nn-256-v1",
+          "games": 1000,
+          "wins": 455,
+          "losses": 545,
+          "winRate": 0.455,
+          "decisions": 11975,
+          "decisionP95Ms": 1.322
+        },
+        {
+          "id": "sdk-code-v1",
+          "games": 1000,
+          "wins": 545,
+          "losses": 455,
+          "winRate": 0.545,
+          "decisions": 12115,
+          "decisionP95Ms": 0.67
+        }
+      ]
+    },
+    {
+      "file": "code-table-v1--nn-256x512.json",
+      "sha256": "133929342e1568d2246e3889ec549d16b8e9593f8369752d06091241756c3fd8",
+      "subject": "nn-256x512",
+      "opponent": "code-table-v1",
+      "information": "public",
+      "results": [
+        {
+          "id": "code-table-v1",
+          "games": 1000,
+          "wins": 564,
+          "losses": 436,
+          "winRate": 0.564,
+          "decisions": 11967,
+          "decisionP95Ms": 1.471
+        },
+        {
+          "id": "nn-256x512",
+          "games": 1000,
+          "wins": 436,
+          "losses": 564,
+          "winRate": 0.436,
+          "decisions": 11697,
+          "decisionP95Ms": 2.536
+        }
+      ]
+    },
+    {
+      "file": "nn-256x512--sdk-code-v1.json",
+      "sha256": "70917e347b75dd6f15d54c1419f51c51d6bac3f9f03b9f3a7481b6469506237b",
+      "subject": "nn-256x512",
+      "opponent": "sdk-code-v1",
+      "information": "public",
+      "results": [
+        {
+          "id": "nn-256x512",
+          "games": 1000,
+          "wins": 447,
+          "losses": 553,
+          "winRate": 0.447,
+          "decisions": 11951,
+          "decisionP95Ms": 2.529
+        },
+        {
+          "id": "sdk-code-v1",
+          "games": 1000,
+          "wins": 553,
+          "losses": 447,
+          "winRate": 0.553,
+          "decisions": 12153,
+          "decisionP95Ms": 0.658
+        }
+      ]
+    },
+    {
+      "file": "code-table-v1--nn-512-v1.json",
+      "sha256": "7cf893f1b02efbfde3797039d8a4347b7b4826485b4ec3e7980f16a47c7393f9",
+      "subject": "nn-512-v1",
+      "opponent": "code-table-v1",
+      "information": "public",
+      "results": [
+        {
+          "id": "code-table-v1",
+          "games": 1000,
+          "wins": 597,
+          "losses": 403,
+          "winRate": 0.597,
+          "decisions": 11831,
+          "decisionP95Ms": 1.521
+        },
+        {
+          "id": "nn-512-v1",
+          "games": 1000,
+          "wins": 403,
+          "losses": 597,
+          "winRate": 0.403,
+          "decisions": 11494,
+          "decisionP95Ms": 2.714
+        }
+      ]
+    },
+    {
+      "file": "nn-512-v1--sdk-code-v1.json",
+      "sha256": "1ec62e68cc5f4e2c8c3eb11d23f40ef1216fbe9dc018352f7904d8c4828e8292",
+      "subject": "nn-512-v1",
+      "opponent": "sdk-code-v1",
+      "information": "public",
+      "results": [
+        {
+          "id": "nn-512-v1",
+          "games": 1000,
+          "wins": 458,
+          "losses": 542,
+          "winRate": 0.458,
+          "decisions": 11655,
+          "decisionP95Ms": 2.704
+        },
+        {
+          "id": "sdk-code-v1",
+          "games": 1000,
+          "wins": 542,
+          "losses": 458,
+          "winRate": 0.542,
+          "decisions": 11878,
+          "decisionP95Ms": 0.661
+        }
+      ]
+    },
+    {
+      "file": "code-table-v1--nn-structured-v2.json",
+      "sha256": "97a9def6685e3709bc3a21e2386b26dfd78aa4c4dbee06ffc6f2a432940aedd3",
+      "subject": "nn-structured-v2",
+      "opponent": "code-table-v1",
+      "information": "public",
+      "results": [
+        {
+          "id": "code-table-v1",
+          "games": 1000,
+          "wins": 761,
+          "losses": 239,
+          "winRate": 0.761,
+          "decisions": 11261,
+          "decisionP95Ms": 1.707
+        },
+        {
+          "id": "nn-structured-v2",
+          "games": 1000,
+          "wins": 239,
+          "losses": 761,
+          "winRate": 0.239,
+          "decisions": 10147,
+          "decisionP95Ms": 0.873
+        }
+      ]
+    },
+    {
+      "file": "nn-structured-v2--sdk-code-v1.json",
+      "sha256": "ec953c56315611248bf5d344b564c15b91c7feca0d0d582ceedca4e6a1b7f64d",
+      "subject": "nn-structured-v2",
+      "opponent": "sdk-code-v1",
+      "information": "public",
+      "results": [
+        {
+          "id": "nn-structured-v2",
+          "games": 1000,
+          "wins": 266,
+          "losses": 734,
+          "winRate": 0.266,
+          "decisions": 10694,
+          "decisionP95Ms": 0.856
+        },
+        {
+          "id": "sdk-code-v1",
+          "games": 1000,
+          "wins": 734,
+          "losses": 266,
+          "winRate": 0.734,
+          "decisions": 11659,
+          "decisionP95Ms": 0.636
+        }
+      ]
+    },
+    {
+      "file": "code-table-v1--godlike.json",
+      "sha256": "36bc0f2f8503dd198a599643362f752d2700cb3cda1dc867fdaf41c82f46038b",
+      "subject": "godlike",
+      "opponent": "code-table-v1",
+      "information": "privileged-current-hand",
+      "results": [
+        {
+          "id": "code-table-v1",
+          "games": 1000,
+          "wins": 330,
+          "losses": 670,
+          "winRate": 0.33,
+          "decisions": 10899,
+          "decisionP95Ms": 1.679
+        },
+        {
+          "id": "godlike",
+          "games": 1000,
+          "wins": 670,
+          "losses": 330,
+          "winRate": 0.67,
+          "decisions": 10493,
+          "decisionP95Ms": 18.119
+        }
+      ]
+    },
+    {
+      "file": "godlike--sdk-code-v1.json",
+      "sha256": "ba67b29a0937906617f3b87f2f29e0a4a7782079619e647e03c067566c6400fc",
+      "subject": "godlike",
+      "opponent": "sdk-code-v1",
+      "information": "privileged-current-hand",
+      "results": [
+        {
+          "id": "godlike",
+          "games": 1000,
+          "wins": 675,
+          "losses": 325,
+          "winRate": 0.675,
+          "decisions": 10899,
+          "decisionP95Ms": 16.828
+        },
+        {
+          "id": "sdk-code-v1",
+          "games": 1000,
+          "wins": 325,
+          "losses": 675,
+          "winRate": 0.325,
+          "decisions": 11144,
+          "decisionP95Ms": 0.692
+        }
+      ]
+    }
+  ]
+}

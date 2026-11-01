@@ -2,6 +2,11 @@ import {catalog} from '../policies/catalog.mjs';
 import {registryAuthors} from '../policies/authors.mjs';
 let data,entries,authors,error;
 const en=()=>document.documentElement.lang==='en',t=(zh,english)=>en()?english:zh;
+const policyName=m=>({
+  'nn-256-v1':t('整手评分 · 256 → 128','Whole-move scoring · 256 → 128'),
+  'nn-512-v1':t('整手评分 · 512 → 256','Whole-move scoring · 512 → 256'),
+  'nn-structured-v2':t('自回归 · 256 → 128','Autoregressive · 256 → 128'),
+}[m.id]||m.name);
 function cell(row,text,tag='td'){const node=document.createElement(tag);node.textContent=text;row.append(node);const column=row.children.length;const labels={3:t('基准 Elo','Reference Elo'),4:t('胜率','Win rate'),5:t('对局','Games'),6:t('p95 上界','Max p95')};if(labels[column])node.dataset.label=labels[column];return node;}
 function paint(){
   if(error){document.getElementById('arena-summary').textContent=t('暂时无法加载天梯，请刷新重试。','Unable to load the ladder. Please retry.');return;}
@@ -12,18 +17,18 @@ function paint(){
   ranked.forEach((r,index)=>{
     const m=r.entry.manifest,recorded=data.policies.find(p=>p.id===m.id),current=recorded&&JSON.stringify(recorded)===JSON.stringify(m)&&(r.reference||r.games>0);
     const row=document.createElement('tr');cell(row,current?String(index+1):'—');
-    const name=cell(row,'');const strong=document.createElement('strong');strong.textContent=m.name;name.append(strong);
+    const name=cell(row,'');const strong=document.createElement('strong');strong.textContent=policyName(m);name.append(strong);
     const small=document.createElement('small');small.textContent=`${m.type==='onnx'?'NN':'JS'} · `;
     const author=document.createElement('a'),handle=authors.get(m.id);if(!handle)throw Error('Missing policy author');
     author.className='arena-author';author.href=`https://github.com/${handle}`;author.textContent=`@${handle}`;small.append(author);name.append(small);
     cell(row,current?String(r.elo):'—');cell(row,current&&r.games?(100*r.wins/r.games).toFixed(1)+'%':'—');cell(row,current&&r.games>0?String(r.games):'—');cell(row,current&&Number.isFinite(r.latencyP95Ms)?r.latencyP95Ms.toFixed(1)+' ms':'—');
     if(current&&r.reference){const label=document.createElement('small');label.textContent=t('固定基准','Fixed reference');name.append(label);}
     if(!current||r.provisional){const label=document.createElement('small');label.textContent=current?t('暂定','Provisional'):t('待评估','Unrated');name.append(label);}
-    const action=cell(row,'');const a=document.createElement('a');a.className='arena-play';a.href=`index.html?lang=${en()?'en':'zh-CN'}&policy=${encodeURIComponent(m.id)}`;a.textContent=t('挑战 ↗','Play ↗');a.setAttribute('aria-label',t('挑战 ','Play ')+m.name);action.append(a);body.append(row);
+    const action=cell(row,'');const a=document.createElement('a');a.className='arena-play';a.href=`index.html?lang=${en()?'en':'zh-CN'}&policy=${encodeURIComponent(m.id)}`;a.textContent=t('挑战 ↗','Play ↗');a.setAttribute('aria-label',t('挑战 ','Play ')+policyName(m));action.append(a);body.append(row);
   });
   const games=ranked.filter(r=>!r.reference).reduce((n,r)=>n+(r.games||0),0);
   document.getElementById('arena-summary').textContent=t(`${entries.length} 个策略 · ${games.toLocaleString()} 评分局`,`${entries.length} policies · ${games.toLocaleString()} rated games`);
-  document.getElementById('arena-runtime').textContent=`${data.protocol.opponents.length} × ${data.protocol.gamesPerOpponent} ${t('局 / 策略','games / policy')} · ${data.createdAt.slice(0,10)}. `+t('延迟为 CI 各组 p95 的最大值，不代表手机表现。','Latency is the highest opponent-batch p95 on CI, not a mobile benchmark.');
+  document.getElementById('arena-runtime').textContent=`${data.protocol.opponents.length} × ${data.protocol.gamesPerOpponent} ${t('局 / 策略','games / policy')} · ${data.createdAt.slice(0,10)}. `+t('延迟为各对手批次最高 p95；运行环境见记录，非手机测量。','Latency is the highest opponent-batch p95; environments are recorded per run, not measured on mobile.');
 }
 async function readJSON(path){const response=await fetch(new URL(path,import.meta.url),{cache:'no-cache'});if(!response.ok)throw Error('Arena data unavailable');return response.json();}
 try{[entries,data,authors]=await Promise.all([catalog(),readJSON('./results/leaderboard.json'),readJSON('../policies/registry.json').then(registryAuthors)]);paint();}catch(e){error=e;paint();}

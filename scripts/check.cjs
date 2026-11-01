@@ -34,6 +34,8 @@ require('../tests/skip-swaps.cjs');
 require('../tests/nn-policy.cjs');
 
 require('../tests/rl-page.cjs');
+require('../tests/neural-evaluation.cjs');
+require('../tests/complete-benchmark.cjs');
 
 require('../tests/arena-observation.cjs');
 

@@ -104,6 +104,16 @@
 .rl-methods{max-width:80ch;font-size:13px;line-height:1.8;color:var(--muted)}
 .rl-methods ul{padding-left:20px}
 .rl-methods li+li{margin-top:10px}
+.rl-matchups{margin-top:56px;font-size:13px}
+.rl-matchups h3{margin:0;font-size:22px}
+.rl-matchups .site-section-head{margin-bottom:20px}
+.rl-matchup-table{width:100%;table-layout:fixed;border-collapse:collapse;text-align:left;font-variant-numeric:tabular-nums}
+.rl-matchup-table th,.rl-matchup-table td{padding:20px 16px;border-bottom:1px solid var(--line);vertical-align:middle}
+.rl-matchup-table thead th{font-size:13px;font-weight:500;color:var(--muted)}
+.rl-matchup-table tbody th{font-size:15px;font-weight:600}
+.rl-matchup-table th:first-child{padding-left:0}
+.rl-matchup-table td:last-child,.rl-matchup-table th:last-child{padding-right:0}
+.rl-matchup-table .rl-result small{white-space:nowrap}
 @media(max-width:700px){
  .rl-model-card{padding:22px}
  .rl-model-card h3{font-size:16px}
@@ -117,4 +127,13 @@
  .rl-metric-label{display:block;font-size:11px;font-weight:400;color:var(--muted);margin-bottom:7px}
  .rl-result strong{font-size:22px}
  .rl-methods{font-size:12px}
+ .rl-matchups{margin-top:36px}
+ .rl-matchups h3{font-size:20px}
+ .rl-matchups .site-section-head{display:block}
+ .rl-matchups .site-section-head p{margin:10px 0 0}
+ .rl-matchup-table th,.rl-matchup-table td{padding:18px 8px}
+ .rl-matchup-table thead th{font-size:12px}
+ .rl-matchup-table tbody th{font-size:13px}
+ .rl-matchup-table .rl-result strong{font-size:20px}
+ .rl-matchup-table .rl-result small{font-size:11px}
 }

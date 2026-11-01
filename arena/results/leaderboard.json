@@ -2,7 +2,7 @@
   "schema": 2,
   "method": "reference-elo-v1",
   "panelSha256": "197c97f1aaa89f81b70fa287f3e96b3ca9501a317458e38fcf76f5493f4cec81",
-  "createdAt": "2026-10-27T14:34:28.080Z",
+  "createdAt": "2026-11-01T14:07:15.560Z",
   "protocol": {
     "gamesPerOpponent": 20,
     "opponents": [
@@ -128,15 +128,34 @@
         "sha256": "6ecafc81a29aefcff3cb9922f9070db42dc84b81fe7c937fc08de1354b7d10de"
       },
       "features": "gym-v1"
+    },
+    {
+      "id": "nn-structured-v2",
+      "name": "NN · Structured 256 → 128",
+      "api": "royale-policy-v2",
+      "type": "onnx",
+      "author": "@lucienzhu",
+      "license": "MIT",
+      "rules": "1.0.0",
+      "episode": "game",
+      "information": "public",
+      "memory": "none",
+      "features": "structured-v2",
+      "actions": "actions-v2",
+      "artifact": {
+        "file": "policy.onnx",
+        "bytes": 916663,
+        "sha256": "16e452b48837e6fa681216c13279bbe500997c97b86f56efa19e449b1699baf3"
+      }
     }
   ],
   "leaderboard": [
     {
       "id": "code-table-v1",
       "elo": 1500,
-      "games": 60,
-      "wins": 44,
-      "losses": 16,
+      "games": 80,
+      "wins": 59,
+      "losses": 21,
       "provisional": false,
       "reference": true,
       "opponents": [
@@ -144,6 +163,11 @@
           "id": "nn-512-v1",
           "games": 20,
           "wins": 12
+        },
+        {
+          "id": "nn-structured-v2",
+          "games": 20,
+          "wins": 15
         },
         {
           "id": "random-v1",
@@ -157,7 +181,7 @@
         }
       ],
       "latencyP95Ms": 3.197,
-      "decisions": 615
+      "decisions": 807
     },
     {
       "id": "sdk-code-v1",
@@ -230,9 +254,9 @@
     {
       "id": "nn-256-v1",
       "elo": 1440,
-      "games": 60,
-      "wins": 43,
-      "losses": 17,
+      "games": 80,
+      "wins": 60,
+      "losses": 20,
       "provisional": false,
       "reference": true,
       "opponents": [
@@ -240,6 +264,11 @@
           "id": "nn-512-v1",
           "games": 20,
           "wins": 11
+        },
+        {
+          "id": "nn-structured-v2",
+          "games": 20,
+          "wins": 17
         },
         {
           "id": "random-v1",
@@ -253,14 +282,14 @@
         }
       ],
       "latencyP95Ms": 2.547,
-      "decisions": 596
+      "decisions": 782
     },
     {
       "id": "easy-v2",
       "elo": 1387,
-      "games": 60,
-      "wins": 32,
-      "losses": 28,
+      "games": 80,
+      "wins": 46,
+      "losses": 34,
       "provisional": false,
       "reference": true,
       "opponents": [
@@ -268,6 +297,11 @@
           "id": "nn-512-v1",
           "games": 20,
           "wins": 7
+        },
+        {
+          "id": "nn-structured-v2",
+          "games": 20,
+          "wins": 14
         },
         {
           "id": "random-v1",
@@ -281,7 +315,41 @@
         }
       ],
       "latencyP95Ms": 1.353,
-      "decisions": 706
+      "decisions": 975
+    },
+    {
+      "id": "nn-structured-v2",
+      "elo": 1237,
+      "games": 60,
+      "wins": 14,
+      "losses": 46,
+      "provisional": true,
+      "reference": false,
+      "opponents": [
+        {
+          "id": "code-table-v1",
+          "elo": 1500,
+          "games": 20,
+          "wins": 5
+        },
+        {
+          "id": "easy-v2",
+          "elo": 1387,
+          "games": 20,
+          "wins": 6
+        },
+        {
+          "id": "nn-256-v1",
+          "elo": 1440,
+          "games": 20,
+          "wins": 3
+        }
+      ],
+      "latencyP95Ms": 1.049,
+      "decisions": 608,
+      "updatedAt": "2026-11-01T14:07:15.560Z",
+      "sourceCommit": "7911e209e9a68fc80b8a8ca957f957bf99598896",
+      "runUrl": ""
     },
     {
       "id": "random-v1",

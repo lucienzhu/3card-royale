@@ -11,9 +11,8 @@ python -m venv .venv
 pip install -r training/structured/requirements.txt
 python training/structured/train.py --epochs 40
 tensorboard --logdir artifacts/structured-v2/tensorboard
-node arena/evaluate.mjs --games 1000 --seed-start 91000000 \
-  --policies code-table-v1,nn-256-v1,nn-structured-v2 \
-  --output artifacts/structured-v2/evaluation.json
+node training/evaluate-baselines.mjs --games 1000 --seed-start 91000000 \
+  --output artifacts/neural-baselines
 ```
 
 The collection command defaults to 10,000 games and seed 20261101. Start levels mix 2, varied levels and Ace to cover 3/4/5-card wild combinations. Whole games use `game_id % 10`: 0 validation, 1 test, 2–9 training. Both seats stay together. 8,000/1,000/1,000 games yield 252,906 decisions and 988,571 token targets. No game exceeded the safety bound.
@@ -26,17 +25,28 @@ Saved ONNX: **228,929 parameters, 916,663 bytes**. SHA-256 `16e452b48837e6fa6812
 
 ## Playing strength
 
-All three pairs use the same 500 new seeds with swapped seats and balanced first attackers, 1,000 games per pair, level 2. No illegal actions or truncations.
+Each neural policy faces all six other public Arena entries. Every matchup uses
+500 paired seeds, swapped seats, balanced first movers and level-2 starts:
+**11,000 distinct games**, all complete, with no illegal actions or truncations.
 
-| Left policy | Opponent | Wins |
-| --- | --- | ---: |
-| Autoregressive · 256 → 128 | Hard Code AI | 239/1,000 · 23.9% |
-| Whole-move scoring · 256 → 128 | Hard Code AI | 426/1,000 · 42.6% |
-| Autoregressive · 256 → 128 | Whole-move scoring · 256 → 128 | 288/1,000 · 28.8% |
+| Opponent | Whole-move scoring · 256 → 128 | Autoregressive · 256 → 128 |
+| --- | ---: | ---: |
+| Code AI (Hard) | 426/1,000 · 42.6% | 239/1,000 · 23.9% |
+| SDK Code AI | 455/1,000 · 45.5% | 266/1,000 · 26.6% |
+| Easy · 64 | 559/1,000 · 55.9% | 366/1,000 · 36.6% |
+| Whole-move scoring · 512 → 256 | 505/1,000 · 50.5% | 298/1,000 · 29.8% |
+| Random | 1,000/1,000 · 100.0% | 997/1,000 · 99.7% |
 
-**On this matched seed cohort, the autoregressive checkpoint has the lower win rate.** Representation clarity does not establish playing strength; teacher-forcing agreement also does not measure autoregressive sequence errors. Future experiments should evaluate free-running action agreement, improve card encodings, and train from rewards. These results are evaluation evidence, not official reference Elo ratings.
+Direct matchup: autoregressive vs whole-move scoring **288/1,000 (28.8%)**.
+[All reports, hashes and reproduction](../../docs/experiments/neural-baselines/README.md).
 
-Whole Worker decision p95 for the autoregressive policy is **0.691 ms** over 20,487 decisions on Apple M1 / Node 22 / single-thread WASM. Includes encoding and all autoregressive calls; excludes initial model load. It is not a browser/mobile benchmark.
+The [complete benchmark](../../docs/experiments/complete-baseline/README.md) also
+measures five scoring widths and all code baselines against both Code AI opponents
+on the same seeds. Its 19,000 games include 4,000 reproduced games from this suite.
+
+**On this matched seed cohort, the autoregressive checkpoint has the lower win rate.** Representation clarity does not establish playing strength; teacher-forcing agreement also does not measure autoregressive sequence errors. Future experiments should evaluate free-running action agreement, improve card encodings, and train from rewards. The independent Arena rating is **provisional Elo 1237**, from 14/60 wins against the three fixed references. The whole-move scorer remains the fixed 1440 reference. Those rating seeds and opponents differ from this evaluation.
+
+Maximum opponent-batch whole Worker decision p95 for the autoregressive policy is **0.958 ms** across 62,427 decisions on Apple M1 / Node 22 / single-thread WASM. Includes encoding and all autoregressive calls; excludes initial model load. It is not a browser/mobile benchmark.
 
 Checked-in artifacts are in `models/structured-policy/`; the identical ONNX is in `policies/entries/nn-structured-v2/` for Arena integrity checks. Local `.pt`, data and TensorBoard files stay under ignored `artifacts/`. After deliberately replacing a checkpoint, update both artifacts, byte/hash manifests, receipts and evaluation; published policy IDs must be immutable.
 

@@ -1,117 +1,80 @@
 'use strict';
-// Public experimental claims must agree with the saved reports and deployment artifact.
+// Every public result must resolve to the retained artifact and its measured cohort.
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');
-const html=read('arena.html'),training=JSON.parse(read('docs/experiments/nn-policy-v1/training.json'));
-const evaluations=JSON.parse(read('docs/experiments/nn-policy-v1/evaluation.json'));
-const difficulty=JSON.parse(read('docs/experiments/difficulty-v1/evaluation.json'));
-const profile=JSON.parse(read('docs/experiments/nn-policy-v1/browser-profile.json'));
-const comparison=JSON.parse(read('models/structured-policy/evaluation.json'));
-const allCopy=JSON.parse(html.match(/window.SC_COPY=(\{[\s\S]*?\});<\/script>/)[1]);
-const copy={...allCopy,...Object.fromEntries(Object.entries(allCopy).filter(([key])=>key.startsWith('rl-')).map(([key,value])=>[key.slice(3),value]))};
+const json=p=>JSON.parse(read(p)),html=read('arena.html');
+const benchmark=json('docs/experiments/complete-baseline/summary.json');
+const comparison=json('docs/experiments/neural-baselines/summary.json');
+const training=json('docs/experiments/nn-policy-v1/training.json');
+const current=json('models/structured-policy/training.json');
+const copy=JSON.parse(html.match(/window.SC_COPY=(\{[\s\S]*?\});<\/script>/)[1]);
 const rows=[...html.matchAll(/<tr data-model="([^"]+)"([^>]*)>([\s\S]*?)<\/tr>/g)];
-assert.equal(rows.length,training.models.length+5);
+const subjects={random:'random-v1',easy:'easy-v2','sdk-code':'sdk-code-v1',
+ '64':'nn-64','128':'nn-128','256':'nn-256-v1','256x512':'nn-256x512',
+ '512':'nn-512-v1',autoregressive:'nn-structured-v2',godlike:'godlike'};
+assert.equal(rows.length,10);assert.equal(new Set(rows.map(r=>r[1])).size,10);
 assert.equal((html.match(/class="rl-benchmark"/g)||[]).length,1);
 assert(!html.includes('details id="experiments"'));
-assert(!Object.values(allCopy).flat().some(text=>/legacy|earlier evaluations|NN v[12]|历史实验/i.test(text)));
-const rowFor=id=>{const row=rows.find(r=>r[1]===id);assert(row,'Missing policy '+id);return row[3];};
-function result(id,opponent,wins,games){
- const cell=rowFor(id).match(new RegExp(`<td data-opponent="${opponent}">([\\s\\S]*?)</td>`))?.[1];
- assert(cell,'Missing result cell '+id+'/'+opponent);
- assert(cell.includes((100*wins/games).toFixed(1)+'%'),id+'/'+opponent+' win rate');
- assert(cell.includes(`${wins} / ${games.toLocaleString('en-US')}`),id+'/'+opponent+' wins/games');
-}
-for(const [_,id,attrs,row] of rows){
- if(['sdk-code','autoregressive','godlike'].includes(id))continue;
- if(id==='easy'){
-  const ev=difficulty.results.find(r=>r.policy==='easy'&&r.opponent==='code');
-  result(id,'sdk',ev.wins,ev.games);
-  assert(row.includes('class="rl-size"><span class="rl-metric-label">ONNX</span>—'),'Easy has no ONNX');
-  for(const label of copy.easy)assert(label.includes(String(difficulty.attention_budget)));
-  continue;
+assert(!Object.values(copy).flat().some(t=>/legacy|earlier evaluations|NN v[12]|历史实验/i.test(t)));
+let measuredCells=0;
+for(const [_,key,attrs,row] of rows){
+ const id=subjects[key];assert(id,'Unknown table policy '+key);
+ const cells=[...row.matchAll(/<td([^>]*)>([\s\S]*?)<\/td>/g)];
+ assert.equal(cells.length,4);
+ const artifact=benchmark.policies.find(p=>p.manifest.id===id)?.manifest;
+ if(artifact?.type==='onnx'){
+  assert(cells[0][2].includes((artifact.artifact.bytes/1e6).toFixed(2)+' <small>MB</small>'),id+' artifact size');
+  const model=key==='autoregressive'?current:training.models.find(m=>String(m.id||m.width)===key);
+  assert(model,id+' training metrics');
+  const hidden=model.hidden||[model.width,model.width/2];
+  assert(row.includes(`${hidden[0]} <span aria-hidden="true">→</span> ${hidden[1]}`),id+' architecture');
+ }else assert(cells[0][2].includes('data-sc="benchmarkNA"'),id+' no ONNX');
+ const timing=benchmark.models.find(m=>m.id===id);
+ assert(cells[1][2].includes(timing.maxDecisionP95Ms.toFixed(2)+' ms'),id+' complete-decision p95');
+ for(const [i,opponent] of benchmark.opponents.entries()){
+  const cell=cells[i+2][2];
+  if(id===opponent){assert(cell.includes('data-sc="benchmarkSelf"'));continue;}
+  const pair=benchmark.matches.find(m=>m.subject===id&&m.opponent===opponent);
+  assert(pair,id+'/'+opponent+' missing report');
+  const result=pair.results.find(r=>r.id===id);
+  assert(cell.includes((100*result.winRate).toFixed(1)+'%'),id+'/'+opponent+' rate');
+  assert(cell.includes(`${result.wins.toLocaleString('en-US')} / ${result.games.toLocaleString('en-US')}`),id+'/'+opponent+' count');
+  assert(cell.includes('docs/experiments/complete-baseline/'+pair.file),id+'/'+opponent+' source');
+  measuredCells++;
  }
- if(id==='random'){
-  const ev=JSON.parse(read('docs/experiments/nn-policy-v1/random-baseline.json'));
-  result(id,'sdk',ev.wins,ev.games);
-  assert(row.includes('class="rl-size"><span class="rl-metric-label">ONNX</span>—'),'random has no ONNX');
-  assert.equal(ev.episodes.length,ev.games);
-  assert.equal(ev.episodes.filter(e=>!e.truncated&&e.reward>0).length,ev.wins);
-  assert.equal(ev.episodes.filter(e=>e.truncated).length,ev.truncated);
-  assert.equal(ev.completed+ev.truncated,ev.games);
-  assert.equal(ev.win_rate,ev.wins/ev.completed);
-  assert.equal(ev.invalid_actions,0);
-  continue;
- }
- const model=training.models.find(m=>String(m.id||m.width)===id);
- assert(model,'Unknown model '+id);
- const ev=evaluations.find(e=>e.model===`mlp-${id}.onnx`);
- assert(ev,'Missing evaluation '+id);
- result(id,'sdk',ev.wins,ev.games);
- assert(row.includes((model.bytes/1e6).toFixed(2)+' <small>MB</small>'),id+' size');
- const hidden=model.hidden||[model.width,model.width/2];
- assert(row.includes(`${hidden[0]} <span aria-hidden="true">→</span> ${hidden[1]}`),id+' architecture');
- const latency=id==='256'?comparison.leaderboard.find(r=>r.id==='nn-256-v1').latencyP95Ms:profile.results.find(r=>r.id===id&&r.candidates===220).p95_ms;
- assert(row.includes(latency.toFixed(2)+' ms'),id+' recorded p95');
+ if(id==='godlike')assert(attrs.includes('data-godlike-policy="godlike"'));
 }
-const current=JSON.parse(read('models/structured-policy/training.json'));
+assert.equal(measuredCells,19);
+assert(copy.benchmarkCount.every(t=>t.includes(benchmark.totalGames.toLocaleString('en-US'))));
+assert(copy.benchmarkProtocol.every(t=>t.includes('500')&&t.includes('19,000')));
+assert(copy.latencyWorker.every(t=>t.includes('Apple M1 / Node 22')));
+assert(copy['rl-godlikeNote'][0].includes('非同等信息')&&copy['rl-godlikeNote'][1].includes('extra information'));
+assert(html.includes('docs/experiments/complete-baseline/README.md'));
 assert(html.includes('models/structured-policy/policy.onnx'));
 assert(html.includes('index.html?policy=nn-256-v1'));
 assert(html.includes('index.html?policy=nn-structured-v2'));
 assert(html.includes(current.parameters.toLocaleString('en-US')));
 assert(html.includes((current.bytes/1e6).toFixed(2)+' MB'));
 assert(html.includes('Epoch '+current.best_epoch));
-for(const [a,b] of [['nn-structured-v2','code-table-v1'],['nn-256-v1','code-table-v1'],['nn-structured-v2','nn-256-v1']]){
- const games=comparison.records.filter(r=>[r.left,r.right].includes(a)&&[r.left,r.right].includes(b));
- assert.equal(games.length,1000);assert(games.every(r=>r.status==='complete'));
- const wins=games.filter(r=>r.winner===a).length;
- if(b==='code-table-v1')result(a==='nn-256-v1'?'256':'autoregressive','code',wins,games.length);
- else for(const text of allCopy.benchmarkHeadToHead)assert(text.includes(`${(wins/10).toFixed(1)}% · ${wins} / 1,000`));
+
+const matchup=(id,opponent)=>comparison.matches.find(m=>m.policies.some(p=>p.id===id)&&m.policies.some(p=>p.id===opponent));
+const matchupRows=[...html.matchAll(/<tr data-matchup="([^"]+)">([\s\S]*?)<\/tr>/g)];
+assert.equal(matchupRows.length,comparison.policies.length-2);
+for(const [_,opponent,row] of matchupRows){
+ const cells=[...row.matchAll(/<td>([\s\S]*?)<\/td>/g)];assert.equal(cells.length,2);
+ for(const [i,id] of comparison.focalPolicies.entries()){
+  const m=matchup(id,opponent),r=m.policies.find(p=>p.id===id),cell=cells[i][1];
+  assert(cell.includes((100*r.winRate).toFixed(1)+'%'),id+'/'+opponent+' matched rate');
+  assert(cell.includes(`${r.wins.toLocaleString('en-US')} / ${r.games.toLocaleString('en-US')}`),id+'/'+opponent+' matched count');
+  assert(cell.includes('docs/experiments/neural-baselines/'+m.file),id+'/'+opponent+' source');
+ }
 }
-assert(rowFor('autoregressive').includes((current.bytes/1e6).toFixed(2)+' <small>MB</small>'));
-assert(rowFor('autoregressive').includes(comparison.leaderboard.find(r=>r.id==='nn-structured-v2').latencyP95Ms.toFixed(2)+' ms'));
+const mutual=matchup('nn-structured-v2','nn-256-v1').policies.find(p=>p.id==='nn-structured-v2');
+for(const text of copy.benchmarkHeadToHead)assert(text.includes(`${(100*mutual.winRate).toFixed(1)}% · ${mutual.wins} / 1,000`));
+assert(copy.matchupsCount.every(t=>t.includes(comparison.totalGames.toLocaleString('en-US'))));
 for(const m of html.matchAll(/data-sc="([^"]+)"/g)){
  if(['skip','name','tag','learn','identity','play','menu'].includes(m[1]))continue;
  assert(copy[m[1]]?.length===2,'Missing translation: '+m[1]);
 }
-assert(copy.method[0].includes('模仿学习')&&copy.method[1].toLowerCase().includes('imitation learning'));
-assert.equal(Object.values(allCopy).flat().some(text=>/Legacy baseline|NN v1|NN v2/.test(text)),false);
-console.log('RL page: one bilingual benchmark; both modeling approaches, model sizes and latency scopes match saved reports.');
-
-const easy=require('../sdk/easy-policy.js');
-assert.equal(difficulty.attention_budget,easy.budget);
-assert.equal(difficulty.easy_version,easy.version);
-for(const r of difficulty.results){
- assert.equal(r.completed,r.games);assert.equal(r.truncated,0);assert.equal(r.invalid_actions,0);
- assert.equal(r.episodes.filter(e=>e.reward>0).length,r.wins);
- if(r.policy==='easy')for(const lang of copy.difficultyNote)assert(lang.includes((r.win_rate*100).toFixed(1)+'%'));
-}
-console.log('Difficulty page: Easy head-to-head figures match the saved paired evaluation.');
-
-const restored=JSON.parse(read('docs/experiments/difficulty-v1/table-code-evaluation.json'));
-for(const id of ['easy','sdk-code','nn']){
- const ev=restored.results.find(r=>id==='sdk-code' ? r.policy==='table-code'&&r.opponent===id : r.policy===id&&r.opponent==='table-code');
- assert(ev,'Missing restored Hard evaluation: '+id);
- const wins=id==='sdk-code'?ev.games-ev.wins:ev.wins;
- if(id==='nn')for(const text of allCopy.cohortC){assert(text.includes((100*wins/ev.games).toFixed(1)+'%'));assert(text.includes(`${wins} / ${ev.games.toLocaleString('en-US')}`));}
- else result(id,'code',wins,ev.games);
-}
-for(const ev of restored.results){
- assert.equal(ev.games,1000);assert.equal(ev.completed,ev.games);
- assert.equal(ev.truncated,0);assert.equal(ev.invalid_actions,0);
- assert.equal(ev.episodes.length,ev.games);
- assert.equal(ev.episodes.filter(e=>e.reward>0).length,ev.wins);
- assert.equal(ev.win_rate,ev.wins/ev.games);
-}
-const oldControl=difficulty.results.find(r=>r.policy==='nn'&&r.opponent==='code');
-const newControl=restored.results.find(r=>r.policy==='nn'&&r.opponent==='sdk-code');
-assert.deepEqual(newControl.episodes.map(e=>[e.seed,e.seat,e.first,e.reward]),oldControl.episodes.map(e=>[e.seed,e.seat,e.first,e.reward]));
-console.log('Restored Hard: page agrees with all 4,000 saved games; 1,000 control outcomes reproduce the frozen SDK baseline.');
-// The Godlike row uses its own report, not the regular-information benchmark.
-const godlike=JSON.parse(read('docs/experiments/godlike-v1/evaluation.json'));
-const godlikeRow=html.match(/<tr[^>]*data-godlike-policy="godlike"[\s\S]*?<\/tr>/)[0];
-assert(godlikeRow.includes((godlike.win_rate*100).toFixed(1)+'%'));
-assert(godlikeRow.includes(`${godlike.wins} / ${godlike.games.toLocaleString('en-US')}`));
-assert.equal(godlike.records.length,godlike.games);
-assert.equal(godlike.records.filter(r=>r.won).length,godlike.wins);
-assert(copy.godlikeNote[0].includes('非同等信息')&&copy.godlikeNote[1].includes('extra information'));
-console.log('Godlike table: privileged-information result matches all 1,000 recorded games.');
+assert(copy['rl-method'][0].includes('模仿学习')&&copy['rl-method'][1].toLowerCase().includes('imitation learning'));
+console.log('RL page: all 19 measured cells, 10 latencies, artifacts, matched opponents and bilingual copy agree with retained reports.');

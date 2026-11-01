@@ -14,11 +14,31 @@ datasets and whole-game train/validation/test splits. They are separate policy
 entries, evaluated through the same action protocol. Artifact identifiers remain
 stable for reproducibility.
 
-In the [matched evaluation](../models/structured-policy/evaluation.json), the scorer
-wins **426/1,000 (42.6%)** against browser Code AI; the autoregressive policy wins
-**239/1,000 (23.9%)**. Directly against the scorer, the autoregressive policy wins
-**288/1,000 (28.8%)**. Each matchup uses the same 500 paired seeds, swapped seats,
-balanced first movers and level-2 starts. All 3,000 games completed.
+The [matched evaluation](experiments/neural-baselines/README.md) pairs each model
+with all six other public Arena policies: 1,000 small games per opponent, seeds
+91,000,000–91,000,499, swapped seats, balanced first movers and level-2 starts.
+All **11,000 distinct games** completed without illegal actions or truncations;
+the models' mutual matchup is counted once.
+
+| Opponent | Whole-move scoring · 256 → 128 | Autoregressive · 256 → 128 |
+| --- | ---: | ---: |
+| Code AI (Hard) | 426/1,000 · 42.6% | 239/1,000 · 23.9% |
+| SDK Code AI | 455/1,000 · 45.5% | 266/1,000 · 26.6% |
+| Easy · 64 | 559/1,000 · 55.9% | 366/1,000 · 36.6% |
+| Whole-move scoring · 512 → 256 | 505/1,000 · 50.5% | 298/1,000 · 29.8% |
+| Random | 1,000/1,000 · 100.0% | 997/1,000 · 99.7% |
+
+Head-to-head: autoregressive wins **288/1,000 (28.8%)** against whole-move scoring;
+the scorer wins **712/1,000 (71.2%)**. Maximum opponent-batch complete-decision p95:
+**1.289 ms (scoring)** and **0.958 ms (autoregressive)** on Apple M1 / Node 22 /
+single-thread WASM. Includes encoding and all inference calls, excludes initial
+loading; not a mobile benchmark.
+
+Arena separately assigns the autoregressive submission **provisional Elo 1237**
+from 14 wins in 60 games. The scorer remains a **fixed 1440 reference**, with 60 wins
+in 80 games. Their ladder opponent sets differ, so aggregate win rates are not
+comparable rankings. [Rating record](../arena/results/reference-elo-v1/nn-structured-v2.json) ·
+[Leaderboard](../arena/results/leaderboard.json)
 
 **Opponents:** browser Code AI (`code-table-v1`) is the Hard opponent. SDK Code AI is
 the fixed self-play teacher and a separate evaluation opponent. Results against
@@ -36,7 +56,13 @@ current public observation and scores the legal moves. It has no recurrent memor
 search, private opponent cards or reward-trained value function. The Gym environment
 supports RL experiments; a PPO trainer and critic are not implemented.
 
-The matching uniform legal-action baseline won **1/1,000 (0.1%)** against SDK Code AI, with no truncations or illegal actions. It uses the same 500 paired seeds and level-2 starts. [Protocol and reproduction](../training/README.md#uniform-random-baseline).
+The uniform legal-action baseline won **0/1,000 (0.0%)** against each Code AI opponent
+on the same paired seeds, with no truncations or illegal actions. The
+[complete 19,000-game benchmark](experiments/complete-baseline/README.md) covers all
+five scoring widths, the autoregressive model and code policies, with original
+checkpoints and complete-decision latency measured in the same environment.
+Its scoring/autoregressive p95 values are 1.322/0.873 ms, maxima across the two
+Code AI batches; the six-opponent suite above has a different timing sample.
 
 ### Checkpoint
 
@@ -49,7 +75,7 @@ The matching uniform legal-action baseline won **1/1,000 (0.1%)** against SDK Co
 | Data | 10,000 completed small games; 252,859 decisions from both SDK Code AI seats |
 | Selection | Epoch 5, lowest validation cross-entropy |
 | Held-out agreement | 89.36% of SDK Code AI action labels |
-| Evaluation | 462 / 1,000 games won against SDK Code AI |
+| SDK Code AI evaluation | 455 / 1,000 · 45.5% (matched cohort above) |
 
 The two hidden layers use ReLU. Each candidate shares the same scoring network:
 `h = ReLU(W_state × state + W_action × candidate + bias)`, then `256 → 128 → 1`.
