@@ -2,7 +2,7 @@
 
 ## This branch: structured actions v2
 
-New policies use `royale-policy-v2` / `actions-v2`. JavaScript returns a complete semantic action. ONNX takes `state [1,336]` and `prefix [1,396]`, returning `logits [1,65]`. Conditional masks constrain each decoding step; the game advances once after the full 3/4/5-card play or swap is complete.
+New policies use `royale-policy-v2` / `actions-v2`: one complete semantic action with fixed card IDs, validated and executed once. JS code, complete-move scoring and autoregressive generation share that boundary. ONNX declares a separate feature profile: `scoring-v2` (state + complete candidates → move scores) or `structured-v2` (state + prefix → token scores). Model choices do not redefine the action protocol.
 
 [Action contract and migration](../docs/ACTIONS.md) · [JS template](../policies/templates/structured-policy.mjs) · [Training and measurements](../training/structured/README.md). Legacy `royale-policy-v1` remains supported. Its reference weights and Elo are frozen. The v1 interface below remains for compatibility.
 

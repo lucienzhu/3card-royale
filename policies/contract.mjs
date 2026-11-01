@@ -11,7 +11,8 @@ export function validateManifest(m) {
   if (!a || !/^[a-zA-Z0-9][a-zA-Z0-9._-]*\.(mjs|onnx)$/.test(a.file) || !/^[a-f0-9]{64}$/.test(a.sha256) || !Number.isInteger(a.bytes) || a.bytes < 1 || a.bytes > MAX_BYTES) throw Error('Invalid policy artifact');
   if (!a.file.endsWith(m.type === 'onnx' ? '.onnx' : '.mjs')) throw Error('Artifact type mismatch');
   if (m.api === STRUCTURED_API && m.actions !== 'actions-v2') throw Error('Declare actions-v2');
-  if (m.type === 'onnx' && (m.features !== (m.api === STRUCTURED_API ? 'structured-v2' : 'gym-v1') || m.memory !== 'none')) throw Error('ONNX feature contract mismatch');
+  const profiles = m.api === STRUCTURED_API ? ['structured-v2','scoring-v2'] : ['gym-v1'];
+  if (m.type === 'onnx' && (!profiles.includes(m.features) || m.memory !== 'none')) throw Error('ONNX feature contract mismatch');
   return m;
 }
 export function validateIndex(index, count) {

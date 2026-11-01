@@ -1,10 +1,10 @@
 # NN policy · 256
 
-This branch uses **actions-v2 structured moves**: fixed physical card IDs, operation-first autoregressive selection, and one atomic submission. Three-, four- and five-card plays are supported.
+This branch uses **actions-v2 structured moves**: stable physical card IDs and one atomic submission, including three-, four- and five-card plays. Code, whole-move scoring and autoregressive models share this protocol. Model architecture and training objective are separate choices.
 
 [Action contract, Gym and RL](ACTIONS.md) · [v2 model and reproduction](../training/structured/README.md)
 
-The 0.92 MB v2 baseline wins 239/1,000 games against Hard; the legacy NN control wins 426/1,000. The interface is clearer, but this checkpoint is weaker. Gym v0, legacy models and their historical results remain compatible.
+The 0.92 MB autoregressive experiment wins 239/1,000 games against Hard; the legacy NN control wins 426/1,000. The interface is clearer, but this checkpoint is weaker. Gym v0, legacy models and their historical results remain compatible.
 
 ## Archived v1 candidate-policy documentation
 

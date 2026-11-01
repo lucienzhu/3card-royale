@@ -7,6 +7,16 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
  const base=process.env.TEST_URL||'http://127.0.0.1:59184',errors=[];
  try {
   const page=await browser.newPage();page.on('pageerror',e=>errors.push(e.message));
+  // Browser-only fixture: reuse frozen weights without registering a duplicate policy.
+  const nnRoot=require('node:path').resolve(__dirname,'../policies/entries/nn-256-v1');
+  const manifest=JSON.parse(fs.readFileSync(`${nnRoot}/manifest.json`));
+  await page.route('**/__scoring-profile/manifest.json',route=>route.fulfill({
+   contentType:'application/json',body:JSON.stringify({...manifest,id:'test-scoring-v2',
+    api:'royale-policy-v2',actions:'actions-v2',features:'scoring-v2'})
+  }));
+  await page.route('**/__scoring-profile/policy.onnx',route=>route.fulfill({
+   contentType:'application/octet-stream',body:fs.readFileSync(`${nnRoot}/policy.onnx`)
+  }));
   for(const lang of ['zh-CN','en'])for(const width of [390,1440]){
    await page.setViewportSize({width,height:1000});
    await page.goto(`${base}/arena.html?lang=${lang}#spaces`);
@@ -64,8 +74,22 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
    await client.load('nn-structured-v2');
    const g=new sdk.Game(44,0),o=g.observation(0),result=await client.act(o);client.cancel();
    if(!o.legal_actions[result.index])throw Error('Arena browser action invalid');
+   const {loadPolicy}=await import('/policies/runtime.mjs');
+   const legacy=await loadPolicy(new URL('/policies/entries/nn-256-v1/manifest.json',location.href));
+   const scoring=await loadPolicy(new URL('/__scoring-profile/manifest.json',location.href));
+   const fixtures=await (await fetch('/tests/fixtures/actions-v2.json')).json();
+   let scoringParity=0;
+   try{
+    for(const {observation} of fixtures){
+     const before=JSON.stringify(observation);
+     const a=await legacy.act(observation),b=await scoring.act(observation);
+     if(a!==b)throw Error('Browser scorer changed the frozen NN move');
+     if(JSON.stringify(observation)!==before)throw Error('Browser scorer mutated observation');
+     scoringParity++;
+    }
+   }finally{await legacy.dispose();await scoring.dispose();}
    const p95=a=>a.sort((x,y)=>x-y)[Math.floor(a.length*.95)];
-   return {browser:navigator.userAgent,model:ready.version,games:8,decisions,nnDecisions:latency.length,workerRoundTripP95Ms:p95(latency),inferenceP95Ms:p95(inference),arenaPlugin:true};
+   return {browser:navigator.userAgent,model:ready.version,games:8,decisions,nnDecisions:latency.length,workerRoundTripP95Ms:p95(latency),inferenceP95Ms:p95(inference),arenaPlugin:true,scoringParity};
   });
   assert.deepEqual(errors,[]);report.ui={languages:['zh-CN','en'],widths:[390,1440],examples:3,playLengths:[3,4,5]};
   fs.writeFileSync(process.env.REPORT_PATH||'/private/tmp/structured-browser.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));

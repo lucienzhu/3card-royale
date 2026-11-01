@@ -2,7 +2,7 @@
 
 ## This branch: structured actions v2
 
-New policies use `royale-policy-v2` / `actions-v2`. JavaScript returns a complete semantic action. ONNX takes `state [1,336]` and `prefix [1,396]`, returning `logits [1,65]`. Conditional masks constrain each decoding step; the game advances once after the full 3/4/5-card play or swap is complete.
+New policies use `royale-policy-v2` / `actions-v2`: one complete semantic action with fixed card IDs, validated and executed once. JS code, complete-move scoring and autoregressive generation share that boundary. ONNX declares a separate feature profile: `scoring-v2` (state + complete candidates → move scores) or `structured-v2` (state + prefix → token scores). Model choices do not redefine the action protocol.
 
 [Action contract and migration](../docs/ACTIONS.md) · [JS template](../policies/templates/structured-policy.mjs) · [Training and measurements](../training/structured/README.md). Legacy `royale-policy-v1` remains supported. Its reference weights and Elo are frozen. The versioned interfaces below keep old submissions reproducible.
 
@@ -65,7 +65,7 @@ Use injected `random()` for reproducible randomness, never `Math.random`, clock,
 network, storage, environment variables or external services. For small games the
 factory is called anew at every game boundary: keep optional public-observation
 memory inside that instance, not module globals. No remote imports or dependencies.
-Injected `sdk`, `core`, `code`, `easy` expose the pinned shared rules/helpers, never
+Injected `actions` and `scoring` provide canonical actions and optional whole-move features. `sdk`, `core`, `code`, `easy` expose the pinned shared rules/helpers, never
 the host's live game. Start with `templates/structured-policy.mjs` and the manifest example in [ACTIONS](../docs/ACTIONS.md#plugin-manifest). The old `templates/policy.mjs` is v1.
 
 ### Python or another language
@@ -80,7 +80,11 @@ Arena entry. A trained network can instead be exported to ONNX.
 
 ## ONNX
 
-New `structured-v2` networks use fixed token outputs:
+Both ONNX profiles use `royale-policy-v2` / `actions-v2`, FP32 and `memory: "none"`.
+
+**Whole-move scoring** declares `features: "scoring-v2"`: `state [B,336] + candidates [B,N,72] → logits [B,N]`. N is the number of complete legal moves, up to 512 in this profile; no padding is sent to inference. The host selects argmax (first row on ties), maps the row to a canonical semantic action and validates it. The 72-feature descriptor matches the legacy scorer; fixed card IDs in the returned action replace the old external candidate index. Use `sdk/scoring.js` or Python `scoring.encode` for matching training features.
+
+**Autoregressive generation** declares `features: "structured-v2"`:
 
 | Name | Type | Shape |
 | --- | --- | --- |

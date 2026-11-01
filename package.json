@@ -5,7 +5,7 @@
   "description": "An open two-player card game from Shenzhen.",
   "license": "MIT",
   "scripts": {
-    "test": "node scripts/check.cjs && node tests/arena/contracts.mjs && node tests/arena/rating.mjs && node tests/arena/reference.mjs && node tests/arena/release.mjs",
+    "test": "node scripts/check.cjs && node tests/scoring-actions.mjs && node tests/arena/contracts.mjs && node tests/arena/rating.mjs && node tests/arena/reference.mjs && node tests/arena/release.mjs",
     "test:core": "python3 -m unittest discover -s tests -p 'test_core.py'",
     "test:gym": "python3 -m unittest discover -s tests -p 'test_*.py'",
     "test:conformance": "python3 tests/conformance.py --rust rust/target/debug/royale-json",
@@ -19,7 +19,7 @@
     "arena:submit": "node arena/submit.mjs",
     "arena:reference:test": "node tests/arena/reference.mjs",
     "arena:release:check": "node arena/reference-ci.mjs --release --rate --output /tmp/royale-release",
-    "test:actions": "node tests/structured-actions.cjs && python3 -m unittest discover -s tests -p test_structured.py"
+    "test:actions": "node tests/structured-actions.cjs && node tests/scoring-actions.mjs && python3 -m unittest discover -s tests -p test_structured.py && python3 -m unittest discover -s tests -p test_scoring.py"
   },
   "main": "sdk/index.js",
   "types": "sdk/index.d.ts",

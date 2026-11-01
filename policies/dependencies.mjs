@@ -12,3 +12,5 @@ export const easy = easyModule.default || globalThis.RoyaleEasyPolicy;
 
 import * as actionsModule from '../sdk/actions.js';
 export const actions = actionsModule.default || globalThis.RoyaleActions;
+import * as scoringModule from '../sdk/scoring.js';
+export const scoring = scoringModule.default || globalThis.RoyaleScoring;

@@ -1,5 +1,7 @@
 # Structured policy · reproducible baseline
 
+This is one autoregressive experiment, not the required architecture for `actions-v2`. Whole-move scorers and code policies use the same action protocol; see [model profiles](../../docs/ACTIONS.md#model-and-compatibility).
+
 Schema `actions-v2`; rules 1.0.0. 336 state + 396 prefix → 256 → 128 → 65. The teacher is frozen **SDK Code AI**, not browser Hard. The policy imitates complete actions through masked, teacher-forced token predictions; each decision has total weight one.
 
 ```sh

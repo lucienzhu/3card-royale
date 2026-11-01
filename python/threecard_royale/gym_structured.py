@@ -1,7 +1,8 @@
 """Atomic structured-action Gym. One step = one complete 1–6 token action.
 
-Call action_masks(prefix) while decoding, then step(padded_sequence) once.
-This is not a flat MultiDiscrete policy with independent output heads.
+Score complete legal moves, use code, or decode with action_masks(prefix).
+All policies submit a complete padded sequence to step() once. Independent
+MultiDiscrete heads cannot enforce the conditional legality of token choices.
 """
 import gymnasium as gym
 from gymnasium import spaces
@@ -30,6 +31,13 @@ class StructuredRoyaleEnv(RoyaleEnv):
         if values.ndim != 1 or (len(values) and not np.issubdtype(values.dtype,np.integer)):
             raise ValueError('Prefix must contain integer tokens')
         return np.array(self._grammar.next([int(t) for t in values])[0],bool)
+
+    def scoring_observation(self):
+        """Optional model input; selected row maps to a complete actions-v2 sequence."""
+        from .scoring import encode
+        if self._done:
+            raise RuntimeError('Episode ended or not reset; call reset()')
+        return encode(self.game.observation(self.player), self.episode)
 
     def step(self, action):
         # Decode without mutation. The inherited step applies the complete action once.
