@@ -1,5 +1,7 @@
 # 深圳花牌 · 3Card Royale
 
+**动作空间迁移分支：**[固定语义动作、Gym v1 与模型实测](docs/ACTIONS.md) · [gametest](docs/GAMETEST.md)。支持 3／4／5 张出牌，旧策略保持兼容。
+
 [**AI Arena · 策略插件与 Elo 天梯 ↗**](https://lucienzhu.github.io/3card-royale/arena.html?lang=zh-CN) · [提交策略](policies/README.zh-CN.md)
 
 **简体中文** · [English](README.md)

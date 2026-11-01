@@ -9,3 +9,6 @@ export const sdk = sdkModule.default || globalThis.ThreeCardRoyale;
 export const features = featuresModule.default || globalThis.RoyaleFeatures;
 export const code = codeModule.default || globalThis.RoyaleCodePolicy;
 export const easy = easyModule.default || globalThis.RoyaleEasyPolicy;
+
+import * as actionsModule from '../sdk/actions.js';
+export const actions = actionsModule.default || globalThis.RoyaleActions;

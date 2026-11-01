@@ -1,5 +1,12 @@
 # Policy 插件 · Arena 1.1
 
+## 当前分支：结构化动作 v2
+
+新策略使用 `royale-policy-v2` / `actions-v2`：JS 返回完整的语义动作；ONNX 输入 `state [1,336]` 和 `prefix [1,396]`，输出 `logits [1,65]`。按条件掩码依次解码，完整选好 3/4/5 张牌或换牌后，才执行一次。
+
+[动作定义与迁移](../docs/ACTIONS.md) · [JS 模板](../policies/templates/structured-policy.mjs) · [训练与实测](../training/structured/README.md)。旧 `royale-policy-v1` 继续加载，旧基准权重和 Elo 保持固定。以下按接口版本区分，兼容旧提交。
+
+
 [English](README.md) · [天梯](../arena.html?lang=zh-CN) · [评估协议](../arena/README.md)
 
 参赛单位是 **policy**，既可以是纯 JavaScript，也可以是 ONNX 神经网络。
@@ -18,11 +25,12 @@
 复制已有示例，加入 `policies/registry.json`，为目录条目填写 `"github": "你的GitHub用户名"`（不带 @ 或网址）；新 manifest 的 `author` 使用相同用户名。天梯显示可点击的 `@用户名`。目录署名独立于已评分的 manifest，修改展示资料不会使旧评分失效。
 
 运行 `node arena/stamp.mjs <id>` 更新哈希。
-已评分的 ID 不覆盖修改；新代码或权重用新 ID。兼容接口为 `royale-policy-v1`，
+已评分的 ID 不覆盖修改；新代码或权重用新 ID。新接口使用 `royale-policy-v2` 和 `actions-v2`，旧 `royale-policy-v1` 保持兼容；
 玩法规则 1.0.0，按独立小局评估，所有策略只获得公开观察。
 
 纯代码导出 `createPolicy({random, sdk})`，返回 `{act(observation)}`。
-`act` 返回当前 `observation.legal_actions` 的序号，可异步。手牌和双方公开伤牌可见；
+v2 的 `act` 返回完整结构化动作，可异步；只有 v1 返回当前 `observation.legal_actions` 的序号。
+使用 [v2 模板](templates/structured-policy.mjs) 和 [manifest 示例](../docs/ACTIONS.md#plugin-manifest)。手牌和双方公开伤牌可见；
 对手手牌、牌堆顺序、发牌种子和引擎 RNG 不传入。观察是只读副本。
 随机策略使用传入的 `random()`，不使用时间、网络、存储或 `Math.random()`。
 每小局重建实例，记忆只保留在实例中。不要远程 import、读取环境变量或调用外部服务。
@@ -30,8 +38,9 @@
 **Python 或其他语言的策略，请先用 Codex / Claude Code 翻译成 JavaScript。**
 保留原始代码及许可，用固定观察样本检查转换前后动作一致，再提交网页可加载的版本。
 [转换提示词与校验流程](templates/PORTING.md)。这不是线上自动转换服务。
-神经网络可直接导出 ONNX：`state [1,336] + candidates [1,N,72] → logits [1,N]`，
-float32，动态 N≤512，输出有限数值，最高分对应动作。[训练与导出](../docs/MODEL.zh-CN.md)。
+v2 神经网络导出 ONNX：`state [B,336] + prefix [B,396] → logits [B,65]`，
+float32；宿主逐步应用条件 mask，最多六步后提交完整动作。旧 v1 仍使用
+`state [1,336] + candidates [1,N,72] → logits [1,N]`，N≤512。[训练与导出](../docs/MODEL.zh-CN.md)。
 
 ## 工作流程
 

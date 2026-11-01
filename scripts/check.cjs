@@ -48,3 +48,6 @@ require('../tests/onboarding.cjs');
 require('../tests/guided-flow.cjs');
 
 require('../tests/godlike-policy.cjs');
+
+require('../tests/structured-actions.cjs');
+require('../tests/structured-match.cjs');

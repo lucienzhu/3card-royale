@@ -3,11 +3,24 @@ import {createHash} from 'node:crypto';
 import {validateManifest,ID} from '../policies/contract.mjs';
 export const LIMITS=Object.freeze({prTargets:3,batchTargets:10,smokeGames:4,pairMs:60000,totalMs:180000});
 export const digest=value=>createHash('sha256').update(typeof value==='string'||Buffer.isBuffer(value)?value:JSON.stringify(value)).digest('hex');
+export async function sourceVersions(panel){
+ // Only explicitly audited runtime migrations can coexist with frozen reports.
+ const audit=JSON.parse(await fs.readFile('arena/legacy-v2-replay.json'));
+ const priorBytes=await fs.readFile('arena/results/season-1.json'),prior=JSON.parse(priorBytes);
+ if(audit.historicalReport!=='arena/results/season-1.json'||audit.historicalSha256!==digest(priorBytes)||audit.records.length!==2000||digest(audit.records)!==digest(prior.records)||digest(audit.protocol)!==digest(prior.protocol))throw Error('Invalid legacy replay evidence');
+ const versions=[panel.sourceSha256,audit.sourceSha256];
+ for(const version of versions){
+  let valid=true;
+  for(const [file,hash]of Object.entries(version))if(digest(await fs.readFile(file))!==hash){valid=false;break;}
+  if(valid)return versions;
+ }
+ throw Error('Season dependencies changed; audit compatibility or recalibrate a new panel');
+}
 export async function context(){
  const bytes=await fs.readFile('arena/reference-panel.json'),panel=JSON.parse(bytes);
  if(panel.id!=='reference-elo-v1'||panel.opponents.length!==3||panel.gamesPerOpponent!==20||panel.logisticScale!==400||panel.priorSd!==400||panel.priorMean!==1500)throw Error('Unsupported reference panel');
  if(digest(await fs.readFile(panel.calibration.path))!==panel.calibration.sha256)throw Error('Calibration hash changed');
- for(const [file,hash]of Object.entries(panel.sourceSha256))if(digest(await fs.readFile(file))!==hash)throw Error(`Season dependency changed: ${file}; explicitly recalibrate a new panel`);
+ const sources=await sourceVersions(panel);
  const registry=JSON.parse(await fs.readFile('policies/registry.json')),manifests=new Map();
  for(const entry of registry.policies){
   if(!ID.test(entry.id)||entry.manifest!==`entries/${entry.id}/manifest.json`||manifests.has(entry.id))throw Error('Invalid registry');
@@ -15,7 +28,7 @@ export async function context(){
  }
  if(new Set(panel.opponents.map(p=>p.id)).size!==3)throw Error('Duplicate reference');
  for(const p of panel.opponents)if(digest(manifests.get(p.id))!==digest(p.manifest)||!Number.isFinite(p.elo))throw Error(`Frozen reference changed: ${p.id}`);
- return {panel,panelSha256:digest(bytes),manifests};
+ return {panel,panelSha256:digest(bytes),manifests,sources};
 }
 export function targetsFor(ctx,{explicit='',changed=null,baseManifests=null,limit=LIMITS.batchTargets}={}){
  if(baseManifests)for(const [id,m]of ctx.manifests)if(baseManifests[id]&&digest(baseManifests[id])!==digest(m))throw Error(`${id}: published IDs are immutable; submit a new ID`);
@@ -30,7 +43,7 @@ export function targetsFor(ctx,{explicit='',changed=null,baseManifests=null,limi
 export function checkMatch(report,ctx,target,opponent,games,seedStart){
  const ids=[target,opponent].sort();
  if(report.records?.length!==games||report.protocol?.gamesPerPair!==games||report.protocol?.seedStart!==seedStart||report.rules!=='1.0.0'||report.information!=='public'||report.episode!=='game')throw Error('Wrong match protocol');
- if(digest(report.sourceSha256)!==digest(ctx.panel.sourceSha256))throw Error('Wrong match source');
+ if(!(ctx.sources||[ctx.panel.sourceSha256]).some(s=>digest(report.sourceSha256)===digest(s)))throw Error('Wrong match source');
  if(report.policies.length!==2||new Set(report.policies.map(m=>m.id)).size!==2||report.policies.some(m=>!ids.includes(m.id)||digest(m)!==digest(ctx.manifests.get(m.id))))throw Error('Wrong match manifests');
  const seen=new Set();
  for(const r of report.records){

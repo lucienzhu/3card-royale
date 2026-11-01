@@ -1,5 +1,14 @@
 # NN policy · 256
 
+This branch uses **actions-v2 structured moves**: fixed physical card IDs, operation-first autoregressive selection, and one atomic submission. Three-, four- and five-card plays are supported.
+
+[Action contract, Gym and RL](ACTIONS.md) · [v2 model and reproduction](../training/structured/README.md)
+
+The 0.92 MB v2 baseline wins 239/1,000 games against Hard; the legacy NN control wins 426/1,000. The interface is clearer, but this checkpoint is weaker. Gym v0, legacy models and their historical results remain compatible.
+
+## Archived v1 candidate-policy documentation
+
+
 **Policy names:** SDK Code AI is the frozen training/evaluation baseline. Browser Hard uses the original table Code AI (`code-table-v1`), restored after a routing regression. It also preserves the next combination and evaluates swap gains, including blind rival-hand swaps. Historical NN results remain against the SDK baseline. [Current difficulty results](DIFFICULTY.md).
 
 [简体中文](MODEL.zh-CN.md) · [RL environment](RL.md) · [Reproduce](../training/README.md)

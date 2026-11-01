@@ -1,5 +1,5 @@
 import {validateManifest, validateIndex, seededRandom, freeze} from './contract.mjs';
-import {sdk, core, code, easy, features} from './dependencies.mjs';
+import {sdk, core, code, easy, features, actions} from './dependencies.mjs';
 const isNode = typeof process !== 'undefined' && !!process.versions?.node;
 let ortPromise;
 export async function readBytes(url) {
@@ -34,8 +34,14 @@ export async function loadPolicy(manifestURL) {
     });
     const ort = await ortPromise;
     const session = await ort.InferenceSession.create(bytes,{executionProviders:['wasm']});
-    if (session.inputNames.join(',') !== 'state,candidates' || session.outputNames.join(',') !== 'logits') {await session.release(); throw Error('Expected state / candidates → logits');}
+    const structured = manifest.api === 'royale-policy-v2';
+    if (session.inputNames.join(',') !== (structured ? 'state,prefix' : 'state,candidates') || session.outputNames.join(',') !== 'logits') {await session.release(); throw Error(structured?'Expected state / prefix → logits':'Expected state / candidates → logits');}
     engine = {createPolicy:()=>({act:async observation=>{
+      if (structured) return (await actions.decode(observation,async (state,prefix)=>{
+        const out=await session.run({state:new ort.Tensor('float32',state,[1,336]),prefix:new ort.Tensor('float32',prefix,[1,396])});
+        if(out.logits.dims.join(',')!=='1,65')throw Error('Expected 65 fixed token logits');
+        return out.logits.data;
+      })).action;
       const f = features.encode(observation,'game');
       const out = await session.run({state:new ort.Tensor('float32',f.state,[1,336]), candidates:new ort.Tensor('float32',f.candidates,[1,f.count,72])});
       if (out.logits.dims.length !== 2 || out.logits.dims[0] !== 1 || out.logits.dims[1] !== f.count) throw Error('Invalid logits shape');
@@ -45,7 +51,7 @@ export async function loadPolicy(manifestURL) {
   }
   let instance;
   function reset(seed) {
-    instance = engine.createPolicy({sdk,core,code,easy,random:seededRandom(seed)});
+    instance = engine.createPolicy({sdk,core,code,easy,actions,random:seededRandom(seed)});
     if (!instance || typeof instance.act !== 'function') throw Error('createPolicy must return {act}');
   }
   reset(1);
@@ -53,6 +59,10 @@ export async function loadPolicy(manifestURL) {
     if (observation.rules !== manifest.rules || !observation.legal_actions?.length) throw Error('Unsupported observation');
     // No engine, deck, rival hand, deal seed or RNG enters the plugin.
     const copy = freeze(structuredClone(observation));
+    if (manifest.api === 'royale-policy-v2') {
+      const input=manifest.type==='javascript'?freeze(actions.observation(copy)):copy;
+      return actions.build(copy).validate(await instance.act(input)).index;
+    }
     return validateIndex(await instance.act(copy),copy.legal_actions.length);
   }};
 }

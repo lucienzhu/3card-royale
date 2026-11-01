@@ -43,16 +43,24 @@ for(const [_,id,attrs,row] of rows){
  assert(row.includes(`${hidden[0]} <span aria-hidden="true">→</span> ${hidden[1]}`),id+' architecture');
  assert.equal(attrs.includes('rl-selected'),manifest.file===`policy-mlp-${id}-v1.onnx`,id+' deployed flag');
 }
-assert(html.includes('models/nn-policy/'+manifest.file));
-assert(html.includes(manifest.version));
-assert(html.includes(manifest.hidden.join(' <span>→</span> ')));
-assert(html.includes((manifest.bytes/1e6).toFixed(2)+' MB'));
+const current=JSON.parse(read('models/structured-policy/training.json'));
+assert(html.includes('models/structured-policy/policy.onnx'));
+assert(html.includes('structured-256-v2'));
+assert(html.includes(current.parameters.toLocaleString('en-US')));
+assert(html.includes((current.bytes/1e6).toFixed(2)+' MB'));
+assert(html.includes('Epoch '+current.best_epoch));
+const comparison=JSON.parse(read('models/structured-policy/evaluation.json'));
+for(const [a,b] of [['nn-structured-v2','code-table-v1'],['nn-256-v1','code-table-v1'],['nn-structured-v2','nn-256-v1']]){
+ const games=comparison.records.filter(r=>[r.left,r.right].includes(a)&&[r.left,r.right].includes(b));
+ assert.equal(games.length,1000);assert(games.every(r=>r.status==='complete'));
+ const wins=games.filter(r=>r.winner===a).length;assert(html.includes(`${(wins/10).toFixed(1)}% · ${wins} / 1,000`));
+}
 for(const m of html.matchAll(/data-sc="([^"]+)"/g)){
  if(['skip','name','tag','learn','identity','play','menu'].includes(m[1]))continue;
  assert(copy[m[1]]?.length===2,'Missing translation: '+m[1]);
 }
 assert(copy.tryPath[0].includes('设置')&&copy.tryPath[1].includes('Settings'));
-assert(copy.method[0].includes('模仿学习')&&copy.method[1].includes('imitation learning'));
+assert(copy.method[0].includes('模仿学习')&&copy.method[1].toLowerCase().includes('imitation learning'));
 console.log('RL page: five models, Easy and Random match saved results, deployed artifact and bilingual setup instructions.');
 
 const easy=require('../sdk/easy-policy.js');

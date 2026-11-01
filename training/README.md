@@ -1,3 +1,9 @@
+# Training
+
+Current branch: [structured actions-v2 recipe](structured/README.md).
+
+## Historical v1 reproduction
+
 # Reproduce NN AI · 256
 
 Code AI in this training recipe means the **frozen SDK baseline**. Browser Hard uses the restored original table policy. Compare current opponents with `python training/evaluate_table_policy.py --node node`; see [difficulty records](../docs/DIFFICULTY.md).

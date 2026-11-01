@@ -30,6 +30,11 @@
       "id": "nn-512-v1",
       "manifest": "entries/nn-512-v1/manifest.json",
       "github": "lucienzhu"
+    },
+    {
+      "id": "nn-structured-v2",
+      "manifest": "entries/nn-structured-v2/manifest.json",
+      "github": "lucienzhu"
     }
   ]
 }

@@ -1,5 +1,14 @@
 # NN 策略模型 · 256
 
+当前分支改用 **actions-v2 结构化动作**：实体牌 ID 固定，先选操作，再逐张选牌或换牌目标，完整提交一次。支持三、四、五张牌。
+
+[接口、Gym 与 RL 训练约定](ACTIONS.md) · [v2 模型与复现](../training/structured/README.md)
+
+新模型 0.92 MB，对困难 Code AI 为 239/1,000 胜；旧 NN 对照为 426/1,000。新表示更直观，但当前棋力较弱。旧 Gym v0、候选模型与历史成绩保持兼容。
+
+## 以下为 v1 候选模型历史文档
+
+
 **策略名称：** SDK Code AI 是固定的训练／评估基线。网页困难档已修复调用回归，恢复原牌桌 Code AI（`code-table-v1`），会保留下一手组合、评估换牌收益并盲换对手手牌。旧 NN 数据仍以 SDK 基线为对手。[当前难度结果](DIFFICULTY.zh-CN.md)。
 
 [English](MODEL.md) · [RL 环境](RL.zh-CN.md) · [复现步骤](../training/README.md)

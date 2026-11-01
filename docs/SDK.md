@@ -1,5 +1,12 @@
 # Portable core & integration
 
+## This branch: structured actions v2
+
+New policies use `royale-policy-v2` / `actions-v2`. JavaScript returns a complete semantic action. ONNX takes `state [1,336]` and `prefix [1,396]`, returning `logits [1,65]`. Conditional masks constrain each decoding step; the game advances once after the full 3/4/5-card play or swap is complete.
+
+[Action contract and migration](../docs/ACTIONS.md) · [JS template](../policies/templates/structured-policy.mjs) · [Training and measurements](../training/structured/README.md). Legacy `royale-policy-v1` remains supported. Its reference weights and Elo are frozen. The v1 interface below remains for compatibility.
+
+
 **Policy names:** SDK Code AI is the frozen training/evaluation baseline. Browser Hard uses the original table Code AI (`code-table-v1`), restored after a routing regression. It also preserves the next combination and evaluates swap gains, including blind rival-hand swaps. Historical NN results remain against the SDK baseline. [Current difficulty results](DIFFICULTY.md).
 
 [简体中文](SDK.zh-CN.md) · [RL environment](RL.md) · [Rules](RULES.md)

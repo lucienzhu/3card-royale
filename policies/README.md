@@ -1,5 +1,12 @@
 # Policy plugins · Arena 1.1
 
+## This branch: structured actions v2
+
+New policies use `royale-policy-v2` / `actions-v2`. JavaScript returns a complete semantic action. ONNX takes `state [1,336]` and `prefix [1,396]`, returning `logits [1,65]`. Conditional masks constrain each decoding step; the game advances once after the full 3/4/5-card play or swap is complete.
+
+[Action contract and migration](../docs/ACTIONS.md) · [JS template](../policies/templates/structured-policy.mjs) · [Training and measurements](../training/structured/README.md). Legacy `royale-policy-v1` remains supported. Its reference weights and Elo are frozen. The versioned interfaces below keep old submissions reproducible.
+
+
 [简体中文](README.zh-CN.md) · [Arena](../arena.html) · [Evaluation protocol](../arena/README.md)
 
 Submit a **policy**, either pure JavaScript or an ONNX network. Both run in the
@@ -20,7 +27,7 @@ Copy a current entry and give it a **new immutable ID**. Add its manifest to
 `policies/registry.json`. Do not replace an existing policy's weights/code under
 the same ID after it has been rated. The artifact is at most 5,000,000 bytes;
 update `artifact.bytes` and `artifact.sha256` with `node arena/stamp.mjs <id>`.
-Each manifest declares `royale-policy-v1`, rules `1.0.0`, episode `game`, public
+New manifests declare `royale-policy-v2` and `actions-v2`; v1 manifests remain valid. All declare rules `1.0.0`, episode `game`, public
 information and whether the policy remembers observations within one game.
 
 The primary extension point is this folder. The old `sdk/policy.js`,
@@ -42,14 +49,15 @@ A **single self-contained ES module** exports a factory:
 export function createPolicy({random, sdk}) {
   return {
     act(observation) {
-      return Math.floor(random() * observation.legal_actions.length);
+      return observation.legal_actions[Math.floor(random() * observation.legal_actions.length)];
     }
   };
 }
 ```
 
-`act` may return a number or a Promise of a number: an index into this observation's
-`legal_actions`. This is a dynamic candidate table, not a permanent action ID.
+For v2, `act` returns a complete semantic action (or a Promise of one), validated
+against this observation. For v1 only, it returns the action’s index in the current
+`legal_actions` list. Do not mix the two return types.
 The detached, frozen observation is the [public SDK observation](../docs/SDK.md#state-ownership--observations).
 Own hand and both public wound racks are visible; rival hand, deck order, RNG and
 deal seed are not. The host applies the chosen legal action and checks it again.
@@ -58,7 +66,7 @@ network, storage, environment variables or external services. For small games th
 factory is called anew at every game boundary: keep optional public-observation
 memory inside that instance, not module globals. No remote imports or dependencies.
 Injected `sdk`, `core`, `code`, `easy` expose the pinned shared rules/helpers, never
-the host's live game. Start with `templates/policy.mjs`.
+the host's live game. Start with `templates/structured-policy.mjs` and the manifest example in [ACTIONS](../docs/ACTIONS.md#plugin-manifest). The old `templates/policy.mjs` is v1.
 
 ### Python or another language
 
@@ -72,7 +80,19 @@ Arena entry. A trained network can instead be exported to ONNX.
 
 ## ONNX
 
-Use the existing `gym-v1` contract with dynamic candidate count:
+New `structured-v2` networks use fixed token outputs:
+
+| Name | Type | Shape |
+| --- | --- | --- |
+| `state` | float32 | `[B, 336]` |
+| `prefix` | float32 | `[B, 396]` |
+| `logits` | float32 | `[B, 65]` |
+
+The host decodes at most six steps with conditional masks, then submits the complete move. Use `memory: "none"`. See [the action contract](../docs/ACTIONS.md).
+
+### Legacy ONNX v1
+
+Existing models keep `gym-v1` with dynamic candidate count:
 
 | Name | Type | Shape |
 | --- | --- | --- |

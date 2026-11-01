@@ -1,0 +1,32 @@
+{
+  "schema": "actions-v2",
+  "teacher": "sdk-code-policy-v0.2.0",
+  "games": 10000,
+  "seed": 20261101,
+  "samples": 252906,
+  "tokens": 988571,
+  "kinds": {
+    "52": 191609,
+    "53": 3406,
+    "54": 105,
+    "55": 57786
+  },
+  "splits": {
+    "train": 201970,
+    "val": 25264,
+    "test": 25672
+  },
+  "retries": 0,
+  "bytes": 12665068,
+  "sha256": "a7d4da6f5c218c9cfb00c39240cd6bd6578ec13e90caf7174b00a8f29c524315",
+  "split": "game ID modulo 10: 0 val, 1 test, 2..9 train",
+  "seconds": 144.103,
+  "sources": {
+    "gamecore.js": "beb6ec6666d58424b80e6e7d7cfc2f6801a7d0a77c34791df745612494392981",
+    "sdk/index.js": "e9f2b4e1d9de59d0786dca5ac4b47580d3c6456f812c4f532b6af33f438de717",
+    "sdk/policy.js": "18d660f922a46cf66c238794c65bcca7373d3bbfbf53748ade6ab107e85bbe3e",
+    "sdk/actions.js": "a9c96be6fb0c4d6f1f657e1948415c56a277cc5138a444d2da8690a6b72a3d7e",
+    "training/structured/collect.cjs": "5228e6efa8b6d23579656b96243eb49a59d50396f80cd6308a4f4241a2f08808"
+  },
+  "source_note": "Collector output-path default and provenance reporting were aligned after collection; sampling logic and dataset bytes are unchanged."
+}

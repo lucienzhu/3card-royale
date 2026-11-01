@@ -1,5 +1,7 @@
 # 3Card Royale · 深圳花牌
 
+**Action-space migration branch:** [fixed semantic actions, Gym v1 and model evidence](docs/ACTIONS.md) · [gametest](docs/GAMETEST.md). Supports 3/4/5-card plays. Legacy policies remain compatible.
+
 [**AI Arena · policy plugins and Elo ↗**](https://lucienzhu.github.io/3card-royale/arena.html?lang=en) · [Submit a policy](policies/README.md)
 
 [简体中文](README.zh-CN.md) · **English**

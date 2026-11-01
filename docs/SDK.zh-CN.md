@@ -1,5 +1,12 @@
 # 可移植核心与接入
 
+## 当前分支：结构化动作 v2
+
+新策略使用 `royale-policy-v2` / `actions-v2`：JS 返回完整的语义动作；ONNX 输入 `state [1,336]` 和 `prefix [1,396]`，输出 `logits [1,65]`。按条件掩码依次解码，完整选好 3/4/5 张牌或换牌后，才执行一次。
+
+[动作定义与迁移](../docs/ACTIONS.md) · [JS 模板](../policies/templates/structured-policy.mjs) · [训练与实测](../training/structured/README.md)。旧 `royale-policy-v1` 继续加载，旧基准权重和 Elo 保持固定。以下原 v1 接口说明保留用于兼容。
+
+
 **策略名称：** SDK Code AI 是固定的训练／评估基线。网页困难档已修复调用回归，恢复原牌桌 Code AI（`code-table-v1`），会保留下一手组合、评估换牌收益并盲换对手手牌。旧 NN 数据仍以 SDK 基线为对手。[当前难度结果](DIFFICULTY.zh-CN.md)。
 
 [English](SDK.md) · [RL环境](RL.zh-CN.md) · [规则](RULES.zh-CN.md)

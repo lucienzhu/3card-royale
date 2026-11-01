@@ -1,0 +1,9 @@
+{
+  "version": "structured-256-v2",
+  "rules": "1.0.0",
+  "features": "structured-v2",
+  "actions": "actions-v2",
+  "file": "policy.onnx",
+  "sha256": "16e452b48837e6fa681216c13279bbe500997c97b86f56efa19e449b1699baf3",
+  "bytes": 916663
+}
