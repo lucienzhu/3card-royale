@@ -1,26 +1,44 @@
-# NN policy · 256
+# Policy baselines
 
-This branch uses **actions-v2 structured moves**: stable physical card IDs and one atomic submission, including three-, four- and five-card plays. Code, whole-move scoring and autoregressive models share this protocol. Model architecture and training objective are separate choices.
+Code policies, whole-move scorers and autoregressive models share **actions-v2**:
+stable physical card IDs and one atomic move, including three-, four- and five-card
+plays. The protocol does not prescribe a network architecture or training objective.
 
-[Action contract, Gym and RL](ACTIONS.md) · [v2 model and reproduction](../training/structured/README.md)
+| Neural policy | Hidden layers | Parameters | ONNX | Decisions | Selected epoch |
+| --- | --- | ---: | ---: | ---: | ---: |
+| [Whole-move scoring](../training/README.md) | 256 → 128 | 137,729 | 0.55 MB | 252,859 | 5 |
+| [Autoregressive](../training/structured/README.md) | 256 → 128 | 228,929 | 0.92 MB | 252,906 | 16 |
 
-The 0.92 MB autoregressive experiment wins 239/1,000 games against Hard; the legacy NN control wins 426/1,000. The interface is clearer, but this checkpoint is weaker. Gym v0, legacy models and their historical results remain compatible.
+Both use behavioral cloning from SDK Code AI, with separately generated 10,000-game
+datasets and whole-game train/validation/test splits. They are separate policy
+entries, evaluated through the same action protocol. Artifact identifiers remain
+stable for reproducibility.
 
-## Archived v1 candidate-policy documentation
+In the [matched evaluation](../models/structured-policy/evaluation.json), the scorer
+wins **426/1,000 (42.6%)** against browser Code AI; the autoregressive policy wins
+**239/1,000 (23.9%)**. Directly against the scorer, the autoregressive policy wins
+**288/1,000 (28.8%)**. Each matchup uses the same 500 paired seeds, swapped seats,
+balanced first movers and level-2 starts. All 3,000 games completed.
 
+**Opponents:** browser Code AI (`code-table-v1`) is the Hard opponent. SDK Code AI is
+the fixed self-play teacher and a separate evaluation opponent. Results against
+them must not be pooled. The [Arena comparison](../arena.html#structured-results)
+includes all neural architectures, code policies, raw reports and timing scopes.
 
-**Policy names:** SDK Code AI is the frozen training/evaluation baseline. Browser Hard uses the original table Code AI (`code-table-v1`), restored after a routing regression. It also preserves the next combination and evaluates swap gains, including blind rival-hand swaps. Historical NN results remain against the SDK baseline. [Current difficulty results](DIFFICULTY.md).
+[Action contract, Gym and RL](ACTIONS.md) · [Autoregressive training](../training/structured/README.md)
+
+## Whole-move scoring · 256 → 128
 
 [简体中文](MODEL.zh-CN.md) · [RL environment](RL.md) · [Reproduce](../training/README.md)
 
-NN AI is a **behavioral-cloning baseline** trained to imitate Code AI. It uses one
+The whole-move scorer is a **behavioral-cloning baseline** trained to imitate SDK Code AI. It uses one
 current public observation and scores the legal moves. It has no recurrent memory,
 search, private opponent cards or reward-trained value function. The Gym environment
 supports RL experiments; a PPO trainer and critic are not implemented.
 
-The matching uniform legal-action baseline won **1/1,000 (0.1%)** against Code AI, with no truncations or illegal actions. It uses the same 500 paired seeds and level-2 starts. [Protocol and reproduction](../training/README.md#uniform-random-baseline).
+The matching uniform legal-action baseline won **1/1,000 (0.1%)** against SDK Code AI, with no truncations or illegal actions. It uses the same 500 paired seeds and level-2 starts. [Protocol and reproduction](../training/README.md#uniform-random-baseline).
 
-## Released model
+### Checkpoint
 
 | Item | Value |
 | --- | --- |
@@ -28,25 +46,29 @@ The matching uniform legal-action baseline won **1/1,000 (0.1%)** against Code A
 | Rules / SDK | 1.0.0 / 0.2.0 |
 | Network | 336 state + 72 candidate → 256 → 128 → 1 |
 | Parameters / ONNX | 137,729 / 552,407 bytes; FP32, opset 17 |
-| Data | 10,000 completed small games; 252,859 decisions from both Code AI seats |
+| Data | 10,000 completed small games; 252,859 decisions from both SDK Code AI seats |
 | Selection | Epoch 5, lowest validation cross-entropy |
-| Held-out agreement | 89.36% of Code AI action labels |
-| Evaluation | 462 / 1,000 games won against Code AI |
+| Held-out agreement | 89.36% of SDK Code AI action labels |
+| Evaluation | 462 / 1,000 games won against SDK Code AI |
 
 The two hidden layers use ReLU. Each candidate shares the same scoring network:
 `h = ReLU(W_state × state + W_action × candidate + bias)`, then `256 → 128 → 1`.
 The factored first projection is equivalent to concatenating 408 inputs. **512 is
 the candidate capacity, not a hidden-layer size or a fixed action-class head.**
 
-The [manifest](../models/nn-policy/manifest.json) identifies the deployed
+The [manifest](../models/nn-policy/manifest.json) identifies the scoring
 [ONNX](../models/nn-policy/policy-mlp-256-v1.onnx). SHA-256:
 `5b98061d4188c116080eb6784c6378536a89e0b3c1db333df88217379e4dde13`.
 Accuracy measures imitation, not strength. Equivalent tied moves can count as
 errors. Evaluation uses 500 held-out seeds with the NN seats swapped, normal
 level-2 starts and balanced first movers; it does not establish an advantage over
-Code AI. See [metrics and profiling limits](experiments/nn-policy-v1/README.md).
+SDK Code AI. See [metrics and profiling limits](experiments/nn-policy-v1/README.md).
 
-## Shared Gym → Torch → ONNX → JS contract
+## Scoring tensors · Gym → Torch → ONNX → JS
+
+The tensor interface below is internal to the scoring model. Its Arena adapter
+converts the selected candidate to the shared structured move before execution.
+The direct Gym example uses the candidate-index adapter.
 
 [Python encoding](../python/threecard_royale/gym_env.py) and
 [JS encoding](../sdk/features.js) use the same `gym-v1` features.
@@ -66,10 +88,10 @@ meaning in the next state. Do not sample if no legal actions remain.
 The six card zones are own hand, own wounds, rival public wounds, discard, own
 active play and rival active play. [RL](RL.md#observation-and-action-contract)
 defines all candidate columns, including swap/skip distinctions. `meta[23]` is
-the task flag: 0 for `game`, 1 for `match`. The released model and browser encoder
+the task flag: 0 for `game`, 1 for `match`. The scoring model and its encoder
 use `game`; switching to `match` is a new training/evaluation setting.
 
-## Run the released ONNX in Gym
+## Run the scoring ONNX in Gym
 
 From the repository root, install the [pinned dependencies](../training/README.md),
 then `.venv/bin/pip install --no-deps -e ./python`. Run this with that Python:
@@ -83,7 +105,7 @@ session = ort.InferenceSession(
     "models/nn-policy/policy-mlp-256-v1.onnx",
     providers=["CPUExecutionProvider"],
 )
-env = RoyaleEnv(episode="game", player=0)  # rival: Code AI
+env = RoyaleEnv(episode="game", player=0)  # rival: SDK Code AI
 try:
     obs, info = env.reset(seed=42)
     done = info["reset_terminal"] or info["reset_truncated"]
@@ -109,7 +131,7 @@ conformance/debug snapshots contain private state and must stay outside policy i
 
 ## Reproduction and TensorBoard
 
-[The recipe](../training/recipe-256.json) regenerates Code AI self-play, verifies
+[The recipe](../training/recipe-256.json) regenerates SDK Code AI self-play, verifies
 100 shard hashes, trains 256/128 and exports/evaluates the selected checkpoint.
 Games stay together across the 8,000 / 1,000 / 1,000 train/validation/test split.
 The actual tar.gz is 112,497,347 bytes, so data and `.pt` files are regenerated;
@@ -153,7 +175,7 @@ This is an integration plan, not an existing training command:
    and matching encoder/worker support. Retrain, check parity and profile before
    changing the deployed manifest.
 
-The browser [worker](../app/policy-worker.js) verifies rules, feature version,
-SHA-256 and the 5 MB model limit. [Integration](../app/policy-ai.js) falls back to Easy AI with a visible notice on
-load/inference failure. New visitors start on Easy. [Three difficulties](DIFFICULTY.md). The separately
-cached WASM runtime is about 14 MB; it is not included in the model-size figure.
+The [Arena runtime](../policies/runtime.mjs) loads both modeling approaches,
+verifies the artifact and validates the complete move. Browser play runs inference
+in a Worker. Model sizes above cover ONNX weights; the WASM runtime is cached separately.
+See [opponents and fallback behavior](DIFFICULTY.md).

@@ -1,25 +1,38 @@
-# NN 策略模型 · 256
+# 策略基线
 
-当前分支使用 **actions-v2 统一动作协议**：实体牌 ID 固定，完整提交一次，支持三、四、五张牌。纯代码、整手候选评分、自回归模型共享这套协议；模型结构和训练目标可以不同。
+纯代码、整手评分和自回归模型共享 **actions-v2**：实体牌 ID 固定，完整动作一次提交，
+支持三、四、五张牌。动作协议统一，模型结构和训练目标可以不同。
 
-[接口、Gym 与 RL 训练约定](ACTIONS.md) · [v2 模型与复现](../training/structured/README.md)
+| 神经网络策略 | 隐藏层 | 参数 | ONNX | 决策样本 | 选模 epoch |
+| --- | --- | ---: | ---: | ---: | ---: |
+| [整手评分](../training/README.md) | 256 → 128 | 137,729 | 0.55 MB | 252,859 | 5 |
+| [自回归](../training/structured/README.md) | 256 → 128 | 228,929 | 0.92 MB | 252,906 | 16 |
 
-新模型 0.92 MB，对困难 Code AI 为 239/1,000 胜；旧 NN 对照为 426/1,000。新表示更直观，但当前棋力较弱。旧 Gym v0、候选模型与历史成绩保持兼容。
+两者均模仿 SDK Code AI，各自生成 10,000 局自对弈数据，按整局划分训练、验证和测试集。
+它们是独立策略提交，通过同一动作协议评估。产物标识保持固定，便于复现。
 
-## 以下为 v1 候选模型历史文档
+[同批次评估](../models/structured-policy/evaluation.json)中，整手评分对网页 Code AI
+胜 **426／1,000 局（42.6%）**，自回归胜 **239／1,000 局（23.9%）**。
+自回归直接对整手评分胜 **288／1,000 局（28.8%）**。
+每组均使用同一批 500 个配对种子，交换座位、平衡先攻、从 2 级开局；3,000 局全部完成。
 
+**评估对手：** 网页 Code AI（`code-table-v1`）是困难档；SDK Code AI 是固定的自对弈老师，
+也是另一种评估对手。两者的成绩不能合并。[竞技场对照表](../arena.html#structured-results)
+汇总各网络结构和纯代码策略，保留原始记录及性能测量口径。
 
-**策略名称：** SDK Code AI 是固定的训练／评估基线。网页困难档已修复调用回归，恢复原牌桌 Code AI（`code-table-v1`），会保留下一手组合、评估换牌收益并盲换对手手牌。旧 NN 数据仍以 SDK 基线为对手。[当前难度结果](DIFFICULTY.zh-CN.md)。
+[动作接口、Gym 与 RL](ACTIONS.md) · [自回归训练与复现](../training/structured/README.md)
+
+## 整手评分 · 256 → 128
 
 [English](MODEL.md) · [RL 环境](RL.zh-CN.md) · [复现步骤](../training/README.md)
 
-NN AI 是模仿 Code AI 的**行为克隆基线**：读取当前公开观察，为合法动作评分。
+整手评分策略是模仿 SDK Code AI 的**行为克隆基线**：读取当前公开观察，为合法动作评分。
 没有循环记忆、搜索、对手暗牌或通过奖励训练的价值函数。Gym 环境已支持 RL 实验；
 PPO 训练器和 critic 尚未实现。
 
-相同评估条件下，均匀随机合法动作策略对 Code AI 胜 **1／1,000 局（0.1%）**，无截断、无非法动作。使用相同的 500 个配对种子与 2 级开局。[实验与复现](../training/README.md#uniform-random-baseline)。
+相同评估条件下，均匀随机合法动作策略对 SDK Code AI 胜 **1／1,000 局（0.1%）**，无截断、无非法动作。使用相同的 500 个配对种子与 2 级开局。[实验与复现](../training/README.md#uniform-random-baseline)。
 
-## 上线模型
+### 检查点
 
 | 项目 | 当前值 |
 | --- | --- |
@@ -30,21 +43,24 @@ PPO 训练器和 critic 尚未实现。
 | 数据 | 10,000 个完整小局，记录两席 Code AI 的 252,859 次决策 |
 | 选模 | 第 5 个 epoch，验证集交叉熵最低 |
 | 留出集动作一致率 | 89.36%，对照 Code AI 标签 |
-| 对战评估 | 对 Code AI 胜 462／1,000 局 |
+| 对战评估 | 对 SDK Code AI 胜 462／1,000 局 |
 
 两层隐藏层都用 ReLU，每个候选动作共享同一网络：
 `h = ReLU(W_state × state + W_action × candidate + bias)`，再经过 `256 → 128 → 1`。
 首层拆开计算，等价于拼接 408 维输入。**512 是候选动作容量，不是隐藏层大小，
 也不是固定的 512 类动作输出头。**
 
-[manifest](../models/nn-policy/manifest.json) 指向上线的
+[manifest](../models/nn-policy/manifest.json) 指向整手评分
 [ONNX](../models/nn-policy/policy-mlp-256-v1.onnx)，SHA-256：
 `5b98061d4188c116080eb6784c6378536a89e0b3c1db333df88217379e4dde13`。
 动作一致率衡量模仿程度，不等于胜率；效果相同的并列动作也可能被算错。
 对战使用 500 个留出种子、交换 NN 席位，从正常 2 级开局并平衡先攻；
 结果不能证明 NN 强于 Code AI。详见[指标与性能测量边界](experiments/nn-policy-v1/README.md)。
 
-## Gym → Torch → ONNX → JS 共用接口
+## 评分张量 · Gym → Torch → ONNX → JS
+
+以下张量是评分模型的内部接口。竞技场适配器将选中的候选转换为统一结构化动作后执行。
+下方 Gym 示例直接使用候选索引适配器。
 
 [Python 编码](../python/threecard_royale/gym_env.py)与
 [JS 编码](../sdk/features.js)共用 `gym-v1` 特征。
@@ -62,10 +78,10 @@ Gym 补齐到 512 行并提供 `action_mask`；JS 只传 N 个合法候选。ONN
 
 六个牌区依次为己方手牌、己方伤牌、对手公开伤牌、弃牌、己方已出牌、对手已出牌。
 [RL 文档](RL.zh-CN.md#观察与动作)列出候选特征，包括换牌与跳过的区别。
-`meta[23]` 是任务标记：`game` 为 0、`match` 为 1。上线模型和浏览器编码使用 `game`；
+`meta[23]` 是任务标记：`game` 为 0、`match` 为 1。评分模型及其编码器使用 `game`；
 改成 `match` 需要作为新的训练与评估设置。
 
-## 在 Gym 中运行上线 ONNX
+## 在 Gym 中运行评分 ONNX
 
 在仓库根目录，按[训练指南](../training/README.md)安装锁定依赖，
 再执行 `.venv/bin/pip install --no-deps -e ./python`，用该环境运行：
@@ -140,7 +156,6 @@ finally:
 6. 只导出选定 actor，保持张量名及可变候选维度。任务或特征含义改变时，明确新模型
    契约，并同步编码器与 worker；重新训练、验证一致性、测延迟后再更新上线 manifest。
 
-浏览器 [worker](../app/policy-worker.js)检查规则、特征版本、SHA-256 和 5 MB 模型上限。
-[接入层](../app/policy-ai.js)在加载／推理失败时回退 Easy AI 并显示提示；新玩家默认简单。
-[三档难度](DIFFICULTY.zh-CN.md)。
-独立缓存的 WASM 运行时约 14 MB，不计入模型大小。
+[竞技场运行时](../policies/runtime.mjs)加载两种建模方式，校验产物及完整动作。
+网页通过 Worker 推理。上述模型大小只计算 ONNX 权重，WASM 运行时单独缓存。
+参见[对手与回退行为](DIFFICULTY.zh-CN.md)。

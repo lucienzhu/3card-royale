@@ -4,26 +4,36 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 const root=path.resolve(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const html=read('arena.html'),training=JSON.parse(read('docs/experiments/nn-policy-v1/training.json'));
 const evaluations=JSON.parse(read('docs/experiments/nn-policy-v1/evaluation.json'));
-const manifest=JSON.parse(read('models/nn-policy/manifest.json'));
 const difficulty=JSON.parse(read('docs/experiments/difficulty-v1/evaluation.json'));
+const profile=JSON.parse(read('docs/experiments/nn-policy-v1/browser-profile.json'));
+const comparison=JSON.parse(read('models/structured-policy/evaluation.json'));
 const allCopy=JSON.parse(html.match(/window.SC_COPY=(\{[\s\S]*?\});<\/script>/)[1]);
 const copy={...allCopy,...Object.fromEntries(Object.entries(allCopy).filter(([key])=>key.startsWith('rl-')).map(([key,value])=>[key.slice(3),value]))};
 const rows=[...html.matchAll(/<tr data-model="([^"]+)"([^>]*)>([\s\S]*?)<\/tr>/g)];
-assert.equal(rows.length,training.models.length+2);
+assert.equal(rows.length,training.models.length+5);
+assert.equal((html.match(/class="rl-benchmark"/g)||[]).length,1);
+assert(!html.includes('details id="experiments"'));
+assert(!Object.values(allCopy).flat().some(text=>/legacy|earlier evaluations|NN v[12]|历史实验/i.test(text)));
+const rowFor=id=>{const row=rows.find(r=>r[1]===id);assert(row,'Missing policy '+id);return row[3];};
+function result(id,opponent,wins,games){
+ const cell=rowFor(id).match(new RegExp(`<td data-opponent="${opponent}">([\\s\\S]*?)</td>`))?.[1];
+ assert(cell,'Missing result cell '+id+'/'+opponent);
+ assert(cell.includes((100*wins/games).toFixed(1)+'%'),id+'/'+opponent+' win rate');
+ assert(cell.includes(`${wins} / ${games.toLocaleString('en-US')}`),id+'/'+opponent+' wins/games');
+}
 for(const [_,id,attrs,row] of rows){
+ if(['sdk-code','autoregressive','godlike'].includes(id))continue;
  if(id==='easy'){
   const ev=difficulty.results.find(r=>r.policy==='easy'&&r.opponent==='code');
-  assert(row.includes((ev.win_rate*100).toFixed(1)+'%'),'Easy win rate');
-  assert(row.includes(`${ev.wins} / ${ev.games.toLocaleString('en-US')}`),'Easy wins/games');
-  assert(row.includes('class="rl-size">—'),'Easy has no ONNX');
+  result(id,'sdk',ev.wins,ev.games);
+  assert(row.includes('class="rl-size"><span class="rl-metric-label">ONNX</span>—'),'Easy has no ONNX');
   for(const label of copy.easy)assert(label.includes(String(difficulty.attention_budget)));
   continue;
  }
  if(id==='random'){
   const ev=JSON.parse(read('docs/experiments/nn-policy-v1/random-baseline.json'));
-  assert(row.includes((ev.win_rate*100).toFixed(1)+'%'),'random win rate');
-  assert(row.includes(`${ev.wins} / ${ev.games.toLocaleString('en-US')}`),'random wins/games');
-  assert(row.includes('class="rl-size">—'),'random has no ONNX');
+  result(id,'sdk',ev.wins,ev.games);
+  assert(row.includes('class="rl-size"><span class="rl-metric-label">ONNX</span>—'),'random has no ONNX');
   assert.equal(ev.episodes.length,ev.games);
   assert.equal(ev.episodes.filter(e=>!e.truncated&&e.reward>0).length,ev.wins);
   assert.equal(ev.episodes.filter(e=>e.truncated).length,ev.truncated);
@@ -36,32 +46,36 @@ for(const [_,id,attrs,row] of rows){
  assert(model,'Unknown model '+id);
  const ev=evaluations.find(e=>e.model===`mlp-${id}.onnx`);
  assert(ev,'Missing evaluation '+id);
- assert(row.includes((ev.win_rate*100).toFixed(1)+'%'),id+' win rate');
- assert(row.includes(`${ev.wins} / ${ev.games.toLocaleString('en-US')}`),id+' wins/games');
+ result(id,'sdk',ev.wins,ev.games);
  assert(row.includes((model.bytes/1e6).toFixed(2)+' <small>MB</small>'),id+' size');
  const hidden=model.hidden||[model.width,model.width/2];
  assert(row.includes(`${hidden[0]} <span aria-hidden="true">→</span> ${hidden[1]}`),id+' architecture');
- assert.equal(attrs.includes('rl-selected'),manifest.file===`policy-mlp-${id}-v1.onnx`,id+' deployed flag');
+ const latency=id==='256'?comparison.leaderboard.find(r=>r.id==='nn-256-v1').latencyP95Ms:profile.results.find(r=>r.id===id&&r.candidates===220).p95_ms;
+ assert(row.includes(latency.toFixed(2)+' ms'),id+' recorded p95');
 }
 const current=JSON.parse(read('models/structured-policy/training.json'));
 assert(html.includes('models/structured-policy/policy.onnx'));
-assert(html.includes('structured-256-v2'));
+assert(html.includes('index.html?policy=nn-256-v1'));
+assert(html.includes('index.html?policy=nn-structured-v2'));
 assert(html.includes(current.parameters.toLocaleString('en-US')));
 assert(html.includes((current.bytes/1e6).toFixed(2)+' MB'));
 assert(html.includes('Epoch '+current.best_epoch));
-const comparison=JSON.parse(read('models/structured-policy/evaluation.json'));
 for(const [a,b] of [['nn-structured-v2','code-table-v1'],['nn-256-v1','code-table-v1'],['nn-structured-v2','nn-256-v1']]){
  const games=comparison.records.filter(r=>[r.left,r.right].includes(a)&&[r.left,r.right].includes(b));
  assert.equal(games.length,1000);assert(games.every(r=>r.status==='complete'));
- const wins=games.filter(r=>r.winner===a).length;assert(html.includes(`${(wins/10).toFixed(1)}% · ${wins} / 1,000`));
+ const wins=games.filter(r=>r.winner===a).length;
+ if(b==='code-table-v1')result(a==='nn-256-v1'?'256':'autoregressive','code',wins,games.length);
+ else for(const text of allCopy.benchmarkHeadToHead)assert(text.includes(`${(wins/10).toFixed(1)}% · ${wins} / 1,000`));
 }
+assert(rowFor('autoregressive').includes((current.bytes/1e6).toFixed(2)+' <small>MB</small>'));
+assert(rowFor('autoregressive').includes(comparison.leaderboard.find(r=>r.id==='nn-structured-v2').latencyP95Ms.toFixed(2)+' ms'));
 for(const m of html.matchAll(/data-sc="([^"]+)"/g)){
  if(['skip','name','tag','learn','identity','play','menu'].includes(m[1]))continue;
  assert(copy[m[1]]?.length===2,'Missing translation: '+m[1]);
 }
-assert(copy.tryPath[0].includes('设置')&&copy.tryPath[1].includes('Settings'));
 assert(copy.method[0].includes('模仿学习')&&copy.method[1].toLowerCase().includes('imitation learning'));
-console.log('RL page: five models, Easy and Random match saved results, deployed artifact and bilingual setup instructions.');
+assert.equal(Object.values(allCopy).flat().some(text=>/Legacy baseline|NN v1|NN v2/.test(text)),false);
+console.log('RL page: one bilingual benchmark; both modeling approaches, model sizes and latency scopes match saved reports.');
 
 const easy=require('../sdk/easy-policy.js');
 assert.equal(difficulty.attention_budget,easy.budget);
@@ -74,14 +88,12 @@ for(const r of difficulty.results){
 console.log('Difficulty page: Easy head-to-head figures match the saved paired evaluation.');
 
 const restored=JSON.parse(read('docs/experiments/difficulty-v1/table-code-evaluation.json'));
-const hardRows=[...html.matchAll(/<tr data-hard-policy="([^"]+)"[^>]*>([\s\S]*?)<\/tr>/g)];
-assert.equal(hardRows.length,3);
-for(const [_,id,row] of hardRows){
+for(const id of ['easy','sdk-code','nn']){
  const ev=restored.results.find(r=>id==='sdk-code' ? r.policy==='table-code'&&r.opponent===id : r.policy===id&&r.opponent==='table-code');
  assert(ev,'Missing restored Hard evaluation: '+id);
  const wins=id==='sdk-code'?ev.games-ev.wins:ev.wins;
- assert(row.includes((100*wins/ev.games).toFixed(1)+'%'));
- assert(row.includes(`${wins} / ${ev.games.toLocaleString('en-US')}`));
+ if(id==='nn')for(const text of allCopy.cohortC){assert(text.includes((100*wins/ev.games).toFixed(1)+'%'));assert(text.includes(`${wins} / ${ev.games.toLocaleString('en-US')}`));}
+ else result(id,'code',wins,ev.games);
 }
 for(const ev of restored.results){
  assert.equal(ev.games,1000);assert.equal(ev.completed,ev.games);

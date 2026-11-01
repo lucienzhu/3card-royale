@@ -18,7 +18,7 @@ const base=process.env.PLAYTEST_URL||'http://127.0.0.1:59167/';
    await page.evaluate(()=>dispatchEvent(new Event('afterprint')));assert.deepEqual(await chapters.evaluateAll(ns=>ns.map(n=>n.open)),before);
    await page.goto(base+'arena.html?lang='+lang,{waitUntil:'networkidle'});assert.equal(await page.locator('#encoding').evaluate(n=>n.open),false);
    await page.locator('a[href="#spaces"]').first().click();await page.locator('.obs-layout').waitFor();assert(await page.locator('#encoding').evaluate(n=>n.open));
-   await page.goto(base+'arena.html?lang='+lang+'#results',{waitUntil:'networkidle'});assert(await page.locator('#experiments').evaluate(n=>n.open));
+   await page.goto(base+'arena.html?lang='+lang+'#results',{waitUntil:'networkidle'});assert(await page.locator('#structured-results .rl-benchmark').isVisible());assert.equal(await page.locator('details#experiments').count(),0);
    await page.goto(base+'probability.html?lang='+lang,{waitUntil:'networkidle'});
    const disclosures=page.locator('main>.section>.site-disclosure');assert.equal(await disclosures.count(),3);
    for(let i=0;i<3;i++)await disclosures.nth(i).locator(':scope>summary').click();

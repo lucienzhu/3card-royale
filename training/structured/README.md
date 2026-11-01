@@ -1,4 +1,4 @@
-# Structured policy · reproducible baseline
+# Autoregressive policy · reproducible baseline
 
 This is one autoregressive experiment, not the required architecture for `actions-v2`. Whole-move scorers and code policies use the same action protocol; see [model profiles](../../docs/ACTIONS.md#model-and-compatibility).
 
@@ -20,7 +20,7 @@ The collection command defaults to 10,000 games and seed 20261101. Start levels 
 
 The deterministic gzip is **12,665,068 bytes**, above the 10 MB repository threshold, so data is regenerated instead of checked in. SHA-256: `a7d4da6f5c218c9cfb00c39240cd6bd6578ec13e90caf7174b00a8f29c524315`. `dataset.json` contains source hashes and counts. The generator builds complete legal prefixes using the same actions module as the browser. Teacher never declines a swap: skip/stop have no positive demonstrations, a limitation for future reward training.
 
-Training: CPU, four threads, deterministic PyTorch, seed 20261101, batch 1024, AdamW 0.001, weight decay 0.0001, gradient clipping 5, 40 epochs. Best validation loss selects **epoch 16**, before test evaluation. Train/validation curves are in TensorBoard and `history.json`. Recorded environment: Python 3.9.6, PyTorch 2.8.0, NumPy 2.0.2, Apple M1. Python 3.9 is the historical training environment; the SDK package supports Python ≥3.10. Cross-platform float/ONNX byte identity is not promised; pin the recorded environment for closest reproduction.
+Training: CPU, four threads, deterministic PyTorch, seed 20261101, batch 1024, AdamW 0.001, weight decay 0.0001, gradient clipping 5, 40 epochs. Best validation loss selects **epoch 16**, before test evaluation. Train/validation curves are in TensorBoard and `history.json`. Recorded environment: Python 3.9.6, PyTorch 2.8.0, NumPy 2.0.2, Apple M1. Python 3.9 is the recorded training environment; the SDK package supports Python ≥3.10. Cross-platform float/ONNX byte identity is not promised; pin the recorded environment for closest reproduction.
 
 Saved ONNX: **228,929 parameters, 916,663 bytes**. SHA-256 `16e452b48837e6fa681216c13279bbe500997c97b86f56efa19e449b1699baf3`. Export uses opset 17, dynamic batch, FP32. On 2,048 held-out token targets, PyTorch and ONNX have identical masked choices; max logit difference 0.00001145. Test token agreement is 90.44%, **not whole-action accuracy**. Test loss 0.266315.
 
@@ -30,13 +30,13 @@ All three pairs use the same 500 new seeds with swapped seats and balanced first
 
 | Left policy | Opponent | Wins |
 | --- | --- | ---: |
-| Structured v2 | Hard Code AI | 239/1,000 · 23.9% |
-| Legacy NN256 v1 | Hard Code AI | 426/1,000 · 42.6% |
-| Structured v2 | Legacy NN256 v1 | 288/1,000 · 28.8% |
+| Autoregressive · 256 → 128 | Hard Code AI | 239/1,000 · 23.9% |
+| Whole-move scoring · 256 → 128 | Hard Code AI | 426/1,000 · 42.6% |
+| Autoregressive · 256 → 128 | Whole-move scoring · 256 → 128 | 288/1,000 · 28.8% |
 
-**The new baseline is weaker.** Representation clarity does not establish playing strength; teacher-forcing agreement also does not measure autoregressive sequence errors. Future experiments should evaluate free-running action agreement, improve card encodings, and train from rewards. These results are evaluation evidence, not official reference Elo ratings.
+**On this matched seed cohort, the autoregressive checkpoint has the lower win rate.** Representation clarity does not establish playing strength; teacher-forcing agreement also does not measure autoregressive sequence errors. Future experiments should evaluate free-running action agreement, improve card encodings, and train from rewards. These results are evaluation evidence, not official reference Elo ratings.
 
-Whole Worker decision p95 for v2 is **0.691 ms** over 20,487 decisions on Apple M1 / Node 22 / single-thread WASM. Includes encoding and all autoregressive calls; excludes initial model load. It is not a browser/mobile benchmark.
+Whole Worker decision p95 for the autoregressive policy is **0.691 ms** over 20,487 decisions on Apple M1 / Node 22 / single-thread WASM. Includes encoding and all autoregressive calls; excludes initial model load. It is not a browser/mobile benchmark.
 
 Checked-in artifacts are in `models/structured-policy/`; the identical ONNX is in `policies/entries/nn-structured-v2/` for Arena integrity checks. Local `.pt`, data and TensorBoard files stay under ignored `artifacts/`. After deliberately replacing a checkpoint, update both artifacts, byte/hash manifests, receipts and evaluation; published policy IDs must be immutable.
 
