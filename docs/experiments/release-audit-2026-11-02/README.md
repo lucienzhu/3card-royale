@@ -50,4 +50,5 @@ records and hashes, not rerun. No full training run was repeated. Browser
 timings are local Apple M1 measurements, not phone benchmarks. Mobile checks
 use desktop Chrome viewports; no physical iPhone/WeChat test was performed.
 Blog layout checks rendered the article fragments and local figures, not a
-full Jekyll site build. These changes are local and have not been deployed.
+full Jekyll site build. This report records the pre-release checks; publication is tracked in the
+[1.2.0 release notes](../../releases/1.2.0.md).

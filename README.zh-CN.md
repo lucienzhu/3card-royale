@@ -61,4 +61,4 @@ SDK 包含 JavaScript/TypeScript、Python、Rust 和 C++17；Gym 支持小局和
 
 [设计规范](docs/DESIGN.zh-CN.md) · [组件](https://lucienzhu.github.io/3card-royale/design-system.html?lang=zh-CN) · [反馈](https://github.com/lucienzhu/3card-royale/issues/new/choose)
 
-产品版本 1.1 与标准规则 1.0.0 分别管理。代码、规则和原创视觉素材使用 [MIT 许可](LICENSE)。
+产品版本 1.2 与标准规则 1.0.0 分别管理。代码、规则和原创视觉素材使用 [MIT 许可](LICENSE)。

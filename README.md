@@ -61,4 +61,4 @@ Shenzhen's bougainvillea, red flowers and circuit-board green shape the identity
 
 [Design specification](docs/DESIGN.md) · [Live components](https://lucienzhu.github.io/3card-royale/design-system.html?lang=en) · [Feedback](https://github.com/lucienzhu/3card-royale/issues/new/choose)
 
-Product release 1.1 and Standard rules 1.0.0 are separate version numbers. Code, rules and original artwork use the [MIT license](LICENSE).
+Product release 1.2 and Standard rules 1.0.0 are separate version numbers. Code, rules and original artwork use the [MIT license](LICENSE).
