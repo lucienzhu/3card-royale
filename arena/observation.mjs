@@ -98,15 +98,15 @@ function renderActions(){
  const section=el('section','obs-actions');section.setAttribute('aria-labelledby','obs-action-title');
  const h=heading(t('动作空间','Action Space'),'actions-v2');h.querySelector('h3').id='obs-action-title';section.append(h);
  const layout=el('div','obs-action-layout'),example=el('div','obs-action-example');
- example.append(el('p','obs-example-label',t('示例动作 · 合法','Example action · valid')));
+ example.append(el('p','obs-example-label',t('合法动作','Legal move')));
  const row=el('div','obs-card-row');
  if(isPlay())sample.action.cards.forEach(id=>row.append(card(id)));
  else row.append(card(sample.action.source),el('span','obs-swap-arrow','⇄'),card(sample.action.target.card));
  example.append(row,el('p','obs-note',t(...sample.actionLabel)));
  layout.append(example,el('div','obs-representation'));section.append(layout);
  const maskPanel=el('details','obs-mask-details');
- maskPanel.append(el('summary','',t('逐步 mask · 65','Step-by-step mask · 65')));
- const label=el('label','obs-mask-label',t('检查哪一步','Inspect step'));
+ maskPanel.append(el('summary','',t('条件动作掩码 · 65','Conditional action mask · 65')));
+ const label=el('label','obs-mask-label',t('序列位置','Sequence position'));
  const select=el('select','sz-select-control');select.id='obs-mask-step';label.htmlFor=select.id;maskPanel.append(label,select);
  maskPanel.append(el('div','obs-prefix'),el('p','obs-step-help'),el('div','obs-token-groups'));
  maskPanel.append(el('p','obs-note',t('1 = 可选；0 = 不可选。牌 ID 固定。','1 = allowed; 0 = unavailable. Card IDs stay fixed.')));
@@ -169,8 +169,7 @@ function paint(){
   const top=el('div','obs-intro');
   top.append(el('h3','obs-total','336'),el('div','',t('当前可见状态','Current visible state')),
     el('code','','6 × 52 + 6 + 18'));
-  const note=el('p','obs-note',t(...sample.name));
-  view.append(top,note,heading(t('六个牌区','Six card zones'),'312 · multi-hot'));
+  view.append(top,heading(t('六个牌区','Six card zones'),'312 · multi-hot'));
   const cards=el('div','obs-zones');
   zones.forEach((names,zone)=>{
     const group=el('section','obs-zone');group.dataset.zone=zone;
@@ -188,7 +187,7 @@ function paint(){
     entry.append(el('span','obs-phase-label',t(...names)),bit(sample.state[index],index,t(...names)),el('small','obs-code',`[${index}]`));phasesGrid.append(entry);
   });phase.append(phasesGrid);view.append(phase);
   const details=el('details','obs-meta');details.open=openDetails.includes('obs-meta');
-  const summary=el('summary','');summary.append(el('span','',t('其余 18 项状态','Other 18 state features')),el('span','obs-meta-hint',t('原值 → 入模值','Raw → encoded')));details.append(summary);
+  const summary=el('summary','');summary.append(el('span','',t('局面信息 · 18','Game metadata · 18')),el('span','obs-meta-hint',t('原值 → 入模值','Raw → encoded')));details.append(summary);
   const table=el('table','obs-meta-table');
   table.append(el('caption','obs-note',t('序号从 0 起；入模值最多显示 6 位小数。','Zero-based indices; encoded values rounded to 6 decimals.')));
   const thead=el('thead'),tr=el('tr');

@@ -92,3 +92,44 @@ html:lang(zh) .site-identity-alias [lang=en],html:lang(en) .site-identity-alias 
 .site-header .site-language:hover,.site-header .site-menu summary:hover{background:var(--table)}
 
 .site-header .site-tools .site-language{border-color:var(--line)}
+
+/* Public pages: shared editorial scale, reading width and section rhythm. */
+.site-product{--section-space:80px;--section-heading:clamp(28px,3vw,38px)}
+.site-product .site-section{padding-block:var(--section-space)}
+.site-product .site-section h2{font-size:var(--section-heading);line-height:1.18;text-wrap:balance}
+.site-product .site-section-head{gap:40px;margin-bottom:36px}
+.site-product .site-section-head p{font-size:14px;line-height:1.75}
+.site-product .site-hero{padding-block:88px 72px}
+.site-product .site-hero p:not(.site-lead):not(.site-micro){font-size:15px;line-height:1.75}
+.site-product .site-hero .site-lead,.site-product .site-identity-hero>.site-lead{font-size:19px;line-height:1.6}
+.site-product .site-identity-hero{padding-block:88px 72px}
+.site-product .site-identity-hero>.site-lead{max-width:650px}
+.site-product .site-identity-actions{margin-top:30px}
+.site-product .site-step h3,.site-product .site-opponents h3{font-size:18px;line-height:1.35;letter-spacing:-.015em}
+.site-product .site-step p,.site-product .site-opponents p,.site-product .site-open p{font-size:14px;line-height:1.8}
+.site-product .site-steps{gap:36px}
+.site-product .site-opponents{gap:28px}
+.site-product .site-opponents article{padding-top:8px}
+.site-product .site-guide-note{max-width:72ch;margin-top:32px}
+.site-story{display:grid;grid-template-columns:.8fr 1.2fr;gap:72px;align-items:start}
+.site-story-copy{max-width:58ch}
+.site-story-copy p{margin:0 0 20px;color:var(--muted);font-size:16px;line-height:1.85}
+.site-story-copy .site-story-chill{color:var(--ink);font-weight:600}
+.site-story-copy .site-note{font-size:13px;margin:28px 0 0;line-height:1.8}
+.site-product .site-card-trio{padding-block:40px}
+.site-product .site-swatch b,.site-product .site-card-trio figcaption b{font-size:14px}
+@media(max-width:900px){
+ .site-story{gap:40px}
+ .site-product .site-steps{gap:24px}
+}
+@media(max-width:700px){
+ .site-product{--section-space:48px;--section-heading:28px}
+ .site-product .site-hero{padding-block:44px 40px;gap:36px}
+ .site-product .site-hero .site-lead,.site-product .site-identity-hero>.site-lead{font-size:18px}
+ .site-product .site-section-head{margin-bottom:28px}
+ .site-product .site-identity-hero{padding-block:48px}
+ .site-product .site-steps{gap:28px}
+ .site-story{grid-template-columns:1fr;gap:24px}
+ .site-story-copy p{font-size:15px;line-height:1.8}
+ .site-product .site-card-trio{padding-block:26px}
+}
