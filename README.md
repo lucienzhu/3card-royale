@@ -10,6 +10,8 @@
 
 [**Play ↗**](https://lucienzhu.github.io/3card-royale/?lang=en) · [Learn](https://lucienzhu.github.io/3card-royale/about.html?lang=en) · [Identity](https://lucienzhu.github.io/3card-royale/brand.html?lang=en) · [AI Arena](https://lucienzhu.github.io/3card-royale/arena.html?lang=en)
 
+Play in [English](https://lucienzhu.github.io/3card-royale/?lang=en), [简体中文](https://lucienzhu.github.io/3card-royale/?lang=zh-CN), [日本語](https://lucienzhu.github.io/3card-royale/?lang=ja), [한국어](https://lucienzhu.github.io/3card-royale/?lang=ko) or [Español](https://lucienzhu.github.io/3card-royale/?lang=es). The site, in-game guide, full rules and share cards follow your language.
+
 ## The game
 
 1. Start with eight cards. Combine private hand cards and public wound cards to play three; four- and five-card plays must be bombs.

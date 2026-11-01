@@ -7,7 +7,7 @@
   try { const saved=localStorage.getItem(key);if(['easy','code','nn','godlike','arena'].includes(saved))selected=saved; }catch{}
   if(window.SZArenaPolicy && new URLSearchParams(location.search).has('policy'))selected='arena';
   select.value=selected;
-  const en=()=>window.GKLocale?.language==='en';
+  const en=()=>window.GKLocale?.language!=='zh-CN';
   function paint() {
     document.getElementById('policy-label').textContent=en()?'AI opponent':'AI 对手';
     for(const option of select.options)option.textContent=({easy:en()?'Easy · Easy AI':'简单 · Easy AI',nn:en()?'NN AI':'NN AI',code:en()?'Hard · Code AI':'困难 · Code AI',godlike:en()?'Godlike · Sees your hand':'超凡 · Godlike AI（明牌）',arena:en()?'Arena AI · Community policies':'竞技场 AI · 天梯策略'})[option.value];
@@ -16,6 +16,7 @@
       state==='loading'?(en()?'Loading NN AI…':'正在加载 NN AI…'):
       state==='failed'?(en()?'NN AI unavailable · using Easy AI':'NN AI 暂不可用 · 使用 Easy AI'):
       state==='ready'?(en()?'NN AI ready':'NN AI 已就绪'):'';
+    for(const el of [document.getElementById('policy-label'),...select.options,status])el.textContent=window.SZI18n?.translate(el.textContent,document.documentElement.lang)??el.textContent;
     status.hidden=!status.textContent;
   }
   function shutdown(error) {

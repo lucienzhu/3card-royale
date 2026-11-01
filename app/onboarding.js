@@ -40,7 +40,7 @@
  let pending=prefs.shouldShow,update=()=>{};
  window.SZOnboarding={get pending(){return pending;},update:state=>update(state)};
  function mount(){
-  const en=()=>document.documentElement.lang==='en',t=(zh,english)=>en()?english:zh;
+  const t=(zh,english)=>window.SZI18n.pair(zh,english,document.documentElement.lang);
   const setting=document.createElement('section');setting.className='sz-onboarding-setting';setting.dataset.noI18n='';
   setting.innerHTML='<div><label for="onboarding-enabled"><span></span></label><p id="onboarding-setting-note"></p></div><input id="onboarding-enabled" type="checkbox" role="switch" aria-describedby="onboarding-setting-note"><button id="onboarding-reopen" type="button"></button>';
   document.querySelector('.menu-preferences').append(setting);
@@ -98,7 +98,7 @@
    const id=mode==='play'&&!busy&&!document.hidden&&!window.SZDrawer?.active&&!window.SZDrawer?.closing&&!document.querySelector('dialog[open]')?nextHint(prefs,game):null;
    currentHint=id;bubble.hidden=!id;if(!id)return;
    const messages={wounds:['这些伤牌也能和手牌一起出；打出后会补回，不回血。','Play these face-up wounds with your hand. They refill; damage stays.'],swap: GK.handExchange(game.version)?['防守赢了，可以换牌。先选自己的牌，再选目标；每次也可跳过。','Defense won. Select your card, then a target to swap. Each chance can be skipped.']:['防守赢了，可以换牌。选一张牌，确认换新；每次也可跳过。','Defense won. Pick a card and confirm a swap, or skip each chance.'],flower:['金色的花牌可以代替任意牌。','The gold flower card can stand in for any card.'],refill:['双方各攻守一次后，手牌自动补到 8 张。','After both attack, your hand refills to 8 automatically.']};
-   bubble.querySelector('p').textContent=messages[id][en()?1:0];bubble.querySelector('button').textContent=t('知道了','Got it');bubble.dataset.hint=id;
+   bubble.querySelector('p').textContent=t(...messages[id]);bubble.querySelector('button').textContent=t('知道了','Got it');bubble.dataset.hint=id;
    anchor=document.getElementById(id==='wounds'?'own-table':id==='flower'?'own-level':'action-panel');position();
   };
   bubble.querySelector('button').addEventListener('click',()=>{if(currentHint)prefs.ack(currentHint);bubble.hidden=true;});

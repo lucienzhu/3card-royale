@@ -324,7 +324,7 @@ function openResult(){
  $('result-from').textContent=GK.rankLabel(r.from);
  // Reuse the same physical heart card and gold wildcard styling as the table chip.
  const nextFlower=card(r.to+11,{level:r.to});nextFlower.removeAttribute('aria-label');nextFlower.setAttribute('aria-hidden','true');
- $('result-to').replaceChildren(nextFlower);$('result-to').setAttribute('aria-label',(GKLocale.language==='en'?'Next wild card: ':'下局花牌：')+GK.label(r.to+11));
+ $('result-to').replaceChildren(nextFlower);$('result-to').setAttribute('aria-label',(GKLocale.language!=='zh-CN'?'Next wild card: ':'下局花牌：')+GK.label(r.to+11));
  $('result-upgrade-note').textContent=GK.sharedFlower(variant)?'下局共用花牌':who+'下局花牌';
  $('result-own-damage').textContent=r.damage[0];$('result-opp-damage').textContent=r.damage[1];
  $('result-own').classList.toggle('result-winner',own);$('result-opp').classList.toggle('result-winner',!own);
@@ -340,8 +340,8 @@ function openResult(){
  const bloomHost=$('bloom-result');
  if(match&&GK.sharedFlower(variant)){window.SZBloom.renderResult(bloomHost,game.results,game.snapshot(),game.events.find(e=>e.kind==='deal')?.state?.levelOwner??0,false);modal.setAttribute('aria-labelledby','bloom-heading');modal.removeAttribute('aria-describedby');}
  else{window.SZBloom.hideResult(bloomHost);modal.setAttribute('aria-labelledby','result-title');modal.setAttribute('aria-describedby','result-subtitle result-hint');}
- const playerName=window.SZPlayer.get();$('result-title').toggleAttribute('data-no-i18n',!!playerName&&own);if(playerName&&own)$('result-title').textContent=GKLocale.language==='en'?playerName+(match?', you won the match!':', you won this game.'):(playerName+(match?'，你赢下了整场！':'，这一局你赢了。'));
- $('result-share').textContent=match?(GKLocale.language==='en'?'Share PNG':'分享卡片'):(GKLocale.language==='en'?'Review & share':'回顾与分享');
+ const playerName=window.SZPlayer.get();$('result-title').toggleAttribute('data-no-i18n',!!playerName&&own);if(playerName&&own){const zh=match?'，你赢下了整场！':'，这一局你赢了。',en=match?', you won the match!':', you won this game.';$('result-title').textContent=playerName+(window.SZI18n?SZI18n.pair(zh,en,GKLocale.language):(GKLocale.language==='zh-CN'?zh:en));}
+ $('result-share').textContent=match?(GKLocale.language!=='zh-CN'?'Share PNG':'分享卡片'):(GKLocale.language!=='zh-CN'?'Review & share':'回顾与分享');
  $('result-primary').textContent=match?'再玩一场':'开始下一局';$('result-primary').disabled=false;
  presentedResultKey=key;
  if(!modal.open)modal.showModal();
@@ -592,8 +592,8 @@ function render(){
  $('card-check').textContent='实体牌 '+physical+' / 52';
  renderActions(s,event);
  const compactNames=['High card','Pair','Straight','Flush','Trips','Straight flush','4 of a kind','5 of a kind'];
- for(const [who,id]of [[attack,'attack-label'],[1-attack,'defend-label']])if(moves[who]){const m=moves[who],b=$(id).querySelector('b');b.dataset.noI18n='';b.textContent=GKLocale.language==='en'?(compactNames[m.kind??GK.NAMES.indexOf(m.name)]+' '+m.score+' pts'):(m.name+' '+m.score+' 分');}
- const declarations=moves.flatMap((m,who)=>m?.wild?[((GKLocale.language==='en')?(who===attack?'Attack':'Defend'):(who===attack?'进攻':'防守'))+' '+GK.label(m.wild.physical)+' → '+GK.label(m.wild.as)]:[]);
+ for(const [who,id]of [[attack,'attack-label'],[1-attack,'defend-label']])if(moves[who]){const m=moves[who],b=$(id).querySelector('b');b.dataset.noI18n='';const zh=m.name+' '+m.score+' 分',en=compactNames[m.kind??GK.NAMES.indexOf(m.name)]+' '+m.score+' pts';b.textContent=window.SZI18n?SZI18n.pair(zh,en,GKLocale.language):(GKLocale.language==='zh-CN'?zh:en);}
+ const declarations=moves.flatMap((m,who)=>m?.wild?[(window.SZI18n?SZI18n.pair(who===attack?'进攻':'防守',who===attack?'Attack':'Defend',GKLocale.language):((GKLocale.language!=='zh-CN')?(who===attack?'Attack':'Defend'):(who===attack?'进攻':'防守')))+' '+GK.label(m.wild.physical)+' → '+GK.label(m.wild.as)]:[]);
  $('combat-wild-info').textContent=declarations.join(' · ');$('combat-wild-info').hidden=!declarations.length||['game_over','match_over'].includes(s.phase);
  const events=replay?ROLLOUT.events.slice(0,cursor+1):game.events;$('event-log').replaceChildren();
  for(const e of events.slice(-8).reverse()){const item=document.createElement('div');item.className='log-item';const b=document.createElement('b');b.textContent=e.title;const span=document.createElement('span');span.textContent=e.note;item.append(b,span);$('event-log').append(item);}
@@ -617,7 +617,7 @@ function driveAI(){
 }
 function stopAI(){turnFlow.stop();aiSerial++;motionSerial++;window.SZCardMotion.cancel();if(aiTimer){clearTimeout(aiTimer);aiTimer=null;}busy=false;}
 function renderReplayControls(){
- const en=GKLocale.language==='en',events=ROLLOUT.events,total=events.length,event=events[cursor];
+ const en=GKLocale.language!=='zh-CN',events=ROLLOUT.events,total=events.length,event=events[cursor];
  const name=en?['Previous step','Next step',autoTimer?'Pause':cursor===total-1?'Play again':'Play']:['上一步','下一步',autoTimer?'暂停':cursor===total-1?'重新播放':'播放'];
  ['prev-step','next-step','auto-replay'].forEach((id,i)=>{ $(id).setAttribute('aria-label',name[i]);$(id).title=name[i]; });
  $('prev-step').disabled=cursor===0;$('next-step').disabled=cursor===total-1;$('auto-replay').setAttribute('aria-pressed',String(!!autoTimer));
@@ -676,7 +676,7 @@ $('result-share').addEventListener('click',()=>{if(mode!=='play'||!currentResult
 $('result-primary').addEventListener('click',continueResult);
 $('result-modal').addEventListener('close',()=>{window.SZShareCard.close();stopCelebration();window.SZBloom.hideResult($('bloom-result'));const r=currentResult();if(mode==='play'&&r&&resultKey(r)===$('result-modal').dataset.resultKey)$('show-result')?.focus({preventScroll:true});});
 $('new-match').addEventListener('click',newMatch);
-$('export-match').addEventListener('click',()=>{const data={version:game.version,ui_revision:UI_REVISION,locale:GKLocale.language,game_name:GKLocale.language==='en'?'3Card Royale':'深圳花牌',seed:game.seed,game_seed:game.gameSeed??null,game_seeds:game.events.filter(e=>e.kind==='deal').map(e=>({game:e.game,seed:e.state?.gameSeed??null})),seed_policy:'continuous-xorshift32-v1',opponent_ai:window.SZPolicy?.selected,nn_policy_version:window.SZPolicy?.diagnostics.version,policy:GK.woundExchange(game.version)?GK.WOUND_POLICY:GK.handExchange(game.version)?GK.EXCHANGE_POLICY:GK.winnerStarts(game.version)?GK.WINNER_POLICY:GK.allowsFour(game.version)?GK.FOUR_POLICY:GK.isRefresh(game.version)?GK.REFRESH_POLICY:GK.POLICY,results:game.results,stats:game.stats,events:game.events,save:game.save(),source_sha256:ROLLOUT.source_sha256,...(ROLLOUT.baseline_sha256?{baseline_sha256:ROLLOUT.baseline_sha256}:{})};const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=(GKLocale.language==='en'?'3Card-Royale-':'深圳花牌-')+variant+'-'+game.seed+'-playtest.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+$('export-match').addEventListener('click',()=>{const data={version:game.version,ui_revision:UI_REVISION,locale:GKLocale.language,game_name:GKLocale.language!=='zh-CN'?'3Card Royale':'深圳花牌',seed:game.seed,game_seed:game.gameSeed??null,game_seeds:game.events.filter(e=>e.kind==='deal').map(e=>({game:e.game,seed:e.state?.gameSeed??null})),seed_policy:'continuous-xorshift32-v1',opponent_ai:window.SZPolicy?.selected,nn_policy_version:window.SZPolicy?.diagnostics.version,policy:GK.woundExchange(game.version)?GK.WOUND_POLICY:GK.handExchange(game.version)?GK.EXCHANGE_POLICY:GK.winnerStarts(game.version)?GK.WINNER_POLICY:GK.allowsFour(game.version)?GK.FOUR_POLICY:GK.isRefresh(game.version)?GK.REFRESH_POLICY:GK.POLICY,results:game.results,stats:game.stats,events:game.events,save:game.save(),source_sha256:ROLLOUT.source_sha256,...(ROLLOUT.baseline_sha256?{baseline_sha256:ROLLOUT.baseline_sha256}:{})};const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=(GKLocale.language!=='zh-CN'?'3Card-Royale-':'深圳花牌-')+variant+'-'+game.seed+'-playtest.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
 $('prev-step').addEventListener('click',()=>{stopReplay();replayGo(cursor-1);});$('next-step').addEventListener('click',()=>{stopReplay();replayGo(cursor+1);});
 $('replay-range').max=ROLLOUT.events.length-1;$('replay-range').addEventListener('input',e=>{const index=e.target.value;stopReplay();replayGo(index);});
 $('auto-replay').addEventListener('click',()=>{if(autoTimer){stopReplay();return;}if(cursor===ROLLOUT.events.length-1)replayGo(0);autoTimer=setInterval(()=>{replayGo(cursor+1);if(cursor>=ROLLOUT.events.length-1)stopReplay();},1300);renderReplayControls();});

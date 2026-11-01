@@ -84,7 +84,7 @@ html[data-sz-theme=dark] .site-identity-hero>.site-hero-city{opacity:.44}
 
 /* The alias follows the title center; Shenzhen carries the flower accent. */
 .site-identity-alias strong{font-weight:700;color:var(--accent)}
-html:lang(zh) .site-identity-alias [lang=en],html:lang(en) .site-identity-alias [lang=zh-CN]{display:none}
+html:lang(zh) .site-identity-alias [lang=en],html:not(:lang(zh)) .site-identity-alias [lang=zh-CN]{display:none}
 
 /* Public navigation has one appearance, independent of page-specific styles. */
 .site-header .site-button.primary{background:var(--red);color:#FFFEFA;border:1px solid var(--red);border-radius:8px;box-shadow:none}

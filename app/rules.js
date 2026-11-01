@@ -4,8 +4,8 @@
  const textPanel=document.getElementById('rg-text'),switches=document.getElementById('rg-switch'),progress=document.getElementById('rg-progress'),navigation=document.getElementById('rg-navigation');
  const standard=document.createElement('article');standard.className='standard-rules';standard.dataset.noI18n='';standard.hidden=true;textPanel.before(standard);
  dialog.classList.add('rg-shell');
- const head=dialog.querySelector('.modal-head'),close=document.getElementById('close-rules'),headActions=document.createElement('div'),languageButton=document.createElement('button');
- headActions.className='rg-head-actions';headActions.dataset.noI18n='';languageButton.id='rg-language';languageButton.type='button';headActions.append(languageButton,close);head.append(headActions);
+ const head=dialog.querySelector('.modal-head'),close=document.getElementById('close-rules'),headActions=document.createElement('div'),languageButton=document.createElement('select');
+ headActions.className='rg-head-actions';headActions.dataset.noI18n='';languageButton.id='rg-language';languageButton.className='site-language-select';languageButton.dataset.siteLanguage='';languageButton.innerHTML=SZI18n.options();headActions.append(languageButton,close);head.append(headActions);
  const viewScroll={visual:0,text:0};
  function layoutShell(){dialog.classList.toggle('rg-compact',mobileQuery.matches);}
  function readingPosition(){const headings=[...standard.querySelectorAll('h2')],top=scroller.getBoundingClientRect().top;let index=0;for(let i=0;i<headings.length;i++)if(headings[i].getBoundingClientRect().top<=top+32)index=i;return {index,offset:headings[index]?.getBoundingClientRect().top-top,scroll:scroller.scrollTop};}
@@ -15,10 +15,10 @@
  let scene=null,sceneBattle=null,sceneCopy=null,routeBounds=null,motionToken=0,motionBusy=false,refillCase=null,sequenceLog=[];
  const clone=x=>JSON.parse(JSON.stringify(x));
  const mobileQuery=matchMedia('(max-width:900px), (max-height:500px)');
- const t=(zh,en)=>window.GKLocale?.language==='en'?en:zh,version=()=>document.getElementById('version-select').value;
+ const t=(zh,en)=>window.SZI18n.pair(zh,en,window.GKLocale?.language||document.documentElement.lang),version=()=>document.getElementById('version-select').value;
  const cases=()=>window.SZFocusCases[version()],points=n=>t(n+'分',n+' '+(n===1?'pt':'pts'));
  const id=label=>Array.from({length:52},(_,i)=>i).find(i=>window.GK.label(i)===label);
- function face(label,back=false,extra='',index=0){const el=window.card(back?null:id(label),{back,level:2,backLabel:t('对手手牌，牌面保密','Rival hand card, hidden')});if(!back&&window.GKLocale?.language==='en')el.setAttribute('aria-label',label+(window.GK.wild(id(label),2)?' · Wild':''));for(const name of extra.split(' ').filter(Boolean))el.classList.add(name);el.style.setProperty('--deal-delay',Math.max(0,index)*55+'ms');return el.outerHTML;}
+ function face(label,back=false,extra='',index=0){const el=window.card(back?null:id(label),{back,level:2,backLabel:t('对手手牌，牌面保密','Rival hand card, hidden')});if(!back&&window.GKLocale?.language!=='zh-CN')el.setAttribute('aria-label',label+(window.GK.wild(id(label),2)?' · Wild':''));for(const name of extra.split(' ').filter(Boolean))el.classList.add(name);el.style.setProperty('--deal-delay',Math.max(0,index)*55+'ms');return el.outerHTML;}
  function woundBar(n){const el=document.createElement('div');el.className='damage fg-damage';window.damageBar(el,n);el.querySelector('small').textContent=t(' / 5 伤',' / 5 wounds');el.setAttribute('aria-label',t(n+'伤，共5格',n+' wounds out of 5'));return el.outerHTML;}
  const zoneInfo=()=>({
   'own-hand':[t('你的手牌，只有你能看','Your hand is private'),t('选牌攻防；轮末补到8张。','Select to play. Refill to 8 at round end.')],
@@ -141,8 +141,8 @@
  function reset(){whole=false;cameraRegion=null;attackPhase=0;attackExample=false;rolesSwapped=false;defenseReady=false;defended=false;refilled=false;ranksOpen=false;swapMode='round';swapGame=null;swapSource=null;swapResult=null;refillCase=null;}
  function paint(){
   const isStandard=document.getElementById('version-select').value==='1.0.0';
-  if(isStandard){standard.innerHTML=window.SZStandardRules[window.GKLocale?.language==='en'?'en':'zh'];standard.querySelector('h1')?.remove();for(const a of standard.querySelectorAll('a[href="docs/RULES.md"],a[href="docs/RULES.zh-CN.md"]'))a.closest('p')?.remove();}
-  layoutShell();languageButton.textContent=t('EN','中文');languageButton.lang=t('en','zh-CN');languageButton.setAttribute('aria-label',t('Switch rules to English','将规则切换为中文'));close.textContent=t('回到牌桌','Back to game');
+  if(isStandard){standard.innerHTML=window.SZStandardRules[window.GKLocale?.language==='zh-CN'?'zh':window.GKLocale?.language]||window.SZStandardRules.en;standard.querySelector('h1')?.remove();for(const a of standard.querySelectorAll('a[href="docs/RULES.md"],a[href="docs/RULES.zh-CN.md"]'))a.closest('p')?.remove();}
+  layoutShell();languageButton.value=GKLocale.language;languageButton.setAttribute('aria-label',t('语言','Language'));close.textContent=t('回到牌桌','Back to game');
   const available=isStandard||document.getElementById('version-select').value==='0.3.8';
   switches.parentElement.hidden=!available;
   switches.querySelector('[data-rg-view="visual"]').hidden=!available;
@@ -281,7 +281,7 @@
   if(b.hasAttribute('data-rg-next')){if(hasAction())action(coach()[3]);else go(step+1);}
  }
  switches.addEventListener('click',e=>{const b=e.target.closest('[data-rg-view]');if(b&&b.dataset.rgView!==view){cancelMotion();viewScroll[view]=scroller.scrollTop;view=b.dataset.rgView;if(view==='text')ranksOpen=false;paint();if(view==='visual'&&mobileQuery.matches)frame();else scroller.scrollTop=viewScroll[view];revealContent();}});
- languageButton.addEventListener('click',()=>{cancelMotion();window.GKLocale.setLanguage(t('en','zh-CN'));});
+ languageButton.addEventListener('change',()=>{cancelMotion();SZI18n.setLanguage(languageButton.value);});
  dialog.addEventListener('cancel',e=>{if(ranksOpen){e.preventDefault();e.stopImmediatePropagation();ranksOpen=false;renderFocus('[data-rg-ranks]');}},true);
  for(const element of [host,progress,navigation])element.addEventListener('click',navigate);
  function sync(){const language=window.GKLocale?.language||'zh-CN',v=version();if(language!==lastLanguage||v!==lastVersion){cancelMotion(false);const sameVersion=v===lastVersion,position=view==='text'&&sameVersion?readingPosition():null;if(!sameVersion){view=v==='0.3.8'||v==='1.0.0'?'visual':'text';step=0;viewScroll.visual=viewScroll.text=0;reset();}lastLanguage=language;lastVersion=v;paint();if(position)restoreReading(position);else frame();}}

@@ -10,8 +10,7 @@
   let actions=head.querySelector('.drawer-head-actions,.rg-head-actions');
   if(!actions){actions=document.createElement('div');head.append(actions);}
   actions.className='drawer-head-actions';actions.dataset.noI18n='';
-  let language=actions.querySelector('#rg-language');
-  if(!language){language=document.createElement('button');language.type='button';language.id=name+'-language';language.addEventListener('click',()=>GKLocale.setLanguage(en()?'zh-CN':'en'));}
+  const old=actions.querySelector('#rg-language');const language=document.createElement('select');language.id=old?.id||name+'-language';language.dataset.languageSelect='';language.className='site-language-select';language.innerHTML=window.SZI18n.options();old?.remove();
   const back=head.querySelector('#close-settings,#close-rules')||document.createElement('button');
   back.id='close-'+name;back.type='button';back.dataset.drawerClose='';
   actions.append(language,back);languageButtons.push(language);closeButtons.push(back);
@@ -53,11 +52,11 @@
  $('open-settings').replaceChildren(document.createElement('span'));$('open-settings').removeAttribute('title');
  const play=nav.querySelector('[data-tab="play"]');play.removeAttribute('role');play.removeAttribute('aria-selected');play.setAttribute('aria-current','page');
  function translate(){
-  for(const title of document.querySelectorAll('[data-drawer-title]'))title.textContent=labels[title.dataset.drawerTitle][en()?1:0];
-  for(const b of closeButtons)b.textContent=en()?'Back to game':'回到牌桌';
-  for(const b of languageButtons){b.textContent=en()?'中文':'EN';b.lang=en()?'zh-CN':'en';b.setAttribute('aria-label',en()?'Switch to Chinese':'Switch to English');}
-  play.textContent=en()?'Play':'对局';$('open-rules').textContent=en()?'Rules':'规则';$('open-settings').textContent=en()?'Settings':'设置';$('open-settings').setAttribute('aria-label',en()?'Settings':'设置');
-  nav.setAttribute('aria-label',en()?'Table navigation':'牌桌导航');triggers.replay.textContent=en()?'Watch sample replay':'观看示例回放';
+  for(const title of document.querySelectorAll('[data-drawer-title]'))title.textContent=window.SZI18n.pair(...labels[title.dataset.drawerTitle],GKLocale.language);
+  for(const b of closeButtons)b.textContent=window.SZI18n.pair('回到牌桌','Back to game',GKLocale.language);
+  for(const b of languageButtons){b.value=GKLocale.language;b.setAttribute('aria-label',window.SZI18n.pair('语言','Language',GKLocale.language));}
+  play.textContent=window.SZI18n.pair('对局','Play',GKLocale.language);$('open-rules').textContent=window.SZI18n.pair('规则','Rules',GKLocale.language);$('open-settings').textContent=window.SZI18n.pair('设置','Settings',GKLocale.language);$('open-settings').setAttribute('aria-label',window.SZI18n.pair('设置','Settings',GKLocale.language));
+  nav.setAttribute('aria-label',window.SZI18n.pair('牌桌导航','Table navigation',GKLocale.language));triggers.replay.textContent=window.SZI18n.pair('观看示例回放','Watch sample replay',GKLocale.language);
  }
  let locale='';new MutationObserver(()=>{if(locale!==GKLocale.language){locale=GKLocale.language;translate();}}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});locale=GKLocale.language;translate();
  function run(fn){queue=queue.then(fn,fn);return queue;}

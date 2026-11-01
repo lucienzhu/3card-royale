@@ -1,6 +1,6 @@
 {
   "name": "3card-royale",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "description": "An open two-player card game from Shenzhen.",
   "license": "MIT",

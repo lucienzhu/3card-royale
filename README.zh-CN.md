@@ -10,6 +10,8 @@
 
 [**开始玩 ↗**](https://lucienzhu.github.io/3card-royale/?lang=zh-CN) · [怎么玩](https://lucienzhu.github.io/3card-royale/about.html?lang=zh-CN) · [视觉](https://lucienzhu.github.io/3card-royale/brand.html?lang=zh-CN) · [AI 竞技场](https://lucienzhu.github.io/3card-royale/arena.html?lang=zh-CN)
 
+网页支持[简体中文](https://lucienzhu.github.io/3card-royale/?lang=zh-CN)、[English](https://lucienzhu.github.io/3card-royale/?lang=en)、[日本語](https://lucienzhu.github.io/3card-royale/?lang=ja)、[한국어](https://lucienzhu.github.io/3card-royale/?lang=ko)和[Español](https://lucienzhu.github.io/3card-royale/?lang=es)。网站、新手引导、完整规则和分享图随语言切换。
+
 ## 玩法
 
 1. 八张手牌起步，从手牌与公开伤牌中选三张出牌；四张、五张须组成炸弹。
