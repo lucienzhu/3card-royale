@@ -1,6 +1,6 @@
 # 深圳花牌 · 3Card Royale
 
-**简体中文** · [English](README.md)
+[English](README.md) · **简体中文** · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md)
 
 ![深圳花牌](assets/repository-cover.svg)
 

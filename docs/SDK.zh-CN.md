@@ -1,5 +1,7 @@
 # 可移植核心与接入
 
+[日本語](GUIDE.ja.md) · [한국어](GUIDE.ko.md) · [Español](GUIDE.es.md)
+
 ## 当前分支：结构化动作 v2
 
 新策略使用 `royale-policy-v2` / `actions-v2`：固定牌 ID，完整动作统一校验、执行一次。纯代码、整手评分和逐步生成都使用这个边界。ONNX 单独声明特征接口：`scoring-v2`（状态 + 完整候选 → 动作分数）或 `structured-v2`（状态 + 前缀 → token 分数）。模型形式不改变动作协议。

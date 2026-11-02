@@ -21,8 +21,9 @@ module.exports=function(){
  assert(!/linearGradient|radialGradient|metal/i.test(brand),'Primary mark must be the current flat card');
  const copy=JSON.parse(read('brand.html').match(/window.SC_COPY=(\{.*?\});/s)[1]);assert(copy.downloadSubcss.every(x=>x.includes('v3')),'VI label is stale');
  const rules=JSON.parse(read('app/standard-rules.js').replace(/^window.SZStandardRules=/,'').replace(/;\s*$/,''));
- const plain=s=>s.replace(/^\d+\.\s+/gm,'').replace(/<[^>]*>/g,'').replace(/\[([^\]]+)\]\([^)]*\)/g,'$1').replace(/&(?:amp|nbsp|lt|gt|quot);/g,'').replace(/[^\p{L}\p{N}]/gu,'');
- for(const [lang,file]of [['en','docs/RULES.md'],['zh','docs/RULES.zh-CN.md']])assert(plain(rules[lang])===plain(read(file)),'Browser rules differ from '+file);
+ const plain=s=>s.replace(/<!-- doc-navigation:start -->[\s\S]*?<!-- doc-navigation:end -->/g,'').replace(/<p><a href="docs\/RULES(?:\.zh-CN)?\.md">[^<]*<\/a><\/p>/g,'').replace(/^\d+\.\s+/gm,'').replace(/<[^>]*>/g,'').replace(/\[([^\]]+)\]\([^)]*\)/g,'$1').replace(/&(?:amp|nbsp|lt|gt|quot);/g,'').replace(/[^\p{L}\p{N}]/gu,'');
+ const localized={window:{SZStandardRules:rules}};vm.runInNewContext(read('app/locales/rules.js'),localized);
+ for(const [lang,file]of [['en','docs/RULES.md'],['zh','docs/RULES.zh-CN.md'],...['ja','ko','es'].map(lang=>[lang,'docs/RULES.'+lang+'.md'])])assert(plain(rules[lang])===plain(read(file)),'Browser rules differ from '+file);
  // Inline scripts are also executable code; an old sample had duplicate const declarations.
  for(const name of fs.readdirSync(root).filter(n=>n.endsWith('.html')&&!n.startsWith('__')))for(const [i,m]of [...read(name).matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)].entries()){
   if(/\bsrc=|application\/(?:ld\+)?json/.test(m[1]))continue;

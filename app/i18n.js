@@ -13,6 +13,15 @@ if(/ · | → |: |\n/.test(trim)){const parts=trim.split(/( · | → |: |\n)/);i
 if(/[A-Za-z]{3}/.test(trim)&&trim.length<800)missing.add(trim);return s;}
 function pair(zh,en,lang=language){return lang==='zh-CN'?zh:translate(en,lang);}
 function options(){return Object.entries(locales).map(([id,label])=>'<option value="'+id+'" lang="'+id+'">'+label+'</option>').join('');}
+function onePagerPath(lang=language){return 'docs/shenzhen-flower-rules-a4.'+(normalize(lang)||'en')+'.pdf';}
+function documentPath(name,lang=language){
+ const locale=normalize(lang)||'en',section={SDK:'sdk',ACTIONS:'actions',RL:'gym',MODEL:'models',CONTRIBUTING:'contribute'}[name];
+ if(['ja','ko','es'].includes(locale)){
+  if(name==='RULES')return 'docs/RULES.'+locale+'.md';
+  if(section)return 'docs/GUIDE.'+locale+'.md#'+section;
+ }
+ return 'docs/'+name+(locale==='zh-CN'&&name!=='ACTIONS'?'.zh-CN':'')+'.md';
+}
 function setLanguage(next){const lang=normalize(next);if(!lang)return;language=lang;try{localStorage.setItem(key,lang);}catch{}const url=new URL(location.href);url.searchParams.set('lang',lang);history.replaceState(null,'',url);document.documentElement.lang=lang;window.GKLocale?.setLanguage(lang);window.dispatchEvent(new CustomEvent('sz-language-change',{detail:{language:lang}}));apply();}
 const sourceText=new WeakMap(),sourceAttrs=new WeakMap();let observer,queued=false;
 function apply(){language=normalize(document.documentElement.lang)||language;observer?.disconnect();
@@ -23,6 +32,6 @@ for(const select of document.querySelectorAll('[data-language-select],[data-site
 const og=document.querySelector('meta[property="og:locale"]'),tag={'zh-CN':'zh_CN',en:'en_US',ja:'ja_JP',ko:'ko_KR',es:'es_ES'}[language];if(og&&og.content!==tag)og.content=tag;
 observer?.observe(document.documentElement,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['lang']});}
 function init(){observer=new MutationObserver(()=>{if(!queued){queued=true;queueMicrotask(()=>{queued=false;apply();});}});document.addEventListener('change',e=>{if(e.target.matches('[data-site-language],[data-language-select]'))setLanguage(e.target.value);});apply();}
-window.SZI18n={locales,normalize,translate,pair,add,options,setLanguage,apply,get language(){return language;},get missing(){return [...missing];},catalogs};
+window.SZI18n={locales,normalize,translate,pair,add,options,onePagerPath,documentPath,setLanguage,apply,get language(){return language;},get missing(){return [...missing];},catalogs};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();

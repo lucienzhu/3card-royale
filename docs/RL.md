@@ -1,5 +1,7 @@
 # RL / Gymnasium
 
+[日本語](GUIDE.ja.md) · [한국어](GUIDE.ko.md) · [Español](GUIDE.es.md)
+
 This branch uses **actions-v2 structured moves**: stable physical card IDs and one atomic submission, including three-, four- and five-card plays. Code, whole-move scoring and autoregressive models share this protocol. Model architecture and training objective are separate choices.
 
 [Action contract, Gym and RL](ACTIONS.md) · [v2 model and reproduction](../training/structured/README.md)

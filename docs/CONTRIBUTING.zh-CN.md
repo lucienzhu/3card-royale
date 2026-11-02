@@ -1,5 +1,7 @@
 # 参与改进
 
+[日本語](GUIDE.ja.md) · [한국어](GUIDE.ko.md) · [Español](GUIDE.es.md)
+
 [English](CONTRIBUTING.md) · [项目首页](../README.zh-CN.md)
 
 一条清楚的试玩观察、一次翻译、一处可访问性修复，或一个小功能，都能让游戏更好。
@@ -13,7 +15,7 @@
 | 路径 | 用途 |
 | --- | --- |
 | `index.html` | 牌桌；原根URL继续直接玩 |
-| `about.html` / `brand.html` | 双语官网介绍／视觉识别 |
+| `about.html` / `brand.html` | 五语官网介绍／视觉识别 |
 | `site.css` / `site.js` | 官网布局、语言、明暗和案例 |
 | `app/game.css` | 既有游戏及规则图解样式 |
 | `app/experience.css` / `app/experience.js` | 本版游戏UI优化 |
@@ -22,11 +24,11 @@
 | `app/rules.js` / `app/hand-reference.js` | 规则图解／牌型例牌 |
 | `gamecore.js` | 共享规则引擎，可通过CommonJS载入 |
 | `app/replays.js` | 冻结历史研究回放 |
-| `docs/` / `assets/` | 中英配对文档／品牌素材 |
+| `docs/` / `assets/` | 五语入门文档／品牌素材 |
 
 ## 提交时说明什么
 
-一次修改围绕一个明确问题，说明玩家会感受到的改变。UI请检查手机、桌面、中英和明暗，保留键盘焦点、触摸操作和开关规则时的选牌。语言和外观不要改变真实对局或存档。
+一次修改围绕一个明确问题，说明玩家会感受到的改变。UI请检查手机、桌面、五种语言和明暗，保留键盘焦点、触摸操作和开关规则时的选牌。语言和外观不要改变真实对局或存档。
 
 玩法变更要单独标版本，验证结算顺序、花牌、52张守恒和存档兼容，同时更新两份规则书及游戏条款。不要悄悄改旧版语义或移动旧tag。
 
@@ -50,4 +52,4 @@ Bug请给规则版本、设备／浏览器、复现步骤、预期与实际结�
 与教师策略，再用 `python training/parity.py --root <run>` 比较 Torch／ONNX logits；
 `training/profile.html` 验证浏览器 worker 和延迟。记录任务、种子、划分、留出评估、
 模型哈希及 TensorBoard 曲线。原始轨迹和检查点留在忽略的 `artifacts/`；只发布选定
-ONNX 与 manifest。契约改变时，同步更新中英模型／RL 文档。
+ONNX 与 manifest。契约改变时，同步更新模型／RL 文档及日、韩、西语技术指南。

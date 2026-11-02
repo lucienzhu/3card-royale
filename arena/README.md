@@ -1,5 +1,7 @@
 # Arena · Reference Elo
 
+[日本語](../docs/GUIDE.ja.md#arena) · [한국어](../docs/GUIDE.ko.md#arena) · [Español](../docs/GUIDE.es.md#arena)
+
 Product **1.1.0**, rules **1.0.0**, independent small games from levels `[2,2]`.
 [Submit a policy](../policies/README.md) · [中文](../policies/README.zh-CN.md) · [Leaderboard](../arena.html)
 

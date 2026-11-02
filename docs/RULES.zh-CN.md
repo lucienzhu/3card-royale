@@ -6,7 +6,11 @@
 2. 进攻掉血，防守换牌；
 3. 从 2 到 A，过关开花。
 
-[English](RULES.md)
+<!-- doc-navigation:start -->
+[English](RULES.md) · **简体中文** · [日本語](RULES.ja.md) · [한국어](RULES.ko.md) · [Español](RULES.es.md)
+
+[A4 PDF](shenzhen-flower-rules-a4.zh-CN.pdf)
+<!-- doc-navigation:end -->
 
 ## 1. 目标与准备
 

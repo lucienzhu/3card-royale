@@ -1,5 +1,7 @@
 # Reproduce whole-move scoring · 256 → 128
 
+[日本語](../docs/GUIDE.ja.md#training) · [한국어](../docs/GUIDE.ko.md#training) · [Español](../docs/GUIDE.es.md#training)
+
 Whole-move scoring and [autoregressive policies](structured/README.md) are separate
 Arena entries using the same action protocol. This recipe reproduces the scorer.
 
