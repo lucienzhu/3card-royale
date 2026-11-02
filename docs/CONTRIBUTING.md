@@ -1,5 +1,7 @@
 # Contributing
 
+[日本語](GUIDE.ja.md) · [한국어](GUIDE.ko.md) · [Español](GUIDE.es.md)
+
 [简体中文](CONTRIBUTING.zh-CN.md) · [Project](../README.md)
 
 A better game can start with one clear playtest observation, a translation, an accessibility fix or a small implementation change.
@@ -26,7 +28,7 @@ Clone this repository and serve its root with a static HTTP server, for example 
 
 ## Review expectations
 
-Keep a change focused and explain its player-facing effect. For UI work, check a small phone and a desktop, both languages and themes, keyboard focus, touch targets and selected cards surviving a rules-dialog round trip. Keep gameplay state independent from appearance and language preferences.
+Keep a change focused and explain its player-facing effect. For UI work, check a small phone and a desktop, all five languages and both themes, keyboard focus, touch targets and selected cards surviving a rules-dialog round trip. Keep gameplay state independent from appearance and language preferences.
 
 Rules changes need a separately identified variant and examples of resolution order, wildcard use, card conservation and saved-game behavior. Update both rulebooks and the game’s rule text; do not silently reinterpret old variants or move release tags.
 
@@ -34,7 +36,7 @@ Report a bug with rule version, browser/device, steps, expected result and actua
 
 ## Languages and community
 
-English and Simplified Chinese are peers. Update paired documents and preserve the precise meaning of rules rather than translating word for word. Other-language contributions are welcome; discuss a consistent glossary first. Be respectful and describe observable behavior when disagreeing about a design.
+English, Simplified Chinese, Japanese, Korean and Spanish are supported. Update localized READMEs, rules, A4 PDFs and technical guides when their content changes. Preserve the precise meaning of rules and use a consistent glossary. See [localization maintenance](I18N.md). Be respectful and describe observable behavior when disagreeing about a design.
 
 Contributions are shared under this repository’s MIT license. Keep copyright and license notices and credit prior work.
 

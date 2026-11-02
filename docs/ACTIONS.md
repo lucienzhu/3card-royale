@@ -1,5 +1,7 @@
 # Structured actions · v2
 
+[日本語](GUIDE.ja.md) · [한국어](GUIDE.ko.md) · [Español](GUIDE.es.md)
+
 A policy returns a complete move with stable physical card IDs. **One action space and protocol; many policy architectures.** Code, whole-move ranking and autoregressive networks all submit the same semantic action. `actions-v2` changes the interface, not Standard Rules 1.0.0 or save schema 2.
 
 ```text

@@ -6,7 +6,11 @@
 2. Attack to wound; defend to swap.
 3. From 2 to Ace. Pass the challenge, and bloom.
 
-[简体中文](RULES.zh-CN.md)
+<!-- doc-navigation:start -->
+**English** · [简体中文](RULES.zh-CN.md) · [日本語](RULES.ja.md) · [한국어](RULES.ko.md) · [Español](RULES.es.md)
+
+[A4 PDF](shenzhen-flower-rules-a4.en.pdf)
+<!-- doc-navigation:end -->
 
 ## 1. Objective and setup
 

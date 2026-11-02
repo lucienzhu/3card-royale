@@ -1,5 +1,7 @@
 # RL／Gymnasium环境
 
+[日本語](GUIDE.ja.md) · [한국어](GUIDE.ko.md) · [Español](GUIDE.es.md)
+
 当前分支使用 **actions-v2 统一动作协议**：实体牌 ID 固定，完整提交一次，支持三、四、五张牌。纯代码、整手候选评分、自回归模型共享这套协议；模型结构和训练目标可以不同。
 
 [接口、Gym 与 RL 训练约定](ACTIONS.md) · [v2 模型与复现](../training/structured/README.md)

@@ -1,5 +1,7 @@
 # Policy plugins · Arena 1.1
 
+[日本語](../docs/GUIDE.ja.md#arena) · [한국어](../docs/GUIDE.ko.md#arena) · [Español](../docs/GUIDE.es.md#arena)
+
 ## This branch: structured actions v2
 
 New policies use `royale-policy-v2` / `actions-v2`: one complete semantic action with fixed card IDs, validated and executed once. JS code, complete-move scoring and autoregressive generation share that boundary. ONNX declares a separate feature profile: `scoring-v2` (state + complete candidates → move scores) or `structured-v2` (state + prefix → token scores). Model choices do not redefine the action protocol.

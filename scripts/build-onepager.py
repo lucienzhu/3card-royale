@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the bilingual A4 quick reference from reviewed Standard 1.0 copy.
+"""Build the five-language A4 quick reference from reviewed Standard 1.0 copy.
 
 Requires reportlab. Uses embedded font subsets and the canonical flat brand mark.
 See docs/ONE_PAGER.md for font overrides, rendering and review instructions.
@@ -103,6 +103,8 @@ COPY = {
  },
 }
 
+COPY.update(json.loads((ROOT/'scripts/onepager-locales.json').read_text()))
+
 EXAMPLES = [
  [('A','s'),('A','h'),('A','c'),('A','d'),('2','h')],
  [('7','s'),('7','h'),('7','c'),('7','d')],
@@ -116,14 +118,26 @@ EXAMPLES = [
 
 
 def load_fonts(args):
-    for name, path in [('ZH', args.font_zh), ('ZHB', args.font_zh_bold),
-                       ('EN', args.font_en), ('ENB', args.font_en_bold)]:
-        if not Path(path).is_file():
-            raise SystemExit(f'Font missing: {path}. Set the corresponding --font-* option.')
-        index = args.zh_font_index if name.startswith('ZH') and path.lower().endswith('.ttc') else 0
-        pdfmetrics.registerFont(TTFont(name, path, subfontIndex=index))
-    for family in ('ZH','EN'):
+    families = {'zh-CN': ('ZH', args.font_zh, args.font_zh_bold),
+                'en': ('EN', args.font_en, args.font_en_bold),
+                'es': ('EN', args.font_en, args.font_en_bold),
+                'ja': ('JA', args.font_ja, args.font_ja_bold or args.font_ja),
+                'ko': ('KO', args.font_ko, args.font_ko_bold or args.font_ko)}
+    # Latin glyphs are also used for card faces and numbers in every language.
+    for family, regular, bold in {families[x] for x in ['en'] + args.languages}:
+        for name, path in [(family, regular), (family+'B', bold)]:
+            if not Path(path).is_file():
+                raise SystemExit(f'Font missing: {path}. Set the corresponding --font-* option.')
+            index = args.zh_font_index if family == 'ZH' and path.lower().endswith('.ttc') else 0
+            pdfmetrics.registerFont(TTFont(name, path, subfontIndex=index))
         pdfmetrics.registerFontFamily(family, normal=family, bold=family+'B', italic=family, boldItalic=family+'B')
+    for lang in args.languages:
+        family = families[lang][0]
+        values = COPY[lang].values()
+        content = ' '.join(' '.join(v) if isinstance(v, list) else v for v in values)
+        missing = {ch for ch in re.sub(r'<[^>]+>', '', content) if not ch.isspace() and ord(ch) not in pdfmetrics.getFont(family).face.charToGlyph}
+        if missing:
+            raise SystemExit(f'Missing glyphs for {lang}: {sorted(missing)}')
 
 
 def mark_drawing():
@@ -161,7 +175,7 @@ def mark_drawing():
 class Sheet:
     def __init__(self, lang, output):
         self.lang, self.copy = lang, COPY[lang]
-        self.font = 'ZH' if lang=='zh-CN' else 'EN'
+        self.font = {'zh-CN':'ZH', 'ja':'JA', 'ko':'KO'}.get(lang, 'EN')
         self.size = 9.4 if lang=='zh-CN' else 9.5
         self.leading = 14.2 if lang=='zh-CN' else 13.6
         self.c = canvas.Canvas(str(output), pagesize=A4, pageCompression=1, invariant=1)
@@ -175,7 +189,7 @@ class Sheet:
         getattr(c, {'left':'drawString','right':'drawRightString','center':'drawCentredString'}[align])(x,H-y,txt)
 
     def paragraph(self, x, top, width, txt, size=None, color=INK, leading=None):
-        style=ParagraphStyle('body',fontName=self.font,fontSize=size or self.size,leading=leading or self.leading,textColor=HexColor(color),alignment=TA_LEFT,wordWrap='CJK' if self.lang=='zh-CN' else None,allowWidows=0,allowOrphans=0)
+        style=ParagraphStyle('body',fontName=self.font,fontSize=size or self.size,leading=leading or self.leading,textColor=HexColor(color),alignment=TA_LEFT,wordWrap='CJK' if self.lang in ('zh-CN','ja','ko') else None,allowWidows=0,allowOrphans=0)
         p=Paragraph(txt,style); _,height=p.wrap(width,H)
         p.drawOn(self.c,x,H-top-height)
         return top+height
@@ -216,7 +230,7 @@ class Sheet:
         self.text(M+COL,213,t['points'],8,color=MUTED,align='right')
         for i,(name,example) in enumerate(zip(t['types'],EXAMPLES)):
             y=228+i*26
-            self.text(M,y+15,name,10 if self.lang=='zh-CN' else 9.4,True)
+            self.text(M,y+15,name,min(10 if self.lang=='zh-CN' else 9.4, 94/pdfmetrics.stringWidth(name,self.font+'B',1)),True)
             for j,(rank,suit) in enumerate(example):
                 self.card(M+101+j*21,y,rank,suit,wild=(i==0 and j==4))
             self.text(M+COL,y+16,str(7-i),14,True,RED,align='right',font='ENB')
@@ -231,7 +245,7 @@ class Sheet:
         for key,result,color in [('attack','attackResult',RED),('defense','defenseResult',GREEN)]:
             c.setFillColor(HexColor(PAPER)); c.roundRect(RIGHT,H-y-42,COL,42,4,stroke=0,fill=1)
             self.text(RIGHT+10,y+15,t[key],10.5,True,color)
-            self.text(RIGHT+10,y+31,t[result],9.3,color=INK)
+            self.text(RIGHT+10,y+31,t[result],min(9.3,(COL-20)/pdfmetrics.stringWidth(t[result],self.font,1)),color=INK)
             y+=47
         y=self.paragraph(RIGHT,y+2,COL,t['tie'],size=8.6,color=MUTED,leading=12)
         y=self.paragraph(RIGHT,y+13,COL,t['resolve'])
@@ -279,8 +293,12 @@ def main():
     p.add_argument('--zh-font-index',type=int,default=1,help='Simplified Chinese subfont for the default TTCs')
     p.add_argument('--font-en',default='/System/Library/Fonts/Supplemental/Arial.ttf')
     p.add_argument('--font-en-bold',default='/System/Library/Fonts/Supplemental/Arial Bold.ttf')
+    p.add_argument('--languages', nargs='+', choices=list(COPY), default=list(COPY))
+    for lang in ('ja','ko'):
+        p.add_argument('--font-'+lang,default='/System/Library/Fonts/Supplemental/Arial Unicode.ttf')
+        p.add_argument('--font-'+lang+'-bold',default=None)
     args=p.parse_args(); load_fonts(args); args.output_dir.mkdir(parents=True,exist_ok=True)
-    for lang in COPY:
+    for lang in args.languages:
         output=args.output_dir/('shenzhen-flower-rules-a4.'+lang+'.pdf')
         Sheet(lang,output).make(); print(output)
 

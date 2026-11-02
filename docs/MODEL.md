@@ -1,5 +1,7 @@
 # Policy baselines
 
+[日本語](GUIDE.ja.md) · [한국어](GUIDE.ko.md) · [Español](GUIDE.es.md)
+
 Code policies, whole-move scorers and autoregressive models share **actions-v2**:
 stable physical card IDs and one atomic move, including three-, four- and five-card
 plays. The protocol does not prescribe a network architecture or training objective.

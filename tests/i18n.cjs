@@ -15,6 +15,31 @@ for(const [url,stored,browser,want] of [
  ['lang=ja-JP','es','ko-KR','ja'],['','es-MX','ko-KR','es'],['',null,'ko-KR','ko'],['lang=xx',null,'fr','en'],['lang=zh-TW',null,'en','zh-CN']
 ])assert.equal(context(url,stored,browser).SZI18n.language,want);
 const ctx=context(),i18n=ctx.SZI18n;
+// Downloads and GitHub documentation must follow the selected locale, not an English fallback.
+for(const lang of ['en','zh-CN','ja','ko','es']){
+ const pdf=i18n.onePagerPath(lang);
+ assert.equal(pdf,`docs/shenzhen-flower-rules-a4.${lang}.pdf`);
+ assert.equal(fs.readFileSync(path.join(root,pdf)).subarray(0,5).toString(),'%PDF-');
+ for(const name of ['RULES','SDK','ACTIONS','RL','MODEL','CONTRIBUTING']){
+  const [file,anchor]=i18n.documentPath(name,lang).split('#');
+  assert(fs.existsSync(path.join(root,file)),`${lang}: missing ${file}`);
+  if(['ja','ko','es'].includes(lang))assert(file.endsWith(`.${lang}.md`));
+  if(anchor)assert(read(file).includes(`id="${anchor}"`),`${file}: missing ${anchor}`);
+ }
+}
+assert.equal(i18n.onePagerPath('es-MX'),i18n.onePagerPath('es'));
+assert.equal(i18n.documentPath('RULES','ja-JP'),'docs/RULES.ja.md');
+assert.equal(i18n.onePagerPath('unknown'),i18n.onePagerPath('en'));
+for(const lang of ['ja','ko','es'])for(const file of [`README.${lang}.md`,`docs/RULES.${lang}.md`,`docs/GUIDE.${lang}.md`]){
+ const markdown=read(file);
+ for(const [,href]of markdown.matchAll(/\]\(([^)]+)\)/g)){
+  if(/^[a-z]+:/.test(href))continue;
+  const [target,anchor]=href.split('#'),clean=target.split('?')[0];
+  const resolved=path.resolve(root,path.dirname(file),clean||path.basename(file));
+  assert(fs.existsSync(resolved),`${file}: missing ${href}`);
+  if(anchor&&/GUIDE\.[^.]+\.md$/.test(resolved))assert(fs.readFileSync(resolved,'utf8').includes(`id="${anchor}"`));
+ }
+}
 assert.equal(i18n.pair('进攻','Attack','zh-CN'),'进攻');assert.equal(i18n.pair('进攻','Attack','en'),'Attack');
 for(const [lang,attack] of [['ja','攻撃'],['ko','공격'],['es','Ataque']]){
  assert.equal(i18n.translate('Attack',lang),attack);
