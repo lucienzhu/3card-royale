@@ -76,14 +76,20 @@ The home introduction reuses the approved layer19 skyline as a softly cropped ba
 
 ### Selects and disclosures · 2026-10-27
 
-`app/controls.css` is shared by Settings, the replay chapter picker and the live
-component gallery. Native selects retain keyboard navigation and mobile pickers:
-44 px minimum height, 16 px text, 14 px left padding, 48 px text clearance on the
-right, and a 20 px rounded chevron inset 14 px. Surfaces, border and arrow follow
-the light/dark tokens. Hover strengthens the border; keyboard focus uses the red
-text token and a soft ring. Disabled fields are muted; reduced motion and forced
-colors are supported. Disclosures use the same chevron and right inset, rotating
-only when expanded. The gallery shows default, focus, disabled and expand states.
+`app/controls.css` styles the native `select.sz-select-control` used in site
+navigation, drawers, Settings, replay, the probability lab and the live gallery.
+Form selects use a 44 px minimum height, 16 px text, 14 px start padding and
+48 px of space for the 20 px chevron. The compact navigation variant keeps
+the same height, reserves space for the longest language name and uses 16 px text on
+small or touch screens. The public header keeps language visible and moves
+Appearance into the menu when navigation collapses.
+
+Surfaces, borders and the chevron follow the light and dark palettes. Hover
+strengthens the form border or tints the compact control. Keyboard focus uses
+the red text token and a soft ring; disabled fields are muted. Reduced motion
+and forced colors are supported. Disclosures use the same chevron, rotating
+it when expanded. The gallery shows both select styles, the default, hover,
+focus and disabled states, and a working disclosure.
 
 Settings switches align to the right of their title and description. Secondary
 actions such as “Practice again” use an outlined secondary button below the

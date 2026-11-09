@@ -1,22 +1,41 @@
 /* Shared native selects and disclosures. Keep platform pickers and keyboard semantics. */
 :root{--control-height:44px;--control-pad:14px;--control-arrow-size:20px;--control-arrow-inset:14px;--control-end-space:48px;--control-chevron:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='m5 7.5 5 5 5-5' stroke='%234F665A' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
 [data-sz-theme=dark]{--control-chevron:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='m5 7.5 5 5 5-5' stroke='%239DB5A8' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
-:root body :is(#settings-modal select,select.sz-select-control,#replay-controls .replay-chapter select){
+:root body select.sz-select-control{
  -webkit-appearance:none;appearance:none;display:block;box-sizing:border-box;
- width:100%;min-width:0;max-width:100%;min-height:var(--control-height);margin:0;
- padding:10px var(--control-end-space) 10px var(--control-pad);
- border:1px solid var(--line);border-radius:var(--r);color:var(--ink);
- background-color:var(--panel);background-image:var(--control-chevron);
- background-repeat:no-repeat;background-position:right var(--control-arrow-inset) center;
+ width:var(--select-width,100%);min-width:0;max-width:100%;min-height:var(--control-height);margin:0;
+ padding:8px var(--select-end-space,var(--control-end-space)) 8px var(--select-pad,var(--control-pad));
+ border:1px solid var(--select-border,var(--line));border-radius:var(--r,8px);color:var(--select-ink,var(--ink));
+ background-color:var(--select-surface,var(--panel));background-image:var(--select-chevron,var(--control-chevron));
+ background-repeat:no-repeat;background-position:right var(--select-arrow-inset,var(--control-arrow-inset)) center;
  background-size:var(--control-arrow-size) var(--control-arrow-size);
- font-family:inherit;font-size:16px;font-weight:400;line-height:1.4;
+ font-family:inherit;font-size:var(--select-font-size,16px);font-weight:400;line-height:1.4;
  cursor:pointer;text-overflow:ellipsis;transition:border-color .15s,box-shadow .15s,background-color .15s;
 }
-:root body :is(#settings-modal select,select.sz-select-control,#replay-controls .replay-chapter select) option{background:var(--panel);color:var(--ink)}
-@media(hover:hover){:root body :is(#settings-modal select,select.sz-select-control,#replay-controls .replay-chapter select):not(:disabled):hover{border-color:var(--muted)}}
-:root body :is(#settings-modal select,select.sz-select-control,#replay-controls .replay-chapter select):focus-visible,:root body :is(#settings-modal select,select.sz-select-control,#replay-controls .replay-chapter select)[data-control-preview=focus]{border-color:var(--red-text);outline:2px solid var(--red-text);outline-offset:2px;box-shadow:0 0 0 4px var(--red-tint)}
-:root body :is(#settings-modal select,select.sz-select-control,#replay-controls .replay-chapter select):disabled{color:var(--muted);background-color:var(--table);opacity:.55;cursor:default}
-:root body .ds-select select.sz-select-control{padding-left:40px}
+:root body .sz-select-control option{background:var(--panel);color:var(--ink)}
+.sz-select--compact,.sz-select--icon{
+ --select-border:transparent;--select-surface:transparent;--select-hover-border:transparent;--select-hover-surface:var(--table);
+}
+.sz-select--compact{
+ --select-width:calc(4em + 42px);--select-font-size:14px;--select-pad:8px;--select-end-space:29px;--select-arrow-inset:5px;flex:none;
+}
+@media(max-width:700px),(pointer:coarse){.sz-select--compact{--select-font-size:16px}}
+/* The visible icon is supplied by the label; the select owns focus and input. */
+.sz-select--icon{
+ --select-width:var(--control-height);--select-pad:0px;--select-end-space:0px;--select-chevron:none;--select-ink:transparent;
+}
+:root body select.sz-select-control[data-control-preview=hover]{
+ border-color:var(--select-hover-border,var(--muted));background-color:var(--select-hover-surface,var(--select-surface,var(--panel)));
+}
+@media(hover:hover){
+ :root body select.sz-select-control:where(:enabled):hover{
+  border-color:var(--select-hover-border,var(--muted));background-color:var(--select-hover-surface,var(--select-surface,var(--panel)));
+ }
+}
+:root body select.sz-select-control:is(:focus-visible,[data-control-preview=focus]){
+ border-color:var(--red-text);outline:2px solid var(--red-text);outline-offset:2px;box-shadow:0 0 0 4px var(--red-tint);
+}
+:root body select.sz-select-control:disabled{color:var(--muted);background-color:var(--table);opacity:.55;cursor:default}
 /* Dependent choices stay inside their parent setting, with a quiet branch guide. */
 :root body .sz-control-child{position:relative;display:grid;gap:10px;min-width:0;padding:0 0 0 24px}
 :root body .sz-control-child::before{content:'';position:absolute;left:5px;top:-12px;width:9px;height:24px;border-left:1.5px solid var(--muted);border-bottom:1.5px solid var(--muted);border-bottom-left-radius:6px;pointer-events:none}
@@ -32,10 +51,9 @@
 :root body :is(#settings-modal details,.sz-disclosure)>summary::-webkit-details-marker{display:none}
 :root body :is(#settings-modal details,.sz-disclosure)>summary::after{content:'';display:block;flex:none;width:var(--control-arrow-size);height:var(--control-arrow-size);margin-right:calc(var(--control-arrow-inset) + 1px);border:0;background-color:var(--muted);-webkit-mask:var(--control-chevron) center/contain no-repeat;mask:var(--control-chevron) center/contain no-repeat;transform:none;transition:transform .15s}
 :root body :is(#settings-modal details,.sz-disclosure)[open]>summary::after{transform:rotate(180deg)}
-:root body #replay-controls .replay-chapter>svg{display:none}
-@media(prefers-reduced-motion:reduce){:root body :is(#settings-modal select,select.sz-select-control,#replay-controls .replay-chapter select),:root body :is(#settings-modal details,.sz-disclosure)>summary::after{transition:none}}
+@media(prefers-reduced-motion:reduce){:root body select.sz-select-control,:root body :is(#settings-modal details,.sz-disclosure)>summary::after{transition:none}}
 @media(forced-colors:active){
- :root body :is(#settings-modal select,select.sz-select-control,#replay-controls .replay-chapter select){-webkit-appearance:auto;appearance:auto;background-image:none;border-color:ButtonText}
- :root body :is(#settings-modal select,select.sz-select-control,#replay-controls .replay-chapter select):focus-visible,:root body :is(#settings-modal select,select.sz-select-control,#replay-controls .replay-chapter select)[data-control-preview=focus]{outline-color:Highlight;box-shadow:none}
+ :root body select.sz-select-control{-webkit-appearance:auto;appearance:auto;background-image:none;border-color:ButtonText;padding-inline-end:var(--select-pad,var(--control-pad))}
+ :root body select.sz-select-control:is(:focus-visible,[data-control-preview=focus]){outline-color:Highlight;box-shadow:none}
  :root body :is(#settings-modal details,.sz-disclosure)>summary::after{background-color:ButtonText;forced-color-adjust:none}
 }

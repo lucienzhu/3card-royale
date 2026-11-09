@@ -8,13 +8,6 @@
 }
 :root body #replay-controls[hidden]{display:none}
 #replay-controls .replay-chapter{grid-area:chapter;position:relative;min-width:0}
-:root body #replay-controls select{
- display:block;appearance:none;-webkit-appearance:none;width:100%;max-width:none;min-width:0;
- height:44px;padding:0 28px 0 0;border:0;border-radius:6px;background:transparent;color:var(--ink);
- font-family:inherit;font-size:14px;font-weight:500;line-height:1.4;cursor:pointer;text-overflow:ellipsis;
-}
-#replay-controls .replay-chapter>svg{position:absolute;right:3px;top:12px;width:20px;height:20px;pointer-events:none;fill:none;stroke:var(--muted);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-#replay-controls select option{background:var(--panel);color:var(--ink)}
 #replay-controls .replay-source{grid-area:source;white-space:nowrap;color:var(--muted);font-size:12px;line-height:1.4}
 #replay-controls .replay-transport{grid-area:transport;display:flex;align-items:center;gap:2px}
 :root body #replay-controls button{
@@ -43,6 +36,9 @@
  :root body #replay-controls{grid-template-columns:136px minmax(30px,1fr) max-content;grid-template-areas:"chapter chapter source" "transport progress count";gap:0 10px;padding:2px 12px 6px;border-radius:14px}
  #replay-controls .replay-source{text-align:right}
 }
-@media(max-width:360px){:root body #replay-controls{padding-inline:8px;column-gap:6px}}
+@media(max-width:360px){
+ :root body #replay-controls{padding-inline:8px;column-gap:6px}
+ #replay-controls .replay-source{max-width:76px;white-space:normal}
+}
 @media(min-width:761px) and (max-width:1000px){:root body #replay-controls{grid-template-columns:180px 136px minmax(40px,1fr) 58px;grid-template-areas:"chapter transport progress count";gap:8px}#replay-controls .replay-source{display:none}}
 @media(prefers-reduced-motion:reduce){:root body #replay-controls button{transition:none}}

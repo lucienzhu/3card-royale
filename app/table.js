@@ -617,18 +617,25 @@ function driveAI(){
 }
 function stopAI(){turnFlow.stop();aiSerial++;motionSerial++;window.SZCardMotion.cancel();if(aiTimer){clearTimeout(aiTimer);aiTimer=null;}busy=false;}
 function renderReplayControls(){
- const en=GKLocale.language!=='zh-CN',events=ROLLOUT.events,total=events.length,event=events[cursor];
- const name=en?['Previous step','Next step',autoTimer?'Pause':cursor===total-1?'Play again':'Play']:['上一步','下一步',autoTimer?'暂停':cursor===total-1?'重新播放':'播放'];
+ const t=(zh,en)=>SZI18n.pair(zh,en,GKLocale.language),events=ROLLOUT.events,total=events.length,event=events[cursor];
+ const name=[t('上一步','Previous step'),t('下一步','Next step'),autoTimer?t('暂停','Pause'):cursor===total-1?t('重新播放','Play again'):t('播放','Play')];
  ['prev-step','next-step','auto-replay'].forEach((id,i)=>{ $(id).setAttribute('aria-label',name[i]);$(id).title=name[i]; });
  $('prev-step').disabled=cursor===0;$('next-step').disabled=cursor===total-1;$('auto-replay').setAttribute('aria-pressed',String(!!autoTimer));
- $('replay-controls').setAttribute('aria-label',en?'Replay controls':'回放控制');
- $('replay-source').textContent=en?'Sample replay':'示例回放';
- const jump=$('replay-jump');jump.setAttribute('aria-label',en?'Jump to game or round':'跳到局或轮');
+ $('replay-controls').setAttribute('aria-label',t('回放控制','Replay controls'));
+ $('replay-source').textContent=t('示例回放','Sample replay');
+ const jump=$('replay-jump');jump.setAttribute('aria-label',t('跳到局或轮','Jump to game or round'));
+ const round=t('第 {game} 局 · 第 {round} 轮','Game {game} · Round {round}'),result=t('第 {game} 局 · 结算','Game {game} · Result');
  let chapter=0;
- for(const option of jump.options){const e=events[Number(option.value)];if(Number(option.value)<=cursor)chapter=Number(option.value);option.textContent=en?`Game ${e.game} · ${e.kind==='end'?'Result':'Round '+e.round}`:`第 ${e.game} 局 · ${e.kind==='end'?'结算':'第 '+e.round+' 轮'}`;}
+ for(const option of jump.options){
+  const index=Number(option.value),e=events[index];
+  if(index<=cursor)chapter=index;
+  const label=(e.kind==='end'?result:round).replace('{game}',e.game).replace('{round}',e.round);
+  if(option.textContent!==label)option.textContent=label;
+ }
  jump.value=String(chapter);
  const range=$('replay-range');range.value=cursor;range.style.setProperty('--replay-progress',(total>1?cursor/(total-1)*100:0)+'%');
- range.setAttribute('aria-label',en?'Replay progress':'回放进度');range.setAttribute('aria-valuetext',en?`Step ${cursor+1} of ${total}. ${GKLocale.text(event.title)}`:`第 ${cursor+1} 步，共 ${total} 步。${event.title}`);
+ range.setAttribute('aria-label',t('回放进度','Replay progress'));
+ range.setAttribute('aria-valuetext',t('第 {n} 步，共 {m} 步。{title}','Step {n} of {m}. {title}').replace('{n}',cursor+1).replace('{m}',total).replace('{title}',()=>GKLocale.text(event.title)));
  $('replay-step').textContent=(cursor+1)+' / '+total;
 }
 function stopReplay(){if(autoTimer){clearInterval(autoTimer);autoTimer=null;}renderReplayControls();}

@@ -5,7 +5,7 @@
  const standard=document.createElement('article');standard.className='standard-rules';standard.dataset.noI18n='';standard.hidden=true;textPanel.before(standard);
  dialog.classList.add('rg-shell');
  const head=dialog.querySelector('.modal-head'),close=document.getElementById('close-rules'),headActions=document.createElement('div'),languageButton=document.createElement('select');
- headActions.className='rg-head-actions';headActions.dataset.noI18n='';languageButton.id='rg-language';languageButton.className='site-language-select';languageButton.dataset.siteLanguage='';languageButton.innerHTML=SZI18n.options();headActions.append(languageButton,close);head.append(headActions);
+ headActions.className='rg-head-actions';headActions.dataset.noI18n='';languageButton.id='rg-language';languageButton.className='sz-select-control sz-select--compact';languageButton.dataset.siteLanguage='';languageButton.innerHTML=SZI18n.options();headActions.append(languageButton,close);head.append(headActions);
  const viewScroll={visual:0,text:0};
  function layoutShell(){dialog.classList.toggle('rg-compact',mobileQuery.matches);}
  function readingPosition(){const headings=[...standard.querySelectorAll('h2')],top=scroller.getBoundingClientRect().top;let index=0;for(let i=0;i<headings.length;i++)if(headings[i].getBoundingClientRect().top<=top+32)index=i;return {index,offset:headings[index]?.getBoundingClientRect().top-top,scroll:scroller.scrollTop};}

@@ -8,7 +8,7 @@ html,:root body,[data-sz-theme=dark] body{background:var(--paper);color:var(--in
 :root body .modal,[data-sz-theme=dark] .modal{border-radius:var(--r-lg)}
 :root body .table .actionbar,[data-sz-theme=dark] .table .actionbar{background:var(--paper);border-radius:var(--r)}
 :root body #hr-panel,[data-sz-theme=dark] #hr-panel{border-radius:var(--r-lg);background:var(--panel);border-color:var(--line)}
-:root body .settings-modal :is(select,input),[data-sz-theme=dark] .settings-modal :is(select,input){border-radius:var(--r);background:var(--panel);border-color:var(--line);color:var(--ink)}
+:root body .settings-modal input,[data-sz-theme=dark] .settings-modal input{border-radius:var(--r);background:var(--panel);border-color:var(--line);color:var(--ink)}
 [data-sz-theme=dark] .table #hr-toggle{background:var(--panel)}
 [data-sz-theme=dark] .table .shared-flower{background:transparent}
 /* buttons: filled red, or ink text with an underline */
@@ -238,5 +238,4 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 
 /* Policy selection follows the shared settings controls. */
 .policy-field{display:flex;flex-direction:column;gap:6px;min-width:0}
-.policy-field select{width:100%}
 #policy-status{font-size:12px;line-height:1.5;color:var(--muted);overflow-wrap:anywhere}
