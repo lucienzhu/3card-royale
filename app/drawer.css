@@ -11,10 +11,9 @@
  position:relative;box-sizing:border-box;flex:0 0 var(--drawer-head);height:var(--drawer-head);min-height:var(--drawer-head);
  padding:8px var(--drawer-gutter);gap:8px;background:var(--paper);
 }
-:root body .sz-drawer>.modal-head h2{font-size:18px!important;white-space:nowrap;line-height:1.3!important;margin:0}
+:root body .sz-drawer>.modal-head h2{font-size:18px!important;overflow-wrap:anywhere;line-height:1.3!important;margin:0}
 :root body .sz-drawer .drawer-head-actions{display:flex;flex:none;align-items:center;gap:8px}
 :root body .sz-drawer .drawer-head-actions button{min-height:36px;padding:6px 8px;white-space:nowrap;font-size:12px;line-height:1.4;background:transparent;border:0;color:var(--muted)}
-:root body .sz-drawer :is(#rg-language,#menu-language){min-width:44px;color:var(--ink)}
 :root body .sz-drawer>.drawer-tabs{box-sizing:border-box;flex:0 0 var(--drawer-tabs);height:var(--drawer-tabs);min-height:var(--drawer-tabs);padding:6px var(--drawer-gutter);gap:12px;align-items:center;background:var(--paper);border-bottom:1px solid var(--line)}
 :root body .sz-drawer #rg-switch{gap:4px}
 :root body .sz-drawer #rg-switch button{min-height:34px;min-width:48px;padding:6px 8px;font-size:12px;line-height:1.4}
@@ -22,11 +21,10 @@
 :root body #settings-modal.sz-drawer .language-field{display:none}
 :root body #settings-modal.sz-drawer .menu-preferences{grid-template-columns:1fr}
 :root body #settings-modal.sz-drawer .sz-appearance{margin:0;max-width:none}
-:root body #settings-modal.sz-drawer .sz-appearance select{width:min(100%,320px);max-width:320px}
 :root body .sz-drawer .drawer-head-actions button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 @media(max-width:700px),(max-height:500px) and (max-width:1000px){
  :root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal,#onboarding-modal).sz-drawer{
-  --drawer-head:48px;--drawer-tabs:48px;--drawer-gutter:12px;
+  --drawer-head:52px;--drawer-tabs:48px;--drawer-gutter:12px;
   inset:var(--app-top,0px) 0 auto;margin:0;width:100%;height:var(--app-height,100dvh);max-height:var(--app-height,100dvh);
   border-radius:0;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
  }
@@ -37,7 +35,7 @@
  :root body .sz-drawer>.drawer-tabs{padding-block:3px;gap:6px}
  :root body .sz-drawer>.modal-body{padding:16px;scrollbar-gutter:auto}
 }
-@media(max-height:500px) and (min-width:480px) and (max-width:1000px){:root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal,#onboarding-modal).sz-drawer{--drawer-head:42px;--drawer-tabs:44px}}
+@media(max-height:500px) and (min-width:480px) and (max-width:1000px){:root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal,#onboarding-modal).sz-drawer{--drawer-tabs:44px}}
 /* The teaching camera stays clipped inside the same flexible content region. */
 :root body #rule-page.sz-drawer.fg-mobile>.modal-body{display:flex;padding:0 12px;overflow:hidden}
 :root body :is(#settings-modal,#rule-page,#ranks-modal,#replay-modal,#onboarding-modal).sz-drawer.qb-dialog-fallback{width:min(880px,calc(100vw - 32px))!important;height:min(900px,calc(var(--app-height,100dvh) - 32px))!important;max-height:calc(var(--app-height,100dvh) - 32px)!important;inset:0!important;margin:auto!important}

@@ -84,7 +84,7 @@ button,a,input,select,summary{-webkit-tap-highlight-color:transparent}
 :root body .settings-modal{width:min(560px,calc(100vw - 32px))}
 :root body .settings-modal .modal-:root body{padding:0 24px 20px;gap:0}
 :root body .settings-modal .menu-preferences{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-:root body .settings-modal :is(select,input),[data-sz-theme=dark] .settings-modal :is(select,input){font-size:16px;min-height:46px;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:7px;color:var(--ink)}
+:root body .settings-modal input,[data-sz-theme=dark] .settings-modal input{font-size:16px;min-height:46px;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:7px;color:var(--ink)}
 :root body .settings-modal label{font-size:12px;color:var(--muted)}
 :root body .settings-modal .seed-readout{padding:0 0 20px;border-top:0;border-bottom:1px solid var(--line);margin:0 0 20px;gap:16px}
 :root body .settings-modal .seed-readout span{font-size:12px}

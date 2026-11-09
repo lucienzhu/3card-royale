@@ -130,7 +130,7 @@ body{background:var(--sz-paper);color:var(--sz-ink)}
 /* One identity, two luminance ranges. Game faces stay white for rank/suit legibility. */
 :root{color-scheme:light;--sz-logo-paper:#F7F7F2;--sz-logo-petal:#D83B74;--sz-logo-center:#F2CD5D;--sz-logo-edge:#D3AF45}
 .sz-appearance{display:flex;align-items:center;justify-content:space-between;gap:12px;font:13px/1.4 -apple-system,BlinkMacSystemFont,'PingFang SC',Arial,sans-serif;color:var(--ink);margin:10px 0}
-.sz-appearance select{font:inherit;min-height:40px;max-width:190px;padding:6px 10px;border:1px solid var(--line);border-radius:7px;background:var(--sz-paper);color:var(--ink)}
+
 .sz-appearance.inline{justify-content:flex-end;margin:10px 0 0}.sz-appearance.inline>span{font-size:12px;color:var(--muted)}
 .sz-theme-story{margin:0 0 28px}.sz-theme-story h2{font-size:22px;margin:0 0 9px}.sz-theme-story>p{color:var(--muted);font-size:13px;line-height:1.8}
 .sz-theme-pair{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
@@ -140,7 +140,7 @@ body{background:var(--sz-paper);color:var(--sz-ink)}
 .sz-theme-card[aria-pressed=true]{outline:2px solid var(--sz-flower);outline-offset:3px}
 [data-sz-theme=dark]{color-scheme:dark;--sz-paper:#111F2C;--sz-ink:#EDF4F1;--sz-sea:#EDF4F1;--sz-flower:#F27FAE;--sz-flower-deep:#F27FAE;--sz-mint:#86D8C7;--sz-gold:#F2CD5D;--sz-table:#203949;--sz-logo-paper:#192E3D;--sz-logo-petal:#F27FAE;--sz-logo-center:#F2CD5D;--sz-logo-edge:#6F8997;--paper:var(--sz-paper);--panel:#192E3D;--cream:var(--sz-paper);--ink:var(--sz-ink);--muted:#B4CAD0;--line:#496472;--green:#86D8C7;--flower:#F27FAE;--mint:#86D8C7;--gold:#F2CD5D;--face:#FFFFFF;background:var(--sz-paper);color:var(--ink)}
 [data-sz-theme=dark] body{background:var(--sz-paper);color:var(--ink)}
-[data-sz-theme=dark] button,[data-sz-theme=dark] select,[data-sz-theme=dark] input{color:var(--ink);background:var(--panel);border-color:var(--line)}
+[data-sz-theme=dark] button,[data-sz-theme=dark] input{color:var(--ink);background:var(--panel);border-color:var(--line)}
 [data-sz-theme=dark] a{color:var(--sz-mint)}
 [data-sz-theme=dark] .table{background:var(--sz-table);border-color:var(--line);color:var(--ink)}
 [data-sz-theme=dark] :is(.table .tabs button,.topline .meta,.rack-label,.empty,.damage small,.preview-score small,.pile-label,.pile-title,.pile-recycle){color:var(--muted)}

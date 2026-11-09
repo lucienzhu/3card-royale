@@ -10,7 +10,7 @@
   let actions=head.querySelector('.drawer-head-actions,.rg-head-actions');
   if(!actions){actions=document.createElement('div');head.append(actions);}
   actions.className='drawer-head-actions';actions.dataset.noI18n='';
-  const old=actions.querySelector('#rg-language');const language=document.createElement('select');language.id=old?.id||name+'-language';language.dataset.languageSelect='';language.className='site-language-select';language.innerHTML=window.SZI18n.options();old?.remove();
+  const old=actions.querySelector('#rg-language');const language=document.createElement('select');language.id=old?.id||name+'-language';language.dataset.languageSelect='';language.className='sz-select-control sz-select--compact';language.innerHTML=window.SZI18n.options();old?.remove();
   const back=head.querySelector('#close-settings,#close-rules')||document.createElement('button');
   back.id='close-'+name;back.type='button';back.dataset.drawerClose='';
   actions.append(language,back);languageButtons.push(language);closeButtons.push(back);

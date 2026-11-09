@@ -1885,6 +1885,18 @@ SZI18n.add([
     "Selección y expansión"
   ],
   [
+    "Navigation language",
+    "ナビゲーションの言語",
+    "탐색 메뉴 언어",
+    "Idioma de navegación"
+  ],
+  [
+    "Hover",
+    "ホバー",
+    "마우스 올림",
+    "Al pasar el cursor"
+  ],
+  [
     "Default",
     "標準",
     "기본",
@@ -2243,6 +2255,60 @@ SZI18n.add([
     "行動プレビュー",
     "행동 미리보기",
     "Vista previa de acción"
+  ],
+  [
+    "Previous step",
+    "前のステップ",
+    "이전 단계",
+    "Paso anterior"
+  ],
+  [
+    "Next step",
+    "次のステップ",
+    "다음 단계",
+    "Paso siguiente"
+  ],
+  [
+    "Play again",
+    "最初から再生",
+    "다시 재생",
+    "Volver a reproducir"
+  ],
+  [
+    "Replay controls",
+    "リプレイ操作",
+    "리플레이 조작",
+    "Controles de repetición"
+  ],
+  [
+    "Sample replay",
+    "リプレイ例",
+    "리플레이 예시",
+    "Repetición de ejemplo"
+  ],
+  [
+    "Jump to game or round",
+    "ゲームやラウンドに移動",
+    "게임이나 라운드로 이동",
+    "Ir a una partida o ronda"
+  ],
+  [
+    "Replay progress",
+    "リプレイの進行状況",
+    "리플레이 진행률",
+    "Progreso de repetición"
+  ],
+  [
+    "Step {n} of {m}. {title}",
+    "全{m}ステップ中の{n}。{title}",
+    "{m}단계 중 {n}단계. {title}",
+    "Paso {n} de {m}. {title}"
+  ],
+  [
+    "Game {game} · Result",
+    "第{game}局 · 結果",
+    "{game}게임 · 결과",
+    "Juego {game} · Resultado"
   ],
   [
     "Game {game} · Round {round}",
